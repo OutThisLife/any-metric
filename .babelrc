@@ -1,7 +1,7 @@
 {
 	"presets": ["next/babel", "env", "react"],
 	"plugins": [
-		["inline-react-svg"],
+		"inline-react-svg",
 		["module-alias", [
 			{ "src": "./", "expose": "@" }
 		]]

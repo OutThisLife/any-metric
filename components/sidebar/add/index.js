@@ -14,22 +14,22 @@ form {
   position: absolute;
   top: 0;
   left: 110%;
-  width: 250px;
+  width: 700px;
   padding: 15px;
   box-shadow: 0 0 25px 5px rgba(0,0,0,.4);
-  transform: .4s ease-in-out;
+  transition: .2s ease-in-out;
+  transform-origin: left center;
   background: var(--bg);
 
   &:not(.open) {
     opacity: 0;
     pointer-events: none;
-    filter: blur(10px);
-    transform: scale(0.95) translate3d(-10px, 0, 0);
+    transform: scale(0) translate3d(-10px, 0, 0);
   }
 }
 `
 
-export default () => (
+export default ({ handle }) => (
   <AddNew>
     <Button
       title='Add Target'
@@ -39,10 +39,58 @@ export default () => (
       }}
     />
 
-    <Form action='javascript:;'>
-      <input type='text' name='url' placeholder='Target URL' />
-      <input type='text' name='price' placeholder='Price selector' />
-      <input type='text' name='reviews' placeholder='Review count selector' />
+    <Form action='javascript:;' onSubmit={({ currentTarget }) => {
+      const { title, url, parent, price, reviews } = currentTarget
+
+      handle({
+        id: Math.random(),
+        title: title.value,
+        url: url.value,
+        selectors: {
+          parent: parent.value,
+          price: price.value,
+          reviews: price.value
+        },
+        created: new Date(),
+        updated: new Date(),
+        spider: []
+      }).then(() => currentTarget.classList.remove('open'))
+    }}>
+      <input
+        type='text'
+        name='title'
+        placeholder='Product name'
+        required
+      />
+
+      <input
+        type='text'
+        name='url'
+        placeholder='//amazon.com/path/to/product/page'
+        required
+      />
+
+      <div className='row'>
+        <input
+          type='text'
+          name='parent'
+          placeholder='Parent selector, eg: .product'
+          required
+        />
+
+        <input
+          type='text'
+          name='price'
+          placeholder='Price selector'
+          required
+        />
+
+        <input
+          type='text'
+          name='reviews'
+          placeholder='Review count selector'
+        />
+      </div>
 
       <footer>
         <button type='reset' onClick={({ currentTarget }) => {

@@ -17,9 +17,8 @@ export default class MyDocument extends Document {
           <meta name='robots' content='noindex' />
 
           <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/open-iconic@1.1.1/font/css/open-iconic.min.css' />
-          <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Inconsolata' />
 
-          <style>{`:root{ --font: Inconsolata }`}</style>
+          <style>{`:root{ --font: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol }`}</style>
           {this.props.styleTags}
         </Head>
 

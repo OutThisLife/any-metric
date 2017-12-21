@@ -1,0 +1,34 @@
+table {
+  width: calc(100% + calc(var(--grid) * 6));
+  margin-left: calc(var(--grid) * -3);
+
+th {
+  &:first-child,
+  &:nth-child(2) {
+    width: 90px;
+  }
+}
+
+td:nth-child(3),
+th:nth-child(3) {
+  text-align: left;
+}
+
+tr > *:first-child,
+tr > *:last-child {
+  padding: 0 25px;
+}
+
+td a {
+  display: block;
+  color: var(--text);
+
+  em {
+    display: block;
+  }
+}
+
+tr:hover * {
+  color: var(--primary);
+  transition: none;
+}

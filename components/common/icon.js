@@ -1,9 +1,10 @@
-export default ({ i }) => (
+export default ({ i, size }) => (
   <span
     className='oi'
     data-glyph={i}
     style={{
-      fontSize: '50%'
+      fontSize: size || '50%',
+      transition: 'none'
     }}
   />
 )

@@ -8,12 +8,22 @@ width: 100%;
 tr, td, th {
   margin: 0;
   padding: 0;
-  text-align: left;
+  text-align: center;
+
+  &:first-child {
+    text-align: left;
+  }
+
+  &:nth-last-child(2),
+  &:last-child {
+    text-align: right;
+  }
 }
 
 th {
   opacity: 0.6;
   color: var(--primary);
+  font-size: 11px;
   text-transform: uppercase;
 }
 

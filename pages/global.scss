@@ -1,6 +1,7 @@
 :root {
-  --primary: rgb(253, 0, 55);
   --text: #FFF;
+  --primary: #fd0037;
+  --faded: #404763;
   --bg: #04070e;
 
   --grid: 9.1px;
@@ -13,8 +14,10 @@ html, body {
 
 html {
   color: var(--text);
-  font: 13px/1.25 var(--font);
-  letter-spacing: 0px;
+  font: 13px/1.42857142857143 var(--font);
+  font-smoothing: antialiased;
+  letter-spacing: -.005em;
+  text-decoration-skip: ink;
   background: fixed url(https://www.toptal.com/designers/subtlepatterns/patterns/ep_naturalblack.png);
 }
 
@@ -42,11 +45,21 @@ img, figure, embed, iframe, video, audio {
 a {
   color: var(--primary);
   text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
+  }
 }
 
-em {
-  opacity: 0.5;
+small, em {
+  opacity: 1;
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--faded);
+  font-size: 11px;
   font-style: normal;
+  text-overflow: ellipsis;
 }
 
 code {

@@ -51,6 +51,18 @@ footer {
     }
   }
 }
+
+.row {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  margin-top: 10px;
+
+  input {
+    width: calc(33.33% - 5px);
+    margin: 0;
+  }
+}
 `
 
 export default props => (

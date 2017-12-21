@@ -1,3 +1,4 @@
+import { Component } from 'react'
 import dynamic from 'next/dynamic'
 import styled, { injectGlobal } from 'styled-components'
 import globalStyles from './global.scss'
@@ -19,24 +20,67 @@ section {
   width: 100%;
   padding: calc(var(--grid) * 3);
 
-  h1 {
-    font-weight: 300;
-    font-size: calc(24px + (40 - 24) * (100vw - 400px) / (2000 - 400));
-    margin: 0 0 25px;
+  > div {
+    max-width: 768px;
+    margin: auto;
   }
 }
 `
 
-export default ({ url }) => {
-  const Dummy = Templates[url.query.page || '/']
+export default class Index extends Component {
+  constructor (props) {
+    super(props)
+    this.state = { data: [] }
+  }
 
-  return (
-    <Main>
-      <Sidebar {...url} />
+  handleUpdate (data) {
+    return new Promise((resolve, reject) => {
+      try {
+        this.setState({
+          data: [
+            ...this.state.data,
+            data
+          ]
+        })
 
-      <section>
-        <Dummy {...url} />
-      </section>
-    </Main>
-  )
+        resolve(this.state.data)
+      } catch (e) {
+        reject(e)
+      }
+    })
+  }
+
+  componentWillMount () {
+    if (typeof localStorage !== 'undefined') {
+      this.setState(JSON.parse(localStorage.getItem('data')))
+    }
+  }
+
+  componentDidUpdate () {
+    localStorage.setItem('data', JSON.stringify(this.state))
+  }
+
+  render () {
+    const { url } = this.props
+    const Dummy = Templates[url.query.page || '/']
+    const props = {
+      ...url,
+      ...this.state,
+      handle: this.handleUpdate.bind(this)
+    }
+
+    console.log(props)
+
+    return (
+      <Main>
+        <Sidebar {...props} />
+
+        <section>
+          <div>
+            <Dummy {...props} />
+          </div>
+        </section>
+      </Main>
+    )
+  }
 }

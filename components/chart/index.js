@@ -2,7 +2,6 @@ import styled from 'styled-components'
 import LineChart from 'react-svg-line-chart'
 
 const Chart = styled.figure`
-max-width: 700px;
 user-select: none;
 margin: 25px;
 

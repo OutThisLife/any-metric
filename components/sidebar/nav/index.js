@@ -1,80 +1,46 @@
 import Link from 'next/link'
 import styled from 'styled-components'
 
-const Nav = styled.nav`
-a {
-  display: block;
-  padding: 15px 25px;
+const A = styled.nav`
+display: flex;
+align-items: center;
+padding: 15px 25px;
+color: var(--text);
+
+&.active {
   color: var(--text);
-  border: solid rgba(255,255,255,.1);
-  border-width: 1px 0;
-
-  &:not(.active) {
-    opacity: 0.2;
-
-    &:hover {
-      opacity: 0.5;
-      transition: none;
-      background: rgba(0,0,0,.4);
-    }
-
-    &:not(:hover) {
-      border-top-color: transparent;
-    }
-  }
-
-  &.active {
-    color: var(--text);
-    font-weight: 700;
-    background: var(--primary);
-  }
+  background: var(--primary);
 
   em {
-    display: inherit;
-    max-width: 100%;
-    overflow: hidden;
     color: var(--text);
-    font-size: 11px;
-    text-overflow: ellipsis;
   }
+}
+
+&:not(.active):hover {
+  transition: none;
+  background: rgba(253, 0, 55, .04);
+}
+
+&:hover:active {
+  outline: 1px solid var(--primary);
+  outline-offset: -3px;
+}
+
+svg {
+  width: 10px;
+  fill: #FFF;
+  margin-right: auto;
 }
 `
 
-export default ({ id }) => (
-  <Nav>
-    <Link href='/?page=report&id=1'>
-      <a className={id === '1' ? 'active' : ''}>
-        Some Product Title
-        <em>//amazon.com/path/to/product/page</em>
-      </a>
-    </Link>
-
-    <Link href='/?page=report&id=2'>
-      <a className={id === '2' ? 'active' : ''}>
-        Some Product Title
-        <em>//amazon.com/path/to/product/page</em>
-      </a>
-    </Link>
-
-    <Link href='/?page=report&id=3'>
-      <a className={id === '3' ? 'active' : ''}>
-        Some Product Title
-        <em>//amazon.com/path/to/product/page</em>
-      </a>
-    </Link>
-
-    <Link href='/?page=report&id=4'>
-      <a className={id === '4' ? 'active' : ''}>
-        Some Product Title
-        <em>//amazon.com/path/to/product/page</em>
-      </a>
-    </Link>
-
-    <Link href='/?page=report&id=5'>
-      <a className={id === '5' ? 'active' : ''}>
-        Some Product Title
-        <em>//amazon.com/path/to/product/page</em>
-      </a>
-    </Link>
-  </Nav>
+export default ({ query, data }) => (
+  <nav>
+    {(data || []).map(({ id, url, title, spider }) => (
+      <Link key={id} href={`/?page=report&id=${id}`}>
+        <A className={id.toString() === query.id ? 'active' : ''}>
+          {title || url} ({spider.length})
+        </A>
+      </Link>
+    ))}
+  </nav>
 )

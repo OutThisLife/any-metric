@@ -8,11 +8,11 @@ padding: calc(var(--grid) * 3) 0;
 background: rgba(0,0,0,.2);
 `
 
-export default ({ query }) => (
+export default props => (
   <Sidebar>
     <div style={{ zIndex: 10, position: 'sticky', top: 27 }}>
-      <Add />
-      <Nav {...query} />
+      <Add {...props} />
+      <Nav {...props} />
     </div>
   </Sidebar>
 )

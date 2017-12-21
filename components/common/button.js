@@ -1,8 +1,10 @@
 import styled from 'styled-components'
 
 const Button = styled.a`
+user-select: none;
 cursor: pointer;
 display: inline-block;
+position: relative;
 color: var(--text);
 text-align: center;
 line-height: 1;
@@ -12,6 +14,10 @@ background: ${({ outline }) => outline ? 'rgba(0,0,0,.2)' : 'var(--primary)'};
 
 &:hover {
   background: ${({ outline }) => outline ? 'var(--primary)' : 'inherit'};
+
+  &:active {
+    transform: translate(0, 2px);
+  }
 }
 `
 

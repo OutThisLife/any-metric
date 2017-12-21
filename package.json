@@ -1,0 +1,27 @@
+{
+  "name": "baphometrics",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/OutThisLife/baphometrics",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next",
+    "build": "next build && next export",
+    "start": "serve out"
+  },
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-inline-react-svg": "^0.5.2",
+    "babel-plugin-module-alias": "^1.6.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "file-loader": "^1.1.6",
+    "next": "^4.2.1",
+    "raw-loader": "^0.5.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "serve": "^6.4.3",
+    "styled-components": "^2.3.3"
+  }
+}

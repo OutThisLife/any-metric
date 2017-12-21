@@ -1,0 +1,50 @@
+:root {
+  --primary: #FA2740;
+  --text: #FFF;
+  --bg: #131418;
+  --border: rgba(255, 255, 255, .2);
+
+  --grid: 9.1px;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  color: var(--text);
+  font: 13px/1.25 var(--font);
+  letter-spacing: 0px;
+}
+
+body {
+  cursor: crosshair;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+* {
+  box-sizing: border-box;
+  transition: .3s ease-in-out;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+img, figure, embed, iframe, video, audio {
+  max-width: 100%;
+  height: auto;
+  margin: 0;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+em {
+  opacity: 0.5;
+  font-style: normal;
+}

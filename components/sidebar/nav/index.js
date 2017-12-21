@@ -14,6 +14,7 @@ a {
 
     &:hover {
       opacity: 0.5;
+      transition: none;
       background: rgba(0,0,0,.4);
     }
 

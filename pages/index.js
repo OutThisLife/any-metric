@@ -20,6 +20,7 @@ section {
   padding: calc(var(--grid) * 3);
 
   h1 {
+    font-weight: 300;
     font-size: calc(24px + (40 - 24) * (100vw - 400px) / (2000 - 400));
     margin: 0 0 25px;
   }

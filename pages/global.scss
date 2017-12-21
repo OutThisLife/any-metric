@@ -1,8 +1,7 @@
 :root {
-  --primary: #FA2740;
+  --primary: rgb(253, 0, 55);
   --text: #FFF;
-  --bg: #131418;
-  --border: rgba(255, 255, 255, .2);
+  --bg: #04070e;
 
   --grid: 9.1px;
 }
@@ -16,17 +15,18 @@ html {
   color: var(--text);
   font: 13px/1.25 var(--font);
   letter-spacing: 0px;
+  background: fixed url(https://www.toptal.com/designers/subtlepatterns/patterns/ep_naturalblack.png);
 }
 
 body {
   cursor: crosshair;
   min-height: 100vh;
-  background: var(--bg);
+  background: rgba(4, 7, 14, .9);
 }
 
 * {
   box-sizing: border-box;
-  transition: .3s ease-in-out;
+  transition: .2s ease-in-out;
 
   &:focus {
     outline: none;

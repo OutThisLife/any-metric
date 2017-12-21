@@ -16,7 +16,9 @@ export default class MyDocument extends Document {
           <title>Baphometrics</title>
           <meta name='robots' content='noindex' />
 
+          <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/open-iconic@1.1.1/font/css/open-iconic.min.css' />
           <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Inconsolata' />
+
           <style>{`:root{ --font: Inconsolata }`}</style>
           {this.props.styleTags}
         </Head>

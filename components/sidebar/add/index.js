@@ -3,7 +3,6 @@ import Form from '@/components/common/form'
 import Button from '@/components/common/button'
 
 const AddNew = styled.div`
-position: relative;
 padding: 0 calc(var(--grid) * 3);
 margin: 0 auto calc(var(--grid) * 2);
 
@@ -46,8 +45,15 @@ export default () => (
       <input type='text' name='reviews' placeholder='Review count selector' />
 
       <footer>
-        <button type='submit'>Cancel</button>
-        <button type='submit'>Add</button>
+        <button type='reset' onClick={({ currentTarget }) => {
+          currentTarget.offsetParent.classList.remove('open')
+        }}>
+          Cancel
+        </button>
+
+        <button type='submit'>
+          Add
+        </button>
       </footer>
     </Form>
   </AddNew>

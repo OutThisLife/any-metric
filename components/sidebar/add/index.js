@@ -51,8 +51,8 @@ export default ({ handle }) => (
           price: price.value,
           reviews: price.value
         },
-        created: new Date(),
-        updated: new Date(),
+        created: new Date().toISOString(),
+        updated: new Date().toISOString(),
         spider: []
       }).then(() => currentTarget.classList.remove('open'))
     }}>

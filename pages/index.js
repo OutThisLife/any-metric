@@ -69,8 +69,6 @@ export default class Index extends Component {
       handle: this.handleUpdate.bind(this)
     }
 
-    console.log(props)
-
     return (
       <Main>
         <Sidebar {...props} />

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import styled from 'styled-components'
 
-const A = styled.nav`
+const A = styled.a`
 display: flex;
 align-items: center;
 padding: 15px 25px;

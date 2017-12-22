@@ -13,6 +13,7 @@ svg {
 
 export default props => (
   <Chart>
+    {console.log(props)}
     <LineChart
       pathColor='#FD0037'
       pathWidth={1}

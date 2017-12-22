@@ -12,52 +12,46 @@ export default ({ handle, query, data }) => {
   const idx = data.findIndex(({ id }) => id.toString() === query.id)
   const item = data[idx]
 
-  if (!item) {
-    return null
-  }
-
   const { title, url, updated, spider } = item
 
   return (
     <Report>
-      <PageTitle title={`Report for <code>${url}</code>`}>
+      <PageTitle title={`Report for <code><a href='${url}' target='_blank'>${url}</a></code>`}>
         <small>
           Last crawled ${updated}
         </small>
 
         <a href='javascript:;' onClick={() => crawl(item, meta => {
-          data[idx].spider.push(meta)
+          data[idx].spider = Object.assign(spider, meta)
           handle(data)
         })}>
           <Icon i='loop-circular' size='1rem' />
         </a>
       </PageTitle>
 
-      {spider.length > 0 && <Chart data={spider.map(({ date, price }) => ({ x: date, y: price }))} />}
+      {spider.length > 0 && (
+        <Chart
+          data={spider.filter(({ price }) => price).map(({ price }, x) => ({
+            x,
+            y: parseFloat(price.replace(/(\$)/g, ''))
+          }))}
+        />
+      )}
 
       {spider.length > 0 && (
-        <Table headers={['Date', 'Img', 'Name', 'Price', 'Reviews']}>
-          {spider.map(({ id, date, img, price, reviews }) => (
-            <tr key={i}>
+        <Table headers={['Date', 'Name', 'Img', 'Price', 'Reviews']}>
+          {spider.map(({ id, date, title, image, price, reviews }) => (
+            <tr key={id}>
               <td>{date}</td>
 
-              <td>
-                <img src={img} />
-                <img src={img} />
-              </td>
+              <td>{title}</td>
 
               <td>
-                <a href={url} target='_blank'>
-                  <Icon i='location' /> {title}
-                  <em>{url}</em>
-                </a>
+                <img src={image || '//placeimg.com/640/480/nature'} />
+                <img src={image || '//placeimg.com/640/480/nature'} />
               </td>
 
-              <td>
-                {price}
-                &nbsp;<Icon i='caret-top' /> <em>(+50%)</em>
-              </td>
-
+              <td>{price}</td>
               <td>{reviews}</td>
             </tr>
           ))}

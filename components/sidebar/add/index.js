@@ -1,3 +1,4 @@
+import Router from 'next/router'
 import styled from 'styled-components'
 import Form from '@/components/common/form'
 import Button from '@/components/common/button'
@@ -50,15 +51,19 @@ export default ({ data, handle }) => (
           url: url.value,
           selectors: {
             parent: parent.value,
-            price: price.value,
-            reviews: reviews.value
+            title: 'h2@html',
+            image: 'img@src',
+            price: `${price.value}@html`,
+            reviews: `${reviews.value}@html`,
           },
           created: new Date().toISOString(),
           updated: new Date().toISOString(),
           spider: []
         })
 
-        handle(data).then(() => currentTarget.classList.remove('open'))
+        handle(data, ({ id }) => {
+          currentTarget.classList.remove('open')
+        })
       }}
       onReset={({ currentTarget }) => currentTarget.classList.remove('open')}
     >
@@ -66,6 +71,7 @@ export default ({ data, handle }) => (
         type='text'
         name='title'
         placeholder='Product name'
+        defaultValue='ipad @ amazon'
         required
       />
 
@@ -73,6 +79,7 @@ export default ({ data, handle }) => (
         type='text'
         name='url'
         placeholder='//amazon.com/path/to/product/page'
+        defaultValue='https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=ipad'
         required
       />
 
@@ -81,6 +88,7 @@ export default ({ data, handle }) => (
           type='text'
           name='parent'
           placeholder='Parent selector, eg: .product'
+          defaultValue='.s-item-container'
           required
         />
 
@@ -88,6 +96,7 @@ export default ({ data, handle }) => (
           type='text'
           name='price'
           placeholder='Price selector'
+          defaultValue='.a-span7 .a-size-base'
           required
         />
 
@@ -95,6 +104,7 @@ export default ({ data, handle }) => (
           type='text'
           name='reviews'
           placeholder='Review count selector'
+          defaultValue='.a-span-last .a-size-small'
         />
       </div>
 

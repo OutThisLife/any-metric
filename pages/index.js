@@ -33,15 +33,8 @@ export default class Index extends Component {
     this.state = { data: [] }
   }
 
-  handleUpdate (data) {
-    return new Promise((resolve, reject) => {
-      try {
-        this.setState({ data })
-        resolve(this.state.data)
-      } catch (e) {
-        reject(e)
-      }
-    })
+  handleUpdate (data, done) {
+    this.setState({ data }, () => done ? done(data[data.length - 1]) : 1)
   }
 
   componentWillMount () {
@@ -56,7 +49,7 @@ export default class Index extends Component {
 
   render () {
     const { url } = this.props
-    const Dummy = Templates[url.query.page || '/']
+    const Dummy = Templates[this.state.data.length > 0 ? (url.query.page || '/') : '/']
     const props = {
       ...url,
       ...this.state,

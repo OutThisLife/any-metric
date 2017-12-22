@@ -1,17 +1,6 @@
 table {
   width: calc(100% + calc(var(--grid) * 6));
   margin-left: calc(var(--grid) * -3);
-
-th {
-  &:first-child,
-  &:nth-child(2) {
-    width: 90px;
-  }
-}
-
-td:nth-child(3),
-th:nth-child(3) {
-  text-align: left;
 }
 
 tr > *:first-child,

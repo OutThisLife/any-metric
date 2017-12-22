@@ -36,13 +36,7 @@ export default class Index extends Component {
   handleUpdate (data) {
     return new Promise((resolve, reject) => {
       try {
-        this.setState({
-          data: [
-            ...this.state.data,
-            data
-          ]
-        })
-
+        this.setState({ data })
         resolve(this.state.data)
       } catch (e) {
         reject(e)

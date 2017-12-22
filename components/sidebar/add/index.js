@@ -29,7 +29,7 @@ form {
 }
 `
 
-export default ({ handle }) => (
+export default ({ data, handle }) => (
   <AddNew>
     <Button
       title='Add Target'
@@ -39,23 +39,29 @@ export default ({ handle }) => (
       }}
     />
 
-    <Form action='javascript:;' onSubmit={({ currentTarget }) => {
-      const { title, url, parent, price, reviews } = currentTarget
+    <Form
+      action='javascript:;'
+      onSubmit={({ currentTarget }) => {
+        const { title, url, parent, price, reviews } = currentTarget
 
-      handle({
-        id: Math.random(),
-        title: title.value,
-        url: url.value,
-        selectors: {
-          parent: parent.value,
-          price: price.value,
-          reviews: price.value
-        },
-        created: new Date().toISOString(),
-        updated: new Date().toISOString(),
-        spider: []
-      }).then(() => currentTarget.classList.remove('open'))
-    }}>
+        data.push({
+          id: Math.random(),
+          title: title.value,
+          url: url.value,
+          selectors: {
+            parent: parent.value,
+            price: price.value,
+            reviews: reviews.value
+          },
+          created: new Date().toISOString(),
+          updated: new Date().toISOString(),
+          spider: []
+        })
+
+        handle(data).then(() => currentTarget.classList.remove('open'))
+      }}
+      onReset={({ currentTarget }) => currentTarget.classList.remove('open')}
+    >
       <input
         type='text'
         name='title'
@@ -93,9 +99,7 @@ export default ({ handle }) => (
       </div>
 
       <footer>
-        <button type='reset' onClick={({ currentTarget }) => {
-          currentTarget.offsetParent.classList.remove('open')
-        }}>
+        <button type='reset'>
           Cancel
         </button>
 

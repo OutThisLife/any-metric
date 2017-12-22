@@ -4,37 +4,36 @@ import Icon from '@/components/common/icon'
 import Table from '@/components/common/table'
 import PageTitle from '@/components/pageTitle'
 import Chart from '@/components/chart'
+import crawl from '@/services/crawl'
 
 const Report = styled.div`${styles}`
 
-const fillerData = []
+export default ({ handle, query, data }) => {
+  const idx = data.findIndex(({ id }) => id.toString() === query.id)
+  const item = data[idx]
 
-for (let x = 1; x <= 30; x++) {
-  fillerData.push({ x: x, y: Math.floor(Math.random() * (100)) })
-}
-
-export default ({ query, data }) => {
-  if (data.length === 0) {
+  if (!item) {
     return null
   }
 
-  const { title, url, updated, spider } = data.filter(({ id }) => id.toString() === query.id)[0]
+  const { title, url, updated, spider } = item
 
   return (
     <Report>
       <PageTitle title={`Report for <code>${url}</code>`}>
-        {updated && (
-          <small>
-            Last crawled ${updated}
-          </small>
-        )}
+        <small>
+          Last crawled ${updated}
+        </small>
 
-        <a href='javascript:;'>
+        <a href='javascript:;' onClick={() => crawl(item, meta => {
+          data[idx].spider.push(meta)
+          handle(data)
+        })}>
           <Icon i='loop-circular' size='1rem' />
         </a>
       </PageTitle>
 
-      <Chart data={fillerData} />
+      {spider.length > 0 && <Chart data={spider.map(({ date, price }) => ({ x: date, y: price }))} />}
 
       {spider.length > 0 && (
         <Table headers={['Date', 'Img', 'Name', 'Price', 'Reviews']}>

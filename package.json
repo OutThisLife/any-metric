@@ -5,10 +5,10 @@
   "repository": "https://github.com/OutThisLife/baphometrics",
   "license": "MIT",
   "scripts": {
-    "dev": "next",
-    "build": "next build && next export",
+    "dev": "babel-node index.js --preset=env",
+    "build": "next build",
     "heroku-postbuild": "yarn build",
-    "start": "serve out"
+    "start": "babel-node index.js --preset=env"
   },
   "dependencies": {
     "babel-cli": "^6.26.0",
@@ -17,13 +17,19 @@
     "babel-plugin-module-alias": "^1.6.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
+    "body-parser": "^1.18.2",
+    "compression": "^1.7.1",
+    "express": "^4.16.2",
     "file-loader": "^1.1.6",
     "next": "^4.2.1",
+    "next-routes": "^1.2.0",
+    "nodemon": "^1.14.1",
     "raw-loader": "^0.5.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-svg-line-chart": "^2.0.0",
     "serve": "^6.4.3",
-    "styled-components": "^2.3.3"
+    "styled-components": "^2.3.3",
+    "x-ray": "^2.3.2"
   }
 }

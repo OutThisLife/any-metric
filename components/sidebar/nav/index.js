@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import styled from 'styled-components'
+import Icon from '@/components/common/icon'
 
 const A = styled.a`
 display: flex;
@@ -33,12 +34,25 @@ svg {
 }
 `
 
-export default ({ query, data }) => (
+export default ({ query, data, handle }) => (
   <nav>
+    <Link href='/'>
+      <A>/index</A>
+    </Link>
+
     {(data || []).map(({ id, url, title, spider }) => (
       <Link key={id} href={`/?page=report&id=${id}`}>
         <A className={id.toString() === query.id ? 'active' : ''}>
           {title || url} ({spider.length})
+
+          <Icon
+            i='trash'
+            onClick={() => {
+              const idx = data.findIndex(d => d.id === id)
+              delete data[idx]
+              handle(data)
+            }}
+          />
         </A>
       </Link>
     ))}

@@ -1,10 +1,11 @@
-import styled from 'styled-components'
-import styles from './styles.scss'
+import Chart from '@/components/chart'
 import Icon from '@/components/common/icon'
 import Table from '@/components/common/table'
 import PageTitle from '@/components/pageTitle'
-import Chart from '@/components/chart'
 import crawl from '@/services/crawl'
+import styled from 'styled-components'
+
+import styles from './styles.scss'
 
 const Report = styled.div`${styles}`
 

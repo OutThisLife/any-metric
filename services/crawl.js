@@ -1,4 +1,4 @@
-import fetch from 'isomorphic-fetch'
+import fetch from 'isomorphic-unfetch'
 
 export default ({ url, selectors }, done) => {
   selectors.name = 'title'
@@ -9,12 +9,16 @@ export default ({ url, selectors }, done) => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ url, selectors })
-  }).then(res => res.json()).then(({ items }) => {
-    return done(items.map(item => {
-      item.id = Math.random()
-      item.date = new Date().toISOString()
-
-      return item
-    }))
   })
+    .then(res => res.json())
+    .then(({ items }) => {
+      return done(
+        items.map(item => {
+          item.id = Math.random()
+          item.date = new Date().toISOString()
+
+          return item
+        })
+      )
+    })
 }

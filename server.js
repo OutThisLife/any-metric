@@ -77,6 +77,19 @@ app.prepare().then(() => {
     .get('/:slug', render('/page'))
     .get('*', (req, res) => handle(req, res))
 
+    .post('/crawl', (req, res) => {
+      const { url, selectors } = req.body
+      const { parent, ...children } = selectors
+
+      require('x-ray')()(url, { items: x(parent, [children]) })((err, obj) => {
+        if (err) {
+          res.status(500).send(err)
+        }
+
+        res.json(obj)
+      })
+    })
+
     .listen(port, err => {
       if (err) {
         throw err

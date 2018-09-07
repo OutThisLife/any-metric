@@ -50,7 +50,7 @@ const headersLink = setContext((_, { headers }) => ({
 }))
 
 const restLink = new RestLink({
-  uri: `${CMS}/wp-json/wp/v2`
+  uri: `/api`
 })
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {

@@ -17,9 +17,15 @@
     "lib": ["dom", "es2017"],
     "typeRoots": ["./typings", "./node_modules/@types"],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["app/*"],
+      "@lib/*": ["app/lib/*"],
+      "@components/*": ["app/components/*"],
+      "@pages/*": ["app/pages/*"],
+      "@static/*": ["app/static/*"],
+      "@vars": ["app/variables/index"],
+      "@vars/*": ["app/variables/*"]
     }
   },
   "include": ["app/**/*"],
-  "exclude": ["node_modules/**", "**/*.spec", "app/out/**", "app/.next/**", "server/**"]
+  "exclude": ["node_modules/**", "**/*.spec", "app/out/**", "app/.next/**"]
 }

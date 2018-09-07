@@ -2,7 +2,7 @@ import Chart from '@/components/chart'
 import Icon from '@/components/common/icon'
 import Table from '@/components/common/table'
 import PageTitle from '@/components/pageTitle'
-import crawl from '@/services/crawl'
+import crawl from '@/server/crawl'
 import styled from 'styled-components'
 
 import styles from './styles.scss'
@@ -22,11 +22,11 @@ export default ({ handle, query, data }) => {
           Last crawled ${updated}
         </small>
 
-        <a href='javascript:;' onClick={() => crawl(item, meta => {
+        <a href="javascript:;" onClick={() => crawl(item, meta => {
           data[idx].spider = Object.assign(spider, meta)
           handle(data)
         })}>
-          <Icon i='loop-circular' size='1rem' />
+          <Icon i="loop-circular" size="1rem" />
         </a>
       </PageTitle>
 

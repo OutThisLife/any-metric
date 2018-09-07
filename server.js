@@ -78,10 +78,11 @@ app.prepare().then(() => {
     .get('*', (req, res) => handle(req, res))
 
     .post('/crawl', (req, res) => {
+      const x = require('x-ray')()
       const { url, selectors } = req.body
       const { parent, ...children } = selectors
 
-      require('x-ray')()(url, { items: x(parent, [children]) })((err, obj) => {
+      x(url, { items: x(parent, [children]) })((err, obj) => {
         if (err) {
           res.status(500).send(err)
         }

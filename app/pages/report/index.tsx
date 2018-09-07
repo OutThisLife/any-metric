@@ -2,7 +2,7 @@ import Chart from '@/components/chart'
 import Icon from '@/components/common/icon'
 import Table from '@/components/common/table'
 import PageTitle from '@/components/pageTitle'
-import crawl from '@/server/crawl'
+import crawl from '@/lib/crawl'
 import styled from 'styled-components'
 
 import styles from './styles.scss'
@@ -13,7 +13,7 @@ export default ({ handle, query, data }) => {
   const idx = data.findIndex(({ id }) => id.toString() === query.id)
   const item = data[idx]
 
-  const { title, url, updated, spider } = item
+  const { url, updated, spider } = item
 
   return (
     <Report>

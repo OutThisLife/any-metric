@@ -1,10 +1,9 @@
+import Sidebar from '@/components/sidebar'
+import withApolloClient from '@/lib/withApollo'
 import { ApolloClient } from 'apollo-boost'
 import App, { Container } from 'next/app'
 import { ApolloProvider } from 'react-apollo'
 import styled from 'styled-components'
-
-import Sidebar from '../components/sidebar'
-import withApolloClient from '../lib/withApollo'
 
 const Main = styled.main`
   display: flex;
@@ -31,13 +30,11 @@ export default withApolloClient(
         <Container>
           <ApolloProvider client={apolloClient}>
             <Main id="app">
-              <Sidebar {...pageProps} />
+              <Sidebar />
 
-            <section>
-              <div>
+              <section>
                 <Component {...pageProps} />
-              </div>
-            </section>
+              </section>
             </Main>
           </ApolloProvider>
         </Container>

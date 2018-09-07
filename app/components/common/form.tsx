@@ -1,5 +1,11 @@
 import styled from 'styled-components'
 
+export default ({ children, ...props }) => (
+  <Form {...props}>
+    {children}
+  </Form>
+)
+
 const Form = styled.form`
 margin: 0;
 padding: 0;
@@ -64,10 +70,4 @@ footer {
   }
 }
 `
-
-export default props => (
-  <Form {...props}>
-    {props.children}
-  </Form>
-)
 

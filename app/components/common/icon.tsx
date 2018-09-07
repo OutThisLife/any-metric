@@ -1,10 +1,18 @@
-export default ({ i, size, onClick }) => (
+import { MouseEvent } from 'react'
+
+interface TInner {
+  i?: string
+  size?: number | string
+  onClick?: (e?: MouseEvent<HTMLSpanElement>) => void
+}
+
+export default ({ i, size = '50%', onClick = () => null }: TInner) => (
   <span
-    className='oi'
+    className="oi"
     data-glyph={i}
-    onClick={onClick || (() => {})}
+    onClick={onClick}
     style={{
-      fontSize: size || '50%',
+      fontSize: size,
       transition: 'none'
     }}
   />

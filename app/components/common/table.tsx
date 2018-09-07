@@ -1,5 +1,22 @@
 import styled from 'styled-components'
 
+interface TInner {
+  headers: string[]
+  children: React.ReactNode
+}
+
+export default ({ headers, children }: TInner) => (
+  <Table>
+    <thead>
+      <tr>
+        {headers.map(h => <th key={Math.random()}>{h}</th>)}
+      </tr>
+    </thead>
+
+    <tbody>{children}</tbody>
+  </Table>
+)
+
 const Table = styled.table`
 table-layout: fixed;
 border-collapse: collapse;
@@ -59,16 +76,4 @@ tbody tr {
   }
 }
 `
-
-export default ({ headers, children }) => (
-  <Table>
-    <thead>
-      <tr>
-        {headers.map(h => <th key={Math.random()}>{h}</th>)}
-      </tr>
-    </thead>
-
-    <tbody>{children}</tbody>
-  </Table>
-)
 

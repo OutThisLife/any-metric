@@ -1,5 +1,17 @@
 import styled from 'styled-components'
 
+interface TInner {
+  title: string
+  children: React.ReactNode
+}
+
+export default ({ title, children }: TInner) => (
+  <PageTitle>
+    <h1 dangerouslySetInnerHTML={{ __html: title }} />
+    {children}
+  </PageTitle>
+)
+
 const PageTitle = styled.hgroup`
 margin: 0 0 20px;
 
@@ -18,10 +30,3 @@ small {
   color: #FFF;
 }
 `
-
-export default ({ title, children }) => (
-  <PageTitle>
-    <h1 dangerouslySetInnerHTML={{ __html: title }} />
-    {children}
-  </PageTitle>
-)

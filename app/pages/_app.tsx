@@ -5,22 +5,6 @@ import App, { Container } from 'next/app'
 import { ApolloProvider } from 'react-apollo'
 import styled from 'styled-components'
 
-const Main = styled.main`
-  display: flex;
-  align-items: stretch;
-  min-height: 100vh;
-
-  section {
-    width: 100%;
-    padding: calc(var(--grid) * 3);
-
-    > div {
-      max-width: 768px;
-      margin: auto;
-    }
-  }
-`
-
 export default withApolloClient(
   class extends App<{ apolloClient: ApolloClient<{}>}> {
     public render() {
@@ -42,3 +26,11 @@ export default withApolloClient(
     }
   }
 )
+
+const Main = styled.main`
+  --pad: 1vmax;
+
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: minmax(100vh, 1fr);
+`

@@ -14,7 +14,7 @@ if (!isBrowser) {
 // --------------------------------
 
 const mainLink = new HttpLink({
-  uri: `http://localhost:4000/graphql`
+  uri: `http://localhost:4000/graphiql`
 })
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {

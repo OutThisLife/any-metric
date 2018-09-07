@@ -5,13 +5,6 @@ import { graphql } from 'react-apollo'
 import compose from 'recompose/compose'
 import styled from 'styled-components'
 
-export interface Item {
-  id: number
-  url: string
-  title: string
-  spider: string
-}
-
 interface TInner {
   router: RouterProps,
   data: {
@@ -23,27 +16,27 @@ interface TInner {
 export default compose<TInner, {}>(
   withRouter,
   graphql(gql`
-  query items {
-    Item {
+  {
+    history {
       id
       url
-      title
-      spider
+      data
     }
   }
   `)
-)(({ router: {query }, data }) => (
+)(({ router: { query }, data: { loading = true, items = [] } }) => (
   <nav>
     <Link href="/">
       <A className={!query.id ? 'active' : ''}>
-        /index
+        Overview
       </A>
     </Link>
 
-    {!data.loading && (data.items || []).map(({ id, url, title, spider }) => (
+    {!loading && items.map(({ id, hostname, url, data }) => (
       <Link key={id} href={`/?page=report&id=${id}`}>
         <A className={id.toString() === query.id ? 'active' : ''}>
-          {title || url} ({spider.length})
+          <img src={`//${hostname}/favicon.ico`} width={16} height={16} />
+          {url} ({data.length})
         </A>
       </Link>
     ))}
@@ -51,36 +44,5 @@ export default compose<TInner, {}>(
 ))
 
 const A = styled.a`
-display: flex;
-align-items: center;
-color: var(--text);
-line-height: 1;
-padding: 15px 25px;
 
-&.active {
-  color: var(--text);
-  background: var(--primary);
-
-  em {
-    color: var(--text);
-  }
-}
-
-&:not(.active):hover {
-  transition: none;
-  background: rgba(253, 0, 55, .04);
-}
-
-&:hover:active {
-  outline: 1px solid var(--primary);
-  outline-offset: -3px;
-}
-
-[data-glyph="trash"] {
-  margin-left: auto;
-}
-
-&:not(:hover) [data-glyph="trash"] {
-  opacity: 0;
-}
 `

@@ -1,4 +1,5 @@
 const md5 = require('md5')
+const { parse } = require('url')
 const LRUCache = require('lru-cache')
 const { gql } = require('apollo-server-express')
 const GraphQLJSON = require('graphql-type-json')
@@ -8,6 +9,8 @@ const cache = new LRUCache({
   max: 100,
   maxAge: 36e5
 })
+
+exports.context = { cache }
 
 exports.typeDefs = gql`
   scalar JSON
@@ -19,12 +22,16 @@ exports.typeDefs = gql`
   }
 
   type Result {
-    id: ID! @isUnique
+    id: ID @isUnique
+    title: String
+    hostname: String
+    url: String
     data: JSON
   }
 
   type Query {
     crawl(url: String!, parent: String!, children: [Selector]!): Result
+    history: [Result]
   }
 `
 
@@ -33,13 +40,15 @@ exports.resolvers = {
   Query: {
     crawl: async (root, { url, parent = 'body', children }) => {
       const selectors = children.reduce((acc, s) => ((acc[s.name] = s.el), acc), {})
+      const { hostname } = parse(url)
       const id = md5(`${url}${JSON.stringify(selectors)}`)
 
       if (cache.has(id)) {
         return cache.get(id)
       }
 
-      const { err, data } = await XRay(url, {
+      const { err, title, data } = await XRay(url, {
+        title: 'title',
         data: XRay(parent, [selectors])
       })
 
@@ -48,8 +57,11 @@ exports.resolvers = {
         throw err
       }
 
-      cache.set(id, { id, data })
+      cache.set(id, { id, title, hostname, url, data })
+
       return cache.get(id)
-    }
+    },
+
+    history: async (root, args, ctx) => ctx.cache.values().filter(o => o.id)
   }
 }

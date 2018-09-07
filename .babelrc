@@ -1,9 +1,28 @@
 {
-	"presets": ["next/babel", "env", "react"],
-	"plugins": [
-		"inline-react-svg",
-		["module-alias", [
-			{ "src": "./", "expose": "@" }
-		]]
-	]
+  "presets": ["@babel/preset-env", "next/babel", "@zeit/next-typescript/babel"],
+  "plugins": [
+    "@babel/plugin-proposal-optional-chaining",
+    "@babel/plugin-transform-runtime",
+    [
+      "module-resolver",
+      {
+        "cwd": "babelrc",
+        "alias": {
+          "@": "./app",
+          "@lib": "./app/lib",
+          "@components": "./app/components",
+          "@static": "./app/static",
+          "@vars": "./app/variables"
+        }
+      }
+    ],
+    [
+      "styled-components",
+      {
+        "ssr": true,
+        "displayName": true,
+        "preprocess": false
+      }
+    ]
+  ]
 }

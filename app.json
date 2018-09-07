@@ -1,0 +1,10 @@
+{
+	"name": "nextjs-starter",
+	"description": "",
+	"scripts": {},
+	"env": {
+    "CMS": { "required": true },
+    "SERVER": ""
+	},
+	"buildbacks": [{ "url": "https://github.com/heroku/heroku-buildpack-nodejs#v83" }]
+}

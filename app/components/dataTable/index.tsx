@@ -1,0 +1,197 @@
+import 'react-table/react-table.css'
+
+import { buttonStyles } from '@/components/button'
+import { inputStyles } from '@/components/input'
+import Link from '@/components/link'
+import dayjs from 'dayjs'
+import faker from 'faker'
+import { rgba } from 'polished'
+import { FaAngleLeft, FaAngleRight, FaSortDown, FaSortUp } from 'react-icons/fa'
+import ReactTable from 'react-table'
+import styled from 'styled-components'
+
+export default () => (
+  <DataTable
+    pageSize={4}
+    minRows={0}
+    showPaginationTop={true}
+    showPaginationBottom={false}
+    pageText=""
+    ofText="/"
+    rowsText=""
+    nextText={<FaAngleRight />}
+    previousText={<FaAngleLeft />}
+    getTrGroupProps={(_, { original }) => ({
+      className: `status-${original.status}`
+    })}
+    data={[...Array(255).keys()].map(i => ({
+      status: i < 2 ? 'unread' : 'read',
+      price: faker.commerce.price(),
+      title: faker.commerce.productName(),
+      image: faker.internet.avatar(),
+      date: new Date().toString()
+    }))}
+    columns={[
+      {
+        Header: 'Price',
+        accessor: 'price',
+        maxWidth: 100,
+        Cell: ({ value }) => {
+          const isDiscount = Math.random() < 0.5
+
+          return (
+            <p className={`price ${isDiscount ? 'under' : 'over'}`}>
+              {value} <small>{isDiscount ? <FaSortDown /> : <FaSortUp />}10%</small>
+            </p>
+          )
+        }
+      },
+      {
+        Header: 'Title',
+        accessor: 'title',
+        Cell: ({ value }) => (
+          <div>
+            <Link href="#">{value}</Link>
+            <p>{faker.lorem.words()}</p>
+          </div>
+        )
+      },
+      {
+        Header: 'Image(s)',
+        accessor: 'image',
+        maxWidth: 70,
+        headerStyle: { 'text-align': 'center' },
+        style: { 'text-align': 'center' },
+        Cell: ({ value }) => <img src={value} width={40} />
+      },
+      {
+        Header: 'Date',
+        accessor: 'date',
+        headerStyle: { 'text-align': 'right' },
+        style: { 'text-align': 'right' },
+        Cell: ({ value }) => <time>{dayjs(value).format('MM/DD/YY hh:mm:ssZ[Z]')}</time>
+      }
+    ]}
+  />
+)
+
+const DataTable = styled(ReactTable)`
+  border: 0;
+  margin: auto;
+
+  h2 + & {
+    margin-top: -20px;
+  }
+
+  .rt-thead.-header,
+  .-pagination {
+    border: 0;
+    box-shadow: none;
+  }
+
+  .rt-th {
+    text-align: left;
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+
+    &[style] {
+      border: 0;
+      padding: var(--pad);
+    }
+  }
+
+  .rt-tbody {
+    .rt-tr-group,
+    .rt-td[style] {
+      border-color: ${({ theme }) => theme.colours.border};
+    }
+  }
+
+  [class^='pagination-'] {
+    display: flex;
+    width: 100%;
+  }
+
+  .-pagination {
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+    font-size: 11px;
+    margin: 0 0 0 auto;
+
+    .-center {
+      flex: unset;
+      display: inline-block;
+    }
+
+    input,
+    select {
+      ${inputStyles};
+    }
+
+    button.-btn {
+      ${buttonStyles};
+      padding: 8px 11px;
+    }
+  }
+
+  .rt-tr-group {
+    cursor: pointer;
+    padding: var(--pad);
+
+    &.status-unread {
+      a[rel],
+      .price {
+        font-weight: 700;
+      }
+    }
+
+    &.status-read {
+      background: ${({ theme }) => rgba(theme.colours.base, 0.009)};
+
+      &:not(:hover) .rt-td {
+        img, time {
+          opacity: 0.2;
+        }
+
+        p {
+          opacity: 0.5;
+          color: inherit;
+        }
+      }
+    }
+
+    .rt-td {
+      p {
+        margin: 0;
+      }
+
+      time {
+        font-size: 11px;
+      }
+
+      .price {
+        color: ${({ theme }) => theme.colours.success};
+
+        &.over {
+          color: ${({ theme }) => theme.colours.error};
+
+          svg {
+            vertical-align: middle;
+          }
+        }
+      }
+    }
+
+    &:hover {
+      outline: 1px solid  ${({ theme }) => rgba(theme.colours.base, 0.1)};
+      outline-offset: -1px;
+      box-shadow: 0 2px 3px  ${({ theme }) => rgba(theme.colours.base, 0.07)};
+
+      a[rel] {
+        text-decoration: underline;
+      }
+    }
+  }
+`

@@ -92,7 +92,7 @@ app.prepare().then(() => {
     })
 
     .get('/', render('/home'))
-    .get('/:slug', render('/report'))
+    .get('/:slug', render('/home'))
     .get('*', (req, res) => handle(req, res))
 
     .listen(port, err => {

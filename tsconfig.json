@@ -24,7 +24,12 @@
       "@static/*": ["app/static/*"],
       "@vars": ["app/variables/index"],
       "@vars/*": ["app/variables/*"]
-    }
+    },
+    "plugins": [
+      {
+        "name": "typescript-styled-plugin"
+      }
+    ]
   },
   "include": ["app/**/*"],
   "exclude": ["node_modules/**", "**/*.spec", "app/out/**", "app/.next/**"]

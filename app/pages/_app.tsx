@@ -1,36 +1,21 @@
-import Sidebar from '@/components/sidebar'
 import withApolloClient from '@/lib/withApollo'
+import Layout from '@/pages/_layout'
 import { ApolloClient } from 'apollo-boost'
 import App, { Container } from 'next/app'
 import { ApolloProvider } from 'react-apollo'
-import styled from 'styled-components'
 
 export default withApolloClient(
-  class extends App<{ apolloClient: ApolloClient<{}>}> {
+  class extends App<{ apolloClient: ApolloClient<{}> }> {
     public render() {
       const { Component, pageProps, apolloClient } = this.props
 
       return (
         <Container>
           <ApolloProvider client={apolloClient}>
-            <Main id="app">
-              <Sidebar />
-
-              <section>
-                <Component {...pageProps} />
-              </section>
-            </Main>
+            <Layout key={Math.random()} render={props => <Component {...props} {...pageProps} />} />
           </ApolloProvider>
         </Container>
       )
     }
   }
 )
-
-const Main = styled.main`
-  --pad: 1vmax;
-
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  grid-template-rows: minmax(100vh, 1fr);
-`

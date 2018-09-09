@@ -62,6 +62,6 @@ exports.resolvers = {
       return cache.get(id)
     },
 
-    history: async (root, args, ctx) => ctx.cache.values().filter(o => o.id)
+    history: (root, args, ctx) => ctx.cache.values().filter(o => o.id)
   }
 }

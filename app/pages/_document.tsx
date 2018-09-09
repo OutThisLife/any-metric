@@ -1,3 +1,4 @@
+import { fonts as fontVars } from '@/theme'
 import Document, { Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
 
@@ -19,8 +20,39 @@ export default class extends Document {
           <meta name="robots" content="noindex" />
 
           <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/normalize.css@8.0.0/normalize.min.css" />
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif+JP|Roboto" />
 
           {this.props.styleTags}
+
+          <style>{`
+          :root {
+            --pad: calc(8px + (16 - 9) * (100vw - 400px) / 1700);
+          }
+
+          html {
+            color: ${fontVars.colour};
+            font-family: ${fontVars.family};
+            font-size: ${fontVars.size};
+            line-height: 1.75;
+          }
+
+          h1,h2,h3 {
+            font-family: ${fontVars.headers.family};
+          }
+
+          h5,h6 {
+            text-transform: uppercase;
+          }
+
+          * {
+            box-sizing: border-box;
+          }
+
+          ::selection {
+            color: #FFF;
+            background: #000080;
+          }
+          `}</style>
         </Head>
 
         <body>

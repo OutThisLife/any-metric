@@ -7,10 +7,12 @@ if (isDev) {
 const withPlugins = require('next-compose-plugins')
 const typescript = require('@zeit/next-typescript')
 const offline = require('next-offline')
+const withCSS = require('@zeit/next-css')
 const { PHASE_DEVELOPMENT_SERVER } = require('next/constants')
 
 module.exports = withPlugins(
   [
+    withCSS,
     typescript,
     [
       offline,
@@ -61,10 +63,6 @@ module.exports = withPlugins(
         {
           test: /\.(scss)$/,
           use: ['babel-loader', 'raw-loader']
-        },
-        {
-          test: /\.css$/,
-          use: ['to-string-loader', 'css-loader']
         }
       )
 

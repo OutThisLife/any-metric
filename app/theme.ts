@@ -64,33 +64,20 @@ export const links = {
 
 export const buttons = {
   size: 12,
-  radius: 4,
+  radius: 100,
+  colour: colours.base,
+  bg: colours.bg,
 
-  primary: {
-    colour: colours.base,
-    bg: 'transparent',
-    radius: 100,
-
-    hover: {
-      bg: rgba(colours.base, 0.02)
-    }
-  },
-
-  default: {
-    colour: colours.base,
-    bg: '#f2f2f2',
-
-    hover: {
-      bg: darken(0.02, '#f2f2f2')
-    }
+  hover: {
+    bg: rgba(colours.base, 0.02)
   }
 }
 
 export const inputs = {
   colour: colours.base,
   border: rgba(colours.base, 0.1),
-  radius: buttons.radius,
-  bg: 'none',
+  radius: 0.3,
+  bg: 'transparent',
 
   focus: {
     border: colours.base

@@ -8,7 +8,7 @@ export const inputStyles = css`
   color: ${({ theme }) => theme.inputs.colour};
   padding: 4px;
   border: 1px solid ${({ theme }) => theme.inputs.border};
-  border-radius: ${({ theme }) => theme.inputs.radius};
+  border-radius: ${({ theme }) => theme.inputs.radius}em;
   background: ${({ theme }) => theme.inputs.bg};
 
   &:focus {

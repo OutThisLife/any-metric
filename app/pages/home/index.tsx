@@ -33,6 +33,8 @@ const Home = styled.div`
     }
 
     h2 {
+      z-index: 1;
+      position: relative;
       margin: 0;
     }
   }

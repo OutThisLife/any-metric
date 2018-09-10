@@ -1,5 +1,5 @@
 import { MouseEvent } from 'react'
-import { FaAngleDown } from 'react-icons/fa'
+import { FiChevronDown } from 'react-icons/fi'
 import { compose, withHandlers } from 'recompose'
 import styled from 'styled-components'
 
@@ -33,7 +33,7 @@ export default compose<TInner & TOutter, TOutter>(
 )(({ onRef, handleClick, title, children }) => (
   <Group>
     <h5 onClick={handleClick}>
-      {title} <FaAngleDown />
+      {title} <FiChevronDown />
     </h5>
 
     <div ref={onRef}>{children}</div>

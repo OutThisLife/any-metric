@@ -4,11 +4,14 @@ import { buttonStyles } from '@/components/button'
 import { inputStyles } from '@/components/input'
 import Link from '@/components/link'
 import dayjs from 'dayjs'
+import advancedFormat from 'dayjs/plugin/advancedFormat'
 import faker from 'faker'
 import { rgba } from 'polished'
-import { FaAngleLeft, FaAngleRight, FaSortDown, FaSortUp } from 'react-icons/fa'
+import { FiChevronLeft, FiChevronRight, FiTrendingDown, FiTrendingUp } from 'react-icons/fi'
 import ReactTable from 'react-table'
 import styled from 'styled-components'
+
+dayjs.extend(advancedFormat)
 
 export default () => (
   <DataTable
@@ -19,8 +22,8 @@ export default () => (
     pageText=""
     ofText="/"
     rowsText=""
-    nextText={<FaAngleRight />}
-    previousText={<FaAngleLeft />}
+    nextText={<FiChevronRight />}
+    previousText={<FiChevronLeft />}
     getTrGroupProps={(_, { original }) => ({
       className: `status-${original.status}`
     })}
@@ -38,10 +41,16 @@ export default () => (
         maxWidth: 100,
         Cell: ({ value }) => {
           const isDiscount = Math.random() < 0.5
+          const num = isDiscount ? '-10' : '10'
 
           return (
             <p className={`price ${isDiscount ? 'under' : 'over'}`}>
-              {value} <small>{isDiscount ? <FaSortDown /> : <FaSortUp />}10%</small>
+              {value}
+
+              <small>
+                &nbsp;
+                {isDiscount ? <FiTrendingDown /> : <FiTrendingUp />} {num}%
+              </small>
             </p>
           )
         }
@@ -57,19 +66,19 @@ export default () => (
         )
       },
       {
-        Header: 'Image(s)',
+        Header: null,
         accessor: 'image',
         maxWidth: 70,
-        headerStyle: { 'text-align': 'center' },
-        style: { 'text-align': 'center' },
+        headerStyle: { pointerEvents: 'none' },
+        style: { textAlign: 'center' },
         Cell: ({ value }) => <img src={value} width={40} />
       },
       {
         Header: 'Date',
         accessor: 'date',
-        headerStyle: { 'text-align': 'right' },
-        style: { 'text-align': 'right' },
-        Cell: ({ value }) => <time>{dayjs(value).format('MM/DD/YY hh:mm:ssZ[Z]')}</time>
+        headerStyle: { textAlign: 'right' },
+        style: { textAlign: 'right' },
+        Cell: ({ value }) => <time>{dayjs(value).format('MMM. Do, YYYY kk:mm:ss')}</time>
       }
     ]}
   />
@@ -128,17 +137,29 @@ const DataTable = styled(ReactTable)`
     input,
     select {
       ${inputStyles};
+      text-align: center;
     }
 
     button.-btn {
       ${buttonStyles};
       padding: 8px 11px;
+      border-radius: ${({ theme }) => theme.inputs.radius}em;
     }
   }
 
   .rt-tr-group {
     cursor: pointer;
     padding: var(--pad);
+
+    &:hover {
+      outline: 1px solid ${({ theme }) => rgba(theme.colours.base, 0.1)};
+      outline-offset: -1px;
+      box-shadow: 0 2px 3px ${({ theme }) => rgba(theme.colours.base, 0.07)};
+
+      a[rel] {
+        text-decoration: underline;
+      }
+    }
 
     &.status-unread {
       a[rel],
@@ -151,7 +172,12 @@ const DataTable = styled(ReactTable)`
       background: ${({ theme }) => rgba(theme.colours.base, 0.009)};
 
       &:not(:hover) .rt-td {
-        img, time {
+        img {
+          filter: grayscale(1);
+        }
+
+        img,
+        time {
           opacity: 0.2;
         }
 
@@ -181,16 +207,6 @@ const DataTable = styled(ReactTable)`
             vertical-align: middle;
           }
         }
-      }
-    }
-
-    &:hover {
-      outline: 1px solid  ${({ theme }) => rgba(theme.colours.base, 0.1)};
-      outline-offset: -1px;
-      box-shadow: 0 2px 3px  ${({ theme }) => rgba(theme.colours.base, 0.07)};
-
-      a[rel] {
-        text-decoration: underline;
       }
     }
   }

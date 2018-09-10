@@ -67,4 +67,8 @@ const Main = styled.main`
       margin-left: -11px;
     }
   }
+
+  select {
+    cursor: pointer;
+  }
 `

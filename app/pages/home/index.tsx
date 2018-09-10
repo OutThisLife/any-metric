@@ -7,8 +7,7 @@ export default () => (
   <Home>
     <SplitPane split="vertical" defaultSize="66%">
       <section>
-        <DataGroup title="DataMan 8050 (3)" />
-        <DataGroup title="Another Product (100)" />
+        <DataGroup />
       </section>
 
       <section>
@@ -23,7 +22,7 @@ const Home = styled.div`
   min-width: 100%;
   min-height: 100%;
 
-  .Pane2 > section {
+  .Pane > section {
     height: 100%;
     overflow: auto;
   }

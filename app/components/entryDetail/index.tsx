@@ -7,39 +7,11 @@ interface TInner {
 
 export default ({ title }: TInner) => (
   <EntryDetail>
-    <h2>
-      {title}
-    </h2>
+    <h2>{title}</h2>
 
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
-    <p>{faker.lorem.paragraph()}</p>
+    {[...Array(15).keys()].map(i => (
+      <p key={`f-${i}`}>{faker.lorem.paragraph()}</p>
+    ))}
   </EntryDetail>
 )
 

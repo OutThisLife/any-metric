@@ -31,24 +31,18 @@ const Main = styled.main`
     grid-template-columns: 200px 1fr;
     grid-template-rows: 1fr;
     position: relative;
-    background: ${({ theme }) => theme.main.bg};
-
-    > div {
-      padding: var(--pad);
-    }
   }
 
   * {
     &::-webkit-scrollbar {
       width: 11px;
-      border: 1px solid ${({ theme }) => theme.scrollbar.border};
-      background-color: ${({ theme }) => theme.scrollbar.bg};
+      border: 1px solid ${({ theme }) => theme.scrollbar.bg};
+      background: transparent;
     }
 
     &::-webkit-scrollbar-thumb {
-      border: 1px solid ${({ theme }) => theme.scrollbar.border};
-      box-shadow: inset 0 0 0 1px ${({ theme }) => theme.scrollbar.bg};
-      background-color: ${({ theme }) => theme.scrollbar.thumb};
+      box-shadow: inset 1px 0 0 0 ${({ theme }) => theme.scrollbar.bg}, inset 1px 0 0 1px ${({ theme }) => theme.colours.bg};
+      background: ${({ theme }) => theme.scrollbar.thumb};
     }
 
     &:focus,
@@ -59,13 +53,12 @@ const Main = styled.main`
 
   .Resizer {
     z-index: 1;
-    opacity: 0.1;
-    border-right: 4px double ${({ theme }) => theme.colours.base};
+    border-right: 4px double ${({ theme }) => theme.scrollbar.bg};
 
     &.vertical {
       cursor: col-resize;
       width: 11px;
-      margin: 0 10px 0 5px;
+      margin: 0 10 0 5px;
     }
   }
 

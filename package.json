@@ -74,6 +74,7 @@
     "@types/node": "^10.9.4",
     "@types/react": "^16.4.13",
     "@types/react-dom": "^16.0.7",
+    "@types/react-table": "^6.7.12",
     "@types/recompose": "^0.26.4",
     "@types/styled-components": "^3.0.0",
     "@types/x-ray": "^2.3.2",

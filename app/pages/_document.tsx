@@ -20,7 +20,7 @@ export default class extends Document {
           <meta name="robots" content="noindex" />
 
           <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/normalize.css@8.0.0/normalize.min.css" />
-          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif+JP|Roboto" />
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora|Lato" />
 
           {this.props.styleTags}
 
@@ -50,7 +50,7 @@ export default class extends Document {
 
           ::selection {
             color: #FFF;
-            background: #000080;
+            background: #f36;
           }
           `}</style>
         </Head>

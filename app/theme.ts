@@ -2,11 +2,11 @@ import { darken, lighten, rgba } from 'polished'
 
 export const colours = {
   base: '#111',
-  brand: '#D64E43',
+  brand: '#000',
 
   border: '#f3f3f3',
   outline: '#D64E43',
-  bg: '#fafafa',
+  bg: '#fff',
 
   success: '#08663A',
   error: '#973030'
@@ -14,16 +14,16 @@ export const colours = {
 
 export const fonts = {
   colour: colours.base,
-  family: 'Roboto, Arial, sans-serif',
+  family: 'Lato, serif',
   size: '14px',
 
   brand: {
     colour: colours.brand,
-    family: 'monospace'
+    family: 'Lora, sans-serif'
   },
 
   headers: {
-    family: 'Noto Serif JP, sans-serif'
+    family: 'Lora, sans-serif'
   }
 }
 
@@ -46,21 +46,18 @@ export const sidebar = {
   }
 }
 
-export const main = {
-  bg: darken(0.01, colours.bg)
-}
-
 export const scrollbar = {
-  thumb: '#C6C6C6',
-  bg: '#F8F8F8',
-  border: colours.border
+  thumb: darken(0.15, colours.border),
+  bg: colours.border
 }
 
 // ---------------------------
 
 export const links = {
   colour: '#1F51C7',
-  active: lighten(0.5, '#1f51c7')
+  get active() {
+    return lighten(0.52, this.colour)
+  }
 }
 
 export const buttons = {
@@ -92,7 +89,6 @@ export default {
 
   header,
   sidebar,
-  main,
 
   fonts,
   links,

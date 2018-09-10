@@ -1,18 +1,19 @@
 import DataTable from '@/components//dataTable'
-import Link from '@/components/link'
+import faker from 'faker'
 import styled from 'styled-components'
 
-interface TInner {
-  title: string
-}
-
-export default ({ title }: TInner) => (
+export default () => (
   <DataGroup>
-    <h2>
-      <Link href="#">{title}</Link>
-    </h2>
-
-    <DataTable />
+    <DataTable
+      pageSize={25}
+      data={[...Array(255).keys()].map(i => ({
+        status: i < 2 ? 'unread' : 'read',
+        price: faker.commerce.price(),
+        title: faker.commerce.productName(),
+        image: faker.internet.avatar(),
+        date: new Date().toString()
+      }))}
+    />
   </DataGroup>
 )
 

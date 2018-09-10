@@ -13,9 +13,9 @@ import styled from 'styled-components'
 
 dayjs.extend(advancedFormat)
 
-export default () => (
+export default (props: any) => (
   <DataTable
-    pageSize={4}
+    pageSize={100}
     minRows={0}
     showPaginationTop={true}
     showPaginationBottom={false}
@@ -27,13 +27,6 @@ export default () => (
     getTrGroupProps={(_, { original }) => ({
       className: `status-${original.status}`
     })}
-    data={[...Array(255).keys()].map(i => ({
-      status: i < 2 ? 'unread' : 'read',
-      price: faker.commerce.price(),
-      title: faker.commerce.productName(),
-      image: faker.internet.avatar(),
-      date: new Date().toString()
-    }))}
     columns={[
       {
         Header: 'Price',
@@ -81,6 +74,7 @@ export default () => (
         Cell: ({ value }) => <time>{dayjs(value).format('MMM. Do, YYYY kk:mm:ss')}</time>
       }
     ]}
+    {...props}
   />
 )
 
@@ -120,6 +114,14 @@ const DataTable = styled(ReactTable)`
   [class^='pagination-'] {
     display: flex;
     width: 100%;
+
+    &.pagination-top {
+      z-index: 5;
+      position: sticky;
+      top: 0;
+      padding: var(--pad) 0;
+      background: ${({ theme }) => theme.colours.bg};
+    }
   }
 
   .-pagination {
@@ -149,6 +151,7 @@ const DataTable = styled(ReactTable)`
 
   .rt-tr-group {
     cursor: pointer;
+    position: relative;
     padding: var(--pad);
 
     &:nth-child(2) {
@@ -156,6 +159,7 @@ const DataTable = styled(ReactTable)`
     }
 
     &:hover {
+      z-index: 2;
       outline: 1px solid ${({ theme }) => rgba(theme.colours.base, 0.1)};
       outline-offset: -1px;
       box-shadow: 0 2px 3px ${({ theme }) => rgba(theme.colours.base, 0.07)};
@@ -202,10 +206,10 @@ const DataTable = styled(ReactTable)`
       }
 
       .price {
-        color: ${({ theme }) => theme.colours.success};
+        color: ${({ theme }) => theme.colours.error};
 
         &.over {
-          color: ${({ theme }) => theme.colours.error};
+          color: ${({ theme }) => theme.colours.success};
 
           svg {
             vertical-align: middle;

@@ -844,6 +844,12 @@
     "@types/node" "*"
     "@types/react" "*"
 
+"@types/react-table@^6.7.12":
+  version "6.7.12"
+  resolved "https://registry.npmjs.org/@types/react-table/-/react-table-6.7.12.tgz#216ca51d5c91c812d6c8d6e06f4ee5cbd1138d56"
+  dependencies:
+    "@types/react" "*"
+
 "@types/react@*", "@types/react@^16.4.13":
   version "16.4.13"
   resolved "https://registry.npmjs.org/@types/react/-/react-16.4.13.tgz#1385f5dc3486aa493849a32ccce626a817543e28"

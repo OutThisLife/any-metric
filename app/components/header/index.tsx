@@ -16,7 +16,6 @@ const Header = styled.header`
   align-items: center;
   padding: var(--pad);
   border-bottom: 1px solid ${({ theme }) => theme.header.border};
-  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.15);
   background: ${({ theme }) => theme.header.bg};
 
   > h1 {

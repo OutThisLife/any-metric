@@ -3,6 +3,7 @@ const express = require('express')
 const LRUCache = require('lru-cache')
 const path = require('path')
 const { ApolloServer } = require('apollo-server')
+const { typeDefs, resolvers, context } = require('./schema')
 
 const dev = process.env.NODE_ENV !== 'production'
 
@@ -13,22 +14,17 @@ if (!dev) {
 const dir = path.resolve(process.cwd(), 'app')
 const port = process.env.PORT || 3000
 
-const app = next({ dev })
+const app = next({ dir, dev })
 const handle = app.getRequestHandler()
-
-const cache = new LRUCache({
-  max: 100,
-  maxAge: 36e5
-})
 
 // -----------------------------------------
 
 const render = (page = '/') => (req, res) => {
   const key = req.url
 
-  if (!dev && cache.has(key)) {
+  if (!dev && context.cache.has(key)) {
     res.setHeader('x-cache', 'HIT')
-    res.send(cache.get(key))
+    res.send(context.cache.get(key))
     return
   }
 
@@ -41,7 +37,7 @@ const render = (page = '/') => (req, res) => {
         return
       }
 
-      cache.set(key, html)
+      context.cache.set(key, html)
 
       res.setHeader('x-cache', 'MISS')
       res.send(html)
@@ -54,11 +50,10 @@ const render = (page = '/') => (req, res) => {
 // -----------------------------------------
 
 app.prepare().then(() => {
-  const { typeDefs, resolvers } = require('./schema')
-
   new ApolloServer({
     typeDefs,
     resolvers,
+    context,
     playground: {
       endpoint: '/graphiql'
     }
@@ -96,8 +91,8 @@ app.prepare().then(() => {
       return next()
     })
 
-    .get('/', render('/index'))
-    .get('/:slug', render('/report'))
+    .get('/', render('/home'))
+    .get('/:slug', render('/home'))
     .get('*', (req, res) => handle(req, res))
 
     .listen(port, err => {

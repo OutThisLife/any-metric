@@ -1,5 +1,6 @@
-import DataGroup from '@/components/dataGroup'
+import DataTable from '@/components//dataTable'
 import EntryDetail from '@/components/entryDetail'
+import faker from 'faker'
 import SplitPane from 'react-split-pane'
 import styled from 'styled-components'
 
@@ -7,7 +8,16 @@ export default () => (
   <Home>
     <SplitPane split="vertical" defaultSize="66%">
       <section>
-        <DataGroup />
+        <DataTable
+          pageSize={25}
+          data={[...Array(255).keys()].map(i => ({
+            status: i < 2 ? 'unread' : 'read',
+            price: faker.commerce.price(),
+            title: faker.commerce.productName(),
+            image: faker.internet.avatar(),
+            date: new Date().toString()
+          }))}
+        />
       </section>
 
       <section>

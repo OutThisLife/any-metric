@@ -81,6 +81,7 @@ export default (props: any) => (
 const DataTable = styled(ReactTable)`
   border: 0;
   margin: auto;
+  padding: var(--pad);
 
   h2 + & {
     margin-top: -20px;

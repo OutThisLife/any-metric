@@ -1,4 +1,4 @@
-import { darken, rgba } from 'polished'
+import { darken, lighten, rgba } from 'polished'
 
 export const colours = {
   base: '#111',
@@ -47,7 +47,7 @@ export const sidebar = {
 }
 
 export const main = {
-  bg: darken(0.05, colours.bg)
+  bg: darken(0.01, colours.bg)
 }
 
 export const scrollbar = {
@@ -59,7 +59,8 @@ export const scrollbar = {
 // ---------------------------
 
 export const links = {
-  colour: '#1F51C7'
+  colour: '#1F51C7',
+  active: lighten(0.5, '#1f51c7')
 }
 
 export const buttons = {

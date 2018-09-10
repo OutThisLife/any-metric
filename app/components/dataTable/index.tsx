@@ -151,6 +151,10 @@ const DataTable = styled(ReactTable)`
     cursor: pointer;
     padding: var(--pad);
 
+    &:nth-child(2) {
+      background: ${({ theme }) => theme.links.active};
+    }
+
     &:hover {
       outline: 1px solid ${({ theme }) => rgba(theme.colours.base, 0.1)};
       outline-offset: -1px;

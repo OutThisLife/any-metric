@@ -59,12 +59,13 @@ const Main = styled.main`
 
   .Resizer {
     z-index: 1;
-    border-right: 1px solid ${({ theme }) => theme.colours.border};
+    opacity: 0.1;
+    border-right: 4px double ${({ theme }) => theme.colours.base};
 
     &.vertical {
       cursor: col-resize;
       width: 11px;
-      margin-left: -11px;
+      margin: 0 10px 0 5px;
     }
   }
 

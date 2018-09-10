@@ -1,41 +1,30 @@
-import DataTable from '@/components/dataTable'
-import Link from '@/components/link'
+import DataGroup from '@/components/dataGroup'
+import EntryDetail from '@/components/entryDetail'
+import SplitPane from 'react-split-pane'
 import styled from 'styled-components'
 
 export default () => (
   <Home>
-    <section>
-      <h2>
-        <Link href="#">DataMan 8050 (3)</Link>
-      </h2>
+    <SplitPane split="vertical" defaultSize="66%">
+      <section>
+        <DataGroup title="DataMan 8050 (3)" />
+        <DataGroup title="Another Product (100)" />
+      </section>
 
-      <DataTable />
-    </section>
-
-    <section>
-      <h2>
-        <Link href="#">DataMan 9355 (3)</Link>
-      </h2>
-
-      <DataTable />
-    </section>
+      <section>
+        <EntryDetail title="DataMan 8050" />
+      </section>
+    </SplitPane>
   </Home>
 )
 
 const Home = styled.div`
-  > section {
-    padding: var(--pad);
-    border-radius: 2px;
-    background: ${({ theme }) => theme.colours.bg};
+  position: relative;
+  min-width: 100%;
+  min-height: 100%;
 
-    + section {
-      margin-top: var(--pad);
-    }
-
-    h2 {
-      z-index: 1;
-      position: relative;
-      margin: 0;
-    }
+  .Pane2 > section {
+    height: 100%;
+    overflow: auto;
   }
 `

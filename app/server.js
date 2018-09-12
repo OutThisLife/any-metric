@@ -92,9 +92,9 @@ app.prepare().then(() => {
     })
 
     .get('/', render('/index'))
-    .get('/:slug([A-z-]+)/:id([A-z0-9-]+)?', (req, res) => {
+    .get('/:slug([A-z-]+)/:id([A-z0-9-]+)?', (req, res, next) => {
       if (req.params.slug === '_next') {
-        handle(req, res)
+        next()
       } else {
         render('/index')(req, res)
       }

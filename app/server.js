@@ -91,8 +91,14 @@ app.prepare().then(() => {
       return next()
     })
 
-    .get('/', render('/home'))
-    .get('/:slug', render('/home'))
+    .get('/', render('/index'))
+    .get('/:slug([A-z-]+)/:id([A-z0-9-]+)?', (req, res) => {
+      if (req.params.slug === '_next') {
+        handle(req, res)
+      } else {
+        render('/index')(req, res)
+      }
+    })
     .get('*', (req, res) => handle(req, res))
 
     .listen(port, err => {

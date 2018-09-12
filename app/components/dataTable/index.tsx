@@ -3,9 +3,10 @@ import 'react-table/react-table.css'
 import { buttonStyles } from '@/components/button'
 import { inputStyles } from '@/components/input'
 import Link from '@/components/link'
+import activeClass from '@/lib/activeClass'
 import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
-import faker from 'faker'
+import Router from 'next/router'
 import { rgba } from 'polished'
 import { FiChevronLeft, FiChevronRight, FiTrendingDown, FiTrendingUp } from 'react-icons/fi'
 import ReactTable from 'react-table'
@@ -13,7 +14,7 @@ import styled from 'styled-components'
 
 dayjs.extend(advancedFormat)
 
-export default (props: any) => (
+export default ({ query, ...props }: IObject) => (
   <DataTable
     pageSize={100}
     minRows={0}
@@ -24,8 +25,9 @@ export default (props: any) => (
     rowsText=""
     nextText={<FiChevronRight />}
     previousText={<FiChevronLeft />}
-    getTrGroupProps={(_, { original }) => ({
-      className: `status-${original.status}`
+    getTrGroupProps={(_, { original: { id, slug, status } }) => ({
+      className: `${activeClass(id === query.id)} status-${status}`,
+      onClick: () => Router.replace({ pathname: '/', query: { slug, id } }, `/${slug}/${id}`)
     })}
     columns={[
       {
@@ -33,7 +35,7 @@ export default (props: any) => (
         accessor: 'price',
         maxWidth: 100,
         Cell: ({ value }) => {
-          const isDiscount = Math.random() < 0.5
+          const isDiscount = value < 100
           const num = isDiscount ? '-10' : '10'
 
           return (
@@ -51,10 +53,13 @@ export default (props: any) => (
       {
         Header: 'Title',
         accessor: 'title',
-        Cell: ({ value }) => (
+        Cell: ({ value, original: { id, slug, copy } }) => (
           <div>
-            <Link href="#">{value}</Link>
-            <p>{faker.lorem.words()}</p>
+            <Link href={{ pathname: '/', query: { slug, id } }} as={`/${slug}/${id}`} prefetch>
+              {value}
+            </Link>
+
+            <p>{copy}</p>
           </div>
         )
       },
@@ -155,10 +160,6 @@ const DataTable = styled(ReactTable)`
     position: relative;
     padding: var(--pad);
 
-    &:nth-child(2) {
-      background: ${({ theme }) => theme.links.active};
-    }
-
     &:hover {
       z-index: 2;
       outline: 1px solid ${({ theme }) => rgba(theme.colours.base, 0.1)};
@@ -177,7 +178,7 @@ const DataTable = styled(ReactTable)`
       }
     }
 
-    &.status-read {
+    &.status-read:not(.active) {
       background: ${({ theme }) => rgba(theme.colours.base, 0.009)};
 
       &:not(:hover) .rt-td {
@@ -195,6 +196,10 @@ const DataTable = styled(ReactTable)`
           color: inherit;
         }
       }
+    }
+
+    &.active {
+      background: ${({ theme }) => theme.links.active};
     }
 
     .rt-td {

@@ -1,10 +1,15 @@
-import Link from 'next/link'
-import { AnchorHTMLAttributes } from 'react'
+import Link, { LinkState } from 'next/link'
 import styled from 'styled-components'
 
-export default ({ children, href, ...props }: AnchorHTMLAttributes<any>) => (
-  <Link href={href} passHref>
-    <A {...props} rel={'target' in props ? 'noopener noreferrer' : 'alternate'}>{children}</A>
+interface TInner extends LinkState {
+  className?: string
+}
+
+export default ({ children, href, as = href, ...props }: TInner) => (
+  <Link href={href} as={as} passHref>
+    <A {...props} rel={'target' in props ? 'noopener noreferrer' : 'preload'}>
+      {children}
+    </A>
   </Link>
 )
 
@@ -16,7 +21,8 @@ const A = styled.a`
     text-decoration: underline;
   }
 
-  i, svg {
+  i,
+  svg {
     vertical-align: middle;
   }
 

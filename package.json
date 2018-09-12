@@ -10,7 +10,7 @@
     "dev": "node ./app/server.js",
     "start": "node --optimize_for_size --max_old_space_size=460 --gc_interval=100 ./app/server.js",
     "build": "next build ./app",
-    "postinstall": "[ \"$npm_config_production\" ] || next build ./app",
+    "postinstall": "[ \"$NPM_CONFIG_PRODUCTION\" ] || next build ./app",
     "fix": "tslint app/**/*.tsx --fix"
   },
   "keywords": [],

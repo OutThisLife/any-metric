@@ -1,4 +1,4 @@
-import faker from 'faker'
+import { lorem } from 'faker'
 import styled from 'styled-components'
 
 interface TInner {
@@ -9,9 +9,7 @@ export default ({ title }: TInner) => (
   <EntryDetail>
     <h2>{title}</h2>
 
-    {[...Array(15).keys()].map(i => (
-      <p key={`f-${i}`}>{faker.lorem.paragraph()}</p>
-    ))}
+    <p>{lorem.paragraph(50)}</p>
   </EntryDetail>
 )
 

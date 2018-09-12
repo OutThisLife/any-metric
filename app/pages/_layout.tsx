@@ -1,24 +1,37 @@
 import Header from '@/components/header'
 import Sidebar from '@/components/sidebar'
 import themeVars from '@/theme'
+import { RouterProps, withRouter } from 'next/router'
+import { compose, withProps } from 'recompose'
 import styled, { ThemeProvider } from 'styled-components'
 
-interface TInner {
+interface TOutter {
+  router?: RouterProps
   render: (a?: IObject) => JSX.Element
 }
 
-export default ({ render }: TInner) => (
+interface TInner {
+  getKey: (s?: string) => string
+}
+
+export default compose<TInner & TOutter, TOutter>(
+  withRouter,
+  withProps(({ router: { query }, ...props }) => ({
+    ...props,
+    getKey: (s = '') => `${s}${(query.slug || 'home').toString()}`
+  }))
+)(({ render, getKey }) => (
   <ThemeProvider theme={themeVars}>
-    <Main>
-      <Header />
+    <Main key="main">
+      <Header key={getKey('header')} />
 
       <section>
-        <Sidebar />
-        <div>{render()}</div>
+        <Sidebar key={getKey('sidebar')} />
+        <div key="app">{render({ getKey })}</div>
       </section>
     </Main>
   </ThemeProvider>
-)
+))
 
 const Main = styled.main`
   display: grid;
@@ -41,7 +54,8 @@ const Main = styled.main`
     }
 
     &::-webkit-scrollbar-thumb {
-      box-shadow: inset 1px 0 0 0 ${({ theme }) => theme.scrollbar.bg}, inset 1px 0 0 1px ${({ theme }) => theme.colours.bg};
+      box-shadow: inset 1px 0 0 0 ${({ theme }) => theme.scrollbar.bg},
+        inset 1px 0 0 1px ${({ theme }) => theme.colours.bg};
       background: ${({ theme }) => theme.scrollbar.thumb};
     }
 

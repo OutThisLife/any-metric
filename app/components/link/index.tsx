@@ -1,7 +1,11 @@
 import Link, { LinkState } from 'next/link'
 import styled from 'styled-components'
 
-export default ({ children, href, as = href, ...props }: LinkState) => (
+interface TInner extends LinkState {
+  className?: string
+}
+
+export default ({ children, href, as = href, ...props }: TInner) => (
   <Link href={href} as={as} passHref>
     <A {...props} rel={'target' in props ? 'noopener noreferrer' : 'preload'}>
       {children}

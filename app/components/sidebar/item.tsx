@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import NextLink from '@/components/link'
 import { rgba } from 'polished'
 import { AnchorHTMLAttributes } from 'react'
 import styled from 'styled-components'
@@ -9,19 +9,17 @@ interface TInner {
 }
 
 export default ({ href, status = 'read', title, count }: AnchorHTMLAttributes<any> & TInner) => (
-  <Link href={href} passHref>
-    <A status={status}>
-      <i />
+  <Link href={{ pathname: '/', query: { slug: href }}} as={`/${href}`} prefetch status={status}>
+    <i />
 
-      <span>
-        {title}
-        {count && <em>({count})</em>}
-      </span>
-    </A>
+    <span>
+      {title}
+      {count && <em>({count})</em>}
+    </span>
   </Link>
 )
 
-const A = styled.a`
+const Link = styled(NextLink)`
   display: flex;
   align-items: center;
   color: ${({ theme }) => theme.sidebar.link.colour};
@@ -43,8 +41,8 @@ const A = styled.a`
     vertical-align: middle;
     width: 7px;
     height: 7px;
-    border: 1px solid ${({ theme, status }: any) => status === 'unread' ? '#12a267' : rgba(theme.colours.base, 0.2)};
-    background: ${({ status }: any) => status === 'unread' ? '#12A267' : 'transparent'};
+    border: 1px solid ${({ theme, status }: any) => (status === 'unread' ? '#12a267' : rgba(theme.colours.base, 0.2))};
+    background: ${({ status }: any) => (status === 'unread' ? '#12A267' : 'transparent')};
   }
 
   span {

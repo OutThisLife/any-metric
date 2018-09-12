@@ -5,7 +5,8 @@ import { inputStyles } from '@/components/input'
 import Link from '@/components/link'
 import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
-import faker from 'faker'
+import { lorem } from 'faker'
+import Router from 'next/router'
 import { rgba } from 'polished'
 import { FiChevronLeft, FiChevronRight, FiTrendingDown, FiTrendingUp } from 'react-icons/fi'
 import ReactTable from 'react-table'
@@ -24,8 +25,9 @@ export default (props: any) => (
     rowsText=""
     nextText={<FiChevronRight />}
     previousText={<FiChevronLeft />}
-    getTrGroupProps={(_, { original }) => ({
-      className: `status-${original.status}`
+    getTrGroupProps={(_, { original: { id, slug, status } }) => ({
+      className: `status-${status}`,
+      onClick: () => Router.push({ pathname: '/', query: { slug, id } }, `${slug}/${id}`)
     })}
     columns={[
       {
@@ -51,10 +53,13 @@ export default (props: any) => (
       {
         Header: 'Title',
         accessor: 'title',
-        Cell: ({ value }) => (
+        Cell: ({ value, original: { id, slug } }) => (
           <div>
-            <Link href="#">{value}</Link>
-            <p>{faker.lorem.words()}</p>
+            <Link href={{ pathname: '/', query: { slug, id } }} as={`${slug}/${id}`} prefetch>
+              {value}
+            </Link>
+
+            <p>{lorem.words()}</p>
           </div>
         )
       },

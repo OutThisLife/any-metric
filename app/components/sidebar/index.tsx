@@ -1,22 +1,23 @@
+import Item from '@/components/sidebar/item'
+import { lorem } from 'faker'
 import styled from 'styled-components'
 
 import Group from './group'
-import Link from './link'
 
 export default () => (
   <Sidebar>
     <nav>
       <Group title="Barcode Scanners">
-        <Link href="javascript:;" status="unread" title="DataMan 8050" count={10} />
-        <Link href="javascript:;" title="DataMan 8050" count={5} />
-        <Link href="javascript:;" title="DataMan 8050" count={9} />
-        <Link href="javascript:;" title="DataMan 8050" count={5} />
+        <Item href={lorem.slug()} status="unread" title="DataMan 8050" count={10} />
+        <Item href={lorem.slug()} title="DataMan 8050" count={5} />
+        <Item href={lorem.slug()} title="DataMan 8050" count={9} />
+        <Item href={lorem.slug()} title="DataMan 8050" count={5} />
       </Group>
 
       <Group title="Another Group">
-        <Link href="javascript:;" status="unread" title="ManData 8050" count={5} />
-        <Link href="javascript:;" status="unread" title="ManData 8050" count={11} />
-        <Link href="javascript:;" title="ManData 8050" count={5} />
+        <Item href={lorem.slug()} status="unread" title="ManData 8050" count={5} />
+        <Item href={lorem.slug()} status="unread" title="ManData 8050" count={11} />
+        <Item href={lorem.slug()} title="ManData 8050" count={5} />
       </Group>
     </nav>
   </Sidebar>

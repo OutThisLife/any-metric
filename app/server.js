@@ -75,7 +75,7 @@ app.prepare().then(() => {
       })
     )
     .use((req, res, next) => {
-      if (!dev && !/localhost/.test(req.hostname) && !req.secure && req.headers['x-forwarded-proto'] !== 'https') {
+      if (!dev && !req.secure && req.headers['x-forwarded-proto'] !== 'https') {
         return res.redirect(`https://${req.hostname}${req.url}`)
       }
 

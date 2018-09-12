@@ -26,8 +26,8 @@ export default compose<TInner & TOutter, TOutter>(
     handleClick: () => ({ currentTarget }) => {
       const $group = currentTarget.nextElementSibling
 
-      currentTarget.classList.toggle('collapsed')
       window.requestAnimationFrame(() => ($group.style.maxHeight = `${$group.scrollHeight}px`))
+      currentTarget.classList.toggle('collapsed')
     }
   }))
 )(({ onRef, handleClick, title, children }) => (

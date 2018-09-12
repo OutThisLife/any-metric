@@ -58,7 +58,6 @@ const Main = styled.main`
     &.vertical {
       cursor: col-resize;
       width: 11px;
-      margin: 0 10 0 5px;
     }
   }
 

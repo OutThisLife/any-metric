@@ -1,7 +1,10 @@
 import { ApolloServer } from 'apollo-server'
-import express, { Request, Response } from 'express'
-import next from 'next'
-import path from 'path'
+import * as compression from 'compression'
+import * as express from 'express'
+import { RequestHandlerParams } from 'express-serve-static-core'
+import * as helmet from 'helmet'
+import * as next from 'next'
+import * as path from 'path'
 
 import { cache, resolvers, typeDefs } from './schema'
 
@@ -14,12 +17,12 @@ if (!dev && process.env.NEW_RELIC_HOME) {
 const dir = path.resolve(process.cwd(), 'app')
 const port = process.env.PORT || 3000
 
-const app = next({ dir, dev })
+const app = next({ dir, dev, quiet: true })
 const handle = app.getRequestHandler()
 
 // -----------------------------------------
 
-const render = (page = '/') => (req: Request, res: Response) => {
+const render = (page = '/') => (req: express.Request, res: express.Response) => {
   const key = req.url
 
   if (!dev && cache.has(key)) {
@@ -59,39 +62,47 @@ app.prepare().then(() => {
     }
   })
     .listen()
-    .then(({ url }) => {
-      console.log(`🚀  graphql server ready at ${url}`)
-    })
+    .then(({ url }) => console.log(`: graphql server ready at ${url}`))
     .catch(err => {
       throw err
     })
 
   express()
-    .use(require('helmet')())
+    .use(helmet())
+
     .use(
-      require('compression')({
+      compression({
         level: 6,
         filter: () => true
       })
     )
-    .use((req, res, resolve) => {
-      if (!dev && !req.secure && req.headers['x-forwarded-proto'] !== 'https') {
-        return res.redirect(`https://${req.hostname}${req.url}`)
+
+    .use(({ secure, headers, hostname, url }, res, resolve) => {
+      if (!dev && !secure && headers['x-forwarded-proto'] !== 'https') {
+        return res.redirect(`https://${hostname}${url}`)
       }
 
       return resolve()
     })
+
     .use((req, res, resolve) => {
+      let staticUrl
+
       if (req.url.endsWith('service-worker.js')) {
-        return app.serveStatic(req, res, path.join(dir, `./.next/${req.url}`))
+        staticUrl = path.join(dir, `./.next/${req.url}`)
       } else if (/(robots\.txt)$/.test(req.url)) {
-        return app.serveStatic(req, res, path.join(dir, `./static/${req.url}`))
+        staticUrl = path.join(dir, `./static/${req.url}`)
+      }
+
+      if (staticUrl) {
+        return app.serveStatic(req, res, staticUrl)
       }
 
       return resolve()
     })
 
     .get('/', render('/index'))
+
     .get('/:slug([A-z-]+)/:id([A-z0-9-]+)?', (req, res, resolve) => {
       if (req.params.slug === '_next') {
         return resolve()
@@ -99,7 +110,8 @@ app.prepare().then(() => {
 
       return render('/index')(req, res)
     })
-    .get('*', handle as any)
+
+    .get('*', handle as RequestHandlerParams)
 
     .listen(port, err => {
       if (err) {

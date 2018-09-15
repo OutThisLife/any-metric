@@ -43,7 +43,7 @@ module.exports = withPlugins(
   {
     assetPrefix: isDev ? '' : process.env.SERVER,
     useFileSystemPublicRoutes: false,
-    webpack: config => {
+    webpack: (config, { isServer }) => {
       if (!isDev) {
         config.output.publicPath = `${process.env.SERVER}${config.output.publicPath}`
       }

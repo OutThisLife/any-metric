@@ -1,8 +1,7 @@
-import crawl from '@/schema/crawl'
-import md5 from 'md5'
+import * as md5 from 'md5'
 import { parse } from 'url'
 
-import { context as cache } from '.'
+import { cache, crawl } from '.'
 
 interface Args {
   q: string

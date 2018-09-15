@@ -1,13 +1,14 @@
 declare module '*.scss'
 declare module '*.svg'
 
-declare interface IObject {
+export declare interface IObject {
   [key: string]: any
 }
 
-declare interface Item {
+export declare interface Item {
   id: string
   title: string
+  meta: IObject
   url: string
   hostname: string
   data: IObject

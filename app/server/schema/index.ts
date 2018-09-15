@@ -1,11 +1,29 @@
-import { gql } from 'apollo-server-express'
-import GraphQLJSON from 'graphql-type-json'
-import LRUCache from 'lru-cache'
+import { Item } from '@types'
+import { gql, IResolvers } from 'apollo-server-express'
+import * as JSON from 'graphql-type-json'
+import * as LRU from 'lru-cache'
 
-export const cache = new LRUCache({
+import crawl from './crawl'
+import search from './search'
+
+export { crawl, search }
+
+export const cache = LRU({
   max: 152,
   maxAge: 36e2
 })
+
+export const resolvers: IResolvers = {
+  JSON,
+  Query: {
+    crawl,
+    search,
+    history: (_, __, ctx) => ctx.cache.values().filter(o => o.id)
+  },
+  Result: {
+    data: ({ data }: Item, { limit }) => data.slice(0, limit)
+  }
+}
 
 export const typeDefs = gql`
   scalar JSON
@@ -39,15 +57,3 @@ export const typeDefs = gql`
     history: [Result]
   }
 `
-
-export const resolvers = {
-  JSON: GraphQLJSON,
-  Query: {
-    crawl: require('./crawl'),
-    search: require('./search'),
-    history: (_, __, ctx) => ctx.cache.values().filter(o => o.id)
-  },
-  Result: {
-    data: ({ data }, { limit }) => data.slice(0, limit)
-  }
-}

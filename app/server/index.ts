@@ -15,7 +15,7 @@ if (!dev && process.env.NEW_RELIC_HOME) {
 }
 
 const dir = path.resolve(process.cwd(), 'app')
-const port = process.env.PORT || 3000
+const port = parseInt(process.env.PORT, 10) || 3000
 
 const app = next({ dir, dev, quiet: true })
 const handle = app.getRequestHandler()
@@ -61,8 +61,8 @@ app.prepare().then(() => {
       endpoint: '/graphiql'
     }
   })
-    .listen()
-    .then(({ url }) => console.log(`: graphql server ready at ${url}`))
+    .listen(port + 1)
+    .then(({ url }) => console.log(`: graphql server ready at [::1]:${port + 1}`))
     .catch(err => {
       throw err
     })

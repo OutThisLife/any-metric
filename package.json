@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "nodemon ./app/server/index.ts",
-    "start": "cross-env NODE_ENV=production node --optimize_for_size --max_old_space_size=460 --gc_interval=100 ./app/.next/production-server/index.js",
+    "start": "node --optimize_for_size --max_old_space_size=460 --gc_interval=100 ./app/.next/production-server/index.js",
     "build:app": "next build ./app",
     "build:server": "tsc -p ./tsconfig.server.json",
     "build": "npm run build:app && npm run build:server",

@@ -26,7 +26,7 @@ exports.typeDefs = gql`
     title: String
     hostname: String
     url: String
-    data: JSON
+    data(limit: Int): JSON
   }
 
   type Query {
@@ -38,30 +38,31 @@ exports.typeDefs = gql`
 exports.resolvers = {
   JSON: GraphQLJSON,
   Query: {
-    crawl: async (root, { url, parent = 'body', children }) => {
+    crawl: async (root, { count, url, parent = 'body', children }) => {
       const selectors = children.reduce((acc, s) => ((acc[s.name] = s.el), acc), {})
       const { hostname } = parse(url)
       const id = md5(`${url}${JSON.stringify(selectors)}`)
 
-      if (cache.has(id)) {
-        return cache.get(id)
+      if (!cache.has(id)) {
+        const { err, title, data } = await XRay(url, {
+          title: 'title',
+          data: XRay(parent, [selectors])
+        })
+
+        if (err) {
+          console.error(err)
+          throw err
+        }
+
+        cache.set(id, { id, title, hostname, url, data })
       }
-
-      const { err, title, data } = await XRay(url, {
-        title: 'title',
-        data: XRay(parent, [selectors])
-      })
-
-      if (err) {
-        console.error(err)
-        throw err
-      }
-
-      cache.set(id, { id, title, hostname, url, data })
 
       return cache.get(id)
     },
 
     history: (root, args, ctx) => ctx.cache.values().filter(o => o.id)
+  },
+  Result: {
+    data: ({ data }, { limit }) => data.slice(0, limit)
   }
 }

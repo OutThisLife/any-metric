@@ -9,9 +9,9 @@
   "scripts": {
     "dev": "nodemon ./app/server/index.ts",
     "start": "cross-env NODE_ENV=production node --optimize_for_size --max_old_space_size=460 --gc_interval=100 ./app/.next/production-server/index.js",
-    "build": "npm run build:app && npm run build:server",
     "build:app": "next build ./app",
     "build:server": "tsc -p ./tsconfig.server.json",
+    "build": "npm run build:app && npm run build:server",
     "postinstall": "npm run build",
     "fix": "tslint app/**/*.tsx --fix"
   },
@@ -69,6 +69,7 @@
     "styled-components": "^3.1.0-3",
     "to-string-loader": "^1.1.5",
     "url-loader": "^1.1.1",
+    "typescript": "^3.0.3",
     "x-ray": "^2.3.3"
   },
   "devDependencies": {
@@ -100,7 +101,6 @@
     "prettier-eslint-cli": "^4.7.1",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.15.0",
-    "typescript": "^3.0.3",
     "typescript-eslint-parser": "^18.0.0",
     "typescript-styled-plugin": "^0.10.0"
   },

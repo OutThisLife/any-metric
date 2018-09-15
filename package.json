@@ -7,10 +7,10 @@
     "node": ">=9"
   },
   "scripts": {
-    "dev": "node ./app/server.js",
-    "start": "node --optimize_for_size --max_old_space_size=460 --gc_interval=100 ./app/server.js",
-    "build": "next build ./app",
-    "postinstall": "next build ./app",
+    "dev": "nodemon ./app/server.ts",
+    "start": "NODE_ENV=production node --optimize_for_size --max_old_space_size=460 --gc_interval=100 ./app/.next/production-server/index.js",
+    "build": "next build ./app && tsc --project tsconfig.server.json",
+    "postinstall": "yarn build",
     "fix": "tslint app/**/*.tsx --fix"
   },
   "keywords": [],

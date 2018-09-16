@@ -62,62 +62,64 @@ app.prepare().then(() => {
     }
   })
     .listen(port + 1)
-    .then(({ url }) => console.log(`: graphql server ready at [::1]:${port + 1}`))
     .catch(err => {
       throw err
     })
+    .then(() => {
+      console.log(`🚀\n>graphql server ready at http://[::1]:${port + 1}`)
 
-  express()
-    .use(helmet())
+      express()
+        .use(helmet())
 
-    .use(
-      compression({
-        level: 6,
-        filter: () => true
-      })
-    )
+        .use(
+          compression({
+            level: 6,
+            filter: () => true
+          })
+        )
 
-    .use(({ secure, headers, hostname, url }, res, resolve) => {
-      if (!dev && !secure && headers['x-forwarded-proto'] !== 'https') {
-        return res.redirect(`https://${hostname}${url}`)
-      }
+        .use(({ secure, headers, hostname, url }, res, resolve) => {
+          if (!dev && !secure && headers['x-forwarded-proto'] !== 'https') {
+            return res.redirect(`https://${hostname}${url}`)
+          }
 
-      return resolve()
-    })
+          return resolve()
+        })
 
-    .use((req, res, resolve) => {
-      let staticUrl
+        .use((req, res, resolve) => {
+          let staticUrl
 
-      if (req.url.endsWith('service-worker.js')) {
-        staticUrl = path.join(dir, `./.next/${req.url}`)
-      } else if (/(robots\.txt)$/.test(req.url)) {
-        staticUrl = path.join(dir, `./static/${req.url}`)
-      }
+          if (req.url.endsWith('service-worker.js')) {
+            staticUrl = path.join(dir, `./.next/${req.url}`)
+          } else if (/(robots\.txt)$/.test(req.url)) {
+            staticUrl = path.join(dir, `./static/${req.url}`)
+          }
 
-      if (staticUrl) {
-        return app.serveStatic(req, res, staticUrl)
-      }
+          if (staticUrl) {
+            return app.serveStatic(req, res, staticUrl)
+          }
 
-      return resolve()
-    })
+          return resolve()
+        })
 
-    .get('/', render('/index'))
+        .get('/', render('/index'))
 
-    .get('/:slug([A-z-]+)/:id([A-z0-9-]+)?', (req, res, resolve) => {
-      if (req.params.slug === '_next') {
-        return resolve()
-      }
+        .get('/:slug([A-z-]+)/:id([A-z0-9-]+)?', (req, res, resolve) => {
+          if (req.params.slug === '_next') {
+            return resolve()
+          }
 
-      return render('/index')(req, res)
-    })
+          return render('/index')(req, res)
+        })
 
-    .get('*', handle as RequestHandlerParams)
+        .get('*', handle as RequestHandlerParams)
 
-    .listen(port, err => {
-      if (err) {
-        throw err
-      }
+        .listen(port, err => {
+          if (err) {
+            throw err
+          }
 
-      console.log(`🚀 ready on http://[::1]:${port} 🚀`)
+          console.log(`>ready on http://[::1]:${port}\n🚀`)
+        })
     })
 })

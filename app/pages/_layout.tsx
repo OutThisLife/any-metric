@@ -1,13 +1,18 @@
 import Header from '@/components/header'
 import Sidebar from '@/components/sidebar'
 import themeVars from '@/theme'
+import { IObject } from '@types'
 import { RouterProps, withRouter } from 'next/router'
 import { compose, withProps } from 'recompose'
 import styled, { ThemeProvider } from 'styled-components'
 
 interface TOutter {
-  router?: RouterProps
   render: (a?: IObject) => JSX.Element
+  router?: RouterProps & {
+    query: {
+      slug?: string
+    }
+  }
 }
 
 interface TInner {
@@ -18,7 +23,7 @@ export default compose<TInner & TOutter, TOutter>(
   withRouter,
   withProps(({ router: { query }, ...props }) => ({
     ...props,
-    getKey: (s = '') => `${s}${(query.slug || 'home').toString()}`
+    getKey: (s = '') => `${s}${query.slug || 'home'}`
   }))
 )(({ render, getKey }) => (
   <ThemeProvider theme={themeVars}>

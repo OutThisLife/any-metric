@@ -7,7 +7,12 @@ import { compose, shouldUpdate } from 'recompose'
 import styled from 'styled-components'
 
 interface TInner {
-  router: RouterProps
+  router: RouterProps & {
+    query: {
+      slug?: string
+      id?: string
+    }
+  }
 }
 
 export default compose<TInner, {}>(
@@ -22,11 +27,13 @@ export default compose<TInner, {}>(
     return query.slug !== nextQuery.slug
   })
 )(({ router: { query } }) => {
-  const key = ((query.slug || '/') as string).length
+  const slug = query.slug || '/'
+  const key = slug.length
+
   seed(key)
 
   return (
-    <Home key={JSON.stringify(query)}>
+    <Home key={JSON.stringify(slug)}>
       <SplitPane split="vertical" defaultSize="66%">
         <section>
           <DataTable
@@ -36,7 +43,7 @@ export default compose<TInner, {}>(
             data={[...Array(255).keys()].map(i => ({
               id: random.uuid(),
               status: i < 2 ? 'unread' : 'read',
-              slug: query.slug,
+              slug: query.slug || lorem.slug(),
               price: commerce.price(),
               title: commerce.productName(),
               copy: lorem.words(),
@@ -47,7 +54,7 @@ export default compose<TInner, {}>(
         </section>
 
         <section>
-          {query.id ? <EntryDetail key={query.id.toString()} title="DataMan 8050" /> : null}
+          {query.id ? <EntryDetail key={query.id} title="DataMan 8050" /> : null}
         </section>
       </SplitPane>
     </Home>

@@ -9,12 +9,19 @@ import advancedFormat from 'dayjs/plugin/advancedFormat'
 import Router from 'next/router'
 import { rgba } from 'polished'
 import { FiChevronLeft, FiChevronRight, FiTrendingDown, FiTrendingUp } from 'react-icons/fi'
-import ReactTable from 'react-table'
+import ReactTable, { Instance } from 'react-table'
 import styled from 'styled-components'
 
 dayjs.extend(advancedFormat)
 
-export default ({ query, ...props }: IObject) => (
+interface TInner extends Instance {
+  query: {
+    id?: string
+    string?: string
+  }
+}
+
+export default ({ query, ...props }: TInner) => (
   <DataTable
     pageSize={100}
     minRows={0}
@@ -25,6 +32,7 @@ export default ({ query, ...props }: IObject) => (
     rowsText=""
     nextText={<FiChevronRight />}
     previousText={<FiChevronLeft />}
+    {...props}
     getTrGroupProps={(_, { original: { id, slug, status } }) => ({
       className: `${activeClass(id === query.id)} status-${status}`,
       onClick: () => Router.replace({ pathname: '/', query: { slug, id } }, `/${slug}/${id}`)
@@ -79,11 +87,10 @@ export default ({ query, ...props }: IObject) => (
         Cell: ({ value }) => <time>{dayjs(value).format('MMM. Do, YYYY kk:mm:ss')}</time>
       }
     ]}
-    {...props}
   />
 )
 
-const DataTable = styled(ReactTable)`
+const DataTable = styled<TInner, any>(ReactTable)`
   border: 0;
   margin: auto;
   padding: var(--pad);

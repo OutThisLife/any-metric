@@ -4,5 +4,5 @@
     "module": "commonjs",
     "outDir": "app/.next/production-server/"
   },
-  "include": ["./app/server/**/*.ts"]
+  "include": ["app/server/**/*", "typings/*"]
 }

@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 interface TOutter extends ButtonHTMLAttributes<any> {
   variant?: string
   primary?: boolean
-  theme?: IObject
+  theme?: any
 }
 
 export default ({ title, children, ...props }: TOutter) => <Button {...props}>{title || children}</Button>

@@ -1,13 +1,12 @@
 import Header from '@/components/header'
 import Sidebar from '@/components/sidebar'
 import themeVars from '@/theme'
-import { IObject } from '@types'
 import { RouterProps, withRouter } from 'next/router'
 import { compose, withProps } from 'recompose'
 import styled, { ThemeProvider } from 'styled-components'
 
 interface TOutter {
-  render: (a?: IObject) => JSX.Element
+  render: (a?: any) => JSX.Element
   router?: RouterProps & {
     query: {
       slug?: string

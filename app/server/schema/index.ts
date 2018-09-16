@@ -1,4 +1,3 @@
-import { Item } from '@types'
 import { gql, IResolvers } from 'apollo-server-express'
 import * as JSON from 'graphql-type-json'
 import * as LRU from 'lru-cache'
@@ -18,10 +17,10 @@ export const resolvers: IResolvers = {
   Query: {
     crawl,
     search,
-    history: (_, __, ctx) => ctx.cache.values().filter(o => o.id)
+    history: (_, __, ctx): Baph.Result[] => ctx.cache.values().filter(o => o.id)
   },
   Result: {
-    data: ({ data }: Item, { limit }) => data.slice(0, limit)
+    data: ({ data }: Baph.Result, { limit }: { limit?: number }) => data.slice(0, limit)
   }
 }
 
@@ -37,23 +36,16 @@ export const typeDefs = gql`
   type Result {
     id: ID @isUnique
     title: String
-    hostname: String
+    img: String
     url: String
+    hostname: String
     meta: JSON
     data(limit: Int): JSON
   }
 
-  type SearchResult {
-    id: ID @isUnique
-    title: String
-    hostname: String
-    url: String
-    meta: JSON
-  }
-
   type Query {
     crawl(url: String!, parent: String!, children: [Selector]!): Result
-    search(q: String!): SearchResult
+    search(q: String!): Result
     history: [Result]
   }
 `

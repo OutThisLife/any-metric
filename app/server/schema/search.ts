@@ -3,11 +3,7 @@ import { parse } from 'url'
 
 import { cache, crawl } from '.'
 
-interface Args {
-  q: string
-}
-
-export default async (_, { q }: Args) => {
+export default async (_, { q }: { q: string }): Promise<Baph.Result> => {
   const id = md5(`gsearch-${q}`)
 
   if (!cache.has(id)) {
@@ -17,17 +13,17 @@ export default async (_, { q }: Args) => {
       children: [{ name: 'url', el: 'a:first-child@href' }]
     })
 
-    try {
-      const { href, hostname } = parse(res.data[0].url.split('?q=')[1])
-      const url = href.split('&')[0]
-      const { title, meta } = await crawl(null, { url })
+    const { href, hostname } = parse(res.data[0].url.split('?q=')[1])
+    const url = href.split('&')[0]
+    const { err, title, meta } = await crawl(null, { url })
 
-      cache.set(id, { id, title, meta, hostname, url })
-    } catch (err) {
+    if (err) {
       console.error(err)
       throw err
     }
+
+    cache.set(id, { id, title, meta, hostname, url })
   }
 
-  return cache.get(id)
+  return cache.get(id) as Baph.Result
 }

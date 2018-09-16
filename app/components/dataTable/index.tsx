@@ -9,12 +9,12 @@ import advancedFormat from 'dayjs/plugin/advancedFormat'
 import Router from 'next/router'
 import { rgba } from 'polished'
 import { FiChevronLeft, FiChevronRight, FiTrendingDown, FiTrendingUp } from 'react-icons/fi'
-import ReactTable, { Instance } from 'react-table'
+import ReactTable, { TableProps } from 'react-table'
 import styled from 'styled-components'
 
 dayjs.extend(advancedFormat)
 
-interface TInner extends Instance {
+interface TInner extends Partial<TableProps> {
   query: {
     id?: string
     string?: string

@@ -911,6 +911,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-virtualized@^9.18.7":
+  version "9.18.7"
+  resolved "https://registry.npmjs.org/@types/react-virtualized/-/react-virtualized-9.18.7.tgz#8703d8904236819facff90b8b320f29233160c90"
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/react" "*"
+
 "@types/react@*":
   version "16.4.13"
   resolved "https://registry.npmjs.org/@types/react/-/react-16.4.13.tgz#1385f5dc3486aa493849a32ccce626a817543e28"
@@ -2335,7 +2342,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@^2.2.5:
+classnames@^2.2.3:
   version "2.2.6"
   resolved "https://registry.npmjs.org/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
 
@@ -3095,6 +3102,10 @@ doctrine@^2.1.0:
   resolved "https://registry.npmjs.org/doctrine/-/doctrine-2.1.0.tgz#5cd01fc101621b42c4cd7f5d1a66243716d3f39d"
   dependencies:
     esutils "^2.0.2"
+
+"dom-helpers@^2.4.0 || ^3.0.0":
+  version "3.3.1"
+  resolved "https://registry.npmjs.org/dom-helpers/-/dom-helpers-3.3.1.tgz#fc1a4e15ffdf60ddde03a480a9c0fece821dd4a6"
 
 dom-serializer@0, dom-serializer@~0.1.0:
   version "0.1.0"
@@ -4954,7 +4965,7 @@ js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
 
-js-tokens@^4.0.0:
+"js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
 
@@ -5364,6 +5375,12 @@ loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.3.1:
   resolved "https://registry.yarnpkg.com/loose-envify/-/loose-envify-1.3.1.tgz#d1a8ad33fa9ce0e713d65fdd0ac8b748d478c848"
   dependencies:
     js-tokens "^3.0.0"
+
+loose-envify@^1.3.0:
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz#71ee51fa7be4caec1a63839f7e682d8132d30caf"
+  dependencies:
+    js-tokens "^3.0.0 || ^4.0.0"
 
 loud-rejection@^1.6.0:
   version "1.6.0"
@@ -6984,32 +7001,22 @@ react-split-pane@*:
     react-lifecycles-compat "^3.0.4"
     react-style-proptype "^3.0.0"
 
-react-split-pane@^0.1.82:
-  version "0.1.82"
-  resolved "https://registry.npmjs.org/react-split-pane/-/react-split-pane-0.1.82.tgz#42fbb9fd4823f05e037de0dab3cd6cf9bf0cf4ea"
-  dependencies:
-    inline-style-prefixer "^3.0.6"
-    prop-types "^15.5.10"
-    react-lifecycles-compat "^3.0.4"
-    react-style-proptype "^3.0.0"
-
 react-style-proptype@^3.0.0:
   version "3.2.2"
   resolved "https://registry.npmjs.org/react-style-proptype/-/react-style-proptype-3.2.2.tgz#d8e998e62ce79ec35b087252b90f19f1c33968a0"
   dependencies:
     prop-types "^15.5.4"
 
-react-svg-line-chart@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.npmjs.org/react-svg-line-chart/-/react-svg-line-chart-2.0.1.tgz#2ffdfb505aa89daf52b3fb0d772663a530a62d2c"
+react-virtualized@^9.20.1:
+  version "9.20.1"
+  resolved "https://registry.npmjs.org/react-virtualized/-/react-virtualized-9.20.1.tgz#02dc08fe9070386b8c48e2ac56bce7af0208d22d"
   dependencies:
-    styled-components "^2.1.2"
-
-react-table@^6.8.6:
-  version "6.8.6"
-  resolved "https://registry.npmjs.org/react-table/-/react-table-6.8.6.tgz#a0ad8b4839319052d5befc012603fb161e52ede3"
-  dependencies:
-    classnames "^2.2.5"
+    babel-runtime "^6.26.0"
+    classnames "^2.2.3"
+    dom-helpers "^2.4.0 || ^3.0.0"
+    loose-envify "^1.3.0"
+    prop-types "^15.6.0"
+    react-lifecycles-compat "^3.0.4"
 
 react@^16.2.0:
   version "16.2.0"
@@ -7942,19 +7949,6 @@ strip-indent@^2.0.0:
 strip-json-comments@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
-
-styled-components@^2.1.2:
-  version "2.4.1"
-  resolved "https://registry.npmjs.org/styled-components/-/styled-components-2.4.1.tgz#663bd0485d4b6ab46f946210dc03d2398d1ade74"
-  dependencies:
-    buffer "^5.0.3"
-    css-to-react-native "^2.0.3"
-    fbjs "^0.8.9"
-    hoist-non-react-statics "^1.2.0"
-    is-plain-object "^2.0.1"
-    prop-types "^15.5.4"
-    stylis "^3.4.0"
-    supports-color "^3.2.3"
 
 styled-components@^3.1.0-3:
   version "3.1.0-3"

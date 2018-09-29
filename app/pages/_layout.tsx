@@ -28,40 +28,44 @@ export default compose<TInner & TOutter, TOutter>(
   <ThemeProvider theme={themeVars}>
     <Main key="main">
       <Header key={getKey('header')} />
-
-      <section>
-        <Sidebar key={getKey('sidebar')} />
-        <div key="app">{render({ getKey })}</div>
-      </section>
+      <Sidebar key={getKey('sidebar')} />
+      <section key="app">{render({ getKey })}</section>
     </Main>
   </ThemeProvider>
 ))
 
 const Main = styled.main`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-areas:
+    "head head head"
+    "side body body"
+    "side body body";
   grid-template-rows: auto 1fr;
+  grid-template-columns: 200px 1fr;
   height: 100vh;
 
+  > header {
+    grid-area: head;
+  }
+
+  > aside {
+    grid-area: side;
+  }
+
   > section {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    grid-template-rows: 1fr;
-    position: relative;
+    grid-area: body;
   }
 
   * {
-    &::-webkit-scrollbar {
-      width: 11px;
-      border: 1px solid ${({ theme }) => theme.scrollbar.bg};
+    /* &::-webkit-scrollbar {
+      width: 6px;
+      height: 3px;
       background: transparent;
     }
 
     &::-webkit-scrollbar-thumb {
-      box-shadow: inset 1px 0 0 0 ${({ theme }) => theme.scrollbar.bg},
-        inset 1px 0 0 1px ${({ theme }) => theme.colours.bg};
       background: ${({ theme }) => theme.scrollbar.thumb};
-    }
+    } */
 
     &:focus,
     &:active {

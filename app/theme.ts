@@ -4,7 +4,9 @@ export const colours = {
   base: '#111',
   brand: '#000',
 
-  border: '#f3f3f3',
+  border: '#eee',
+  darkBorder: '#aaa',
+
   outline: '#D64E43',
   bg: '#fff',
 

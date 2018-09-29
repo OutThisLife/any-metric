@@ -15,7 +15,7 @@ import styled from 'styled-components'
 dayjs.extend(advancedFormat)
 
 interface TInner extends Partial<TableProps> {
-  query: {
+  query?: {
     id?: string
     string?: string
   }

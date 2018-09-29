@@ -50,7 +50,11 @@ export default class extends Document {
 
           ::selection {
             color: #FFF;
-            background: #f36;
+            background: #13A368;
+          }
+
+          *:focus {
+            outline: 5px auto -webkit-focus-ring-color;
           }
           `}</style>
         </Head>

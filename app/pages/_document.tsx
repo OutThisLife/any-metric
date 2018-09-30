@@ -25,10 +25,6 @@ export default class extends Document {
           {this.props.styleTags}
 
           <style>{`
-          :root {
-            --pad: calc(8px + (16 - 9) * (100vw - 400px) / 1700);
-          }
-
           html {
             color: ${colours.base};
             font-family: ${fonts.family.copy};
@@ -36,25 +32,10 @@ export default class extends Document {
             line-height: 1.75;
           }
 
-          h1,h2,h3 {
-            font-family: ${fonts.family.title};
-          }
-
-          h5, h6 {
-            text-transform: uppercase;
-          }
-
           * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             box-sizing: border-box;
-          }
-
-          ::selection {
-            color: ${colours.brand.bg};
-            background: ${colours.brand.colour};
-          }
-
-          *:focus {
-            outline: 5px auto -webkit-focus-ring-color;
           }
           `}</style>
         </Head>

@@ -1,81 +1,57 @@
-import 'react-virtualized/styles.css'
+import 'react-grid-layout/css/styles.css'
+import 'react-resizable/css/styles.css'
 
+import Pod from '@/components/pod'
 import { commerce, internet, lorem, seed } from 'faker'
-import { AutoSizer, Column, Table, WindowScroller } from 'react-virtualized'
+import { rgba } from 'polished'
+import { Responsive as Grid, ResponsiveProps, WidthProvider } from 'react-grid-layout'
 import styled from 'styled-components'
 
-export default () => {
-  seed(100)
 
-  const data = [...Array(255).keys()].map(i => ({
-    image: internet.avatar(),
-    title: commerce.productName(),
-    status: i < 2 ? 'unread' : 'read',
-    price: commerce.price(),
-    copy: lorem.paragraph(),
-    slug: lorem.slug()
-  }))
 
-  if (typeof document === 'undefined') {
-    return null
-  }
 
-  return (
-    <Home>
-      <WindowScroller scrollElement={document.getElementById('app')}>
-        {({ height, isScrolling, onChildScroll, scrollTop }) => (
-          <AutoSizer disableHeight>
-            {({ width }) => (
-              <Table
-                ref="Table"
-                rowGetter={({ index }) => data[index]}
-                width={width}
-                height={height}
-                autoHeight
-                headerHeight={30}
-                rowCount={data.length}
-                rowHeight={150}
-                isScrolling={isScrolling}
-                onScroll={onChildScroll}
-                scrollTop={scrollTop}>
+seed(100)
+const data = [...Array(255).keys()].map(i => ({
+  image: internet.avatar(),
+  title: commerce.productName(),
+  status: i < 2 ? 'unread' : 'read',
+  price: commerce.price(),
+  copy: lorem.paragraph(),
+  slug: lorem.slug()
+}))
 
-                <Column
-                  width={100}
-                  label="Image"
-                  dataKey="image"
-                  cellRenderer={({ cellData }) => (
-                    <figure>
-                      <img width={100} src={cellData} alt="" />
-                    </figure>
-                  )}
-                />
+export default () => (
+  <Home
+    breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+    cols={{ lg: 2, md: 2, sm: 1, xs: 1, xxs: 1 }}
+    margin={[35, 35]}
+    rowHeight={30}
+    layouts={{
+      lg: [{ i: 'a', x: 0, y: 0, w: 1, h: 2 }, { i: 'b', x: 2, y: 0, w: 1, h: 2 }]
+    }}>
+    <Pod key="a" data={data} />
+    <Pod key="b" data={data} />
+  </Home>
+)
 
-                <Column width={100} label="Title" dataKey="title" flexGrow={1} />
-              </Table>
-            )}
-          </AutoSizer>
-        )}
-      </WindowScroller>
-    </Home>
-  )
-}
+const Home = styled<ResponsiveProps>(WidthProvider(Grid))`
+  width: 100vw;
+  height: 100% !important;
+  overflow-y: auto;
 
-const Home = styled.div`
-  display: flex;
+  .react-grid-item {
+    &.react-grid-placeholder {
+      outline: 2px dashed ${({ theme }) => rgba(theme.colours.base, 0.7)};
+      background: none;
+    }
 
-  > div {
-    flex: 1 1 auto;
-  }
+    &.resizing,
+    &.react-draggable-dragging {
+      opacity: 0.9;
+    }
 
-  &[style*="will-change"] {
-    will-change: unset !important;
-  }
-
-  figure {
-    margin: 0;
-  }
-
-  .ReactVirtualized__Table__headerRow {
-    text-transform: none;
+    &.react-draggable-dragging {
+      cursor: -webkit-grabbing;
+    }
   }
 `

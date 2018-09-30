@@ -12,7 +12,7 @@ export default withApolloClient(
       return (
         <Container>
           <ApolloProvider client={apolloClient}>
-            <Layout key="layout" render={props => <Component {...props} {...pageProps} />} />
+            <Layout render={props => <Component {...props} {...pageProps} />} />
           </ApolloProvider>
         </Container>
       )

@@ -1,8 +1,6 @@
 import Header from '@/components/header'
-import Sidebar from '@/components/sidebar'
 import themeVars from '@/theme'
 import { RouterProps, withRouter } from 'next/router'
-import { compose, withProps } from 'recompose'
 import styled, { ThemeProvider } from 'styled-components'
 
 interface TOutter {
@@ -14,61 +12,26 @@ interface TOutter {
   }
 }
 
-interface TInner {
-  getKey: (s?: string) => string
-}
-
-export default compose<TInner & TOutter, TOutter>(
-  withRouter,
-  withProps(({ router: { query }, ...props }) => ({
-    ...props,
-    getKey: (s = '') => `${s}${query.slug || 'home'}`
-  }))
-)(({ render, getKey }) => (
+export default withRouter(({ render }: TOutter) => (
   <ThemeProvider theme={themeVars}>
-    <Main key="main">
-      <Header key={getKey('header')} />
-      <Sidebar key={getKey('sidebar')} />
-      <section id="app" key="app">{render({ getKey })}</section>
+    <Main>
+      <Header />
+      <section id="app">{render()}</section>
     </Main>
   </ThemeProvider>
 ))
 
 const Main = styled.main`
+  --pad: calc(8px + (16 - 9) * (100vw - 400px) / 1700);
+
   display: grid;
   grid-template-areas:
-    "head head head"
-    "side body body"
-    "side body body";
-  grid-template-rows: auto 1fr;
-  grid-template-columns: 200px 1fr;
+    'head head head'
+    'body body body'
+    'body body body';
+  grid-template-rows: min-content 1fr;
+  grid-template-columns: 1fr;
   height: 100vh;
-
-  > header {
-    grid-area: head;
-
-    > h1 {
-      width: 200px;
-      margin-right: var(--pad);
-    }
-  }
-
-  > aside {
-    grid-area: side;
-  }
-
-  > section {
-    grid-area: body;
-    padding: calc(var(--pad) * 3);
-    overflow: auto;
-    height: 100%;
-    background: ${({ theme }) => theme.colours.panel};
-
-    > div {
-      border-radius: 10px;
-      background: ${({ theme }) => theme.colours.bg};
-    }
-  }
 
   * {
     &::-webkit-scrollbar {
@@ -78,7 +41,7 @@ const Main = styled.main`
     }
 
     &::-webkit-scrollbar-thumb {
-      /* background: ${({ theme }) => theme.colours.brand.bg}; */
+      background: ${({ theme }) => theme.colours.brand.bg};
     }
 
     &:focus,
@@ -87,7 +50,46 @@ const Main = styled.main`
     }
   }
 
-  select {
-    cursor: pointer;
+  > header {
+    grid-area: head;
+    display: grid;
+    grid-template-columns: minmax(auto, 200px) 1fr;
+    grid-template-areas: 'logo nav nav';
+    align-items: center;
+
+    > nav {
+      grid-area: nav;
+    }
+
+    > h1 {
+      grid-area: logo;
+    }
+  }
+
+  > section {
+    grid-area: body;
+    position: relative;
+    overflow: auto;
+    background: ${({ theme }) => theme.colours.panel};
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: ${({ theme }) => theme.fonts.family.title};
+  }
+
+  h5,
+  h6 {
+    text-transform: uppercase;
+  }
+
+  ::selection {
+    color: ${({ theme }) => theme.colours.brand.bg};
+    background: ${({ theme }) => theme.colours.brand.colour};
+  }
+
+  *:focus {
+    outline: 5px auto -webkit-focus-ring-color;
   }
 `

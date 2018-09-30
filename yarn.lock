@@ -851,13 +851,14 @@
   version "3.3.0"
   resolved "https://registry.npmjs.org/@types/newrelic/-/newrelic-3.3.0.tgz#48b36efe66335e75d54891cdb489511aa56565b7"
 
-"@types/next@^6.1.5":
-  version "6.1.5"
-  resolved "https://registry.npmjs.org/@types/next/-/next-6.1.5.tgz#5ead3d87a48061817a4ca2b58c202fe0e09bc9c5"
+"@types/next@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.npmjs.org/@types/next/-/next-7.0.0.tgz#7dd3d1196a711251fc2331661fe6ccc173929c54"
   dependencies:
     "@types/node" "*"
     "@types/node-fetch" "*"
     "@types/react" "*"
+    "@types/react-loadable" "*"
 
 "@types/node-fetch@*":
   version "2.1.2"
@@ -879,11 +880,17 @@
   version "1.2.2"
   resolved "https://registry.npmjs.org/@types/range-parser/-/range-parser-1.2.2.tgz#fa8e1ad1d474688a757140c91de6dace6f4abc8d"
 
-"@types/react-dom@^16.0.7":
-  version "16.0.7"
-  resolved "https://registry.npmjs.org/@types/react-dom/-/react-dom-16.0.7.tgz#54d0f867a76b90597e8432030d297982f25c20ba"
+"@types/react-dom@^16.0.8":
+  version "16.0.8"
+  resolved "https://registry.npmjs.org/@types/react-dom/-/react-dom-16.0.8.tgz#6e1366ed629cadf55860cbfcc25db533f5d2fa7d"
   dependencies:
     "@types/node" "*"
+    "@types/react" "*"
+
+"@types/react-grid-layout@^0.16.5":
+  version "0.16.5"
+  resolved "https://registry.npmjs.org/@types/react-grid-layout/-/react-grid-layout-0.16.5.tgz#ee23e1f9a0f2d00fc0bf91a5ad12b5c9c6b548df"
+  dependencies:
     "@types/react" "*"
 
 "@types/react-icon-base@*":
@@ -898,6 +905,13 @@
   dependencies:
     "@types/react" "*"
     "@types/react-icon-base" "*"
+
+"@types/react-loadable@*":
+  version "5.4.1"
+  resolved "https://registry.npmjs.org/@types/react-loadable/-/react-loadable-5.4.1.tgz#bc76978c6d9039e5808797b5ee35f6ae18b7329f"
+  dependencies:
+    "@types/react" "*"
+    "@types/webpack" "*"
 
 "@types/react-split-pane@^0.1.67":
   version "0.1.67"
@@ -952,11 +966,30 @@
     "@types/node" "*"
     "@types/react" "*"
 
+"@types/tapable@*":
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/@types/tapable/-/tapable-1.0.4.tgz#b4ffc7dc97b498c969b360a41eee247f82616370"
+
 "@types/typescript@^2.0.0":
   version "2.0.0"
   resolved "https://registry.npmjs.org/@types/typescript/-/typescript-2.0.0.tgz#c433539c98bae28682b307eaa7a0fd2115b83c28"
   dependencies:
     typescript "*"
+
+"@types/uglify-js@*":
+  version "3.0.3"
+  resolved "https://registry.npmjs.org/@types/uglify-js/-/uglify-js-3.0.3.tgz#801a5ca1dc642861f47c46d14b700ed2d610840b"
+  dependencies:
+    source-map "^0.6.1"
+
+"@types/webpack@*":
+  version "4.4.13"
+  resolved "https://registry.npmjs.org/@types/webpack/-/webpack-4.4.13.tgz#828d3a8f7743a12692aa0f65d083f30d25bf34eb"
+  dependencies:
+    "@types/node" "*"
+    "@types/tapable" "*"
+    "@types/uglify-js" "*"
+    source-map "^0.6.0"
 
 "@types/ws@^5.1.2":
   version "5.1.2"
@@ -2342,7 +2375,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@^2.2.3:
+classnames@2.x, classnames@^2.2.3, classnames@^2.2.5:
   version "2.2.6"
   resolved "https://registry.npmjs.org/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
 
@@ -5269,6 +5302,10 @@ lodash.camelcase@^4.3.0:
   version "4.3.0"
   resolved "https://registry.npmjs.org/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz#b28aa6288a2b9fc651035c7711f65ab6190331a6"
 
+lodash.isequal@^4.0.0:
+  version "4.5.0"
+  resolved "https://registry.npmjs.org/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
+
 lodash.isobject@^2.4.1:
   version "2.4.1"
   resolved "https://registry.npmjs.org/lodash.isobject/-/lodash.isobject-2.4.1.tgz#5a2e47fe69953f1ee631a7eba1fe64d2d06558f5"
@@ -6770,7 +6807,7 @@ prop-types-exact@1.2.0:
     object.assign "^4.1.0"
     reflect.ownkeys "^0.2.0"
 
-prop-types@15.6.2, prop-types@^15.5.10:
+prop-types@15.6.2, prop-types@15.x, prop-types@^15.5.10:
   version "15.6.2"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
   dependencies:
@@ -6980,9 +7017,26 @@ react-dom@^16.2.0:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
+react-draggable@3.x, "react-draggable@^2.2.6 || ^3.0.3":
+  version "3.0.5"
+  resolved "https://registry.npmjs.org/react-draggable/-/react-draggable-3.0.5.tgz#c031e0ed4313531f9409d6cd84c8ebcec0ddfe2d"
+  dependencies:
+    classnames "^2.2.5"
+    prop-types "^15.6.0"
+
 react-error-overlay@4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/react-error-overlay/-/react-error-overlay-4.0.0.tgz#d198408a85b4070937a98667f500c832f86bd5d4"
+
+react-grid-layout@^0.16.6:
+  version "0.16.6"
+  resolved "https://registry.npmjs.org/react-grid-layout/-/react-grid-layout-0.16.6.tgz#9b2407a2b946c2260ebaf66f13b556e1da4efeb2"
+  dependencies:
+    classnames "2.x"
+    lodash.isequal "^4.0.0"
+    prop-types "15.x"
+    react-draggable "3.x"
+    react-resizable "1.x"
 
 react-icons@^3.0.5:
   version "3.0.5"
@@ -6991,6 +7045,13 @@ react-icons@^3.0.5:
 react-lifecycles-compat@^3.0.2, react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.npmjs.org/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
+
+react-resizable@1.x:
+  version "1.7.5"
+  resolved "https://registry.npmjs.org/react-resizable/-/react-resizable-1.7.5.tgz#83eb75bb3684da6989bbbf4f826e1470f0af902e"
+  dependencies:
+    prop-types "15.x"
+    react-draggable "^2.2.6 || ^3.0.3"
 
 react-split-pane@*:
   version "0.1.84"

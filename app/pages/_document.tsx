@@ -1,4 +1,4 @@
-import { fonts as fontVars } from '@/theme'
+import { colours, fonts } from '@/theme'
 import Document, { Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
 
@@ -20,7 +20,7 @@ export default class extends Document {
           <meta name="robots" content="noindex" />
 
           <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/normalize.css@8.0.0/normalize.min.css" />
-          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora|Lato" />
+          <link rel="stylesheet" href={fonts.family.src()} />
 
           {this.props.styleTags}
 
@@ -30,17 +30,17 @@ export default class extends Document {
           }
 
           html {
-            color: ${fontVars.colour};
-            font-family: ${fontVars.family};
-            font-size: ${fontVars.size};
+            color: ${colours.base};
+            font-family: ${fonts.family.copy};
+            font-size: ${fonts.copy};
             line-height: 1.75;
           }
 
           h1,h2,h3 {
-            font-family: ${fontVars.headers.family};
+            font-family: ${fonts.family.title};
           }
 
-          h5,h6 {
+          h5, h6 {
             text-transform: uppercase;
           }
 
@@ -49,8 +49,8 @@ export default class extends Document {
           }
 
           ::selection {
-            color: #FFF;
-            background: #13A368;
+            color: ${colours.brand.bg};
+            background: ${colours.brand.colour};
           }
 
           *:focus {

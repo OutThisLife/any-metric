@@ -14,12 +14,8 @@ export default ({ children, href, as = href, ...props }: TInner) => (
 )
 
 const A = styled.a`
-  color: ${({ theme }) => theme.links.colour};
+  color: ${({ theme }) => theme.colours.secondary};
   text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
 
   i,
   svg {
@@ -34,7 +30,7 @@ const A = styled.a`
     color: inherit;
 
     &:hover {
-      color: ${({ theme }) => theme.links.colour};
+      color: ${({ theme }) => theme.colours.secondary};
       text-decoration: none;
     }
   }

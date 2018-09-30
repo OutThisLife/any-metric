@@ -29,7 +29,7 @@ export default compose<TInner & TOutter, TOutter>(
     <Main key="main">
       <Header key={getKey('header')} />
       <Sidebar key={getKey('sidebar')} />
-      <section key="app">{render({ getKey })}</section>
+      <section id="app" key="app">{render({ getKey })}</section>
     </Main>
   </ThemeProvider>
 ))
@@ -46,6 +46,11 @@ const Main = styled.main`
 
   > header {
     grid-area: head;
+
+    > h1 {
+      width: 200px;
+      margin-right: var(--pad);
+    }
   }
 
   > aside {
@@ -54,32 +59,31 @@ const Main = styled.main`
 
   > section {
     grid-area: body;
+    padding: calc(var(--pad) * 3);
+    overflow: auto;
+    height: 100%;
+    background: ${({ theme }) => theme.colours.panel};
+
+    > div {
+      border-radius: 10px;
+      background: ${({ theme }) => theme.colours.bg};
+    }
   }
 
   * {
-    /* &::-webkit-scrollbar {
-      width: 6px;
-      height: 3px;
+    &::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
       background: transparent;
     }
 
     &::-webkit-scrollbar-thumb {
-      background: ${({ theme }) => theme.scrollbar.thumb};
-    } */
+      /* background: ${({ theme }) => theme.colours.brand.bg}; */
+    }
 
     &:focus,
     &:active {
       outline: none;
-    }
-  }
-
-  .Resizer {
-    z-index: 1;
-    border-right: 4px double ${({ theme }) => theme.scrollbar.bg};
-
-    &.vertical {
-      cursor: col-resize;
-      width: 11px;
     }
   }
 

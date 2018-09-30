@@ -2,6 +2,7 @@ import Link from '@/components/link'
 import activeClass from '@/lib/activeClass'
 import { commerce, lorem, random, seed } from 'faker'
 import { RouterProps, withRouter } from 'next/router'
+import { rgba } from 'polished'
 import { compose } from 'recompose'
 import styled from 'styled-components'
 
@@ -18,19 +19,18 @@ interface TInner {
 
 export default compose<TInner, {}>(withRouter)(({ router: { query } }) => (
   <Sidebar>
-    {data.map(({ title, slug, qty }) => (
-      <Link
-        key={`link-${slug}`}
-        prefetch
-        href={{ pathname: '/', query: { slug } }}
-        as={`/${slug}`}
-        className={activeClass(query.slug === slug)}>
-        <span>
-          {title}
-          <em>({qty})</em>
-        </span>
-      </Link>
-    ))}
+    <div>
+      {data.map(({ title, slug }) => (
+        <Link
+          key={`link-${slug}`}
+          prefetch
+          href={{ pathname: '/', query: { slug } }}
+          as={`/${slug}`}
+          className={activeClass(query.slug === slug)}>
+          <span>{title}</span>
+        </Link>
+      ))}
+    </div>
   </Sidebar>
 ))
 
@@ -40,22 +40,31 @@ const Sidebar = styled.aside`
   height: 100%;
   overflow: auto;
   padding: var(--pad);
-  border-right: 1px solid ${({ theme }) => theme.sidebar.border};
-  background: ${({ theme }) => theme.sidebar.bg};
+  background: ${({ theme }) => theme.colours.base};
+
+  > div {
+    position: sticky;
+    top: 0;
+  }
 
   a {
     display: flex;
     align-items: center;
-    color: ${({ theme }) => theme.sidebar.link.colour};
-    padding: calc(var(--pad) / 4) 0;
+    color: ${({ theme }) => theme.colours.bg};
+    padding: calc(var(--pad) / 2) var(--pad);
+    border-radius: 4px;
 
-    &:not(.active):hover {
-      color: ${({ theme }) => theme.sidebar.link.hover.colour};
+    + a {
+      margin-top: calc(var(--pad) / 2);
     }
 
     &.active {
-      color: ${({ theme }) => theme.links.colour};
-      font-weight: 700;
+      color: ${({ theme }) => theme.colours.bg};
+      background: ${({ theme }) => rgba(theme.colours.bg, 0.1)};
+    }
+
+    &:hover:not(.active) {
+      background: ${({ theme }) => rgba(theme.colours.bg, 0.05)};
     }
 
     svg {

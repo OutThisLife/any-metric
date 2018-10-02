@@ -2,7 +2,7 @@ import { colours, fonts } from '@/theme'
 import Document, { Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
 
-export default class extends Document {
+export default class extends Document<{ styleTags: string }> {
   public static getInitialProps({ renderPage }) {
     const sheet = new ServerStyleSheet()
     const page = renderPage(App => props => sheet.collectStyles(<App {...props} />))

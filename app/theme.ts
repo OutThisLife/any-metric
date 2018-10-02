@@ -4,12 +4,12 @@ export const colours = {
   base: '#1C212A',
   bg: '#fff',
 
-  secondary: '#11A6F2',
+  secondary: '#41B5A5',
   border: '#F8F7F5',
   panel: '#F6F8F9',
 
   brand: {
-    colour: '#B3FFCD',
+    colour: '#f3f7f4',
     bg: '#E21D1B'
   }
 }
@@ -20,7 +20,7 @@ export const fonts = {
   h2: between('24px', '36px', '320px', '1600px'),
 
   family: {
-    title: 'Abril Fatface',
+    title: 'Cutive Mono',
     copy: 'Roboto',
     src() {
       const fmt = (s: string): string => s.replace(' ', '+')

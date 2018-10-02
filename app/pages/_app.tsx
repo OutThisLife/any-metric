@@ -12,7 +12,7 @@ export default withApolloClient(
       return (
         <Container>
           <ApolloProvider client={apolloClient}>
-            <Layout render={props => <Component {...props} {...pageProps} />} />
+            <Layout key={Math.random()} render={props => <Component {...props} {...pageProps} />} />
           </ApolloProvider>
         </Container>
       )

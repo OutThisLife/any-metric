@@ -1,6 +1,6 @@
 import Button from '@/components/button'
 import { darken } from 'polished'
-import { IoMdAddCircle, IoMdFlask } from 'react-icons/io'
+import { IoMdAddCircle } from 'react-icons/io'
 import { IconType } from 'react-icons/lib/iconBase'
 import styled, { css } from 'styled-components'
 
@@ -11,28 +11,30 @@ interface TOutter {
 
 export default ({ title, services = [() => null] }: TOutter) => (
   <Title>
+    <div className="drag-h" />
+
     <div>
       <small>
         Updated&nbsp;
         <time>6 hours ago</time>
         <span>
           &mdash;
-          <a href="javascript:;">refresh</a>
+          <a href="javascript:;" onClick={e => e.stopPropagation()}>refresh</a>
           ,&nbsp;
-          <a href="javascript:;">schedule</a>
+          <a href="javascript:;" onClick={e => e.stopPropagation()}>schedule</a>
         </span>
       </small>
     </div>
 
-    <div className="drag-h">
+    <div>
       <h2>
-        <a href="javascript:;">{title}<IoMdFlask /></a>
+        <a href="javascript:;">{title}</a>
       </h2>
 
       <nav>
         {services.length && (
           <figure>
-            {services.map(I => (
+            {[].slice.call(services).map((I: IconType) => (
               <a key={Math.random()} href="javascript:;">
                 <I />
               </a>
@@ -48,10 +50,52 @@ export default ({ title, services = [() => null] }: TOutter) => (
 
 const Title = styled.header`
   ${({ theme }) => css`
-    padding: calc(var(--pad) / 2) 0;
+    cursor: move;
+    position: relative;
 
     .drag-h {
-      cursor: move;
+      z-index: 1;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom :0;
+      left: 0;
+
+      ~ div {
+        pointer-events: none;
+
+        a[href] {
+          pointer-events: auto;
+        }
+      }
+    }
+
+    .react-grid-item:not(:hover) &:before {
+      content: '';
+      z-index: 1;
+      position: absolute;
+      top: calc(var(--pad) * -1.5);
+      right: calc(var(--pad) * -1.5);
+      bottom: 0;
+      left: calc(var(--pad) * -1.5);
+      background: ${theme.colours.panel};
+    }
+
+    > div {
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      position: relative;
+      color: ${darken(0.15, theme.colours.panel)};
+      border-radius: inherit;
+
+      a[href] {
+        color: inherit;
+      }
+    }
+
+    div:not(:hover) & small span {
+      visibility: hidden;
     }
 
     h2 {
@@ -65,36 +109,6 @@ const Title = styled.header`
           color: ${theme.colours.base};
         }
       }
-
-      svg {
-        opacity: 0.1;
-        vertical-align: middle;
-        transform: translate3d(5px, -3px, 0);
-      }
-
-      div:not(:hover) & svg {
-        opacity: 0;
-      }
-    }
-
-    > div {
-      display: flex;
-      align-items: center;
-      color: ${darken(0.15, theme.colours.panel)};
-      border-radius: inherit;
-
-      a[href] {
-        color: inherit;
-
-        &.open-stats svg {
-          width: 25px;
-          margin-left: 0.2em;
-        }
-      }
-    }
-
-    div:not(:hover) & small span {
-      visibility: hidden;
     }
 
     nav {

@@ -23,73 +23,72 @@ interface TOutter {
 
 export default ({ name, data = [], children, ...props }: TOutter) => (
   <Pod {...props}>
+    {children}
+
     <Title title={name} services={[IoLogoReddit, IoLogoTwitter]} />
+    <AutoSizer>
+      {({ width, height }) => (
+        <Table
+          width={width}
+          height={height}
+          headerHeight={35}
+          rowHeight={50}
+          rowCount={data.length}
+          rowGetter={({ index }) => data[index]}>
+          <Column
+            label={<IoIosLink />}
+            dataKey="slug"
+            width={26}
+            style={{ margin: 0 }}
+            headerStyle={{ margin: 0, textAlign: 'center' }}
+            cellRenderer={() => (
+              <div className="datasrc">
+                {Math.random() > 0.5 ? <IoLogoTwitter /> : <IoLogoReddit />}
+                <IoMdOpen />
+              </div>
+            )}
+          />
 
-    <Panel>
-      {children}
+          <Column
+            label={<IoMdImage />}
+            dataKey="image"
+            width={30}
+            headerStyle={{ textAlign: 'center' }}
+            cellRenderer={({ cellData, rowData: { title } }) => (
+              <figure>
+                <img src={cellData} alt={title} />
+              </figure>
+            )}
+          />
 
-      <div>
-        <AutoSizer>
-          {({ width, height }) => (
-            <Table
-              width={width}
-              height={height}
-              headerHeight={35}
-              rowHeight={50}
-              rowCount={data.length}
-              rowGetter={({ index }) => data[index]}>
-              <Column
-                label={<IoIosLink />}
-                dataKey="slug"
-                width={26}
-                style={{ margin: 0 }}
-                headerStyle={{ margin: 0, textAlign: 'center' }}
-                cellRenderer={() => (
-                  <div className="datasrc">
-                    {Math.random() > 0.5 ? <IoLogoTwitter /> : <IoLogoReddit />}
-                    <IoMdOpen />
-                  </div>
-                )}
-              />
+          <Column
+            label="Content"
+            dataKey="title"
+            width={100}
+            flexGrow={1}
+            cellRenderer={({ cellData, rowData: { copy } }) => (
+              <div>
+                <strong>
+                  <span>{cellData}</span> <time title="6/21/90 11:11:11">just now</time>
+                </strong>
 
-              <Column
-                label={<IoMdImage />}
-                dataKey="image"
-                width={30}
-                headerStyle={{ textAlign: 'center' }}
-                cellRenderer={({ cellData, rowData: { title } }) => (
-                  <figure>
-                    <img src={cellData} alt={title} />
-                  </figure>
-                )}
-              />
-
-              <Column
-                label="Content"
-                dataKey="title"
-                width={100}
-                flexGrow={1}
-                cellRenderer={({ cellData, rowData: { copy } }) => (
-                  <div>
-                    <strong>
-                      <span>{cellData}</span> <time title="6/21/90 11:11:11">just now</time>
-                    </strong>
-
-                    <p dangerouslySetInnerHTML={{ __html: copy }} />
-                  </div>
-                )}
-              />
-            </Table>
-          )}
-        </AutoSizer>
-      </div>
-    </Panel>
+                <p dangerouslySetInnerHTML={{ __html: copy }} />
+              </div>
+            )}
+          />
+        </Table>
+      )}
+    </AutoSizer>
   </Pod>
 )
 
-const Pod = styled.div`
+const Pod = styled(Panel)`
   ${({ theme }) => css`
     padding-bottom: 70px;
+
+    [tabindex]:focus {
+      outline: none;
+    }
 
     [class*='panel-'] {
       display: grid;

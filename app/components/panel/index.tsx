@@ -4,8 +4,7 @@ import styled, { css } from 'styled-components'
 export default styled.div`
   ${({ theme }) => css`
     position: relative;
-    width: 100%;
-    min-height: 100%;
+    height: auto;
     padding: var(--pad);
     border: 1px solid transparent;
     border-radius: 4px 4px 0 0;

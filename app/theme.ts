@@ -1,4 +1,5 @@
-import { between } from 'polished'
+import { between, rgba } from 'polished'
+import { css } from 'styled-components'
 
 export const colours = {
   base: '#323648',
@@ -25,6 +26,11 @@ export const fonts = {
     }
   }
 }
+
+export const focusStyles = css`
+  outline: 1px solid ${colours.secondary};
+  box-shadow: 0 0 10px ${rgba(colours.secondary, 0.3)};
+`
 
 // ---------------------------
 

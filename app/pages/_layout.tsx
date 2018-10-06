@@ -1,5 +1,5 @@
 import Header from '@/components/header'
-import themeVars from '@/theme'
+import themeVars, { focusStyles } from '@/theme'
 import { RouterProps, withRouter } from 'next/router'
 import { rgba } from 'polished'
 import styled, { css, ThemeProvider } from 'styled-components'
@@ -47,11 +47,11 @@ const Main = styled.main`
         border-radius: 100px;
         background: ${theme.colours.base};
       }
-    }
 
-    *::selection {
-      color: #fff;
-      background: ${theme.colours.secondary};
+      &::selection {
+       color: #fff;
+        background: ${theme.colours.secondary};
+      }
     }
 
     > header {
@@ -112,6 +112,12 @@ const Main = styled.main`
       &:hover {
         color: ${theme.colours.secondary};
         text-decoration: underline;
+      }
+    }
+
+    a, button, input {
+      &:focus {
+        ${focusStyles}
       }
     }
   `};

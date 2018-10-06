@@ -2,11 +2,11 @@ import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 
 import Pod from '@/components/pod'
+import { focusStyles } from '@/theme'
 import { commerce, internet, lorem, seed } from 'faker'
-import { rgba } from 'polished'
 import Grid, { Layout, ReactGridLayoutProps } from 'react-grid-layout'
 import { compose, onlyUpdateForKeys, StateHandler, StateHandlerMap, withHandlers, withStateHandlers } from 'recompose'
-import styled, { css, StyledComponentClass } from 'styled-components'
+import styled, { StyledComponentClass } from 'styled-components'
 
 interface TState {
   width: number
@@ -74,40 +74,39 @@ export default compose<TInner & TState & THandlers, {}>(
     onResize={onResize}
     margin={[35, 35]}
     draggableHandle=".drag-h"
-    compactType={null}>
+    compactType="horizontal">
     <Pod key="a" name="UCAD Social" data={data} />
     <Pod key="b" name="DataMan 8050" data={data} />
   </Home>
 ))
 
 const Home = styled<ReactGridLayoutProps>(Grid)`
-  ${({ theme }) => css`
-    width: 100vw;
-    min-height: 100%;
-    overflow-y: auto;
+  width: 100vw;
+  min-height: 100%;
+  overflow-y: auto;
 
-    .react-grid-item {
-      &.react-grid-placeholder {
-        outline: 1px ${rgba(theme.colours.base, 0.7)};
-        background: ${rgba(theme.colours.secondary, 0.1)};
-      }
+  .react-grid-item {
+    &.react-grid-placeholder {
+      ${focusStyles}
+      opacity: 1;
+      background: none;
+    }
 
-      &.resizing,
-      &.react-draggable-dragging {
-        opacity: 0.9;
+    &.resizing,
+    &.react-draggable-dragging {
+      opacity: 0.5;
 
-        > * {
-          pointer-events: none;
-        }
-      }
-
-      &.react-draggable-dragging {
-        cursor: -webkit-grabbing;
+      > * {
+        pointer-events: none;
       }
     }
 
-    .react-resizable-handle {
-      z-index: 10;
+    &.react-draggable-dragging {
+      cursor: -webkit-grabbing;
     }
-  `};
+  }
+
+  .react-resizable-handle {
+    z-index: 10;
+  }
 ` as StyledComponentClass<{}, {}, ReactGridLayoutProps>

@@ -1,15 +1,17 @@
 import Button from '@/components/button'
+import Title from '@/components/pod/title/style'
 import { IoMdAddCircle } from 'react-icons/io'
 import { IconType } from 'react-icons/lib/iconBase'
-
-import Title from './styled'
+import { compose, setDisplayName } from 'recompose'
 
 interface TOutter {
   title: string
   services: IconType[]
 }
 
-export default ({ title, services = [() => null] }: TOutter) => (
+export default compose<TOutter, TOutter>(
+  setDisplayName('pod-title')
+)(({ title, services = [() => null] }) => (
   <Title>
     <div className="drag-h" />
 
@@ -42,8 +44,8 @@ export default ({ title, services = [() => null] }: TOutter) => (
           </figure>
         )}
 
-        <Button href="javascript:;" Icon={<IoMdAddCircle />} />
+        <Button href="javascript:;" Icon={<IoMdAddCircle />} data-tip="Add source" />
       </nav>
     </div>
   </Title>
-)
+))

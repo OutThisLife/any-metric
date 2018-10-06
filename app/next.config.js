@@ -9,6 +9,7 @@ const typescript = require('@zeit/next-typescript')
 const offline = require('next-offline')
 const withCSS = require('@zeit/next-css')
 const { PHASE_DEVELOPMENT_SERVER } = require('next/constants')
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 
 module.exports = withPlugins(
   [
@@ -46,6 +47,13 @@ module.exports = withPlugins(
     webpack: (config, { isServer }) => {
       if (!isDev) {
         config.output.publicPath = `${process.env.SERVER}${config.output.publicPath}`
+      } else {
+        config.plugins = config.plugins.filter(plugin => plugin.constructor.name !== 'FriendlyErrorsWebpackPlugin')
+        config.plugins.push(
+          new FriendlyErrorsWebpackPlugin({
+            clearConsole: false
+          })
+        )
       }
 
       config.module.rules.push(

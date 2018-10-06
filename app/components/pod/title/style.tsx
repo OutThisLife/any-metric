@@ -17,7 +17,9 @@ export default styled.header`
       ~ div {
         pointer-events: none;
 
-        a[href] {
+        a[href],
+        button,
+        input {
           pointer-events: auto;
         }
       }

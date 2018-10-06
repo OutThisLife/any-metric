@@ -6,7 +6,7 @@ import * as helmet from 'helmet'
 import * as next from 'next'
 import * as path from 'path'
 
-import { cache, resolvers, typeDefs } from './schema'
+import resolvers, { cache, typeDefs } from './schema'
 
 const dev = process.env.NODE_ENV !== 'production'
 
@@ -17,7 +17,7 @@ if (!dev && process.env.NEW_RELIC_HOME) {
 const dir = path.resolve(process.cwd(), 'app')
 const port = parseInt(process.env.PORT, 10) || 3000
 
-const app = next({ dir, dev, quiet: true })
+const app = next({ dir, dev })
 const handle = app.getRequestHandler()
 
 // -----------------------------------------
@@ -63,6 +63,7 @@ app.prepare().then(() => {
   })
     .listen(port + 1)
     .catch(err => {
+      console.error(err)
       throw err
     })
     .then(() => {

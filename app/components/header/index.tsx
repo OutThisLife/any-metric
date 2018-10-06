@@ -1,23 +1,20 @@
 import Button from '@/components/button'
+import Header from '@/components/header/style'
 import Logo from '@/components/logo'
+import { setDisplayName } from 'recompose'
 
-import Header from './styled'
+import Controls from './controls'
+import Nav from './nav'
 
-export default () => (
+export default setDisplayName('header')(() => (
   <Header>
     <div>
       <Logo />
     </div>
 
     <nav>
-      <div>
-        <a href="javascript:;" className="active">
-          All Views <sup>(12)</sup>
-        </a>
-
-        <a href="javascript:;">Social <sup>(2)</sup></a>
-        <a href="javascript:;">Finance <sup>(20)</sup></a>
-      </div>
+      <Controls />
+      <Nav />
 
       <div>
         <Button title="Create View" />
@@ -25,4 +22,4 @@ export default () => (
       </div>
     </nav>
   </Header>
-)
+))

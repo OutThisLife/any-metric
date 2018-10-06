@@ -1,51 +1,45 @@
-import { gql, IResolvers } from 'apollo-server-express'
-import * as JSON from 'graphql-type-json'
+import * as faker from 'faker'
+import { IResolvers } from 'graphql-tools'
+import * as GraphQLJSON from 'graphql-type-json'
 import * as LRU from 'lru-cache'
 
-import crawl from './crawl'
-import search from './search'
-
-export { crawl, search }
+import { setLayout } from './mutations'
+import { crawl, layout, search } from './queries'
+import { Context, FakeData, Result } from './types'
 
 export const cache = LRU({
   max: 152,
   maxAge: 36e2
 })
 
-export const resolvers: IResolvers = {
-  JSON,
+export { crawl, layout, search, setLayout }
+export { default as typeDefs } from './types'
+
+export default {
+  JSON: GraphQLJSON,
   Query: {
     crawl,
     search,
-    history: (_, __, ctx): Baph.Result[] => ctx.cache.values().filter(o => o.id)
+    layout,
+    history: (_, __, ctx): Result[] => ctx.cache.values().filter(o => o.id),
+    fake: (_, { seed = 100 }): FakeData[] => {
+      faker.seed(seed)
+
+      return [...Array(255).keys()].map(() => ({
+        image: faker.internet.avatar(),
+        title: faker.commerce.productName(),
+        price: faker.commerce.price(),
+        copy: faker.lorem.paragraph(),
+        slug: faker.lorem.slug()
+      }))
+    }
   },
-  Result: {
-    data: ({ data }: Baph.Result, { limit }: { limit?: number }) => data.slice(0, limit)
-  }
-}
 
-export const typeDefs = gql`
-  scalar JSON
+  Mutation: {
+    setLayout
+  },
 
-  input Selector {
-    parent: String
-    name: String
-    el: String
+  CrawlResult: {
+    data: ({ data }: Result, { limit }: { limit?: number }) => data.slice(0, limit)
   }
-
-  type Result {
-    id: ID @isUnique
-    title: String
-    img: String
-    url: String
-    hostname: String
-    meta: JSON
-    data(limit: Int): JSON
-  }
-
-  type Query {
-    crawl(url: String!, parent: String!, children: [Selector]!): Result
-    search(q: String!): Result
-    history: [Result]
-  }
-`
+} as IResolvers<{}, Context>

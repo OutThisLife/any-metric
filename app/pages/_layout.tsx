@@ -2,6 +2,7 @@ import Header from '@/components/header'
 import themeVars, { focusStyles } from '@/theme'
 import { RouterProps, withRouter } from 'next/router'
 import { rgba } from 'polished'
+import Tooltip from 'react-tooltip'
 import styled, { css, ThemeProvider } from 'styled-components'
 
 interface TOutter {
@@ -18,6 +19,7 @@ export default withRouter(({ render }: TOutter) => (
     <Main key={Math.random()}>
       <Header />
       <section id="app">{render()}</section>
+      <Tooltip effect="solid" />
     </Main>
   </ThemeProvider>
 ))
@@ -119,6 +121,11 @@ const Main = styled.main`
       &:focus {
         ${focusStyles}
       }
+    }
+
+    [data-id="tooltip"] {
+      font-size: 11px;
+      padding: 2px 8px;
     }
   `};
 `

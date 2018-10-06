@@ -1,94 +1,69 @@
-import 'react-grid-layout/css/styles.css'
-import 'react-resizable/css/styles.css'
-
 import Pod from '@/components/pod'
-import { commerce, internet, lorem, seed } from 'faker'
-import Grid, { Layout } from 'react-grid-layout'
-import {
-  compose,
-  onlyUpdateForKeys,
-  setDisplayName,
-  StateHandler,
-  StateHandlerMap,
-  withHandlers,
-  withStateHandlers
-} from 'recompose'
+import { getFakeData, getLayout } from '@/lib/queries'
+import Home from '@/pages/home/style'
+import { Layout } from '@/server/schema/queries/layout'
+import { FakeData } from '@/server/schema/types'
+import { MutationFunc } from 'react-apollo'
+import Grid from 'react-grid-layout'
+import { compose, setDisplayName, StateHandler, StateHandlerMap, withHandlers, withStateHandlers } from 'recompose'
 
-import Controls from './controls'
-import Home from './styled'
+
+interface TInner {
+  mutate: MutationFunc<{ layout: ReactGridLayout.Layout[] }>
+  layoutData: { layout: Layout }
+  fakeData: { fake: FakeData[] }
+}
 
 interface TState {
   width: number
   height: number
-  cols?: number
-  layout?: Layout[]
 }
 
-interface THandlers extends StateHandlerMap<TState> {
+interface TStateHandles extends StateHandlerMap<TState> {
   setDimensions: StateHandler<TState>
-  setLayout: StateHandler<TState>
 }
 
-interface TInner {
-  onLayoutChange: (layout: Layout[]) => void
+interface THandles {
   onResize: () => void
+  onLayoutChange: (layout: ReactGridLayout.Layout[]) => void
 }
 
-seed(100)
-const data = [...Array(255).keys()].map(() => ({
-  image: internet.avatar(),
-  title: commerce.productName(),
-  price: commerce.price(),
-  copy: lorem.paragraph(),
-  slug: lorem.slug()
-}))
-
-export default compose<TInner & TState & THandlers, {}>(
+export default compose<TInner & TState & TStateHandles & THandles, {}>(
   setDisplayName('homepage'),
-  withStateHandlers<TState, THandlers>(
-    ({ cols = 40 }: any) => ({
-      cols,
+  getFakeData(),
+  getLayout(),
+  withStateHandlers<TState, TStateHandles, TInner>(
+    ({ layoutData: { layout } }) => ({
+      cols: layout.cols,
+      layout: layout.data,
       width: 1024,
-      height: 768,
-      layout: (() => {
-        if (typeof document !== 'undefined' && localStorage.getItem('BAPH_LAYOUT')) {
-          return JSON.parse(localStorage.getItem('BAPH_LAYOUT'))
-        }
-
-        return [
-          { i: 'a', x: cols / 4, y: 0, w: cols / 2, h: cols / 3.5, maxH: cols },
-          { i: 'b', x: cols / 4, y: 1, w: cols / 2, h: cols / 3.5, maxH: cols }
-        ]
-      })()
+      height: 768
     }),
     {
-      setDimensions: () => (width, height) => ({ width, height }),
-      setLayout: () => layout => localStorage.setItem('BAPH_LAYOUT', JSON.stringify(layout)) || { layout }
+      setDimensions: () => (width, height) => ({ width, height })
     }
   ),
-  withHandlers<THandlers, TInner>(() => ({
+  withHandlers<TInner & TStateHandles, THandles>(() => ({
     onResize: ({ setDimensions }) => () =>
       window.requestAnimationFrame(() => setDimensions(window.innerWidth, window.innerHeight)),
 
-    onLayoutChange: ({ setLayout }) => setLayout
-  })),
-  onlyUpdateForKeys(['width', 'height', 'layout'])
-)(({ onResize, onLayoutChange, cols, width, height, layout }) => (
+    onLayoutChange: ({ mutate }) => layout => mutate({ variables: { layout: JSON.stringify(layout) } })
+  }))
+)(({ onResize, onLayoutChange, fakeData, layoutData, width, height }) => (
   <Home innerRef={onResize}>
-    <Controls setter={onLayoutChange} />
-
     <Grid
-      layout={layout}
       width={width}
-      rowHeight={height / cols}
-      cols={cols}
+      rowHeight={height / layoutData.layout.cols}
+      cols={layoutData.layout.cols}
+      layout={layoutData.layout.data}
       onLayoutChange={onLayoutChange}
       onResize={onResize}
       margin={[35, 35]}
       draggableHandle=".drag-h"
+      useCSSTransforms={typeof window !== 'undefined'}
       compactType={null}>
-      <Pod key="a" name="UCAD Social" data={data} />
-      <Pod key="b" name="DataMan 8050" data={data} />
+      <Pod key="a" name="UCAD Social" data={fakeData.fake} />
+      <Pod key="b" name="DataMan 8050" data={fakeData.fake} />
     </Grid>
   </Home>
 ))

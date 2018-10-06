@@ -1,4 +1,5 @@
-import Button from './styled'
+import Button from '@/components/button/style'
+import { setDisplayName } from 'recompose'
 
 interface TOutter {
   title?: string
@@ -7,9 +8,9 @@ interface TOutter {
   [key: string]: any
 }
 
-export default ({ title, Icon, ...props }: TOutter) => (
+export default setDisplayName('button')(({ title, Icon, ...props }: TOutter) => (
   <Button {...props}>
     {title && typeof Icon === 'object' ? Icon : null}
     {title ? <span className="title">{title}</span> : <span className="icon">{Icon}</span>}
   </Button>
-)
+))

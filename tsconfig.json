@@ -17,7 +17,6 @@
     "lib": ["dom", "es2017"],
     "typeRoots": ["./typings", "./node_modules/@types"],
     "paths": {
-      "@types": ["typings/index.d.ts"],
       "@/*": ["app/*"],
       "@lib/*": ["app/lib/*"],
       "@components/*": ["app/components/*"],
@@ -32,6 +31,6 @@
       }
     ]
   },
-  "include": ["app/**/*", "typings/*"],
+  "include": ["app/**/*", "typings/*.d.ts"],
   "exclude": ["**/*.spec", "app/out/**", "app/.next/**"]
 }

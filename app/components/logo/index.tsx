@@ -1,10 +1,11 @@
+import { setDisplayName } from 'recompose'
 import styled, { css } from 'styled-components'
 
-export default () => (
+export default setDisplayName('logo')(() => (
   <Logo>
     <span>baphometric</span>
   </Logo>
-)
+))
 
 const Logo = styled.h1`
   ${({ theme }) => css`

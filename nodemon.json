@@ -1,4 +1,5 @@
 {
+  "verbose": true,
   "watch": ["server/**/*.ts"],
   "execMap": {
     "ts": "ts-node -P nodemon.tsconfig.json"

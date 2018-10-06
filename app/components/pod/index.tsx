@@ -1,25 +1,22 @@
 import 'react-virtualized/styles.css'
 
+import { FakeData } from '@/server/schema/types'
 import { IoIosLink, IoLogoReddit, IoLogoTwitter, IoMdImage, IoMdOpen } from 'react-icons/io'
 import { AutoSizer, Column, Table } from 'react-virtualized'
+import { compose, setDisplayName } from 'recompose'
 
-import Pod from './styled'
+import Pod from './style'
 import Title from './title'
 
 interface TOutter {
   name: string
   children?: React.ReactNode
-  data:
-    | Array<{
-        title: string
-        slug: string
-        image: string
-        copy: string
-      }>
-    | []
+  data: FakeData[]
 }
 
-export default ({ name, data = [], children, ...props }: TOutter) => (
+export default compose<TOutter, TOutter>(
+  setDisplayName('pod')
+)(({ name, data = [], children, ...props }) => (
   <Pod {...props}>
     {children}
 
@@ -78,4 +75,4 @@ export default ({ name, data = [], children, ...props }: TOutter) => (
       )}
     </AutoSizer>
   </Pod>
-)
+))

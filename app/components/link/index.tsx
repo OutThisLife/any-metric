@@ -1,8 +1,9 @@
 import activeClass from '@/lib/activeClass'
 import Link, { LinkState } from 'next/link'
 import { RouterProps, withRouter } from 'next/router'
-import { compose } from 'recompose'
-import styled, { css } from 'styled-components'
+import { compose, setDisplayName } from 'recompose'
+
+import A from './style'
 
 interface TOutter extends LinkState {
   className?: string
@@ -17,7 +18,10 @@ interface TInner extends TOutter {
   }
 }
 
-export default compose<TInner, TOutter>(withRouter)(({ children, href, as = href, router, ...props }) => (
+export default compose<TInner, TOutter>(
+  withRouter,
+  setDisplayName('baph-link')
+)(({ children, href, as = href, router, ...props }) => (
   <Link href={href} as={as} passHref>
     <A
       rel={'target' in props ? 'noopener noreferrer' : 'preload'}
@@ -27,28 +31,3 @@ export default compose<TInner, TOutter>(withRouter)(({ children, href, as = href
     </A>
   </Link>
 ))
-
-const A = styled.a`
-  ${({ theme }) => css`
-    color: ${theme.colours.secondary};
-    text-decoration: none;
-
-    i,
-    svg {
-      vertical-align: middle;
-    }
-
-    h1 &,
-    h2 &,
-    h3 &,
-    h4 &,
-    h5 & {
-      color: inherit;
-
-      &:hover {
-        color: ${theme.colours.secondary};
-        text-decoration: none;
-      }
-    }
-  `};
-`

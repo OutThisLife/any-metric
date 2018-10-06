@@ -13,7 +13,7 @@ export default styled.div`
     transition: 0.1s ease-in-out;
     background: ${theme.colours.bg};
 
-    .react-grid-item:hover & {
+    .action-panel:hover & {
       box-shadow: 0 10px 15px 0 ${rgba(theme.colours.base, 0.1)};
       transform: translate3d(0, -2px, 0);
     }

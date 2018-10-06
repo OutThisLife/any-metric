@@ -4,8 +4,26 @@ import 'react-resizable/css/styles.css'
 import Pod from '@/components/pod'
 import { commerce, internet, lorem, seed } from 'faker'
 import { rgba } from 'polished'
-import { Responsive as Grid, ResponsiveProps, WidthProvider } from 'react-grid-layout'
-import styled, { css } from 'styled-components'
+import Grid, { Layout, ReactGridLayoutProps } from 'react-grid-layout'
+import { compose, onlyUpdateForKeys, StateHandler, StateHandlerMap, withHandlers, withStateHandlers } from 'recompose'
+import styled, { css, StyledComponentClass } from 'styled-components'
+
+interface TState {
+  width: number
+  height: number
+  cols?: number
+  layout?: Layout[]
+}
+
+interface THandlers extends StateHandlerMap<TState> {
+  setDimensions: StateHandler<TState>
+  setLayout: StateHandler<TState>
+}
+
+interface TInner {
+  onLayoutChange: (layout: Layout[]) => void
+  onResize: () => void
+}
 
 seed(100)
 const data = [...Array(255).keys()].map(i => ({
@@ -16,30 +34,62 @@ const data = [...Array(255).keys()].map(i => ({
   slug: lorem.slug()
 }))
 
-export default () => (
+export default compose<TInner & TState & THandlers, {}>(
+  withStateHandlers<TState, THandlers>(
+    ({ cols = 40 }: any) => ({
+      cols,
+      width: 1024,
+      height: 768,
+      layout: (() => {
+        if (typeof document !== 'undefined' && localStorage.getItem('BAPH_LAYOUT')) {
+          return JSON.parse(localStorage.getItem('BAPH_LAYOUT'))
+        }
+
+        return [
+          { i: 'a', x: cols / 4, y: 0, w: cols / 2, h: cols / 3.5, maxH: cols },
+          { i: 'b', x: cols / 4, y: 1, w: cols / 2, h: cols / 3.5, maxH: cols }
+        ]
+      })()
+    }),
+    {
+      setDimensions: () => (width, height) => ({ width, height }),
+      setLayout: () => layout => localStorage.setItem('BAPH_LAYOUT', JSON.stringify(layout)) || { layout }
+    }
+  ),
+  withHandlers<THandlers, TInner>(() => ({
+    onResize: ({ setDimensions }) => () =>
+      window.requestAnimationFrame(() => setDimensions(window.innerWidth, window.innerHeight)),
+
+    onLayoutChange: ({ setLayout }) => setLayout
+  })),
+  onlyUpdateForKeys(['width', 'height', 'layout'])
+)(({ onResize, onLayoutChange, cols, width, height, layout }) => (
   <Home
-    breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-    cols={{ lg: 4, md: 3, sm: 2, xs: 1, xxs: 1 }}
-    layouts={{
-      lg: [{ i: 'a', x: 0, y: 0, w: 2, h: 1 }, { i: 'b', x: 2, y: 0, w: 2, h: 1 }]
-    }}
+    innerRef={onResize}
+    layout={layout}
+    width={width}
+    rowHeight={height / cols}
+    cols={cols}
+    onLayoutChange={onLayoutChange}
+    onResize={onResize}
     margin={[35, 35]}
-    rowHeight={typeof window === 'undefined' ? 500 : window.innerHeight / 2}>
+    draggableHandle=".drag-h"
+    compactType={null}>
     <Pod key="a" name="UCAD Social" data={data} />
     <Pod key="b" name="DataMan 8050" data={data} />
   </Home>
-)
+))
 
-const Home = styled<ResponsiveProps>(WidthProvider(Grid))`
+const Home = styled<ReactGridLayoutProps>(Grid)`
   ${({ theme }) => css`
     width: 100vw;
-    height: 100% !important;
+    min-height: 100%;
     overflow-y: auto;
 
     .react-grid-item {
       &.react-grid-placeholder {
-        outline: 2px dashed ${rgba(theme.colours.base, 0.7)};
-        background: none;
+        outline: 1px ${rgba(theme.colours.base, 0.7)};
+        background: ${rgba(theme.colours.secondary, 0.1)};
       }
 
       &.resizing,
@@ -60,4 +110,4 @@ const Home = styled<ResponsiveProps>(WidthProvider(Grid))`
       z-index: 10;
     }
   `};
-`
+` as StyledComponentClass<{}, {}, ReactGridLayoutProps>

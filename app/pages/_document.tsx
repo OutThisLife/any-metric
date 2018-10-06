@@ -25,8 +25,13 @@ export default class extends Document<{ styleTags: string }> {
           {this.props.styleTags}
 
           <style>{`
+          :root {
+            ${Object.keys(colours).map(k => `--${k}: ${colours[k]};`)};
+          }
+
           html {
             color: ${colours.base};
+            font-weight: 500;
             font-family: ${fonts.family.copy};
             font-size: ${fonts.copy};
             line-height: 1.75;

@@ -1,12 +1,11 @@
 import 'react-virtualized/styles.css'
 
 import Panel from '@/components/panel'
-import { darken, timingFunctions } from 'polished'
+import { darken, rgba } from 'polished'
 import { IoIosLink, IoLogoReddit, IoLogoTwitter, IoMdImage, IoMdOpen } from 'react-icons/io'
 import { AutoSizer, Column, Table } from 'react-virtualized'
 import styled, { css } from 'styled-components'
 
-import Stats from './stats'
 import Title from './title'
 
 interface TOutter {
@@ -73,8 +72,9 @@ export default ({ name, data = [], children, ...props }: TOutter) => (
                 cellRenderer={({ cellData, rowData: { copy } }) => (
                   <div>
                     <strong>
-                      {cellData} <time title="6/21/90 11:11:11">just now</time>
+                      <span>{cellData}</span> <time title="6/21/90 11:11:11">just now</time>
                     </strong>
+
                     <p dangerouslySetInnerHTML={{ __html: copy }} />
                   </div>
                 )}
@@ -83,14 +83,14 @@ export default ({ name, data = [], children, ...props }: TOutter) => (
           )}
         </AutoSizer>
       </div>
-
-      <Stats />
     </Panel>
   </Pod>
 )
 
 const Pod = styled.div`
   ${({ theme }) => css`
+    padding-bottom: 70px;
+
     [class*='panel-'] {
       display: grid;
       grid-template-columns: 1fr;
@@ -100,7 +100,7 @@ const Pod = styled.div`
 
     [class*='headerColumn'] {
       user-select: none;
-      color: ${theme.colours.brand.bg};
+      color: ${rgba(theme.colours.base, 0.4)};
 
       * {
         vertical-align: middle;
@@ -126,10 +126,11 @@ const Pod = styled.div`
         z-index: 2;
         box-shadow: inset 0 1px 0 ${darken(0.05, theme.colours.panel)},
           inset 0 -1px 0 ${darken(0.05, theme.colours.panel)};
-        background: ${theme.colours.brand.bg};
+        background: ${rgba(theme.colours.base, 0.03)};
 
-        * {
-          color: ${theme.colours.brand.colour};
+        strong > span {
+          color: ${theme.colours.secondary};
+          text-decoration: underline;
         }
 
         .datasrc {
@@ -183,8 +184,6 @@ const Pod = styled.div`
           stroke-width: 2em;
           stroke: ${darken(0.1, theme.colours.panel)};
           vertical-align: middle;
-          transition: 0.2s ${timingFunctions('easeInOutSine')};
-          transition-property: transform, opacity;
         }
 
         svg:last-child {
@@ -192,7 +191,7 @@ const Pod = styled.div`
           position: absolute;
           top: 50%;
           left: calc(50% + 1px);
-          fill: ${theme.colours.brand.colour};
+          fill: ${theme.colours.secondary};
           stroke: none;
           transform: translate(-45%, -50%);
         }

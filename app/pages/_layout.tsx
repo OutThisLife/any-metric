@@ -1,7 +1,7 @@
 import Header from '@/components/header'
 import themeVars from '@/theme'
 import { RouterProps, withRouter } from 'next/router'
-import { rgba, timingFunctions } from 'polished'
+import { rgba } from 'polished'
 import styled, { css, ThemeProvider } from 'styled-components'
 
 interface TOutter {
@@ -50,8 +50,8 @@ const Main = styled.main`
     }
 
     *::selection {
-      color: ${theme.colours.brand.bg};
-      background: ${theme.colours.base};
+      color: #fff;
+      background: ${theme.colours.secondary};
     }
 
     > header {
@@ -61,18 +61,12 @@ const Main = styled.main`
       grid-template-areas: 'logo nav nav';
       align-items: center;
 
-      > nav {
-        grid-area: nav;
+      > div {
+        grid-area: logo;
       }
 
-      > h1 {
-        grid-area: logo;
-        height: 100%;
-        line-height: 0;
-
-        span {
-          vertical-align: middle;
-        }
+      > nav {
+        grid-area: nav;
       }
     }
 
@@ -89,13 +83,13 @@ const Main = styled.main`
     h4,
     h5,
     h6 {
-      font-weight: 500;
-      font-family: inherit;
+      font-weight: 700;
+      font-family: ${theme.fonts.family.title};
       margin: 0;
     }
 
-    h1 {
-      font-family: ${theme.fonts.family.title};
+    h2 {
+      font-size: 2rem;
     }
 
     p,
@@ -114,10 +108,10 @@ const Main = styled.main`
 
     a[href] {
       color: inherit;
-      transition: color 0.2s ${timingFunctions('easeInCubic')};
 
       &:hover {
-        color: ${theme.colours.brand.bg};
+        color: ${theme.colours.secondary};
+        text-decoration: underline;
       }
     }
   `};

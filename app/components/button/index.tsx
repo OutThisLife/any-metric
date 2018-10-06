@@ -55,7 +55,6 @@ const Button = styled.button`
   padding: 0;
   border: 1px solid var(--borderColor, transparent);
   border-radius: 2px;
-  transition: 0.3s ease-in-out;
   background: var(--bg, transparent);
 
   + [class*="Button"] {

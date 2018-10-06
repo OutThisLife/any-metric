@@ -5,7 +5,9 @@ import styled, { css } from 'styled-components'
 
 export default () => (
   <Header>
-    <Logo />
+    <div>
+      <Logo />
+    </div>
 
     <nav>
       <div>
@@ -31,6 +33,10 @@ const Header = styled.header`
     position: relative;
     box-shadow: 0 1px 3px 0 ${rgba(theme.colours.base, 0.15)};
 
+    > div {
+      padding: var(--pad) calc(var(--pad) * 2);
+    }
+
     nav {
       display: flex;
       align-items: center;
@@ -47,11 +53,13 @@ const Header = styled.header`
 
     nav > div:first-of-type a {
       display: inline-block;
-      font-weight: 600;
       text-decoration: none;
-      box-shadow: inset 0 -2px currentColor;
       padding: 0.5em 0;
-      transition-property: color, box-shadow;
+      box-shadow: inset 0 -2px currentColor;
+
+      &:hover {
+        text-decoration: none;
+      }
 
       &.active {
         color: ${theme.colours.secondary};

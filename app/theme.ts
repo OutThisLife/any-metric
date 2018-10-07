@@ -7,6 +7,9 @@ export const colours = {
   bg: '#fff',
   panel: '#F6F8F9',
 
+  good: 'rgb(97, 205, 187)',
+  bad: 'rgb(244, 117, 96)',
+
   get brand() {
     return this.base
   }

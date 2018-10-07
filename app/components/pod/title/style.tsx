@@ -88,4 +88,4 @@ export default styled.header`
       }
     }
   `};
-`
+` as any

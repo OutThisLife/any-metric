@@ -61,16 +61,17 @@ export default compose<TInner & TState & TStateHandles & THandles, {}>(
     <Grid
       width={width}
       rowHeight={height / layout.cols}
-      cols={layout.cols}
       layout={layout.data}
+      cols={layout.cols}
       onLayoutChange={onLayoutChange}
       onResize={onResize}
       margin={[35, 35]}
       draggableHandle=".drag-h"
       useCSSTransforms={typeof window !== 'undefined'}
       compactType={null}>
-      <Pod key="a" name="UCAD Social" data={fake} />
-      <Pod key="b" name="DataMan 8050" data={fake} />
+      {layout.data.map(l => (
+        <Pod key={l.i} name="UCAD Social" data={fake} data-grid={l} />
+      ))}
     </Grid>
   </Home>
 ))

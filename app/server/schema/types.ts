@@ -42,7 +42,7 @@ export default gql`
   }
 
   type Mutation {
-    setLayout(layout: String!): LayoutResult
+    setLayout(cols: Int, layout: String!): LayoutResult
   }
 `
 

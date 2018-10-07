@@ -8,9 +8,8 @@ interface Args {
   layout: string
 }
 
-export default ((_, { layout }: Args, ctx): Layout => {
+export default ((_, { cols = 40, layout }: Args, ctx): Layout => {
   const data = JSON.parse(layout)
   ctx.cache.set('BAPH_LAYOUT', data)
-
-  return { cols: 40, data }
+  return { cols, data }
 }) as IFieldResolver<{}, Context>

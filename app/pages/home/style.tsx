@@ -5,7 +5,7 @@ import { focusStyles } from '@/theme'
 import styled from 'styled-components'
 
 export default styled.div`
-  width: 100vw;
+  width: 99vw;
   min-height: 100%;
   overflow-y: auto;
 

@@ -10,6 +10,8 @@ export default styled.div`
   overflow-y: auto;
 
   .react-grid-item {
+    transition: none;
+
     &.react-grid-placeholder {
       ${focusStyles} opacity: 1;
       background: none;

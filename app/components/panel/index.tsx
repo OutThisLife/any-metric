@@ -9,7 +9,6 @@ export default styled.div`
     border: 1px solid transparent;
     border-radius: 4px 4px 0 0;
     box-shadow: 0 1px 3px 0 ${rgba(theme.colours.base, 0.15)};
-    transition: 0.1s ease-in-out;
     background: ${theme.colours.bg};
 
     .action-panel:hover & {

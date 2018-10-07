@@ -11,4 +11,8 @@ export default styled.section`
     font-size: 1.5rem;
     line-height: 1;
   }
+
+  + section {
+    margin-top: calc(var(--pad) * 3);
+  }
 `

@@ -1,20 +1,15 @@
 import { colours } from '@/theme'
 import { ResponsiveLine as Line } from '@nivo/line'
-import { IoMdArrowUp } from 'react-icons/io'
 
 import Charts from './style'
+import Title from './title'
 
 export default () => (
   <Charts>
-    <label>Sentiment</label>
-    <strong>
-      0.7{' '}
-      <span style={{ color: colours.good }}>
-        <IoMdArrowUp /> 10%
-      </span>
-    </strong>
+    <Title title="Avg. Sentiment" num={0.7} perc={10} />
 
     <Line
+      animate={false}
       margin={{
         top: 20,
         right: 20,
@@ -81,7 +76,7 @@ export default () => (
       dotBorderColor="inherit:darker(0.3)"
       dotLabelYOffset={-20}
       enableGridX={false}
-      colors={['rgb(97, 205, 187)', 'rgb(244, 117, 96)']}
+      colors={[colours.good, colours.bad]}
       xScale={{ type: 'linear' }}
       yScale={{
         type: 'linear',

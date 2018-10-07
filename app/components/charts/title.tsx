@@ -1,6 +1,7 @@
 import { colours } from '@/theme'
 import { IoMdArrowDown, IoMdArrowUp } from 'react-icons/io'
 import { compose, withProps } from 'recompose'
+import styled from 'styled-components'
 
 interface TOutter {
   title: string
@@ -18,7 +19,7 @@ export default compose<TInner & TOutter, TOutter>(
     isUp: +props.num > 0
   }))
 )(({ isUp, title, num, perc }) => (
-  <>
+  <Title>
     <label>{title}</label>
 
     <strong>
@@ -27,5 +28,21 @@ export default compose<TInner & TOutter, TOutter>(
         {isUp ? <IoMdArrowUp /> : <IoMdArrowDown />} {perc}%
       </span>
     </strong>
-  </>
+  </Title>
 ))
+
+const Title = styled.div`
+  white-space: nowrap;
+  width: auto;
+  padding: 0 calc(var(--pad) * 2) 0 var(--pad);
+
+  label,
+  strong {
+    display: block;
+  }
+
+  strong {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+`

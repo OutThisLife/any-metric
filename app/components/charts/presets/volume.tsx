@@ -1,10 +1,7 @@
-import { Container, Title } from '.'
+import { Container, DynamicChart, Title } from '.'
 
-interface TOutter {
-  children: (a: JSX.Element) => JSX.Element
-}
 
-export default ({ children }: TOutter) => (
+export default ({ children }: DynamicChart) => (
   <Container>
     <Title title="Volume" num={350} perc={155} />
   </Container>

@@ -28,8 +28,8 @@ const fontSize = 9
 // *
 const padding = 8
 const baseProps = {
-  width: 350,
-  height: 350,
+  width: 450,
+  height: 300,
   padding: { top: 25, right: 35, bottom: 35, left: 35 }
 }
 

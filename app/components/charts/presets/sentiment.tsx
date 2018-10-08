@@ -1,25 +1,20 @@
-import { VictoryBoxPlot } from 'victory'
+import { random } from 'faker'
+import { VictoryLine } from 'victory'
 
-import { Container, Title } from '.'
+import { Container, DynamicChart, Title } from '.'
 
-interface TOutter {
-  children: (a: JSX.Element) => JSX.Element
-}
+const data = [...Array(200).keys()].map(x => ({
+  x,
+  y: random.number(20)
+}))
 
-export default ({ children }: TOutter) => (
+export default ({ children }: DynamicChart) => (
   <Container>
     <Title title="Avg. Sentiment" num={0.7} perc={10} />
 
-    {children(
-      <VictoryBoxPlot
-        boxWidth={20}
-        data={[
-          { x: 1, y: [1, 2, 3, 5] },
-          { x: 2, y: [3, 2, 8, 10] },
-          { x: 3, y: [2, 8, 6, 5] },
-          { x: 4, y: [1, 3, 2, 9] }
-        ]}
-      />
-    )}
+    {children({
+      data,
+      render: newData => <VictoryLine data={newData} />
+    })}
   </Container>
 )

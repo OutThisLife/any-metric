@@ -96,6 +96,7 @@
     "@types/react-dom": "^16.0.8",
     "@types/react-grid-layout": "^0.16.5",
     "@types/react-icons": "^2.2.6",
+    "@types/react-loadable": "^5.4.1",
     "@types/react-split-pane": "^0.1.67",
     "@types/react-table": "^6.7.12",
     "@types/recompose": "^0.27.0",

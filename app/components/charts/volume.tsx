@@ -1,4 +1,4 @@
-import { ResponsiveBullet as Bullet } from '@nivo/bullet'
+import { ResponsiveBar as Bar } from '@nivo/bar'
 
 import Charts from './style'
 import Title from './title'
@@ -7,7 +7,7 @@ export default () => (
   <Charts>
     <Title title="Volume" num={350} perc={155} />
 
-    <Bullet
+    <Bar
       animate={false}
       margin={{
         top: 20,
@@ -17,43 +17,54 @@ export default () => (
       }}
       data={[
         {
-          id: 'temp.',
-          ranges: [39, 18, 121, 0, 140],
-          measures: [12],
-          markers: [118]
+          country: 'AD',
+          donut: 119,
+          donutColor: 'hsl(171, 70%, 50%)'
         },
         {
-          id: 'power',
-          ranges: [1.2916181416778634, 0.007427638913805868, 1.9036119007565824, 0, 2],
-          measures: [0.8142066134726726, 1.1396970680269156],
-          markers: [1.8831418824302117]
+          country: 'AE',
+          donut: 139,
+          donutColor: 'hsl(41, 70%, 50%)'
         },
         {
-          id: 'volume',
-          ranges: [23, 27, 0, 36, 2, 65, 0, 80],
-          measures: [14],
-          markers: [51]
+          country: 'AF',
+          donut: 129,
+          donutColor: 'hsl(163, 70%, 50%)'
         },
         {
-          id: 'cost',
-          ranges: [260588, 94421, 24738, 0, 500000],
-          measures: [9224, 33286],
-          markers: [347962]
+          country: 'AG',
+          donut: 140,
+          donutColor: 'hsl(313, 70%, 50%)'
         },
         {
-          id: 'revenue',
-          ranges: [8, 1, 0, 0, 9],
-          measures: [5],
-          markers: [8.026927064756212, 8.767281997526865]
+          country: 'AI',
+          donut: 38,
+          donutColor: 'hsl(73, 70%, 50%)'
+        },
+        {
+          country: 'AL',
+          donut: 1,
+          donutColor: 'hsl(198, 70%, 50%)'
+        },
+        {
+          country: 'AM',
+          donut: 93,
+          donutColor: 'hsl(99, 70%, 50%)'
         }
       ]}
-      spacing={46}
-      titleAlign="start"
-      titleOffsetX={-70}
-      measureSize={0.2}
-      animate={true}
+      keys={['donut']}
+      indexBy="country"
+      padding={0.2}
+      groupMode="grouped"
+      colors={['rgb(73, 144, 255)', 'rgb(73, 144, 255)']}
+      colorBy="id"
+      borderColor="inherit:darker(1.6)"
+      enableLabel={false}
+      labelSkipWidth={12}
+      labelSkipHeight={12}
+      labelTextColor="inherit:darker(1.6)"
       motionStiffness={90}
-      motionDamping={12}
+      motionDamping={15}
     />
   </Charts>
 )

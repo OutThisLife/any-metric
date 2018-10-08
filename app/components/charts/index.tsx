@@ -1,14 +1,15 @@
-import dynamic, { DynamicComponent } from 'next/dynamic'
+import dynamic from 'next/dynamic'
 
 const chartStyles: TInner['styles'] = {
-  Sentiment: dynamic(import('./sentiment')),
-  Volume: dynamic(import('./volume'))
+  Sentiment: dynamic(import('./sentiment').then(module => module.default)),
+  Volume: dynamic(import('./volume').then(module => module.default))
 }
+
 
 interface TInner {
   styles: {
-    Sentiment: DynamicComponent<{}>
-    Volume: DynamicComponent<{}>
+    Sentiment: DynamicComponent
+    Volume: DynamicComponent
   }
 }
 

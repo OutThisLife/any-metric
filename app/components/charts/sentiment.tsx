@@ -63,7 +63,6 @@ export default () => (
           ]
         }
       ]}
-      animate
       curve="monotoneX"
       dotSymbol={({ size, color, borderWidth, borderColor }) => (
         <g>

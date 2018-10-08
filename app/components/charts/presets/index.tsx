@@ -4,8 +4,14 @@ export { default as Sentiment } from './sentiment'
 export { default as Volume } from './volume'
 export { default as Title } from '../title'
 
-export interface DynamicChart {
-  children: (a: { render: (newData: any[]) => JSX.Element; data: any[] }) => JSX.Element
+export interface DynamicChart<T = JSX.Element> {
+  ref?: any
+  children: (a: (newData: any[]) => T) => T
+}
+
+export interface Presets {
+  Sentiment: DynamicComponent<DynamicChart>
+  Volume: DynamicComponent<DynamicChart>
 }
 
 export const Container = styled.section`
@@ -20,7 +26,12 @@ export const Container = styled.section`
   aside {
     width: 100%;
 
-    svg, canvas {
+    .VictoryContainer {
+      cursor: -webkit-grab;
+    }
+
+    svg,
+    canvas {
       max-height: 40vh;
       vertical-align: top;
     }

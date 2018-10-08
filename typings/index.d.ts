@@ -1,6 +1,4 @@
-import { LoadableComponent } from 'react-loadable'
-
 declare module '*.scss'
 declare module '*.svg'
 
-declare type DynamicComponent = React.ComponentType<any> & LoadableComponent
+declare type DynamicComponent<P> = React.ComponentType<P> & LoadableExport.LoadableComponent

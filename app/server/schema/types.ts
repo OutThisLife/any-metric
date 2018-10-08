@@ -11,7 +11,7 @@ export default gql`
   }
 
   type CrawlResult {
-    id: ID @isUnique
+    id: ID
     title: String
     img: String
     url: String

@@ -41,3 +41,5 @@ export default {
   colours,
   fonts
 }
+
+export { default as victoryTheme } from './victory'

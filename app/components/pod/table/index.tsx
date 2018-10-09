@@ -1,4 +1,4 @@
-import { FakeData } from '@/server/schema/types'
+import { FakeCrawlResult } from '@/server/schema/types'
 import { IoIosLink, IoLogoReddit, IoLogoTwitter, IoMdImage, IoMdOpen } from 'react-icons/io'
 import { AutoSizer, Column } from 'react-virtualized'
 import { compose, setDisplayName } from 'recompose'
@@ -6,7 +6,7 @@ import { compose, setDisplayName } from 'recompose'
 import Table from './style'
 
 interface TOutter {
-  data: FakeData[]
+  data: FakeCrawlResult[]
 }
 
 export default compose<TOutter, TOutter>(

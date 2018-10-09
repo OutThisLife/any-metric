@@ -1,25 +1,8 @@
 import { Layout } from '@/server/schema/queries/layout'
-import { FakeData } from '@/server/schema/types'
+import { FakeCrawlResult, FakeStockResult } from '@/server/schema/types'
 import gql from 'graphql-tag'
 import { graphql } from 'react-apollo'
 import { compose } from 'recompose'
-
-export const getFakeData = () =>
-  graphql<{}, { fake: FakeData[] }>(
-    gql`
-      query Fake {
-        fake {
-          title
-          slug
-          image
-          copy
-        }
-      }
-    `,
-    {
-      name: 'fakeData'
-    }
-  )
 
 export const getLayout = () =>
   compose(
@@ -51,4 +34,45 @@ export const getLayout = () =>
         }
       }
     )
+  )
+
+export const getFakeCrawl = () =>
+  graphql<{}, { fake: FakeCrawlResult[] }>(
+    gql`
+      query FakeResult {
+        fakeCrawl {
+          title
+          slug
+          image
+          copy
+        }
+      }
+    `,
+    {
+      name: 'resultData',
+      options: {}
+    }
+  )
+
+export const getFakeStocks = () =>
+  graphql<{}, { fake: FakeStockResult[] }>(
+    gql`
+      query FakeStock {
+        fakeStock {
+          date
+          open
+          high
+          low
+          close
+          volume
+          split
+          dividend
+          absoluteChange
+          percentChange
+        }
+      }
+    `,
+    {
+      name: 'stockData'
+    }
   )

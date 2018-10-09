@@ -1,23 +1,39 @@
 import { Presets } from '@/components/charts/presets'
+import { FakeStockResult } from '@/server/schema/types'
+import { cloneDeep } from 'apollo-utilities'
 import { format } from 'd3-format'
-import { timeFormat } from 'd3-time-format'
+import { timeFormat, timeParse } from 'd3-time-format'
 import dynamic from 'next/dynamic'
-import { ReactElement } from 'react'
 import { Chart, ChartCanvas } from 'react-stockcharts'
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes'
-import { CrossHairCursor, EdgeIndicator, MouseCoordinateX, MouseCoordinateY } from 'react-stockcharts/lib/coordinates'
+import {
+  CrossHairCursor,
+  EdgeIndicator,
+  MouseCoordinateX,
+  MouseCoordinateY
+} from 'react-stockcharts/lib/coordinates'
 import { change } from 'react-stockcharts/lib/indicator'
 import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
-import { BarSeries, CandlestickSeries, VolumeProfileSeries } from 'react-stockcharts/lib/series'
+import {
+  BarSeries,
+  CandlestickSeries,
+  VolumeProfileSeries
+} from 'react-stockcharts/lib/series'
 import { OHLCTooltip } from 'react-stockcharts/lib/tooltip'
 import { last } from 'react-stockcharts/lib/utils'
-import { branch, compose, onlyUpdateForKeys, renderComponent, setDisplayName, withProps } from 'recompose'
-
-import { getData } from './utils'
+import {
+  branch,
+  compose,
+  onlyUpdateForKeys,
+  renderComponent,
+  setDisplayName
+} from 'recompose'
 
 interface TOutter {
-  initialData?: any[]
+  data?: FakeStockResult[]
   type?: keyof Presets
+  width: number
+  height: number
 }
 
 const presets: Presets = {
@@ -27,21 +43,20 @@ const presets: Presets = {
 
 export default compose<TOutter, TOutter>(
   setDisplayName('chart-generator'),
-  onlyUpdateForKeys(['data']),
-  withProps(async props => ({
-    ...props,
-    initialData: await getData()
-  })),
-  branch(
-    ({ initialData = [] }) => !initialData.length,
-    renderComponent(() => null)
-  )
-)(({ type, initialData, ...props }) => {
+  onlyUpdateForKeys(['data', 'width']),
+  branch(({ data = [] }) => !data.length, renderComponent(() => null))
+)(({ type, data: initialData, width }) => {
   const Preset = presets[type]
-  const changeCalculator = change()
 
+  const parsed = cloneDeep(initialData).map(d =>
+    Object.assign(d, {
+      date: timeParse('%Y-%m-%d')(d.date)
+    })
+  )
+
+  const calculatedData = change()(parsed)
   const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(d => d.date)
-  const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(changeCalculator(initialData))
+  const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(calculatedData)
 
   const start = xAccessor(last(data))
   const end = xAccessor(data[Math.max(0, data.length - 150)])
@@ -52,10 +67,10 @@ export default compose<TOutter, TOutter>(
       {render => (
         <aside>
           <ChartCanvas
-            height={400}
-            width={400}
+            width={width * 0.75}
+            height={width * 0.54}
             ratio={1}
-            margin={{ left: 80, right: 80, top: 10, bottom: 30 }}
+            margin={{ top: 10, right: 80, bottom: 30, left: 80 }}
             type="hybrid"
             seriesName="MSFT"
             data={data}
@@ -63,9 +78,10 @@ export default compose<TOutter, TOutter>(
             xAccessor={xAccessor}
             displayXAccessor={displayXAccessor}
             xExtents={xExtents}>
-            <Chart id={2} yExtents={[d => d.volume]} height={150} origin={(w, h) => [0, h - 150]}>
+            <Chart id={2} yExtents={[d => d.volume]} height={150} origin={(_, h) => [0, h - 150]}>
               <YAxis axisAt="left" orient="left" ticks={5} tickFormat={format('.2s')} />
               <MouseCoordinateY at="left" orient="left" displayFormat={format('.4s')} />
+
               <BarSeries
                 yAccessor={d => d.volume}
                 widthRatio={0.95}

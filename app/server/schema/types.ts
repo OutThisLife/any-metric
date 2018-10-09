@@ -20,7 +20,12 @@ export default gql`
     data(limit: Int): JSON
   }
 
-  type FakeResult {
+  type LayoutResult {
+    cols: Int
+    data: JSON
+  }
+
+  type FakeCrawlResult {
     image: String
     title: String
     price: String
@@ -28,9 +33,17 @@ export default gql`
     slug: String
   }
 
-  type LayoutResult {
-    cols: Int
-    data: JSON
+  type FakeStockResult {
+    date: String
+    open: String
+    high: String
+    low: String
+    close: String
+    volume: String
+    split: String
+    dividend: String
+    absoluteChange: String
+    percentChange: String
   }
 
   type Query {
@@ -38,7 +51,9 @@ export default gql`
     search(q: String!): CrawlResult
     history: [CrawlResult]
     layout: LayoutResult
-    fake(seed: Int): [FakeResult]
+
+    fakeCrawl(seed: Int): [FakeCrawlResult]
+    fakeStock: [FakeStockResult]
   }
 
   type Mutation {
@@ -61,10 +76,23 @@ export interface Result {
   data?: any
 }
 
-export interface FakeData {
+export interface FakeCrawlResult {
   image?: string
   title?: string
   price?: string
   copy?: string
   slug?: string
+}
+
+export interface FakeStockResult {
+  date?: string
+  open?: number
+  high?: number
+  low?: number
+  close?: number
+  volume?: number
+  split?: number
+  dividend?: number
+  absoluteChange?: number
+  percentChange?: number
 }

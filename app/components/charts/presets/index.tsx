@@ -25,15 +25,5 @@ export const Container = styled.section`
 
   aside {
     width: 100%;
-
-    .VictoryContainer {
-      cursor: -webkit-grab;
-    }
-
-    svg,
-    canvas {
-      max-height: 40vh;
-      vertical-align: top;
-    }
   }
 `

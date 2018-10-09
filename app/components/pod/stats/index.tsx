@@ -1,16 +1,18 @@
 import Chart from '@/components/charts'
-import { random } from 'faker'
+import withDimensions, { DimProps } from '@/lib/withDimensions'
+import { compose, setDisplayName } from 'recompose'
 
 import Stats from './style'
 
-const data = [...Array(200).keys()].map(x => ({
-  x,
-  y: random.number(20)
-}))
+interface TOutter {
+  data: any[]
+}
 
-export default () => (
-  <Stats>
-    <Chart type="Sentiment" data={data} />
-    <Chart type="Volume" data={data} />
+export default compose<TOutter & DimProps, TOutter>(
+  setDisplayName('pod-stats'),
+  withDimensions()
+)(({ onRef, ...props }) => (
+  <Stats innerRef={onRef}>
+    <Chart type="Sentiment" {...props} />
   </Stats>
-)
+))

@@ -49,6 +49,7 @@ const Inner = compose<TInner & TOutter, {}>(
 
     <DataTable data={data} />
 
-    {isOpen && <Stats />}
+    {/* {isOpen && <Stats />} */}
+    <Stats />
   </div>
 ))

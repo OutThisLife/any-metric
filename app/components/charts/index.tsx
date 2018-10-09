@@ -1,32 +1,23 @@
 import { Presets } from '@/components/charts/presets'
-import { fonts, victoryTheme } from '@/theme'
-import { last, maxBy, minBy } from 'lodash'
+import { format } from 'd3-format'
+import { timeFormat } from 'd3-time-format'
 import dynamic from 'next/dynamic'
-import { compose, onlyUpdateForKeys, setDisplayName, withHandlers, withProps, withState } from 'recompose'
-import {
-  createContainer,
-  DomainPropType,
-  VictoryAxis,
-  VictoryChart,
-  VictoryCommonProps,
-  VictoryCursorContainerProps,
-  VictoryLabel,
-  VictoryZoomContainerProps
-} from 'victory'
+import { ReactElement } from 'react'
+import { Chart, ChartCanvas } from 'react-stockcharts'
+import { XAxis, YAxis } from 'react-stockcharts/lib/axes'
+import { CrossHairCursor, EdgeIndicator, MouseCoordinateX, MouseCoordinateY } from 'react-stockcharts/lib/coordinates'
+import { change } from 'react-stockcharts/lib/indicator'
+import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
+import { BarSeries, CandlestickSeries, VolumeProfileSeries } from 'react-stockcharts/lib/series'
+import { OHLCTooltip } from 'react-stockcharts/lib/tooltip'
+import { last } from 'react-stockcharts/lib/utils'
+import { branch, compose, onlyUpdateForKeys, renderComponent, setDisplayName, withProps } from 'recompose'
 
-interface TOutter extends VictoryCommonProps {
-  data?: any[]
+import { getData } from './utils'
+
+interface TOutter {
+  initialData?: any[]
   type?: keyof Presets
-  domain?: DomainPropType
-}
-
-interface TState {
-  zoomConstraint: DomainPropType
-  setZoomConstraint: (a: DomainPropType) => DomainPropType
-}
-
-interface THandles {
-  getData: () => any[]
 }
 
 const presets: Presets = {
@@ -34,78 +25,80 @@ const presets: Presets = {
   Volume: dynamic(import('./presets/volume').then(m => m.default))
 }
 
-export default compose<THandles & TState & TOutter, TOutter>(
+export default compose<TOutter, TOutter>(
   setDisplayName('chart-generator'),
-  withProps<TOutter, TOutter>(({ data }) => ({
-    domain: data.length
-      ? {
-          x: [data[0].x, last(data).x],
-          y: [minBy(data, d => d.y).y, maxBy(data, d => d.y).y]
-        }
-      : { x: [0, 0], y: [0, 0] }
+  onlyUpdateForKeys(['data']),
+  withProps(async props => ({
+    ...props,
+    initialData: await getData()
   })),
-  withState('zoomConstraint', 'setZoomConstraint', ({ domain }) => gx(domain)),
-  withHandlers<TOutter & TState, THandles>(() => ({
-    getData: ({ data, zoomConstraint }) => () => {
-      if (!zoomConstraint) {
-        return data
-      }
-
-      const maxPoints = 120
-      const startIndex = data.findIndex(d => d.x >= zoomConstraint[0])
-      const endIndex = data.findIndex(d => d.x > zoomConstraint[1])
-      const filtered = data.slice(startIndex, endIndex)
-
-      if (filtered.length > maxPoints) {
-        const k = Math.pow(2, Math.ceil(Math.log2(filtered.length / maxPoints)))
-        return filtered.filter((_, i) => (i + startIndex) % k === 0)
-      }
-
-      return filtered
-    }
-  })),
-  onlyUpdateForKeys(['zoomConstraint', 'data'])
-)(({ zoomConstraint, setZoomConstraint, domain, getData, type, ...props }) => {
+  branch(
+    ({ initialData = [] }) => !initialData.length,
+    renderComponent(() => null)
+  )
+)(({ type, initialData, ...props }) => {
   const Preset = presets[type]
-  const VictoryContainer: React.ComponentType<
-    VictoryZoomContainerProps & VictoryCursorContainerProps
-  > = createContainer('zoom', 'cursor')
+  const changeCalculator = change()
+
+  const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(d => d.date)
+  const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(changeCalculator(initialData))
+
+  const start = xAccessor(last(data))
+  const end = xAccessor(data[Math.max(0, data.length - 150)])
+  const xExtents = [start, end]
 
   return (
     <Preset>
       {render => (
         <aside>
-          <VictoryChart
-            theme={victoryTheme}
-            domain={domain}
-            containerComponent={
-              <VictoryContainer
-                zoomDimension="x"
-                onZoomDomainChange={d => setZoomConstraint(gx(d))}
-                cursorLabel={d => `${Math.round(d.x)}, ${Math.round(d.y)}`}
-                events={{
-                  onDoubleClick: () => setZoomConstraint(gx(domain)) && null
-                }}
-                cursorLabelComponent={
-                  <VictoryLabel
-                    style={{
-                      fontSize: 9,
-                      fontFamily: fonts.family.copy
-                    }}
-                  />
-                }
+          <ChartCanvas
+            height={400}
+            width={400}
+            ratio={1}
+            margin={{ left: 80, right: 80, top: 10, bottom: 30 }}
+            type="hybrid"
+            seriesName="MSFT"
+            data={data}
+            xScale={xScale}
+            xAccessor={xAccessor}
+            displayXAccessor={displayXAccessor}
+            xExtents={xExtents}>
+            <Chart id={2} yExtents={[d => d.volume]} height={150} origin={(w, h) => [0, h - 150]}>
+              <YAxis axisAt="left" orient="left" ticks={5} tickFormat={format('.2s')} />
+              <MouseCoordinateY at="left" orient="left" displayFormat={format('.4s')} />
+              <BarSeries
+                yAccessor={d => d.volume}
+                widthRatio={0.95}
+                opacity={0.3}
+                fill={d => (d.close > d.open ? '#6BA583' : '#FF0000')}
               />
-            }
-            {...props}>
-            <VictoryAxis />
-            <VictoryAxis dependentAxis />
-            {render(getData())}
-          </VictoryChart>
+            </Chart>
+
+            <Chart id={1} yExtents={[d => [d.high, d.low]]} padding={{ top: 40, bottom: 20 }}>
+              <XAxis axisAt="bottom" orient="bottom" />
+              <YAxis axisAt="right" orient="right" ticks={5} />
+
+              <MouseCoordinateX at="bottom" orient="bottom" displayFormat={timeFormat('%Y-%m-%d')} />
+              <MouseCoordinateY at="right" orient="right" displayFormat={format('.2f')} />
+
+              <VolumeProfileSeries />
+              <CandlestickSeries />
+
+              <EdgeIndicator
+                itemType="last"
+                orient="right"
+                edgeAt="right"
+                yAccessor={d => d.close}
+                fill={d => (d.close > d.open ? '#6BA583' : '#FF0000')}
+              />
+
+              <OHLCTooltip origin={[-40, 0]} />
+            </Chart>
+
+            <CrossHairCursor />
+          </ChartCanvas>
         </aside>
       )}
     </Preset>
   )
 })
-
-const gx = (d: DomainPropType): DomainPropType => ('x' in d ? d.x : d[0])
-const gy = (d: DomainPropType): DomainPropType => ('y' in d ? d.y : d[1])

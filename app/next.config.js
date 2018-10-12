@@ -1,6 +1,6 @@
-const isDev = process.env.NODE_ENV !== 'production'
+const dev = process.env.NODE_ENV !== 'production'
 
-if (isDev) {
+if (dev) {
   require('dotenv').config()
 }
 
@@ -9,7 +9,6 @@ const typescript = require('@zeit/next-typescript')
 const offline = require('next-offline')
 const withCSS = require('@zeit/next-css')
 const { PHASE_DEVELOPMENT_SERVER } = require('next/constants')
-const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 
 module.exports = withPlugins(
   [
@@ -42,20 +41,8 @@ module.exports = withPlugins(
     ]
   ],
   {
-    assetPrefix: isDev ? '' : process.env.SERVER,
     useFileSystemPublicRoutes: false,
     webpack: (config, { isServer }) => {
-      if (!isDev) {
-        config.output.publicPath = `${process.env.SERVER}${config.output.publicPath}`
-      } else {
-        config.plugins = config.plugins.filter(plugin => plugin.constructor.name !== 'FriendlyErrorsWebpackPlugin')
-        config.plugins.push(
-          new FriendlyErrorsWebpackPlugin({
-            clearConsole: false
-          })
-        )
-      }
-
       config.module.rules.push(
         {
           test: /\.(png|jpg|gif|svg|eot|ttf|otf|woff|woff2)$/,

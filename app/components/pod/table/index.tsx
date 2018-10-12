@@ -18,7 +18,6 @@ interface TOutter {
 export default compose<TOutter, TOutter>(setDisplayName('pod'))(
   ({ data = [] }) => (
     <DataTable>
-      hi
       <AutoSizer>
         {({ width, height }) => (
           <Table

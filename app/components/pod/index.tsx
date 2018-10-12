@@ -1,6 +1,6 @@
 import { getFakeStocks } from '@/lib/queries'
 import { FakeCrawlResult, FakeStockResult } from '@/server/schema/types'
-import pick from 'lodash/pick'
+import omit from 'lodash/omit'
 import { IoLogoReddit, IoLogoTwitter } from 'react-icons/io'
 import { compose, setDisplayName, shouldUpdate, withState } from 'recompose'
 
@@ -13,6 +13,7 @@ interface TOutter {
   name: string
   children?: React.ReactNode
   data: FakeCrawlResult[]
+  className?: string
 }
 
 interface TInner {
@@ -27,7 +28,7 @@ export default compose<TInner & TOutter, TOutter>(
   getFakeStocks(),
   withState('isOpen', 'open', false)
 )(({ children, ...props }) => (
-  <Pod {...pick(props, ['style', 'className'])}>
+  <Pod {...omit(props, ['isOpen', 'open', 'data'])}>
     {children}
     <Inner {...props} />
   </Pod>
@@ -35,7 +36,9 @@ export default compose<TInner & TOutter, TOutter>(
 
 const Inner = compose<TInner & TOutter, {}>(
   shouldUpdate<TOutter & TInner>(
-    (props, nextProps) => nextProps.open !== props.open || !/(resizing|dragging)/.test(nextProps.className)
+    (props, nextProps) =>
+      nextProps.open !== props.open ||
+      !/(resizing|dragging)/.test(nextProps.className)
   )
 )(({ open, isOpen, name, data, stockData: { fakeStock: stats }, ...props }) => (
   <div>
@@ -48,7 +51,6 @@ const Inner = compose<TInner & TOutter, {}>(
 
     <DataTable data={data} />
 
-    {/* {isOpen && <Stats />} */}
-    <Stats data={stats} />
+    {isOpen && <Stats data={stats} />}
   </div>
 ))

@@ -1,7 +1,7 @@
 {
   "verbose": true,
-  "watch": ["server/**/*.ts"],
+  "watch": ["app/server/**/*.ts", "app/next.config.js"],
   "execMap": {
-    "ts": "ts-node -P nodemon.tsconfig.json"
+    "ts": "ts-node -P nodemon.tsconfig.json --no-cache"
   }
 }

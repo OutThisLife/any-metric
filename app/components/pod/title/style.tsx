@@ -11,7 +11,7 @@ export default styled.header`
       position: absolute;
       top: 0;
       right: 0;
-      bottom :0;
+      bottom: 0;
       left: 0;
 
       ~ div {
@@ -23,17 +23,6 @@ export default styled.header`
           pointer-events: auto;
         }
       }
-    }
-
-    .react-grid-item:not(:hover) &:before {
-      content: '';
-      z-index: 1;
-      position: absolute;
-      top: calc(var(--pad) * -1.5);
-      right: calc(var(--pad) * -1.5);
-      bottom: 0;
-      left: calc(var(--pad) * -1.5);
-      background: ${theme.colours.panel};
     }
 
     > div {

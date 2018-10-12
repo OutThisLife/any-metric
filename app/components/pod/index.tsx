@@ -49,7 +49,9 @@ const Inner = compose<TInner & TOutter, {}>(
       grid={props['data-grid']}
     />
 
-    <DataTable data={data} />
+    <section>
+      <DataTable data={data} />
+    </section>
 
     {isOpen && <Stats data={stats} />}
   </div>

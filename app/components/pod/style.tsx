@@ -16,17 +16,16 @@ export default styled(Panel)`
     grid-column: 1 / -1;
   }
 
-  header + div[style] {
+  section {
     grid-row: 2;
     grid-column: 1 / -1;
-    width: 100% !important;
 
-    ${({ isOpen }: any) => `
-      pointer-events: ${isOpen ? 'none' : 'auto'};
-      filter: ${isOpen ? 'blur(2px) opacity(0.5)' : 'none'};
-    `};
+    > div[style] {
+      width: 100% !important;
+      height: 100%;
+    }
 
-    [style*="width"] {
+    [style*='width'] {
       width: 100% !important;
     }
   }

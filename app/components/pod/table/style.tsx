@@ -9,29 +9,14 @@ export default styled.div`
       outline: none;
     }
 
-    [class*='headerColumn'] {
-      user-select: none;
-      color: ${rgba(theme.colours.base, 0.4)};
-
-      * {
-        vertical-align: middle;
-      }
-
-      svg {
-        fill: currentColor;
-        stroke: none;
-      }
-
-      [title] {
-        font-size: 0.9em;
-        letter-spacing: 0.04em;
-      }
-    }
-
     [class$='Table__row'] {
       cursor: pointer;
       position: relative;
       box-shadow: inset 0 1px 0 ${theme.colours.panel};
+
+      &:first-of-type {
+        box-shadow: none;
+      }
 
       &:hover {
         z-index: 2;

@@ -1,11 +1,14 @@
 import { colours, fonts } from '@/theme'
 import Document, { Head, Main, NextScript } from 'next/document'
+import { rgba } from 'polished'
 import { ServerStyleSheet } from 'styled-components'
 
 export default class extends Document<{ styleTags: string }> {
   public static getInitialProps({ renderPage }) {
     const sheet = new ServerStyleSheet()
-    const page = renderPage(App => props => sheet.collectStyles(<App {...props} />))
+    const page = renderPage(App => props =>
+      sheet.collectStyles(<App {...props} />)
+    )
     const styleTags = sheet.getStyleElement()
 
     return { ...page, styleTags }
@@ -19,7 +22,10 @@ export default class extends Document<{ styleTags: string }> {
           <meta httpEquiv="X-UA-Compatible" content="IE=edge,chrome=1" />
           <meta name="robots" content="noindex" />
 
-          <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/normalize.css@8.0.0/normalize.min.css" />
+          <link
+            rel="stylesheet"
+            href="//cdn.jsdelivr.net/npm/normalize.css@8.0.0/normalize.min.css"
+          />
           <link rel="stylesheet" href={fonts.family.src()} />
 
           {this.props.styleTags}
@@ -41,6 +47,23 @@ export default class extends Document<{ styleTags: string }> {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             box-sizing: border-box;
+          }
+
+          *::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+            border-radius: 100px;
+            background: ${rgba(colours.base, 0.03)};
+          }
+
+          *::-webkit-scrollbar-thumb {
+            border-radius: 100px;
+            background: ${colours.base};
+          }
+
+          *::selection {
+            color: #fff;
+            background: ${colours.secondary};
           }
           `}</style>
         </Head>

@@ -12,34 +12,41 @@ export default compose<TInner, {}>(
   setDisplayName('header-controls'),
   withLayout()
 )(({ changeLayout, layoutData: { layout: { cols, data } } }) => (
-    <Controls>
-      <a
-        href="javascript:;"
-        className={data[0].w === cols / 2 ? 'active' : ''}
-        data-tip="Grid layout"
-        data-place="bottom"
-        onClick={() => changeLayout(data.map((d, y) => ({
-          ...d,
-          y: Math.max(0, y - 2),
-          x: (y % 2) * (cols / 2),
-          w: cols / 2
-        })))}>
-        <IoMdApps />
-      </a>
+  <Controls>
+    <a
+      href="javascript:;"
+      className={data[0].x === 0 ? 'active' : ''}
+      data-tip="Grid layout"
+      data-place="bottom"
+      onClick={() =>
+        changeLayout(
+          data.map((d, y) => ({
+            ...d,
+            y: Math.max(0, y - 2),
+            x: (y % 2) * (cols / 2),
+            w: cols / 2
+          }))
+        )
+      }>
+      <IoMdApps />
+    </a>
 
-      <a
-        href="javascript:;"
-        className={data[0].w === cols ? 'active' : ''}
-        data-tip="Feed layout"
-        data-place="bottom"
-        onClick={() => changeLayout(data.map((d, y) => ({
-          ...d,
-          y,
-          x: cols / 4,
-          w: cols / 2
-        })))}>
-        <IoIosList />
-      </a>
-    </Controls>
-  )
-)
+    <a
+      href="javascript:;"
+      className={data[0].x === cols / 4 ? 'active' : ''}
+      data-tip="Feed layout"
+      data-place="bottom"
+      onClick={() =>
+        changeLayout(
+          data.map((d, y) => ({
+            ...d,
+            y,
+            x: cols / 4,
+            w: cols / 2
+          }))
+        )
+      }>
+      <IoIosList />
+    </a>
+  </Controls>
+))

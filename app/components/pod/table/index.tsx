@@ -22,17 +22,18 @@ export default compose<TOutter, TOutter>(setDisplayName('pod'))(
         {({ width, height }) => (
           <Table
             width={width}
-            height={height - 60}
+            height={height}
             headerHeight={35}
             rowHeight={50}
             rowCount={data.length}
-            rowGetter={({ index }) => data[index]}>
+            rowGetter={({ index }) => data[index]}
+            disableHeader={true}
+            overscanRowCount={5}>
             <Column
               label={<IoIosLink />}
               dataKey="slug"
               width={26}
               style={{ margin: 0 }}
-              headerStyle={{ margin: 0, textAlign: 'center' }}
               cellRenderer={() => (
                 <div className="datasrc">
                   {Math.random() > 0.5 ? <IoLogoTwitter /> : <IoLogoReddit />}
@@ -45,7 +46,6 @@ export default compose<TOutter, TOutter>(setDisplayName('pod'))(
               label={<IoMdImage />}
               dataKey="image"
               width={30}
-              headerStyle={{ textAlign: 'center' }}
               cellRenderer={({ cellData, rowData: { title } }) => (
                 <figure>
                   <img src={cellData} alt={title} />

@@ -5,24 +5,23 @@ import { focusStyles } from '@/theme'
 import styled from 'styled-components'
 
 export default styled.div`
-  width: 99vw;
-  min-height: 100%;
-  overflow-y: auto;
-
   .react-grid-item {
     transition: none;
 
     &.react-grid-placeholder {
-      ${focusStyles} opacity: 1;
+      ${focusStyles};
+      opacity: 1;
       background: none;
     }
 
     &.resizing,
     &.react-draggable-dragging {
-      opacity: 0.5;
+      pointer-events: none !important;
+      transition: none !important;
 
-      > * {
-        pointer-events: none;
+      * {
+        pointer-events: none !important;
+        transition: none !important;
       }
     }
 

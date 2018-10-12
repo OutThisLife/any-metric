@@ -3,7 +3,6 @@ import withApolloClient from '@/lib/withApollo'
 import themeVars, { focusStyles } from '@/theme'
 import { ApolloClient } from 'apollo-boost'
 import App, { Container } from 'next/app'
-import { rgba } from 'polished'
 import { ApolloProvider } from 'react-apollo'
 import Tooltip from 'react-tooltip'
 import styled, { css, ThemeProvider } from 'styled-components'
@@ -45,26 +44,11 @@ const Main = styled.main`
   grid-template-rows: min-content 1fr;
   grid-template-columns: 1fr;
   height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
 
   ${({ theme }) => css`
-    * {
-      &::-webkit-scrollbar {
-        width: 5px;
-        height: 5px;
-        border-radius: 100px;
-        background: ${rgba(theme.colours.base, 0.03)};
-      }
-
-      &::-webkit-scrollbar-thumb {
-        border-radius: 100px;
-        background: ${theme.colours.base};
-      }
-
-      &::selection {
-        color: #fff;
-        background: ${theme.colours.secondary};
-      }
-    }
+    background: ${theme.colours.panel};
 
     > header {
       grid-area: head;
@@ -83,6 +67,7 @@ const Main = styled.main`
     }
 
     > section {
+      align-self: stretch;
       grid-area: body;
       position: relative;
       overflow: auto;

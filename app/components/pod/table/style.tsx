@@ -9,9 +9,13 @@ export default styled.section`
       outline: none;
     }
 
-    .ReactVirtualized__Table__sortableHeaderIcon {
-      vertical-align: top;
-      transform: translate(2px, 4px);
+    [class$='Table__headerRow'] {
+      user-select: none;
+
+      .ReactVirtualized__Table__sortableHeaderIcon {
+        vertical-align: top;
+        transform: translate(2px, 4px);
+      }
     }
 
     [class$='Table__row'] {

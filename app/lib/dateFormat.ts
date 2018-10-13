@@ -18,7 +18,9 @@ export default (date: dayjs.ConfigType): string => {
       .diff(d, 'day', true) < 2
   ) {
     return (d as any).fromNow()
+  } else if (d.year() === dayjs().year()) {
+    return d.format('MMM DD')
   }
 
-  return d.format()
+  return d.format('MMM DD, YY')
 }

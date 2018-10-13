@@ -12,7 +12,8 @@ export default styled.aside`
       padding: 0 var(--pad);
       border-radius: 4px;
 
-      &.active {
+      &.active,
+      &.active:hover {
         color: ${theme.colours.bg};
         background: ${rgba(theme.colours.secondary, 0.66)};
       }

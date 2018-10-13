@@ -1,6 +1,6 @@
+import dateFormat from '@/lib/dateFormat'
 import { FakeCrawlResult } from '@/server/schema/types'
 import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import {
   IoIosLink,
   IoLogoReddit,
@@ -21,8 +21,6 @@ import {
 } from 'recompose'
 
 import DataTable from './style'
-
-dayjs.extend(relativeTime)
 
 interface TOutter {
   initialData: FakeCrawlResult[]
@@ -114,31 +112,14 @@ export default compose<TState & TStateHandles, TOutter>(
             width={80}
             headerStyle={{ textAlign: 'left' }}
             style={{ textAlign: 'left' }}
-            cellRenderer={({ cellData: date }: Cell) => {
-              const d = dayjs(date)
-
-              return (
-                <time title={d.valueOf().toString()}>
-                  {(() => {
-                    if (
-                      dayjs()
-                        .add(12, 'hour')
-                        .diff(d, 'day', true) < 1.4
-                    ) {
-                      return d.format('H:mm a')
-                    } else if (
-                      dayjs()
-                        .add(24, 'hour')
-                        .diff(d, 'day', true) < 2
-                    ) {
-                      return (d as any).fromNow()
-                    }
-
-                    return d.format()
-                  })()}
-                </time>
-              )
-            }}
+            cellRenderer={({ cellData: date }: Cell) => (
+              <time
+                title={dayjs(date)
+                  .valueOf()
+                  .toString()}>
+                {dateFormat(date)}
+              </time>
+            )}
           />
 
           <Column

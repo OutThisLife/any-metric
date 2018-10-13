@@ -52,7 +52,6 @@ export default styled.section`
       }
 
       time {
-        font-weight: 400;
         font-size: 0.9em;
         margin-left: auto;
       }

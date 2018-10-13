@@ -5,6 +5,7 @@ import {
   IoIosLink,
   IoLogoReddit,
   IoLogoTwitter,
+  IoMdCalendar,
   IoMdImage,
   IoMdOpen
 } from 'react-icons/io'
@@ -96,20 +97,6 @@ export default compose<TState & TStateHandles, TOutter>(
           sortDirection={sortDirection}
           overscanRowCount={5}>
           <Column
-            label={<IoIosLink />}
-            dataKey="slug"
-            width={26}
-            style={{ margin: 0 }}
-            disableSort={true}
-            cellRenderer={() => (
-              <div className="datasrc">
-                {Math.random() > 0.5 ? <IoLogoTwitter /> : <IoLogoReddit />}
-                <IoMdOpen />
-              </div>
-            )}
-          />
-
-          <Column
             label={<IoMdImage />}
             dataKey="image"
             width={30}
@@ -119,6 +106,39 @@ export default compose<TState & TStateHandles, TOutter>(
                 <img src={cellData} alt={title} />
               </figure>
             )}
+          />
+
+          <Column
+            label={<IoMdCalendar />}
+            dataKey="date"
+            width={80}
+            headerStyle={{ textAlign: 'left' }}
+            style={{ textAlign: 'left' }}
+            cellRenderer={({ cellData: date }: Cell) => {
+              const d = dayjs(date)
+
+              return (
+                <time title={d.valueOf().toString()}>
+                  {(() => {
+                    if (
+                      dayjs()
+                        .add(12, 'hour')
+                        .diff(d, 'day', true) < 1.4
+                    ) {
+                      return d.format('H:mm a')
+                    } else if (
+                      dayjs()
+                        .add(24, 'hour')
+                        .diff(d, 'day', true) < 2
+                    ) {
+                      return (d as any).fromNow()
+                    }
+
+                    return d.format()
+                  })()}
+                </time>
+              )
+            }}
           />
 
           <Column
@@ -146,20 +166,18 @@ export default compose<TState & TStateHandles, TOutter>(
           />
 
           <Column
-            label="Date"
-            dataKey="date"
-            width={80}
+            label={<IoIosLink />}
+            dataKey="slug"
+            width={26}
+            style={{ margin: 0 }}
+            disableSort={true}
             headerStyle={{ textAlign: 'right' }}
-            style={{ textAlign: 'right' }}
-            cellRenderer={({ cellData: date }) => {
-              const d = dayjs(date)
-
-              return (
-                <time title={d.valueOf().toString()}>
-                  {d.day() === dayjs().day() ? d.format('h:mm a') : d.from()}
-                </time>
-              )
-            }}
+            cellRenderer={() => (
+              <div className="datasrc">
+                {Math.random() > 0.5 ? <IoLogoTwitter /> : <IoLogoReddit />}
+                <IoMdOpen />
+              </div>
+            )}
           />
         </Table>
       )}

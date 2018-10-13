@@ -2,9 +2,12 @@ import { darken } from 'polished'
 import styled, { css } from 'styled-components'
 
 export default styled.header`
+  padding: 0 0 var(--pad);
+
   ${({ theme }) => css`
     cursor: move;
     position: relative;
+    padding: var(--pad);
 
     .drag-h {
       z-index: 1;

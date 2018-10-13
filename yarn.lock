@@ -1257,6 +1257,13 @@
   dependencies:
     "@types/webpack" "*"
 
+"@types/graphql-iso-date@^3.3.0":
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/@types/graphql-iso-date/-/graphql-iso-date-3.3.0.tgz#31ec2ddcbac146b4fe7e2afe459d589ee3363115"
+  integrity sha512-SDwKEdM5Ne3Lj8UVKLt494qAA7bdlpcQmuZgFPfazV0ZiDrjlNdLsALjdkNte+A2jS4KNBSNPru1oTG+8UsCWQ==
+  dependencies:
+    "@types/graphql" "*"
+
 "@types/graphql-type-json@^0.1.2":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@types/graphql-type-json/-/graphql-type-json-0.1.2.tgz#c2821b203019c42a7f6f1377afc8b1976c5fd541"
@@ -1321,15 +1328,15 @@
   resolved "https://registry.npmjs.org/@types/mime/-/mime-2.0.0.tgz#5a7306e367c539b9f6543499de8dd519fac37a8b"
   integrity sha512-A2TAGbTFdBw9azHbpVd+/FkdW2T6msN1uct1O9bH3vTerEHKZhTXJUQXy+hNq1B0RagfU8U+KBdqiZpxjhOUQA==
 
-"@types/newrelic@^3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@types/newrelic/-/newrelic-3.3.0.tgz#48b36efe66335e75d54891cdb489511aa56565b7"
-  integrity sha512-PCvAaWRYbVPegHrblql+H/BJcc5+gAOe6Chp4xVXzWRpaRWHV1Ack1gCSfMdlBtuP1qpOgVi7w5osIkG60TVfA==
+"@types/newrelic@^3.3.1":
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/@types/newrelic/-/newrelic-3.3.1.tgz#06584f657a0744be93ef38bd0c7d3116e66396da"
+  integrity sha512-L8Iq+Ns9uS21gWDQzSgtvntIXDHy+8GWlNwxGl8T5g67a/Qwm/wspuvh7qKD5/f4wgqEVTOfWHt4+w4TSkRRBg==
 
-"@types/next@^7.0.1":
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/@types/next/-/next-7.0.1.tgz#c05ac38cce3312fe178bcd43cad8b2a4c61c4cda"
-  integrity sha512-ok79W66vxaF2vncl/BrnXdTuZwHcs677jljEuq7RSgtxDquXAfWagcPnzJCGxUQ1dIq//oi+WSpWyTroYVjMrQ==
+"@types/next@^7.0.2":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@types/next/-/next-7.0.2.tgz#e8ab0c9a7b8865dc56f1d06f60e16b3630f4fa28"
+  integrity sha512-ojVYWDwJoMTtOgKq1BL6obQ6+vJ9XPnq3Msb1l5dlUd2WE1juDfS+Sejbxj3wYYuexBj3jPnZisNjy2ilHumcw==
   dependencies:
     "@types/node" "*"
     "@types/node-fetch" "*"
@@ -1443,6 +1450,11 @@
   dependencies:
     "@types/express-serve-static-core" "*"
     "@types/mime" "*"
+
+"@types/shortid@^0.0.29":
+  version "0.0.29"
+  resolved "https://registry.yarnpkg.com/@types/shortid/-/shortid-0.0.29.tgz#8093ee0416a6e2bf2aa6338109114b3fbffa0e9b"
+  integrity sha1-gJPuBBam4r8qpjOBCRFLP7/6Dps=
 
 "@types/styled-components@^4.0.1":
   version "4.0.1"
@@ -5013,6 +5025,11 @@ graphql-extensions@0.1.3:
   integrity sha512-q+d1bTR7GW4qRiZP17SXN0TZo+k/I1FEKYd6H4JMbxzpY8mqTLbg8MzrLu7LxafF+mPEJwRfipcEcA375k3eXA==
   dependencies:
     apollo-server-env "2.0.3"
+
+graphql-iso-date@^3.6.1:
+  version "3.6.1"
+  resolved "https://registry.yarnpkg.com/graphql-iso-date/-/graphql-iso-date-3.6.1.tgz#bd2d0dc886e0f954cbbbc496bbf1d480b57ffa96"
+  integrity sha512-AwFGIuYMJQXOEAgRlJlFL4H1ncFM8n8XmoVDTNypNOZyQ8LFDG2ppMFlsS862BSTCDcSUfHp8PD3/uJhv7t59Q==
 
 graphql-subscriptions@^0.5.8:
   version "0.5.8"

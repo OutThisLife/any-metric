@@ -1,5 +1,4 @@
 import { Presets } from '@/components/charts/presets'
-import { FakeStockResult } from '@/server/schema/types'
 import { cloneDeep } from 'apollo-utilities'
 import { format } from 'd3-format'
 import { timeFormat, timeParse } from 'd3-time-format'
@@ -30,7 +29,7 @@ import {
 } from 'recompose'
 
 interface TOutter {
-  data?: FakeStockResult[]
+  data?: any[]
   type?: keyof Presets
   width: number
   height: number
@@ -55,8 +54,12 @@ export default compose<TOutter, TOutter>(
   )
 
   const calculatedData = change()(parsed)
-  const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(d => d.date)
-  const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(calculatedData)
+  const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
+    d => d.date
+  )
+  const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(
+    calculatedData
+  )
 
   const start = xAccessor(last(data))
   const end = xAccessor(data[Math.max(0, data.length - 150)])
@@ -78,9 +81,22 @@ export default compose<TOutter, TOutter>(
             xAccessor={xAccessor}
             displayXAccessor={displayXAccessor}
             xExtents={xExtents}>
-            <Chart id={2} yExtents={[d => d.volume]} height={150} origin={(_, h) => [0, h - 150]}>
-              <YAxis axisAt="left" orient="left" ticks={5} tickFormat={format('.2s')} />
-              <MouseCoordinateY at="left" orient="left" displayFormat={format('.4s')} />
+            <Chart
+              id={2}
+              yExtents={[d => d.volume]}
+              height={150}
+              origin={(_, h) => [0, h - 150]}>
+              <YAxis
+                axisAt="left"
+                orient="left"
+                ticks={5}
+                tickFormat={format('.2s')}
+              />
+              <MouseCoordinateY
+                at="left"
+                orient="left"
+                displayFormat={format('.4s')}
+              />
 
               <BarSeries
                 yAccessor={d => d.volume}
@@ -90,12 +106,23 @@ export default compose<TOutter, TOutter>(
               />
             </Chart>
 
-            <Chart id={1} yExtents={[d => [d.high, d.low]]} padding={{ top: 40, bottom: 20 }}>
+            <Chart
+              id={1}
+              yExtents={[d => [d.high, d.low]]}
+              padding={{ top: 40, bottom: 20 }}>
               <XAxis axisAt="bottom" orient="bottom" />
               <YAxis axisAt="right" orient="right" ticks={5} />
 
-              <MouseCoordinateX at="bottom" orient="bottom" displayFormat={timeFormat('%Y-%m-%d')} />
-              <MouseCoordinateY at="right" orient="right" displayFormat={format('.2f')} />
+              <MouseCoordinateX
+                at="bottom"
+                orient="bottom"
+                displayFormat={timeFormat('%Y-%m-%d')}
+              />
+              <MouseCoordinateY
+                at="right"
+                orient="right"
+                displayFormat={format('.2f')}
+              />
 
               <VolumeProfileSeries />
               <CandlestickSeries />

@@ -8,23 +8,26 @@ interface TInner extends LayoutProps {
   base: Partial<ReactGridLayout.Layout>
 }
 
+const gridFactor = 2
+const listFactor = 10
+
 export default compose<TInner, {}>(
   setDisplayName('header-controls'),
   withLayout()
-)(({ changeLayout, layoutData: { layout: { cols, data } } }) => (
+)(({ changeLayout, layoutData: { layout: { cols, data: layout } } }) => (
   <Controls>
     <a
       href="javascript:;"
-      className={data[0].x === 0 ? 'active' : ''}
+      className={layout[0].x === 0 ? 'active' : ''}
       data-tip="Grid layout"
       data-place="bottom"
       onClick={() =>
         changeLayout(
-          data.map((d, y) => ({
+          layout.map((d, y) => ({
             ...d,
-            y: Math.max(0, y - 2),
-            x: (y % 2) * (cols / 2),
-            w: cols / 2
+            y: Math.max(0, y - gridFactor),
+            x: (y % gridFactor) * (cols / gridFactor),
+            w: cols / gridFactor
           }))
         )
       }>
@@ -33,16 +36,16 @@ export default compose<TInner, {}>(
 
     <a
       href="javascript:;"
-      className={data[0].x === cols / 4 ? 'active' : ''}
+      className={layout[0].x === cols / listFactor ? 'active' : ''}
       data-tip="Feed layout"
       data-place="bottom"
       onClick={() =>
         changeLayout(
-          data.map((d, y) => ({
+          layout.map((d, y) => ({
             ...d,
             y,
-            x: cols / 4,
-            w: cols / 2
+            x: cols / listFactor,
+            w: cols - (cols / listFactor) * 2
           }))
         )
       }>

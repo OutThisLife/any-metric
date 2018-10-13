@@ -3,6 +3,7 @@ import * as LRU from 'lru-cache'
 
 export default gql`
   scalar JSON
+  scalar Date
 
   input Selector {
     parent: String
@@ -31,19 +32,8 @@ export default gql`
     price: String
     copy: String
     slug: String
-  }
-
-  type FakeStockResult {
-    date: String
-    open: String
-    high: String
-    low: String
-    close: String
-    volume: String
-    split: String
-    dividend: String
-    absoluteChange: String
-    percentChange: String
+    date: Date
+    tags: [String]
   }
 
   type Query {
@@ -53,7 +43,6 @@ export default gql`
     layout: LayoutResult
 
     fakeCrawl(seed: Int): [FakeCrawlResult]
-    fakeStock: [FakeStockResult]
   }
 
   type Mutation {
@@ -82,17 +71,6 @@ export interface FakeCrawlResult {
   price?: string
   copy?: string
   slug?: string
-}
-
-export interface FakeStockResult {
-  date?: string
-  open?: number
-  high?: number
-  low?: number
-  close?: number
-  volume?: number
-  split?: number
-  dividend?: number
-  absoluteChange?: number
-  percentChange?: number
+  date?: Date
+  tags?: string[]
 }

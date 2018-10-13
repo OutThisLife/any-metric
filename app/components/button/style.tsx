@@ -1,4 +1,5 @@
 import { darken, lighten } from 'polished'
+import { createElement } from 'react'
 import styled, { css } from 'styled-components'
 
 const variants = ({ theme, variant = 'normal' }: any) => {
@@ -29,7 +30,9 @@ const variants = ({ theme, variant = 'normal' }: any) => {
   }
 }
 
-export default styled.button`
+export default styled(({ element = 'button', ...props }: any) =>
+  createElement(element, props)
+)`
   cursor: pointer;
   display: inline-block;
   position: relative;
@@ -43,7 +46,7 @@ export default styled.button`
   border-radius: 2px;
   background: var(--bg, transparent);
 
-  + [class*="Button"] {
+  + [class*='Button'] {
     margin-left: var(--pad);
   }
 

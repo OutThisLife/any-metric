@@ -5,7 +5,6 @@ export default styled.div`
   ${({ theme }) => css`
     position: relative;
     height: auto;
-    padding: var(--pad);
     border: 1px solid transparent;
     border-radius: 4px 4px 0 0;
     box-shadow: 0 1px 3px 0 ${rgba(theme.colours.base, 0.15)};

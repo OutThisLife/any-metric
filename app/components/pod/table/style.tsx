@@ -3,10 +3,15 @@ import 'react-virtualized/styles.css'
 import { darken, rgba } from 'polished'
 import styled, { css } from 'styled-components'
 
-export default styled.div`
+export default styled.section`
   ${({ theme }) => css`
     [tabindex]:focus {
       outline: none;
+    }
+
+    .ReactVirtualized__Table__sortableHeaderIcon {
+      vertical-align: top;
+      transform: translate(2px, 4px);
     }
 
     [class$='Table__row'] {
@@ -46,18 +51,10 @@ export default styled.div`
         margin: 0;
       }
 
-      strong {
-        display: flex;
-        font-weight: 700;
-
-        time {
-          font-weight: 400;
-          margin-left: auto;
-        }
-      }
-
-      &:not(:hover) strong time {
-        opacity: 0.5;
+      time {
+        font-weight: 400;
+        font-size: 0.9em;
+        margin-left: auto;
       }
 
       p {
@@ -91,6 +88,41 @@ export default styled.div`
           stroke: none;
           transform: translate(-45%, -50%);
         }
+      }
+
+      .copy {
+        display: flex;
+        align-items: baseline;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        span:first-of-type {
+          flex: 1 0 50%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        span:last-of-type {
+          margin-left: 8px;
+
+          label {
+            color: ${theme.colours.base};
+            font-size: 0.9em;
+            padding: 1px 5px;
+            background: rgba(255, 212, 90, 1);
+
+            + label {
+              margin-left: 2px;
+            }
+          }
+        }
+      }
+
+      &:not(:hover) .copy span:last-of-type {
+        opacity: 0.5;
       }
     }
   `};

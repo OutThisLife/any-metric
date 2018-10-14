@@ -2,16 +2,10 @@ import * as faker from 'faker'
 import { GraphQLDateTime } from 'graphql-iso-date'
 import { IResolvers } from 'graphql-tools'
 import * as GraphQLJSON from 'graphql-type-json'
-import * as LRU from 'lru-cache'
 
 import { setLayout } from './mutations'
 import { crawl, layout, search } from './queries'
 import { Context, FakeCrawlResult, Result } from './types'
-
-export const cache = LRU({
-  max: 152,
-  maxAge: 36e2
-})
 
 export { crawl, layout, search, setLayout }
 export { default as typeDefs } from './types'

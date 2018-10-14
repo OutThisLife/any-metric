@@ -3,7 +3,7 @@ import * as md5 from 'md5'
 import { parse } from 'url'
 import * as XRay from 'x-ray'
 
-import { cache } from '../'
+import { cache } from '../..'
 import { Context, Result } from '../types'
 
 export interface Selector {
@@ -18,11 +18,17 @@ interface Args {
   children?: Selector[]
 }
 
-export default (async (_, { url, parent = 'html', children = [] }: Args): Promise<Result> => {
+export default (async (
+  _,
+  { url, parent = 'html', children = [] }: Args
+): Promise<Result> => {
   const x = XRay()
   const { hostname } = parse(url)
 
-  const selectors = children.reduce((acc, { name, el }: Selector) => ((acc[name] = el), acc), {})
+  const selectors = children.reduce(
+    (acc, { name, el }: Selector) => ((acc[name] = el), acc),
+    {}
+  )
   const id = md5(`${url}${JSON.stringify(selectors)}`)
 
   if (!cache.has(id)) {

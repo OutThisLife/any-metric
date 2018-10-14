@@ -3,10 +3,11 @@ import * as compression from 'compression'
 import * as express from 'express'
 import { RequestHandlerParams } from 'express-serve-static-core'
 import * as helmet from 'helmet'
+import * as LRU from 'lru-cache'
 import * as next from 'next'
 import * as path from 'path'
 
-import resolvers, { cache, typeDefs } from './schema'
+import resolvers, { typeDefs } from './schema'
 
 const dev = process.env.NODE_ENV !== 'production'
 
@@ -19,6 +20,11 @@ const port = parseInt(process.env.PORT, 10) || 3000
 
 const nextApp = next({ dir, dev })
 const handle = nextApp.getRequestHandler() as RequestHandlerParams
+
+export const cache = LRU({
+  max: 152,
+  maxAge: 36e2
+})
 
 // -----------------------------------------
 
@@ -57,13 +63,6 @@ const render = (page = '/') => (
 
 nextApp.prepare().then(() => {
   const app = express()
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    introspection: dev,
-    playground: dev,
-    context: { cache }
-  })
 
   if (!dev) {
     app
@@ -83,7 +82,14 @@ nextApp.prepare().then(() => {
       })
   }
 
-  server.applyMiddleware({ app })
+  require('./api').applyMiddleware(app)
+  new ApolloServer({
+    typeDefs,
+    resolvers,
+    introspection: dev,
+    playground: dev,
+    context: { cache }
+  }).applyMiddleware({ app })
 
   app
     .use((req, res, resolve) => {
@@ -101,6 +107,7 @@ nextApp.prepare().then(() => {
 
       return resolve()
     })
+
     .get('/', render('/index'))
 
     .get('/:slug([A-z-]+)/:id([A-z0-9-]+)?', (req, res, resolve) => {

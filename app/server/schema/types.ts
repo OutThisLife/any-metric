@@ -15,10 +15,12 @@ export default gql`
     id: ID
     title: String
     img: String
+    date: Date
     url: String
     hostname: String
     meta: JSON
     data(limit: Int): JSON
+    tags: [String]
   }
 
   type LayoutResult {
@@ -39,9 +41,7 @@ export default gql`
   type Query {
     crawl(url: String!, parent: String!, children: [Selector]!): CrawlResult
     search(q: String!): CrawlResult
-    history: [CrawlResult]
     layout: LayoutResult
-
     fakeCrawl(seed: Int): [FakeCrawlResult]
   }
 
@@ -60,9 +60,11 @@ export interface Result {
   title: string
   img?: string
   url: string
+  date?: Date
   hostname: string
   meta?: any
   data?: any
+  tags?: string[]
 }
 
 export interface FakeCrawlResult {

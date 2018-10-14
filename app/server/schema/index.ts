@@ -18,7 +18,6 @@ export default {
     crawl,
     search,
     layout,
-    history: (_, __, ctx): Result[] => ctx.cache.values().filter(o => o.id),
 
     fakeCrawl: (_, { seed = 100 }): FakeCrawlResult[] => {
       faker.seed(seed)

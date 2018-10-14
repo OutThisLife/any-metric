@@ -9,13 +9,13 @@ module.exports = {
       '/screenshot/:site',
       async (
         {
+          params: { site = 'example.com' },
           query: {
             w: width = 1000,
             h: height = 600,
             q: quality = 40,
-            ssl = true
-          },
-          params: { site = 'example.com' }
+            schema = 'https'
+          }
         },
         res
       ) => {
@@ -27,7 +27,7 @@ module.exports = {
             const page = await browser.newPage()
 
             page.setViewport({ width, height, deviceScaleFactor: 1 })
-            await page.goto(`http${ssl ? 's' : ''}://${site}`, {
+            await page.goto(`${schema}://${site}`, {
               waitUntil: 'networkidle0'
             })
 

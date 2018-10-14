@@ -50,14 +50,18 @@ export default class extends Document<{ styleTags: string }> {
           }
 
           *::-webkit-scrollbar {
-            width: 5px;
+            width: 8px;
             height: 5px;
-            border-radius: 100px;
+            border: 1px ridge transparent;
+            background: transparent;
+          }
+
+          *::-webkit-scrollbar:hover {
+            border-color: ${rgba(colours.base, 0.1)};
             background: ${rgba(colours.base, 0.03)};
           }
 
           *::-webkit-scrollbar-thumb {
-            border-radius: 100px;
             background: ${colours.base};
           }
 

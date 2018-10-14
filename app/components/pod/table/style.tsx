@@ -12,6 +12,10 @@ export default styled.section`
     [class$='Table__headerRow'] {
       user-select: none;
 
+      [aria-sort] {
+        color: ${theme.colours.secondary};
+      }
+
       .ReactVirtualized__Table__sortableHeaderIcon {
         vertical-align: top;
         transform: translate(2px, 4px);
@@ -19,8 +23,6 @@ export default styled.section`
     }
 
     [class$='Table__row'] {
-      cursor: pointer;
-      position: relative;
       box-shadow: inset 0 1px 0 ${theme.colours.panel};
 
       &:first-of-type {

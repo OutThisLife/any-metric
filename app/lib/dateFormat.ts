@@ -11,7 +11,7 @@ export default (date: dayjs.ConfigType): string => {
       .add(12, 'hour')
       .diff(d, 'day', true) < 1.4
   ) {
-    return d.format('H:mm a')
+    return d.format('h:mm a')
   } else if (
     dayjs()
       .add(24, 'hour')

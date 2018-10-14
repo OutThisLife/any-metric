@@ -9,7 +9,13 @@ import {
   IoMdImage,
   IoMdOpen
 } from 'react-icons/io'
-import { AutoSizer, Column, SortDirectionType, Table } from 'react-virtualized'
+import {
+  ArrowKeyStepper,
+  AutoSizer,
+  Column,
+  SortDirectionType,
+  Table
+} from 'react-virtualized'
 import {
   compose,
   setDisplayName,
@@ -40,9 +46,9 @@ interface TStateHandles extends StateHandlerMap<TState> {
   onSort: StateHandler<TState>
 }
 
-interface Cell {
-  cellData?: keyof FakeCrawlResult
-  rowData?: FakeCrawlResult
+interface Cell<T = FakeCrawlResult> {
+  cellData?: T[keyof T]
+  rowData?: T
 }
 
 export default compose<TState & TStateHandles, TOutter>(
@@ -81,88 +87,90 @@ export default compose<TState & TStateHandles, TOutter>(
   )
 )(({ onSort, sort: { sortBy, sortDirection }, data = [] }) => (
   <DataTable>
-    <AutoSizer>
-      {({ width, height }) => (
-        <Table
-          width={width}
-          height={height}
-          headerHeight={35}
-          rowHeight={50}
-          rowCount={data.length}
-          rowGetter={({ index }) => data[index]}
-          sort={onSort}
-          sortBy={sortBy}
-          sortDirection={sortDirection}
-          overscanRowCount={5}>
-          <Column
-            label={<IoMdImage />}
-            dataKey="image"
-            width={30}
-            disableSort={true}
-            cellRenderer={({ cellData, rowData: { title } }: Cell) => (
-              <figure>
-                <img src={cellData} alt={title} />
-              </figure>
-            )}
-          />
+    <ArrowKeyStepper columnCount={4} rowCount={data.length}>
+      {({ onSectionRendered, scrollToColumn, scrollToRow }) => (
+        <AutoSizer>
+          {({ width, height }) => (
+            <Table
+              width={width}
+              height={height}
+              headerHeight={35}
+              rowHeight={50}
+              rowCount={data.length}
+              rowGetter={({ index }) => data[index]}
+              sort={onSort}
+              sortBy={sortBy}
+              sortDirection={sortDirection}
+              onSectionRendered={onSectionRendered}
+              scrollToColumn={scrollToColumn}
+              scrollToRow={scrollToRow}
+              overscanRowCount={5}>
+              <Column
+                label={<IoMdImage />}
+                dataKey="image"
+                width={30}
+                disableSort={true}
+                cellRenderer={({ cellData: img, rowData: { title } }: Cell) => (
+                  <figure>
+                    <img src={img} alt={title} />
+                  </figure>
+                )}
+              />
 
-          <Column
-            label={<IoMdCalendar />}
-            dataKey="date"
-            width={80}
-            headerStyle={{ textAlign: 'left' }}
-            style={{ textAlign: 'left' }}
-            cellRenderer={({ cellData: date }: Cell) => (
-              <time
-                title={dayjs(date)
-                  .valueOf()
-                  .toString()}>
-                {dateFormat(date)}
-              </time>
-            )}
-          />
+              <Column
+                label={<IoMdCalendar />}
+                dataKey="date"
+                width={80}
+                headerStyle={{ textAlign: 'center' }}
+                style={{ textAlign: 'center' }}
+                cellRenderer={({ cellData: date }: Cell) => (
+                  <time title={dayjs(date).format()}>{dateFormat(date)}</time>
+                )}
+              />
 
-          <Column
-            label="Content"
-            dataKey="title"
-            width={100}
-            flexGrow={1}
-            cellRenderer={({
-              cellData: title,
-              rowData: { copy, tags }
-            }: Cell) => (
-              <div>
-                <strong>{title}</strong>
+              <Column
+                label="Content"
+                dataKey="title"
+                width={100}
+                flexGrow={1}
+                cellRenderer={({
+                  cellData: title,
+                  rowData: { copy, tags }
+                }: Cell) => (
+                  <div>
+                    <strong>{title}</strong>
 
-                <div className="copy">
-                  <span>{copy}</span>
-                  <span>
-                    {tags.filter(t => t).map(t => (
-                      <label key={`label-${t}`}>{t}</label>
-                    ))}
-                  </span>
-                </div>
-              </div>
-            )}
-          />
+                    <div className="copy">
+                      <span>{copy}</span>
+                      <span>
+                        {tags.filter(t => t).map(t => (
+                          <label key={`label-${t}`}>{t}</label>
+                        ))}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              />
 
-          <Column
-            label={<IoIosLink />}
-            dataKey="slug"
-            width={26}
-            style={{ margin: 0 }}
-            disableSort={true}
-            headerStyle={{ textAlign: 'right' }}
-            cellRenderer={() => (
-              <div className="datasrc">
-                {Math.random() > 0.5 ? <IoLogoTwitter /> : <IoLogoReddit />}
-                <IoMdOpen />
-              </div>
-            )}
-          />
-        </Table>
+              <Column
+                label={<IoIosLink />}
+                dataKey="slug"
+                width={26}
+                style={{ margin: 0 }}
+                disableSort={true}
+                headerStyle={{ textAlign: 'right' }}
+                cellRenderer={() => (
+                  <div className="datasrc">
+                    {Math.random() > 0.5 ? <IoLogoTwitter /> : <IoLogoReddit />}
+                    <IoMdOpen />
+                  </div>
+                )}
+              />
+            </Table>
+          )}
+        </AutoSizer>
       )}
-    </AutoSizer>
+    </ArrowKeyStepper>
   </DataTable>
 ))
 

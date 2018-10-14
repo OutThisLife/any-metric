@@ -16,7 +16,6 @@ export default styled.div`
 
     &.resizing,
     &.react-draggable-dragging {
-      pointer-events: none !important;
       transition: none !important;
 
       * {

@@ -24,3 +24,8 @@ export default (date: dayjs.ConfigType): string => {
 
   return d.format('MMM DD, YY')
 }
+
+export const unixDateFormat = (date: dayjs.ConfigType): string =>
+  dayjs(date)
+    .valueOf()
+    .toString()

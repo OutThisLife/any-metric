@@ -51,12 +51,12 @@ export default compose<TOutter & TStateHandles & TState, TOutter>(
 
     <Nav
       active={filter}
-      onClick={filterData}
+      filterData={filterData}
       tags={props.initialData
         .reduce((acc, d) => acc.push(...d.tags) && acc, [])
         .filter((t, i, self) => t && self.indexOf(t) === i)}
     />
 
-    <DataTable initialData={props.data} />
+    <DataTable initialData={props.data} filterData={filterData} />
   </Inner>
 ))

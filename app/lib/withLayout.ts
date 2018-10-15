@@ -1,5 +1,5 @@
 import { getLayout } from '@/lib/queries'
-import { Layout } from '@/server/schema/queries/layout'
+import { cols, Layout } from '@/server/schema/queries/layout'
 import { MutationFunc } from 'react-apollo'
 import { compose, setDisplayName, withHandlers } from 'recompose'
 
@@ -26,7 +26,7 @@ export default () =>
             __typename: 'Mutation',
             setLayout: {
               __typename: 'setLayout',
-              cols: 40,
+              cols,
               data: layout
             }
           }

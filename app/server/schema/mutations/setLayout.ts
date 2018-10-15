@@ -1,6 +1,6 @@
 import { IFieldResolver } from 'graphql-tools'
 
-import { Layout } from '../queries/layout'
+import { cols as defaultCols, Layout } from '../queries/layout'
 import { Context } from '../types'
 
 interface Args {
@@ -8,7 +8,7 @@ interface Args {
   layout: string
 }
 
-export default ((_, { cols = 40, layout }: Args, ctx): Layout => {
+export default ((_, { cols = defaultCols, layout }: Args, ctx): Layout => {
   const data = JSON.parse(layout)
   ctx.cache.set('BAPH_LAYOUT', data)
   return { cols, data }

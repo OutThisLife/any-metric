@@ -1,14 +1,6 @@
-import dateFormat from '@/lib/dateFormat'
 import { FakeCrawlResult } from '@/server/schema/types'
 import dayjs from 'dayjs'
-import {
-  IoIosLink,
-  IoLogoReddit,
-  IoLogoTwitter,
-  IoMdCalendar,
-  IoMdImage,
-  IoMdOpen
-} from 'react-icons/io'
+import { IoIosLink, IoMdCalendar, IoMdImage } from 'react-icons/io'
 import {
   ArrowKeyStepper,
   AutoSizer,
@@ -26,10 +18,12 @@ import {
   withStateHandlers
 } from 'recompose'
 
+import * as Columns from './columns'
 import DataTable from './style'
 
 interface TOutter {
   initialData: FakeCrawlResult[]
+  filterData: (t: string) => void
 }
 
 interface TState {
@@ -44,11 +38,6 @@ interface SortProps {
 
 interface TStateHandles extends StateHandlerMap<TState> {
   onSort: StateHandler<TState>
-}
-
-interface Cell<T = FakeCrawlResult> {
-  cellData?: T[keyof T]
-  rowData?: T
 }
 
 export default compose<TState & TStateHandles, TOutter>(
@@ -85,7 +74,7 @@ export default compose<TState & TStateHandles, TOutter>(
       !shallowEqual(props.initialData, nextProps.initialData),
     ({ onSort, sort, initialData }) => onSort(sort, initialData)
   )
-)(({ onSort, sort: { sortBy, sortDirection }, data = [] }) => (
+)(({ filterData, onSort, sort: { sortBy, sortDirection }, data = [] }) => (
   <DataTable>
     <ArrowKeyStepper columnCount={4} rowCount={data.length}>
       {({ onSectionRendered, scrollToColumn, scrollToRow }) => (
@@ -110,11 +99,7 @@ export default compose<TState & TStateHandles, TOutter>(
                 dataKey="image"
                 width={30}
                 disableSort={true}
-                cellRenderer={({ cellData: img, rowData: { title } }: Cell) => (
-                  <figure>
-                    <img src={img} alt={title} />
-                  </figure>
-                )}
+                cellRenderer={Columns.Image}
               />
 
               <Column
@@ -123,9 +108,7 @@ export default compose<TState & TStateHandles, TOutter>(
                 width={80}
                 headerStyle={{ textAlign: 'center' }}
                 style={{ textAlign: 'center' }}
-                cellRenderer={({ cellData: date }: Cell) => (
-                  <time title={dayjs(date).format()}>{dateFormat(date)}</time>
-                )}
+                cellRenderer={Columns.Date}
               />
 
               <Column
@@ -133,22 +116,8 @@ export default compose<TState & TStateHandles, TOutter>(
                 dataKey="title"
                 width={100}
                 flexGrow={1}
-                cellRenderer={({
-                  cellData: title,
-                  rowData: { copy, tags }
-                }: Cell) => (
-                  <div>
-                    <strong>{title}</strong>
-
-                    <div className="copy">
-                      <span>{copy}</span>
-                      <span>
-                        {tags.filter(t => t).map(t => (
-                          <label key={`label-${t}`}>{t}</label>
-                        ))}
-                      </span>
-                    </div>
-                  </div>
+                cellRenderer={props => (
+                  <Columns.Title {...props} filterData={filterData} />
                 )}
               />
 
@@ -159,12 +128,7 @@ export default compose<TState & TStateHandles, TOutter>(
                 style={{ margin: 0 }}
                 disableSort={true}
                 headerStyle={{ textAlign: 'right' }}
-                cellRenderer={() => (
-                  <div className="datasrc">
-                    {Math.random() > 0.5 ? <IoLogoTwitter /> : <IoLogoReddit />}
-                    <IoMdOpen />
-                  </div>
-                )}
+                cellRenderer={Columns.Link}
               />
             </Table>
           )}

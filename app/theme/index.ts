@@ -9,6 +9,7 @@ export const colours = {
 
   good: 'rgb(97, 205, 187)',
   bad: 'rgb(244, 117, 96)',
+  label: 'rgb(255, 212, 90)',
 
   get brand() {
     return this.base
@@ -25,7 +26,9 @@ export const fonts = {
     copy: 'Rubik',
     src() {
       const fmt = (s: string): string => s.replace(' ', '+')
-      return `//fonts.googleapis.com/css?family=${fmt(this.title)}|${fmt(this.copy)}`
+      return `//fonts.googleapis.com/css?family=${fmt(this.title)}|${fmt(
+        this.copy
+      )}`
     }
   }
 }

@@ -3,17 +3,17 @@ import Button from '@/components/button'
 import Nav from './style'
 
 interface TOutter {
-  onClick: (t: string) => void
+  filterData: (t: string) => void
   active?: string
   tags: string[]
 }
 
-export default ({ tags, active, onClick }: TOutter) => (
+export default ({ tags, active, filterData }: TOutter) => (
   <Nav>
     <a
       href="javascript:;"
       className={!active ? 'active' : ''}
-      onClick={() => onClick('')}>
+      onClick={() => filterData('')}>
       Everything
     </a>
 
@@ -22,7 +22,7 @@ export default ({ tags, active, onClick }: TOutter) => (
         key={`tag-${t}`}
         href="javascript:;"
         className={active === t ? 'active' : ''}
-        onClick={() => onClick(t)}
+        onClick={() => filterData(t)}
         dangerouslySetInnerHTML={{ __html: t }}
       />
     ))}

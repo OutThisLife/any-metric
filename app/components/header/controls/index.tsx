@@ -1,4 +1,5 @@
 import withLayout, { LayoutProps } from '@/lib/withLayout'
+import { gridFactor, listFactor } from '@/server/schema/queries/layout'
 import { IoIosList, IoMdApps } from 'react-icons/io'
 import { compose, setDisplayName } from 'recompose'
 
@@ -7,9 +8,6 @@ import Controls from './style'
 interface TInner extends LayoutProps {
   base: Partial<ReactGridLayout.Layout>
 }
-
-const gridFactor = 2
-const listFactor = 10
 
 export default compose<TInner, {}>(
   setDisplayName('header-controls'),

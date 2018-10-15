@@ -1,4 +1,6 @@
+import Dropdown from '@/components/dropdown'
 import { darken, rgba } from 'polished'
+import { MdLabelOutline } from 'react-icons/md'
 import styled, { css } from 'styled-components'
 
 import { Cell } from '.'
@@ -13,7 +15,16 @@ export default ({
   filterData
 }: TOutter) => (
   <Title>
-    <strong>{title}</strong>
+    <h4>
+      <Dropdown label={<MdLabelOutline />} />
+
+      <a
+        href="javascript:;"
+        target="_blank"
+        rel="noopener"
+        dangerouslySetInnerHTML={{ __html: title }}
+      />
+    </h4>
 
     <div>
       <span>{copy}</span>
@@ -30,9 +41,29 @@ export default ({
 
 const Title = styled.div`
 ${({ theme }) => css`
-  [class$='Table__row']:hover & strong {
-    color: ${theme.colours.secondary};
-    text-decoration: underline;
+  h4 {
+    font-size: 1rem;
+    font-family: ${theme.fonts.family.copy};
+
+    > * {
+      vertical-align: middle;
+    }
+
+    > div {
+      margin-right: 0.5em;
+
+      [class$='Table__row']:not(:hover) & > a:only-child {
+        opacity: 0.4;
+      }
+    }
+
+    > a {
+      text-decoration: none;
+
+      [class$='Table__row']:hover & {
+        text-decoration: underline;
+      }
+    }
   }
 
   > div {
@@ -73,12 +104,12 @@ ${({ theme }) => css`
       background: ${rgba(theme.colours.label, 0.1)};
     }
 
-    + label {
-      margin-left: 2px;
-    }
-
     &:hover {
       border-color: ${darken(0.25, theme.colours.label)};
+    }
+
+    + * {
+      margin-left: 3px;
     }
   }
 `}

@@ -18,11 +18,13 @@ export default withApolloClient(
             <Container key={router.asPath}>
               <Main key={Math.random() + router.asPath}>
                 <Header key={Math.random() + router.asPath} />
+
                 <Component
                   key={Math.random() + router.asPath}
                   router={router}
                   {...pageProps}
                 />
+
                 <Tooltip effect="solid" />
               </Main>
             </Container>
@@ -129,6 +131,7 @@ const Main = styled.main`
     [data-id='tooltip'] {
       font-size: 11px;
       padding: 2px 8px;
+      transition: none;
     }
   `};
 `

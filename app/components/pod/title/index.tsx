@@ -1,7 +1,7 @@
 import Button from '@/components/button'
 import Title from '@/components/pod/title/style'
-import { IoMdAddCircle } from 'react-icons/io'
 import { IconType } from 'react-icons/lib/iconBase'
+import { MdLibraryAdd } from 'react-icons/md'
 import { compose, setDisplayName } from 'recompose'
 
 interface TOutter {
@@ -30,8 +30,8 @@ export default compose<TOutter, TOutter>(setDisplayName('pod-title'))(
 
           <Button
             href="javascript:;"
-            Icon={<IoMdAddCircle />}
-            data-tip="Add source"
+            Icon={<MdLibraryAdd />}
+            data-tip="Add Source"
           />
         </nav>
       </div>

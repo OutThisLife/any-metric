@@ -1,4 +1,4 @@
-import dateFormat, { unixDateFormat } from '@/lib/dateFormat'
+import dateFormat, { unixDateFormat } from '@/lib/dateUtils'
 import styled from 'styled-components'
 
 import { Cell } from '.'

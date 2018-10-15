@@ -1,6 +1,6 @@
+import { sortByDate } from '@/lib/dateUtils'
 import { FakeCrawlResult } from '@/server/schema/types'
-import dayjs from 'dayjs'
-import { IoIosLink, IoMdCalendar, IoMdImage } from 'react-icons/io'
+import { MdDateRange, MdLink, MdPhoto } from 'react-icons/md'
 import {
   ArrowKeyStepper,
   AutoSizer,
@@ -86,7 +86,7 @@ export default compose<TState & TStateHandles, TOutter>(
               headerHeight={35}
               rowHeight={50}
               rowCount={data.length}
-              rowGetter={({ index }) => data[index]}
+              rowGetter={({ index: i }) => data[i]}
               sort={onSort}
               sortBy={sortBy}
               sortDirection={sortDirection}
@@ -95,7 +95,7 @@ export default compose<TState & TStateHandles, TOutter>(
               scrollToRow={scrollToRow}
               overscanRowCount={5}>
               <Column
-                label={<IoMdImage />}
+                label={<MdPhoto />}
                 dataKey="image"
                 width={30}
                 disableSort={true}
@@ -103,7 +103,7 @@ export default compose<TState & TStateHandles, TOutter>(
               />
 
               <Column
-                label={<IoMdCalendar />}
+                label={<MdDateRange />}
                 dataKey="date"
                 width={80}
                 headerStyle={{ textAlign: 'center' }}
@@ -122,7 +122,7 @@ export default compose<TState & TStateHandles, TOutter>(
               />
 
               <Column
-                label={<IoIosLink />}
+                label={<MdLink />}
                 dataKey="slug"
                 width={26}
                 style={{ margin: 0 }}
@@ -137,6 +137,3 @@ export default compose<TState & TStateHandles, TOutter>(
     </ArrowKeyStepper>
   </DataTable>
 ))
-
-const sortByDate = (a: FakeCrawlResult, b: FakeCrawlResult) =>
-  dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1

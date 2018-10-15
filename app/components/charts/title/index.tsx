@@ -1,5 +1,5 @@
 import { colours } from '@/theme'
-import { IoMdArrowDown, IoMdArrowUp } from 'react-icons/io'
+import { MdArrowDropDown, MdArrowDropUp } from 'react-icons/md'
 import { compose, withProps } from 'recompose'
 import styled from 'styled-components'
 
@@ -25,7 +25,7 @@ export default compose<TInner & TOutter, TOutter>(
     <strong>
       {num}{' '}
       <span style={{ color: isUp ? colours.good : colours.bad }}>
-        {isUp ? <IoMdArrowUp /> : <IoMdArrowDown />} {perc}%
+        {isUp ? <MdArrowDropUp /> : <MdArrowDropDown />} {perc}%
       </span>
     </strong>
   </Title>

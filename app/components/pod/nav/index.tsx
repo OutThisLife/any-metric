@@ -10,11 +10,13 @@ interface TOutter {
 
 export default ({ tags, active, filterData }: TOutter) => (
   <Nav>
+    <strong>Labels</strong>
+
     <a
       href="javascript:;"
       className={!active ? 'active' : ''}
       onClick={() => filterData('')}>
-      Everything
+      All Results
     </a>
 
     {tags.map(t => (
@@ -27,6 +29,6 @@ export default ({ tags, active, filterData }: TOutter) => (
       />
     ))}
 
-    <Button title="Create New Tag" />
+    <Button title="Create Filter" />
   </Nav>
 )

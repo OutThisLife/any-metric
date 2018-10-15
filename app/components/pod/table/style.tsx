@@ -16,9 +16,11 @@ export default styled.section`
         color: ${theme.colours.secondary};
       }
 
-      .ReactVirtualized__Table__sortableHeaderIcon {
+      [class*='sortableHeaderIcon'] {
         vertical-align: top;
-        transform: translate(2px, 4px);
+        position: absolute;
+        fill: ${theme.colours.base} !important;
+        transform: translate(2px, 5px);
       }
     }
 
@@ -34,6 +36,14 @@ export default styled.section`
         box-shadow: inset 0 1px 0 ${darken(0.05, theme.colours.panel)},
           inset 0 -1px 0 ${darken(0.05, theme.colours.panel)};
         background: ${rgba(theme.colours.base, 0.03)};
+      }
+    }
+
+    [class$='innerScrollContainer'] {
+      overflow: visible !important;
+
+      [style*='overflow'] {
+        overflow: visible !important;
       }
     }
   `};

@@ -4,69 +4,33 @@ import * as express from 'express'
 import { RequestHandlerParams } from 'express-serve-static-core'
 import * as helmet from 'helmet'
 import * as LRU from 'lru-cache'
+import * as morgan from 'morgan'
 import * as next from 'next'
 import * as path from 'path'
 
 import resolvers, { typeDefs } from './schema'
 
-const dev = process.env.NODE_ENV !== 'production'
-
-if (!dev && process.env.NEW_RELIC_HOME) {
-  require('newrelic')
-}
-
-const dir = path.resolve(process.cwd(), 'app')
-const port = parseInt(process.env.PORT, 10) || 3000
-
-const nextApp = next({ dir, dev })
-const handle = nextApp.getRequestHandler() as RequestHandlerParams
+export const dev = process.env.NODE_ENV !== 'production'
+export const dir = path.resolve(process.cwd(), 'app')
+export const port = parseInt(process.env.PORT, 10) || 3000
+export const nextApp = next({ dir, dev })
+export const handle = nextApp.getRequestHandler() as RequestHandlerParams
+export const app = express()
 
 export const cache = LRU({
   max: 152,
   maxAge: 36e2
 })
 
-// -----------------------------------------
-
-const render = (page = '/') => (
-  req: express.Request,
-  res: express.Response
-) => {
-  const key = req.url
-
-  if (!dev && cache.has(key)) {
-    res.setHeader('x-cache', 'HIT')
-    res.send(cache.get(key))
-    return
-  }
-
-  try {
-    ;(async () => {
-      const html = await nextApp.renderToHTML(req, res, page, req.params)
-
-      if (res.statusCode !== 200) {
-        res.send(html)
-        return
-      }
-
-      cache.set(key, html)
-
-      res.setHeader('x-cache', 'MISS')
-      res.send(html)
-    })()
-  } catch (err) {
-    nextApp.renderError(err, req, res, req.query)
-  }
+if (!dev && process.env.NEW_RELIC_HOME) {
+  require('newrelic')
 }
 
-// -----------------------------------------
-
 nextApp.prepare().then(() => {
-  const app = express()
-
   if (!dev) {
     app
       .use(helmet())
+      .use(morgan())
       .use(
         compression({
           level: 6,
@@ -82,7 +46,6 @@ nextApp.prepare().then(() => {
       })
   }
 
-  require('./api').applyMiddleware(app)
   new ApolloServer({
     typeDefs,
     resolvers,
@@ -91,40 +54,13 @@ nextApp.prepare().then(() => {
     context: { cache }
   }).applyMiddleware({ app })
 
-  app
-    .use((req, res, resolve) => {
-      let staticUrl
+  app.use(require('./api'))
+  app.use(require('./routes'))
+  app.get('*', handle).listen(port, err => {
+    if (err) {
+      throw err
+    }
 
-      if (req.url.endsWith('service-worker.js')) {
-        staticUrl = path.join(dir, `./.next/${req.url}`)
-      } else if (/(robots\.txt)$/.test(req.url)) {
-        staticUrl = path.join(dir, `./static/${req.url}`)
-      }
-
-      if (staticUrl) {
-        return nextApp.serveStatic(req, res, staticUrl)
-      }
-
-      return resolve()
-    })
-
-    .get('/', render('/index'))
-
-    .get('/:slug([A-z-]+)/:id([A-z0-9-]+)?', (req, res, resolve) => {
-      if (req.params.slug === '_next') {
-        return resolve()
-      }
-
-      return render('/index')(req, res)
-    })
-
-    .get('*', handle)
-
-    .listen(port, err => {
-      if (err) {
-        throw err
-      }
-
-      console.log(`>ready on http://[::1]:${port}\n🚀`)
-    })
+    console.log(`>ready on http://[::1]:${port}\n🚀`)
+  })
 })

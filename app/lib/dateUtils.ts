@@ -29,3 +29,6 @@ export const unixDateFormat = (date: dayjs.ConfigType): string =>
   dayjs(date)
     .valueOf()
     .toString()
+
+export const sortByDate = <T extends { date: Date }>(a: T, b: T): number =>
+  dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1

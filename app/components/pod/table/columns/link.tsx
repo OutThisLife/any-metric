@@ -1,5 +1,6 @@
 import { darken } from 'polished'
-import { IoLogoReddit, IoLogoTwitter, IoMdOpen } from 'react-icons/io'
+import { IoLogoReddit, IoLogoTwitter } from 'react-icons/io'
+import { MdOpenInNew } from 'react-icons/md'
 import styled, { css } from 'styled-components'
 
 import { Cell } from '.'
@@ -11,7 +12,7 @@ export default ({ cellData: link }: Cell<string>) => (
     rel="noopener"
     className="datasrc">
     {Math.random() > 0.5 ? <IoLogoTwitter /> : <IoLogoReddit />}
-    <IoMdOpen />
+    <MdOpenInNew />
   </Link>
 )
 

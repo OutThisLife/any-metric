@@ -1,6 +1,17 @@
 import Dropdown from '@/components/dropdown'
+import { getTags } from '@/lib/queries'
+import { Args as SetTagArgs } from '@/server/schema/mutations/setTags'
 import { darken, rgba } from 'polished'
+import { MutationFunc } from 'react-apollo'
 import { MdLabelOutline } from 'react-icons/md'
+import {
+  compose,
+  onlyUpdateForKeys,
+  setDisplayName,
+  StateHandler,
+  StateHandlerMap,
+  withStateHandlers
+} from 'recompose'
 import styled, { css } from 'styled-components'
 
 import { Cell } from '.'
@@ -9,34 +20,106 @@ interface TOutter extends Cell<string> {
   filterData: (t: string) => void
 }
 
-export default ({
-  cellData: title,
-  rowData: { copy, tags },
-  filterData
-}: TOutter) => (
-  <Title>
-    <h4>
-      <Dropdown label={<MdLabelOutline />} />
+interface TInner {
+  tags: string[]
+  mutate: MutationFunc<{}, SetTagArgs>
+}
 
-      <a
-        href="javascript:;"
-        target="_blank"
-        rel="noopener"
-        dangerouslySetInnerHTML={{ __html: title }}
-      />
-    </h4>
+interface TState {
+  curTags: string[]
+}
 
-    <div>
-      <span>{copy}</span>
-      <span>
-        {tags.filter(t => t).map(t => (
-          <label key={`label-${t}`} onClick={() => filterData(t)}>
-            {t}
-          </label>
-        ))}
-      </span>
-    </div>
-  </Title>
+interface TStateHandles extends StateHandlerMap<TState> {
+  setTag: StateHandler<TState>
+}
+
+export default compose<TState & TStateHandles & TInner & TOutter, TOutter>(
+  setDisplayName('col-title'),
+  getTags(),
+  withStateHandlers<TState, TStateHandles, TInner & TOutter>(
+    ({ rowData: { tags: curTags } }) => ({ curTags }),
+    {
+      setTag: ({ curTags }, { rowData: { id, ...data }, mutate }) => (
+        t: string
+      ) => {
+        const ids: string[] = [id]
+        const tags: string[] = [].slice.call(curTags)
+
+        if (curTags.includes(t)) {
+          tags.splice(tags.indexOf(t), 1)
+
+          if (!tags.length) {
+            tags.push('')
+          }
+        } else {
+          tags.push(t)
+        }
+
+        mutate({
+          variables: { ids, tags },
+          optimisticResponse: {
+            __typename: 'Mutation',
+            setTags: {
+              __typename: 'setTags',
+              id,
+              tags,
+              ...data
+            }
+          }
+        })
+
+        return { curTags: tags }
+      }
+    }
+  ),
+  onlyUpdateForKeys(['curTags'])
+)(
+  ({
+    setTag,
+    tags,
+    curTags,
+    cellData: title,
+    rowData: { copy },
+    filterData
+  }) => (
+    <Title>
+      {console.log(curTags)}
+      <h4>
+        <Dropdown label={<MdLabelOutline />}>
+          {Item =>
+            tags
+              .sort()
+              .map(t => (
+                <Item
+                  key={`tag-${t}`}
+                  title={t}
+                  checked={curTags.includes(t)}
+                  onClick={() => setTag(t)}
+                />
+              ))
+          }
+        </Dropdown>
+
+        <a
+          href="javascript:;"
+          target="_blank"
+          rel="noopener"
+          dangerouslySetInnerHTML={{ __html: title }}
+        />
+      </h4>
+
+      <div>
+        <span>{copy}</span>
+        <span>
+          {curTags.filter(t => t).map(t => (
+            <label key={`label-${t}`} onClick={() => filterData(t)}>
+              {t}
+            </label>
+          ))}
+        </span>
+      </div>
+    </Title>
+  )
 )
 
 const Title = styled.div`

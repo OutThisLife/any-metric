@@ -3,13 +3,14 @@ import { IFieldResolver } from 'graphql-tools'
 import { cols as defaultCols, Layout } from '../queries/layout'
 import { Context } from '../types'
 
-interface Args {
+export interface Args {
   cols?: number
   layout: string
 }
 
-export default ((_, { cols = defaultCols, layout }: Args, ctx): Layout => {
-  const data = JSON.parse(layout)
-  ctx.cache.set('BAPH_LAYOUT', data)
-  return { cols, data }
-}) as IFieldResolver<{}, Context>
+export type SetLayout = (Args) => Layout
+
+export default ((_, { cols = defaultCols, layout }: Args): Layout => ({
+  cols,
+  data: JSON.parse(layout)
+})) as IFieldResolver<{}, Context>

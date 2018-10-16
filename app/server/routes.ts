@@ -1,7 +1,8 @@
 import * as express from 'express'
 import * as path from 'path'
 
-import { cache, dev, dir, nextApp } from '.'
+import { dev, dir, nextApp } from '.'
+import { cache } from './schema/context'
 
 const router = express.Router()
 

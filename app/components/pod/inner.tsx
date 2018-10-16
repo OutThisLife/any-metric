@@ -1,3 +1,4 @@
+import { flatten } from '@/lib/utils'
 import { FakeCrawlResult } from '@/server/schema/types'
 import { IoLogoReddit, IoLogoTwitter } from 'react-icons/io'
 import {
@@ -8,17 +9,11 @@ import {
   withStateHandlers
 } from 'recompose'
 
+import { TOutter } from '.'
 import Nav from './nav'
 import { Inner } from './style'
 import DataTable from './table'
 import Title from './title'
-
-interface TOutter {
-  name: string
-  children?: React.ReactNode
-  data: FakeCrawlResult[]
-  className?: string
-}
 
 interface TState {
   data: FakeCrawlResult[]
@@ -34,14 +29,12 @@ export default compose<TOutter & TStateHandles & TState, TOutter>(
   shouldUpdate<TOutter>(
     (_, nextProps) => !/(resizing|dragging)/.test(nextProps.className)
   ),
-  withStateHandlers<TState, TStateHandles, TState>(
-    ({ data }) => ({ filter: '', initialData: data, data }),
+  withStateHandlers<TState, TStateHandles, TOutter>(
+    ({ fakeCrawl: data }) => ({ filter: '', initialData: data, data }),
     {
-      filterData: ({ initialData }) => (filter: string) => ({
+      filterData: ({ initialData: data }) => (filter: string) => ({
         filter,
-        data: filter.length
-          ? initialData.filter(d => d.tags.includes(filter))
-          : initialData
+        data: filter.length ? data.filter(d => d.tags.includes(filter)) : data
       })
     }
   )
@@ -52,9 +45,7 @@ export default compose<TOutter & TStateHandles & TState, TOutter>(
     <Nav
       active={filter}
       filterData={filterData}
-      tags={props.initialData
-        .reduce((acc, d) => acc.push(...d.tags) && acc, [])
-        .filter((t, i, self) => t && self.indexOf(t) === i)}
+      tags={flatten(props.initialData, 'tags')}
     />
 
     <DataTable initialData={props.data} filterData={filterData} />

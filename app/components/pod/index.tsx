@@ -1,14 +1,14 @@
 import { FakeCrawlResult } from '@/server/schema/types'
 import omit from 'lodash/omit'
+import { DataValue } from 'react-apollo'
 import { compose, setDisplayName } from 'recompose'
 
 import Inner from './inner'
 import Pod from './style'
 
-interface TOutter {
+export interface TOutter extends DataValue<{ fakeCrawl: FakeCrawlResult[] }> {
   name: string
   children?: React.ReactNode
-  data: FakeCrawlResult[]
   className?: string
 }
 

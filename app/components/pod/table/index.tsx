@@ -1,4 +1,4 @@
-import { sortByDate } from '@/lib/dateUtils'
+import { sortByDate } from '@/lib/utils'
 import { FakeCrawlResult } from '@/server/schema/types'
 import { MdDateRange, MdLink, MdPhoto } from 'react-icons/md'
 import {

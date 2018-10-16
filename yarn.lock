@@ -1274,17 +1274,17 @@
   dependencies:
     "@types/webpack" "*"
 
-"@types/graphql-iso-date@^3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@types/graphql-iso-date/-/graphql-iso-date-3.3.0.tgz#31ec2ddcbac146b4fe7e2afe459d589ee3363115"
-  integrity sha512-SDwKEdM5Ne3Lj8UVKLt494qAA7bdlpcQmuZgFPfazV0ZiDrjlNdLsALjdkNte+A2jS4KNBSNPru1oTG+8UsCWQ==
+"@types/graphql-iso-date@^3.3.1":
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/@types/graphql-iso-date/-/graphql-iso-date-3.3.1.tgz#dbb540ae62c68c00eba1d1feb4602d7209257e9d"
+  integrity sha512-x64IejUTqiiC2NGMgMYVOsKgViKknfnhzJHS8pMiYdDqbR5Fd9XHAkujGYvAOBkjFB6TDunY6S8uLDT/OnrKBA==
   dependencies:
     "@types/graphql" "*"
 
-"@types/graphql-type-json@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@types/graphql-type-json/-/graphql-type-json-0.1.2.tgz#c2821b203019c42a7f6f1377afc8b1976c5fd541"
-  integrity sha512-2c8/x838/jX89Hi/uzgeVBN8n4JGSvlWNZJRJ7lo1qeDj2zLCMZSGejOMpdBs9+KB4ja3tPWGQaGkQ6P5N5Etw==
+"@types/graphql-type-json@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@types/graphql-type-json/-/graphql-type-json-0.1.3.tgz#c4e6c0caccd907bf22baa73e76584433d7a0469b"
+  integrity sha512-H/RVUQKL/W5+msmG/+DpYkljDgqE4ibzWm9B6RV/jHdE7dOU+fqmLHb8Ol9JFzbD+ZsIITPuNMYVmaw6FjuyDA==
   dependencies:
     "@types/graphql" "*"
 
@@ -1298,10 +1298,10 @@
   resolved "https://registry.npmjs.org/@types/graphql/-/graphql-0.12.6.tgz#3d619198585fcabe5f4e1adfb5cf5f3388c66c13"
   integrity sha512-wXAVyLfkG1UMkKOdMijVWFky39+OD/41KftzqfX1Oejd0Gm6dOIKjCihSVECg6X7PHjftxXmfOKA/d1H79ZfvQ==
 
-"@types/graphql@^14.0.2":
-  version "14.0.2"
-  resolved "https://registry.yarnpkg.com/@types/graphql/-/graphql-14.0.2.tgz#415e3779718c1e0805e418e3a798cb39dccc58ab"
-  integrity sha512-mB9iBWsXs8BvTk0CIPYA0iV7Jfvx/Csb7pelA6cEZjKDmcJkNWoNmeFw69Hmhjosa4JPVCjNC7RuaStjx4GgTA==
+"@types/graphql@^14.0.3":
+  version "14.0.3"
+  resolved "https://registry.yarnpkg.com/@types/graphql/-/graphql-14.0.3.tgz#389e2e5b83ecdb376d9f98fae2094297bc112c1c"
+  integrity sha512-TcFkpEjcQK7w8OcrQcd7iIBPjU0rdyi3ldj6d0iJ4PPSzbWqPBvXj9KSwO14hTOX2dm9RoiH7VuxksJLNYdXUQ==
 
 "@types/helmet@^0.0.42":
   version "0.0.42"
@@ -1340,10 +1340,17 @@
   dependencies:
     "@types/node" "*"
 
-"@types/mime@*":
+"@types/mime@*", "@types/mime@^2.0.0":
   version "2.0.0"
   resolved "https://registry.npmjs.org/@types/mime/-/mime-2.0.0.tgz#5a7306e367c539b9f6543499de8dd519fac37a8b"
   integrity sha512-A2TAGbTFdBw9azHbpVd+/FkdW2T6msN1uct1O9bH3vTerEHKZhTXJUQXy+hNq1B0RagfU8U+KBdqiZpxjhOUQA==
+
+"@types/morgan@^1.7.35":
+  version "1.7.35"
+  resolved "https://registry.yarnpkg.com/@types/morgan/-/morgan-1.7.35.tgz#6358f502931cc2583d7a94248c41518baa688494"
+  integrity sha512-E9qFi0seOkdlQnCTPv54brNfGWeFdRaEhI5tSue4pdx/V+xfxvMETsxXhOEcj1cYL+0n/jcTEmj/jD2gjzCwMg==
+  dependencies:
+    "@types/express" "*"
 
 "@types/newrelic@^3.3.1":
   version "3.3.1"
@@ -1452,10 +1459,10 @@
     "@types/prop-types" "*"
     csstype "^2.2.0"
 
-"@types/react@^16.4.16":
-  version "16.4.16"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.4.16.tgz#99f91b1200ae8c2062030402006d3b3c3a177043"
-  integrity sha512-lxyoipLWweAnLnSsV4Ho2NAZTKKmxeYgkTQ6PaDiPDU9JJBUY2zJVVGiK1smzYv8+ZgbqEmcm5xM74GCpunSEA==
+"@types/react@^16.4.17":
+  version "16.4.17"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.4.17.tgz#a3b3bffe147b00dd22846eb6b0da23e18afa4b80"
+  integrity sha512-x6js/YqbLIXC9TarM4hP6SEctMrsPgKZBUEgyazwpu8LbYFulnHblu+zAyE+pWWAPKwcvt6QQ8SDDA4JtlNaNA==
   dependencies:
     "@types/prop-types" "*"
     csstype "^2.2.0"
@@ -3689,6 +3696,11 @@ dasherize@2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/dasherize/-/dasherize-2.0.0.tgz#6d809c9cd0cf7bb8952d80fc84fa13d47ddb1308"
   integrity sha1-bYCcnNDPe7iVLYD8hPoT1H3bEwg=
+
+dataloader@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/dataloader/-/dataloader-1.4.0.tgz#bca11d867f5d3f1b9ed9f737bd15970c65dff5c8"
+  integrity sha512-68s5jYdlvasItOJnCuI2Q9s4q98g0pCyL3HrcKJu8KNugUl8ahgmZYg38ysLTgQjjXX3H8CJLkAvWrclWfcalw==
 
 date-fns@^1.27.2:
   version "1.29.0"
@@ -8118,6 +8130,11 @@ react-loadable@^5.5.0:
   dependencies:
     prop-types "^15.5.0"
 
+react-render-to-json@0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/react-render-to-json/-/react-render-to-json-0.0.6.tgz#3d04ad156d58d64390089102554b8030f3c2a4fa"
+  integrity sha512-fMfqnDjO2HHeg3k4dVierDxVQUymaTfWlsL9pfkSNHpXhGey1J/T8CDsVhN+xjswFYSM30zL0dLBiGHqGoAWWg==
+
 react-resizable@1.x:
   version "1.7.5"
   resolved "https://registry.npmjs.org/react-resizable/-/react-resizable-1.7.5.tgz#83eb75bb3684da6989bbbf4f826e1470f0af902e"
@@ -8146,6 +8163,15 @@ react-stockcharts@^0.7.8:
     lodash.flattendeep "^4.4.0"
     prop-types "^15.6.0"
     save-svg-as-png "^1.4.5"
+
+react-svg-morph@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/react-svg-morph/-/react-svg-morph-0.2.1.tgz#fdcb8a53d646cd8166e60b5ceb8f60d585d8c724"
+  integrity sha512-Z4TBpO0tXbfnligZiEQlHwU+XRe0HkJjQAmrNEENFgAlF58dKN5Pit5NOWp3JqYB7PmZ3tnnTul7T/cW9dH14g==
+  dependencies:
+    prop-types "^15.6.0"
+    react-render-to-json "0.0.6"
+    svgpath "^2.1.0"
 
 react-tooltip@^3.8.4:
   version "3.8.4"
@@ -9377,6 +9403,11 @@ svgo@^0.7.2:
     mkdirp "~0.5.1"
     sax "~1.2.1"
     whet.extend "~0.9.9"
+
+svgpath@^2.1.0:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/svgpath/-/svgpath-2.2.1.tgz#0834bb67c89a76472b2bd06cc101fa7b517b222c"
+  integrity sha1-CDS7Z8iadkcrK9BswQH6e1F7Iiw=
 
 symbol-observable@1.0.1:
   version "1.0.1"

@@ -1,40 +1,37 @@
 import { compose, withState } from 'recompose'
 
+import Label, { TOutter as LabelProps } from './label'
 import Dropdown from './style'
 
 interface TOutter {
   label: string | JSX.Element
+  onToggle?: (e?: HTMLAnchorElement) => void
+  children: (e?: React.ComponentType<LabelProps>) => React.ReactNode
 }
 
 interface TState {
   isOpen: boolean
-  open: (b: boolean) => void
+  toggle: (b: boolean, cb?: () => void) => void
 }
 
 export default compose<TState & TOutter, TOutter>(
-  withState('isOpen', 'open', false)
-)(({ isOpen, open, label }) => (
+  withState('isOpen', 'toggle', false)
+)(({ children, isOpen, toggle, label, onToggle = () => null }) => (
   <Dropdown
     tabIndex={0}
     onBlur={({ currentTarget }) =>
       window.requestAnimationFrame(() => {
         if (!currentTarget.contains(document.activeElement)) {
-          open(false)
+          toggle(false)
         }
       })
     }>
-    <a href="javascript:;" onClick={() => open(!isOpen)}>
+    <a
+      href="javascript:;"
+      onClick={e => toggle(!isOpen, onToggle.bind(null, e.currentTarget))}>
       {label}
     </a>
 
-    {isOpen && (
-      <nav>
-        <a href="javascript:;">Important</a>
-        <a href="javascript:;">Lead</a>
-        <a href="javascript:;">Broken</a>
-        <a href="javascript:;">Djarum</a>
-        <a href="javascript:;">LF2M MC</a>
-      </nav>
-    )}
+    {isOpen && <nav>{children(Label)}</nav>}
   </Dropdown>
 ))

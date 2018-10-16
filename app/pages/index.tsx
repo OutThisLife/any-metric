@@ -3,14 +3,15 @@ import { getFakeCrawl } from '@/lib/queries'
 import withDimensions, { DimProps } from '@/lib/withDimensions'
 import withLayout, { LayoutProps } from '@/lib/withLayout'
 import { FakeCrawlResult } from '@/server/schema/types'
+import { DataValue } from 'react-apollo'
 import Grid, { Layout } from 'react-grid-layout'
 import { branch, compose, renderComponent, setDisplayName } from 'recompose'
 
 import Home from './style'
 
 interface TInner {
-  resultData: { fakeCrawl: FakeCrawlResult[] }
-  layoutData: { layout: Layout[] }
+  resultData: DataValue<{ fakeCrawl: FakeCrawlResult[] }>
+  layoutData: DataValue<{ layout: Layout[] }>
 }
 
 export default compose<TInner & DimProps & LayoutProps, {}>(
@@ -26,7 +27,7 @@ export default compose<TInner & DimProps & LayoutProps, {}>(
   ({
     onRef,
     changeLayout,
-    resultData: { fakeCrawl: data },
+    resultData,
     layoutData: { layout },
     width,
     height
@@ -44,7 +45,7 @@ export default compose<TInner & DimProps & LayoutProps, {}>(
         useCSSTransforms={typeof window !== 'undefined'}
         compactType={null}>
         {layout.data.map(l => (
-          <Pod key={l.i} name="UCAD Social" data={data} data-grid={l} />
+          <Pod key={l.i} name="UCAD Social" data-grid={l} {...resultData} />
         ))}
       </Grid>
     </Home>

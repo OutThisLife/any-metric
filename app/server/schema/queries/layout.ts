@@ -11,9 +11,9 @@ export const cols = 40
 export const gridFactor = 2
 export const listFactor = 10
 
-export default ((_, __, ctx): Layout => ({
+export default ((): Layout => ({
   cols,
-  data: (ctx.cache.get('BAPH_LAYOUT') || [
+  data: [
     {
       i: 'a',
       x: cols / listFactor,
@@ -30,5 +30,5 @@ export default ((_, __, ctx): Layout => ({
       h: cols / 3.5,
       maxH: cols
     }
-  ]) as ReactGridLayout.Layout[]
+  ]
 })) as IFieldResolver<{}, Context>

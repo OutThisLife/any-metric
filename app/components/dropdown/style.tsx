@@ -22,7 +22,7 @@ export default styled.div`
       display: block;
       font-weight: 400;
       text-decoration: none !important;
-      padding: 0 var(--pad);
+      padding: 0 calc(var(--pad) + 1em) 0 var(--pad);
 
       &:hover {
         color: ${theme.colours.base};

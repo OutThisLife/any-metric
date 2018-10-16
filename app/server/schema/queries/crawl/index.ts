@@ -3,8 +3,7 @@ import * as md5 from 'md5'
 import { parse } from 'url'
 import * as XRay from 'x-ray'
 
-import { cache } from '../..'
-import { Context, Result } from '../types'
+import { Context, Result } from '../../types'
 
 export interface Selector {
   parent?: string
@@ -29,32 +28,29 @@ export default (async (
     (acc, { name, el }: Selector) => ((acc[name] = el), acc),
     {}
   )
+
   const id = md5(`${url}${JSON.stringify(selectors)}`)
 
-  if (!cache.has(id)) {
-    const { err, title, meta, data }: Result = await x(url, {
-      title: 'title',
-      img: 'img:first-child@src',
-      meta: x('meta', [
-        {
-          name: '@name',
-          content: '@content'
-        },
-        {
-          name: '@property',
-          content: '@content'
-        }
-      ]),
-      data: x(parent, [selectors])
-    })
+  const { err, title, meta, data }: Result = await x(url, {
+    title: 'title',
+    img: 'img:first-child@src',
+    meta: x('meta', [
+      {
+        name: '@name',
+        content: '@content'
+      },
+      {
+        name: '@property',
+        content: '@content'
+      }
+    ]),
+    data: x(parent, [selectors])
+  })
 
-    if (err) {
-      console.error(err)
-      throw err
-    }
-
-    cache.set(id, { id, title, meta, hostname, url, data })
+  if (err) {
+    console.error(err)
+    throw err
   }
 
-  return cache.get(id) as Result
+  return { id, title, meta, hostname, url, data }
 }) as IFieldResolver<{}, Context>

@@ -1,9 +1,8 @@
-import { IFieldResolver } from 'graphql-tools'
 import * as md5 from 'md5'
 import { parse } from 'url'
 import * as XRay from 'x-ray'
 
-import { Context, Result } from '../../types'
+import { Resolver, Result } from '../../types'
 
 export interface Selector {
   parent?: string
@@ -53,4 +52,4 @@ export default (async (
   }
 
   return { id, title, meta, hostname, url, data }
-}) as IFieldResolver<{}, Context>
+}) as Resolver

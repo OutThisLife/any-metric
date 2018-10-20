@@ -2,29 +2,29 @@ import theme from '@/theme'
 import { rgba, timingFunctions } from 'polished'
 import { MdCheck, MdCheckBoxOutlineBlank } from 'react-icons/md'
 import { MorphReplace } from 'react-svg-morph'
-import { compose, withState } from 'recompose'
+import { compose, shouldUpdate, withState } from 'recompose'
 
 import Label from './style'
 
 export interface TOutter {
   title?: string
-  checked?: boolean
-  style?: string | { [key: string]: any }
-  onClick?: (b?: boolean) => void
+  initChecked?: boolean
+  onClick?: () => void
 }
 
 interface TState {
-  toggle: (b: boolean, cb: TOutter['onClick']) => void
-  isChecked: boolean
+  isChecked?: boolean
+  toggle: (b: boolean, cb?: () => void) => void
 }
 
 export default compose<TState & TOutter, TOutter>(
-  withState('isChecked', 'toggle', ({ checked }) => checked)
-)(({ title, isChecked, toggle, onClick = () => 1 }) => (
+  shouldUpdate(() => false),
+  withState('isChecked', 'toggle', ({ initChecked }) => initChecked)
+)(({ isChecked, toggle, title, onClick = () => 1 }) => (
   <Label
-    checked={isChecked}
+    isChecked={isChecked}
     href="javascript:;"
-    onClick={() => toggle(!isChecked, onClick.bind(null))}>
+    onClick={() => toggle(!isChecked, onClick)}>
     <MorphReplace
       width={13}
       height={13}

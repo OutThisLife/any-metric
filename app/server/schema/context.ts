@@ -2,16 +2,7 @@ import * as DataLoader from 'dataloader'
 import * as faker from 'faker'
 import * as LRU from 'lru-cache'
 
-import { FakeCrawlResult } from './types'
-
-export interface Context<Cache = LRU.Cache<{}, {}>> {
-  cache: Cache
-  fakeResultLoader: (lru: Cache) => DataLoader<string, FakeCrawlResult>
-  genFakeResults: (
-    lru: Cache,
-    ids?: string[] | undefined
-  ) => Promise<FakeCrawlResult[]>
-}
+import { Context, FakeCrawlResult } from './types'
 
 export const cache = LRU({
   max: 152,
@@ -41,7 +32,7 @@ const genFakeResults: Context['genFakeResults'] = async (lru, ids) => {
     )
   }
 
-  const data = lru.get('data') as FakeCrawlResult[]
+  const data = lru.get('data')
 
   if (!ids) {
     return data

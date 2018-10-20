@@ -1,6 +1,7 @@
+import * as DataLoader from 'dataloader'
 import gql from 'graphql-tag'
-
-export { Context } from './context'
+import { IFieldResolver } from 'graphql-tools'
+import * as LRU from 'lru-cache'
 
 export interface Result {
   id: string
@@ -26,9 +27,32 @@ export interface FakeCrawlResult {
   tags?: string[]
 }
 
-export default gql`
+export interface Context<Cache = LRU.Cache<string, FakeCrawlResult[]>> {
+  cache: Cache
+  fakeResultLoader: (lru: Cache) => DataLoader<string, FakeCrawlResult>
+  genFakeResults: (
+    lru: Cache,
+    ids?: string[] | undefined
+  ) => Promise<FakeCrawlResult[]>
+}
+
+export type Resolver = IFieldResolver<any, Context>
+
+export const typeDefs = gql`
   scalar JSON
   scalar Date
+
+  type Query {
+    crawl(url: String!, parent: String!, children: [Selector]!): CrawlResult
+    fakeCrawl(id: [String]): [FakeCrawlResult]
+    search(q: String!): CrawlResult
+    layout: LayoutResult
+  }
+
+  type Mutation {
+    setLayout(cols: Int, layout: String!): LayoutResult
+    setTags(ids: [String]!, tags: [String]!): [FakeCrawlResult]
+  }
 
   input Selector {
     parent: String
@@ -49,6 +73,7 @@ export default gql`
   }
 
   type LayoutResult {
+    id: ID!
     cols: Int
     data: JSON
   }
@@ -62,18 +87,6 @@ export default gql`
     slug: String
     date: Date
     tags: [String]
-  }
-
-  type Query {
-    crawl(url: String!, parent: String!, children: [Selector]!): CrawlResult
-    fakeCrawl(id: [String]): [FakeCrawlResult]
-    search(q: String!): CrawlResult
-    layout: LayoutResult
-  }
-
-  type Mutation {
-    setLayout(cols: Int, layout: String!): LayoutResult
-    setTags(ids: [String]!, tags: [String]!): [FakeCrawlResult]
   }
 `
 

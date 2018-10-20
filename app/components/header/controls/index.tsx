@@ -13,12 +13,18 @@ interface TInner extends LayoutProps {
 export default compose<TInner, {}>(
   setDisplayName('header-controls'),
   withLayout(),
-  withProps(({ layoutData: { layout: { cols, data: layout } } }) => ({
-    isGrid: layout.every(
-      (l, i) => (!(i % 2) ? l.x === 0 : l.x === cols / gridFactor)
-    ),
-    isList: layout.every(l => l.x === cols / listFactor)
-  }))
+  withProps<Partial<TInner>, TInner>(
+    ({
+      layoutData: {
+        layout: { cols, data: layout }
+      }
+    }) => ({
+      isGrid: layout.every(
+        (l, i) => (!(i % 2) ? l.x === 0 : l.x === cols / gridFactor)
+      ),
+      isList: layout.every(l => l.x === cols / listFactor)
+    })
+  )
 )(
   ({
     layoutData: {
@@ -32,8 +38,8 @@ export default compose<TInner, {}>(
       <a
         href="javascript:;"
         className={isGrid ? 'active' : ''}
-        data-tip="2x2"
-        data-place="Grid Style"
+        data-tip="Grid Style"
+        data-place="bottom"
         onClick={() =>
           changeLayout(
             layout.map((d, y) => ({

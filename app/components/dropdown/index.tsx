@@ -1,7 +1,9 @@
-import { compose, withState } from 'recompose'
+import { compose, onlyUpdateForKeys, withHandlers, withState } from 'recompose'
 
 import Label, { TOutter as LabelProps } from './label'
 import Dropdown from './style'
+
+let tm
 
 interface TOutter {
   label: string | JSX.Element
@@ -14,24 +16,44 @@ interface TState {
   toggle: (b: boolean, cb?: () => void) => void
 }
 
-export default compose<TState & TOutter, TOutter>(
-  withState('isOpen', 'toggle', false)
-)(({ children, isOpen, toggle, label, onToggle = () => null }) => (
+interface THandles {
+  handleMouse: (e: React.MouseEvent<any> | React.FocusEvent<any>) => void
+}
+
+export default compose<THandles & TState & TOutter, TOutter>(
+  withState('isOpen', 'toggle', false),
+  withHandlers<TState & TOutter, THandles>(() => ({
+    handleMouse: ({ isOpen, toggle }) => ({ currentTarget, type }) => {
+      clearTimeout(tm)
+      const f = (b, d = 100) => (tm = setTimeout(() => toggle(b), d))
+
+      if (!isOpen && type === 'mouseenter') {
+        f(true)
+      } else if (isOpen && type === 'mouseleave') {
+        f(false, 400)
+      } else if (type === 'click') {
+        f(true, 0)
+      } else if (type === 'blur') {
+        window.requestAnimationFrame(() => {
+          if (!currentTarget.contains(document.activeElement)) {
+            f(false, 0)
+          }
+        })
+      }
+    }
+  })),
+  onlyUpdateForKeys(['isOpen'])
+)(({ children, isOpen, label, handleMouse }) => (
   <Dropdown
     tabIndex={0}
-    onBlur={({ currentTarget }) =>
-      window.requestAnimationFrame(() => {
-        if (!currentTarget.contains(document.activeElement)) {
-          toggle(false)
-        }
-      })
-    }>
-    <a
-      href="javascript:;"
-      onClick={e => toggle(!isOpen, onToggle.bind(null, e.currentTarget))}>
+    isOpen={isOpen}
+    onMouseEnter={handleMouse}
+    onMouseLeave={handleMouse}
+    onBlur={handleMouse}>
+    <a href="javascript:;" onClick={handleMouse}>
       {label}
     </a>
 
-    {isOpen && <nav>{children(Label)}</nav>}
+    {isOpen && <nav key={`nav-${label}`}>{children(Label)}</nav>}
   </Dropdown>
 ))

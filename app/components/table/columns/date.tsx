@@ -1,13 +1,8 @@
 import { dateFormat, unixDateFormat } from '@/lib/utils'
-import styled from 'styled-components'
 
 import { Cell } from '.'
+import { Date } from './style'
 
 export default ({ cellData: date }: Cell<Date>) => (
   <Date title={unixDateFormat(date)}>{dateFormat(date)}</Date>
 )
-
-const Date = styled.time`
-  font-size: 0.9em;
-  margin-left: auto;
-`

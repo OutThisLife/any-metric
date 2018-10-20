@@ -1,6 +1,4 @@
-import { IFieldResolver } from 'graphql-tools'
-
-import { Context, FakeCrawlResult } from '../types'
+import { FakeCrawlResult, Resolver } from '../types'
 
 export default (async (
   _,
@@ -12,4 +10,4 @@ export default (async (
   }
 
   return await genFakeResults(cache)
-}) as IFieldResolver<{}, Context>
+}) as Resolver

@@ -1,9 +1,8 @@
-import { IFieldResolver } from 'graphql-tools'
 import * as md5 from 'md5'
 import { parse } from 'url'
 
 import { crawl } from '../'
-import { Context, Result } from '../types'
+import { Resolver, Result } from '../types'
 
 export default (async (_, { q }: { q: string }): Promise<Result> => {
   const id = md5(`gsearch-${q}`)
@@ -28,4 +27,4 @@ export default (async (_, { q }: { q: string }): Promise<Result> => {
   }
 
   return { id, title, meta, hostname, url }
-}) as IFieldResolver<{}, Context>
+}) as Resolver

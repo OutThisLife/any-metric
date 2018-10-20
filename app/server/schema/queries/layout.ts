@@ -1,8 +1,7 @@
-import { IFieldResolver } from 'graphql-tools'
+import { Resolver } from '../types'
 
-import { Context } from '../types'
-
-export interface Layout {
+export interface LayoutResult {
+  id: number | string
   cols: number
   data: ReactGridLayout.Layout[]
 }
@@ -10,8 +9,10 @@ export interface Layout {
 export const cols = 40
 export const gridFactor = 2
 export const listFactor = 10
+export const id = cols * gridFactor * listFactor
 
-export default ((): Layout => ({
+export default ((): LayoutResult => ({
+  id,
   cols,
   data: [
     {
@@ -31,4 +32,4 @@ export default ((): Layout => ({
       maxH: cols
     }
   ]
-})) as IFieldResolver<{}, Context>
+})) as Resolver

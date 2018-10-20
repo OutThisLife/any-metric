@@ -7,7 +7,7 @@ import { crawl, fakeCrawl, layout, search } from './queries'
 import { Context, Result } from './types'
 
 export { crawl, layout, search, setLayout }
-export { default as typeDefs } from './types'
+export { typeDefs } from './types'
 export { default as context } from './context'
 
 export default {

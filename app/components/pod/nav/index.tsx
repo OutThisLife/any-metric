@@ -1,5 +1,5 @@
 import Button from '@/components/button'
-import { compose } from 'recompose'
+import { compose, mapProps, onlyUpdateForKeys } from 'recompose'
 
 import Nav from './style'
 
@@ -9,29 +9,33 @@ interface TOutter {
   active: string
 }
 
-export default compose<TOutter, TOutter>()(
-  ({ active, filterData, tags = [] }) => (
-    <Nav>
-      <strong>Labels</strong>
+export default compose<TOutter, TOutter>(
+  onlyUpdateForKeys(['active', 'tags']),
+  mapProps(({ tags = [], ...props }) => ({
+    ...props,
+    tags: tags.filter((t, i, self) => t && self.indexOf(t) === i)
+  }))
+)(({ active, filterData, tags }) => (
+  <Nav>
+    <strong>Labels</strong>
 
+    <a
+      href="javascript:;"
+      className={!active ? 'active' : ''}
+      onClick={() => filterData('')}>
+      All Results
+    </a>
+
+    {tags.map(t => (
       <a
+        key={`tag-${t}`}
         href="javascript:;"
-        className={!active ? 'active' : ''}
-        onClick={() => filterData('')}>
-        All Results
-      </a>
+        className={active === t ? 'active' : ''}
+        onClick={() => filterData(t)}
+        dangerouslySetInnerHTML={{ __html: t }}
+      />
+    ))}
 
-      {tags.filter((t, i, self) => t && self.indexOf(t) === i).map(t => (
-        <a
-          key={`tag-${t}`}
-          href="javascript:;"
-          className={active === t ? 'active' : ''}
-          onClick={() => filterData(t)}
-          dangerouslySetInnerHTML={{ __html: t }}
-        />
-      ))}
-
-      <Button title="Create Filter" />
-    </Nav>
-  )
-)
+    <Button title="Create Filter" />
+  </Nav>
+))

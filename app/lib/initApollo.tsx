@@ -1,22 +1,16 @@
-import { ApolloClient, HttpLink, InMemoryCache } from 'apollo-boost'
-import { ApolloLink } from 'apollo-link'
+import 'isomorphic-unfetch'
+
+import { typeDefs } from '@/server/schema/types'
+import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from 'apollo-boost'
 import { onError } from 'apollo-link-error'
+import { toIdValue } from 'apollo-utilities'
+import getConfig from 'next/config'
 
-let apolloClient = null
-const port = process.env.PORT || 3000
-const isDev = process.env.NODE_ENV !== 'production'
-const isBrowser = 'browser' in process
-
-if (!isBrowser) {
-  ;(global as any).fetch = require('isomorphic-unfetch')
-  ;(global as any).Headers = require('fetch-headers')
-}
+const {
+  publicRuntimeConfig: { API_URL, isDev }
+} = getConfig()
 
 // --------------------------------
-
-const mainLink = new HttpLink({
-  uri: `http://localhost:${port}/graphql`
-})
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
@@ -36,29 +30,47 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   }
 })
 
-const createStore = (initialState): ApolloClient<{}> =>
-  new ApolloClient({
-    link: ApolloLink.from([errorLink, mainLink]),
-    ssrMode: !isBrowser,
-    connectToDevTools: isDev && isBrowser,
-    cache: new InMemoryCache({
-      dataIdFromObject: o => (o.id ? `${o.__typename}:${o.id}` : null)
-    }).restore(initialState)
+let apolloClient
+const createStore = (initialState = {}) => {
+  const cache = new InMemoryCache({
+    dataIdFromObject: o => ('id' in o ? `${o.__typename}:${o.id}` : null),
+    cacheRedirects: {
+      Query: typeDefs.definitions
+        .find(s => /query|mutation/i.test(s.name.value))
+        .fields.map(({ name, type }) => ({
+          [name.value]: (_, args = {}, { cache: imc }) =>
+            toIdValue(
+              imc.config.dataIdFromObject({
+                __typename:
+                  type.kind === 'ListType'
+                    ? `[${type.type.name.value}]`
+                    : type.name.value,
+                ...args
+              })
+            )
+        }))
+    }
   })
 
+  return new ApolloClient({
+    link: ApolloLink.from([errorLink, new HttpLink({ uri: API_URL })]),
+    cache: cache.restore(initialState),
+    ssrMode: !('browser' in process),
+    connectToDevTools: 'browser' in process && isDev,
+    ssrForceFetchDelay: 100
+  })
+}
 // --------------------------------
 
 export default (initialState = {}): ApolloClient<{}> => {
-  if (!isBrowser) {
+  if (!('browser' in process)) {
     return createStore(initialState)
   }
 
   if (!apolloClient) {
-    if ('__NEXT_DATA__' in window) {
-      initialState = (window as any).__NEXT_DATA__.props.apolloState || {}
-    }
-
-    apolloClient = createStore(initialState)
+    apolloClient = createStore(
+      (window as any).__NEXT_DATA__.props.apolloState || {}
+    )
   }
 
   return apolloClient

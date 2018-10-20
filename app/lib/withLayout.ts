@@ -1,11 +1,11 @@
 import { getLayout } from '@/lib/queries'
-import { cols, Layout } from '@/server/schema/queries/layout'
+import { LayoutResult } from '@/server/schema/queries/layout'
 import { MutationFunc } from 'react-apollo'
 import { compose, setDisplayName, withHandlers } from 'recompose'
 
 interface TInner {
   mutate: MutationFunc<{}, { layout: ReactGridLayout.Layout[] }>
-  layoutData: { layout: Layout }
+  layoutData: { layout: LayoutResult }
 }
 
 interface THandles {
@@ -19,15 +19,21 @@ export default () =>
     setDisplayName('with-layout'),
     getLayout(),
     withHandlers<TInner, THandles>(() => ({
-      changeLayout: ({ mutate }) => (obj, layout = JSON.stringify(obj)) =>
+      changeLayout: ({
+        mutate,
+        layoutData: {
+          layout: { id, cols }
+        }
+      }) => (obj, layout = JSON.stringify(obj)) =>
         mutate({
           variables: { layout },
           optimisticResponse: {
             __typename: 'Mutation',
             setLayout: {
-              __typename: 'setLayout',
+              __typename: 'LayoutResult',
+              id,
               cols,
-              data: layout
+              data: JSON.parse(layout)
             }
           }
         })

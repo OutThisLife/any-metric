@@ -20,10 +20,13 @@ module.exports = withPlugins(
         workboxOpts: {
           runtimeCaching: [
             {
-              urlPattern: /^https?.*/,
+              urlPattern: /\.([A-z]{2,4})$/,
+              handler: 'cacheFirst'
+            },
+            {
+              urlPattern: /graphql/,
               handler: 'networkFirst',
               options: {
-                cacheName: 'https-calls',
                 networkTimeoutSeconds: 15,
                 expiration: {
                   maxEntries: 150,
@@ -41,7 +44,13 @@ module.exports = withPlugins(
     ]
   ],
   {
+    assetPrefix: process.env.SERVER,
     useFileSystemPublicRoutes: false,
+    publicRuntimeConfig: {
+      isDev: process.env.NODE_ENV !== 'production',
+      API_URL: `${process.env.SERVER ||
+        `http://localhost:${process.env.PORT || 3000}`}/graphql`
+    },
     webpack: (config, { isServer }) => {
       config.module.rules.push(
         {

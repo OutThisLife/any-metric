@@ -41,20 +41,24 @@ nextApp.prepare().then(() => {
   }
 
   new ApolloServer({
-    introspection: dev,
-    playground: dev,
     typeDefs,
     resolvers,
-    context
+    context,
+    introspection: dev,
+    playground: dev,
+    tracing: dev,
+    cacheControl: true
   }).applyMiddleware({ app })
 
-  app.use(require('./api'))
-  app.use(require('./routes'))
-  app.get('*', handle).listen(port, err => {
-    if (err) {
-      throw err
-    }
+  app
+    .use(require('./api'))
+    .use(require('./routes'))
+    .get('*', handle)
+    .listen(port, err => {
+      if (err) {
+        throw err
+      }
 
-    console.log(`>ready on http://[::1]:${port}\n🚀`)
-  })
+      console.log(`>ready on http://[::1]:${port}\n🚀`)
+    })
 })

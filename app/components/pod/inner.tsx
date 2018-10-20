@@ -1,53 +1,40 @@
+import DataTable from '@/components/table'
 import { flatten } from '@/lib/utils'
-import { FakeCrawlResult } from '@/server/schema/types'
 import { IoLogoReddit, IoLogoTwitter } from 'react-icons/io'
-import {
-  compose,
-  shouldUpdate,
-  StateHandler,
-  StateHandlerMap,
-  withStateHandlers
-} from 'recompose'
+import { compose, shouldUpdate, withState } from 'recompose'
 
-import { TOutter } from '.'
+import { TInner as TOutter } from '.'
 import Nav from './nav'
 import { Inner } from './style'
-import DataTable from './table'
 import Title from './title'
 
 interface TState {
-  data: FakeCrawlResult[]
-  initialData: FakeCrawlResult[]
   filter: string
+  filterData: (s: string) => void
 }
 
-interface TStateHandles extends StateHandlerMap<TState> {
-  filterData: StateHandler<TState>
-}
-
-export default compose<TOutter & TStateHandles & TState, TOutter>(
-  shouldUpdate<TOutter>(
-    (_, nextProps) => !/(resizing|dragging)/.test(nextProps.className)
+export default compose<TOutter & TState, TOutter>(
+  shouldUpdate<TOutter & TState>(
+    (props, nextProps) =>
+      !/(resizing|dragging)/.test(nextProps.className) ||
+      props.filter !== nextProps.filter
   ),
-  withStateHandlers<TState, TStateHandles, TOutter>(
-    ({ fakeCrawl: data }) => ({ filter: '', initialData: data, data }),
-    {
-      filterData: ({ initialData: data }) => (filter: string) => ({
-        filter,
-        data: filter.length ? data.filter(d => d.tags.includes(filter)) : data
-      })
-    }
-  )
-)(({ open, isOpen, filter, filterData, name, ...props }) => (
+  withState('filter', 'filterData', '')
+)(({ resultData: { fakeCrawl: data }, filter, filterData, name }) => (
   <Inner>
     <Title title={name} services={[IoLogoReddit, IoLogoTwitter]} />
 
     <Nav
       active={filter}
       filterData={filterData}
-      tags={flatten(props.initialData, 'tags')}
+      tags={flatten(data, 'tags').sort()}
     />
 
-    <DataTable initialData={props.data} filterData={filterData} />
+    <DataTable
+      initialData={
+        filter.length ? data.filter(d => d.tags.includes(filter)) : data
+      }
+      filterData={filterData}
+    />
   </Inner>
 ))

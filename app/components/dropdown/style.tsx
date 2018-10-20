@@ -1,10 +1,25 @@
 import { rgba } from 'polished'
+import { SVGAttributes } from 'react'
 import styled, { css } from 'styled-components'
 
-export default styled.div`
+export default styled<
+  {
+    isOpen: boolean
+    style?: SVGAttributes<'div'>
+  },
+  'div'
+>('div').attrs({
+  style: ({ theme, isOpen }) => ({
+    color: isOpen ? theme.colours.secondary : 'initial'
+  })
+})`
   ${({ theme }) => css`
   display: inline-block;
   position: relative;
+
+  > a {
+    color: inherit;
+  }
 
   nav {
     z-index: 100;
@@ -21,6 +36,7 @@ export default styled.div`
     a[href] {
       display: block;
       font-weight: 400;
+      color: ${theme.colours.base};
       text-decoration: none !important;
       padding: 0 calc(var(--pad) + 1em) 0 var(--pad);
 

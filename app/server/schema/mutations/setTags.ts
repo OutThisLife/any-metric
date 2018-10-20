@@ -1,6 +1,4 @@
-import { IFieldResolver } from 'graphql-tools'
-
-import { Context, FakeCrawlResult } from '../types'
+import { FakeCrawlResult, Resolver } from '../types'
 
 export interface Args {
   ids: string[]
@@ -26,4 +24,4 @@ export default (async (
   )
 
   return cache.set('data', newData) && newData.filter(d => ids.includes(d.id))
-}) as IFieldResolver<{}, Context>
+}) as Resolver

@@ -1,27 +1,27 @@
 import { SetLayout } from '@/server/schema/mutations/setLayout'
 import { SetTags } from '@/server/schema/mutations/setTags'
-import { Layout } from '@/server/schema/queries/layout'
-import {
-  FakeCrawlResult,
-  fakeResultFrag,
-  layoutFrag
-} from '@/server/schema/types'
+import { LayoutResult } from '@/server/schema/queries/layout'
+import { FakeCrawlResult } from '@/server/schema/types'
 import gql from 'graphql-tag'
 import { ChildDataProps, graphql } from 'react-apollo'
-import { compose } from 'recompose'
+import { branch, compose, renderComponent } from 'recompose'
 
 import { flatten } from './utils'
 
 export const getFakeCrawl = () =>
   graphql<{}, { fake: FakeCrawlResult[] }>(
     gql`
-      query FakeResult {
+      query GetFakeResult {
         fakeCrawl {
-          ...fakeResultFields
+          id
+          title
+          slug
+          image
+          copy
+          date
+          tags
         }
       }
-
-      ${fakeResultFrag}
     `,
     {
       name: 'resultData'
@@ -30,35 +30,34 @@ export const getFakeCrawl = () =>
 
 export const getLayout = () =>
   compose(
-    graphql<{}, { layout: Layout }>(
+    graphql<{}, { layout: LayoutResult }>(
       gql`
-        query Layout {
+        query GetLayout {
           layout {
-            ...layoutFields
+            id
+            cols
+            data
           }
         }
-
-        ${layoutFrag}
       `,
       {
         name: 'layoutData'
       }
     ),
+    branch(
+      ({ layoutData: { loading } }) => loading,
+      renderComponent(() => null)
+    ),
     graphql<{}, { setLayout: SetLayout }>(
       gql`
         mutation setLayout($layout: String!) {
           setLayout(layout: $layout) {
-            ...layoutFields
+            id
+            cols
+            data
           }
         }
-
-        ${layoutFrag}
-      `,
-      {
-        options: {
-          refetchQueries: ['Layout']
-        }
-      }
+      `
     )
   )
 
@@ -66,18 +65,17 @@ export const getTags = () =>
   compose(
     graphql<
       {},
-      { fakeCrawl: Array<{ tags: string[] }> },
+      { fakeCrawl: Partial<FakeCrawlResult[]> },
       {},
       ChildDataProps<{ tags: string[] }>
     >(
       gql`
-        query Tags {
+        query GetTags {
           fakeCrawl {
-            ...fakeResultFields
+            id
+            tags
           }
         }
-
-        ${fakeResultFrag}
       `,
       {
         props: ({ data: { fakeCrawl, ...data } }) => ({
@@ -87,18 +85,16 @@ export const getTags = () =>
       }
     ),
 
+    branch(({ data: { loading } }) => loading, renderComponent(() => null)),
+
     graphql<{}, { setTags: SetTags }>(
       gql`
-        mutation setTags($ids: [String]!, $tags: [String]!) {
+        mutation SetTags($ids: [String]!, $tags: [String]!) {
           setTags(ids: $ids, tags: $tags) {
-            ...fakeResultFields
+            id
+            tags
           }
         }
-
-        ${fakeResultFrag}
-      `,
-      {
-        options: { refetchQueries: ['fakeCrawl'] }
-      }
+      `
     )
   )

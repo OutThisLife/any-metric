@@ -1,10 +1,15 @@
+import { SVGAttributes } from 'react'
 import styled from 'styled-components'
 
-import { TOutter } from '.'
-
-export default styled<TOutter, 'a'>('a').attrs({
-  style: ({ checked }) => ({
-    fontWeight: checked ? 700 : 400
+export default styled<
+  {
+    isChecked: boolean
+    style?: SVGAttributes<'a'>
+  },
+  'a'
+>('a').attrs({
+  style: ({ isChecked }) => ({
+    fontWeight: isChecked ? 700 : 400
   })
 })`
   svg {

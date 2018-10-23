@@ -1,8 +1,7 @@
 import Button from '@/components/button'
 import Title from '@/components/pod/title/style'
-import { Heading, Link, Position, Text } from 'evergreen-ui'
+import { Heading, Menu, Popover, Position, Text } from 'evergreen-ui'
 import { func } from 'prop-types'
-import { IconType } from 'react-icons/lib/iconBase'
 import {
   compose,
   getContext,
@@ -15,7 +14,6 @@ import AddNew from './addNew'
 
 interface TOutter {
   title: string
-  services: IconType[]
 }
 interface TInner {
   filter: DataTableFilter
@@ -25,45 +23,54 @@ export default compose<TInner & TOutter, TOutter>(
   setDisplayName('pod-title'),
   onlyUpdateForKeys(['title', 'services']),
   getContext({ filter: func })
-)(({ title, services = [] }) => (
+)(({ title }) => (
   <Title>
     <div className="drag-h" />
 
     <div>
       <Heading size={800} is="h2">
         {title}
-
-        <AddNew position={Position.BOTTOM_LEFT} variant="select">
-          <Button
-            href="javascript:;"
-            icon="refresh"
-            data-tip="Change refresh interval"
-            display="inline-block"
-            appearance="minimal"
-            marginLeft={8}
-            style={{ top: -2 }}
-          />
-        </AddNew>
       </Heading>
 
       <nav>
-        {services.length && (
-          <figure>
-            {[].slice.call(services).map((I: IconType) => (
-              <Link
-                key={Math.random()}
-                href="javascript:;"
-                target="_blank"
-                rel="noopener noreferrer">
-                <I />
-              </Link>
-            ))}
-          </figure>
-        )}
+        <Button
+          href="javascript:;"
+          icon="chart"
+          data-tip="View Charts"
+          appearance="minimal"
+          onClick={() => {
+            document.querySelector('section aside').classList.toggle('open')
+          }}
+        />
 
-        <AddNew position={Position.BOTTOM_RIGHT}>
-          <Button href="javascript:;" icon="series-add" data-tip="Add Source" />
-        </AddNew>
+        <Popover
+          position={Position.BOTTOM_RIGHT}
+          content={
+            <Menu>
+              <Menu.Group>
+                <Menu.Item icon="cog">Edit Targets&hellip;</Menu.Item>
+                <Menu.Item icon="circle-arrow-right">Move&hellip;</Menu.Item>
+                <Menu.Item icon="edit" secondaryText="⌘R">
+                  Rename&hellip;
+                </Menu.Item>
+              </Menu.Group>
+
+              <Menu.Divider />
+
+              <Menu.Group>
+                <Menu.Item icon="trash" intent="danger">
+                  Delete&hellip;
+                </Menu.Item>
+              </Menu.Group>
+            </Menu>
+          }>
+          <Button
+            href="javascript:;"
+            icon="more"
+            data-tip="Settings"
+            appearance="minimal"
+          />
+        </Popover>
       </nav>
     </div>
 
@@ -71,7 +78,17 @@ export default compose<TInner & TOutter, TOutter>(
       <Text is="small" color="muted" size={300}>
         Updated&nbsp;
         <time>
-          6 hours ago, next update in <strong>15 minutes</strong>
+          6 hours ago, next update in&nbsp;
+          <AddNew position={Position.BOTTOM_LEFT} variant="select">
+            {({ getRef, toggle }) => (
+              <strong
+                ref={getRef}
+                onClick={toggle}
+                style={{ cursor: 'pointer', borderBottom: '1px dotted' }}>
+                15 minutes
+              </strong>
+            )}
+          </AddNew>
         </time>
       </Text>
     </div>

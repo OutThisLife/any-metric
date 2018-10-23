@@ -10,8 +10,10 @@ export default styled.div`
     transition: none;
 
     &.react-grid-placeholder {
+      z-index: 1;
       opacity: 1;
       border: 3px solid ${({ theme }) => rgba(theme.colours.secondary, 0.2)};
+      transition: none;
       background: none;
     }
 

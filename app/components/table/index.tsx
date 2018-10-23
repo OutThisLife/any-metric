@@ -1,7 +1,7 @@
 import { sortByDate } from '@/lib/utils'
 import { FakeCrawlResult } from '@/server/schema/types'
 import { Icon } from 'evergreen-ui'
-import { AutoSizer, Column, SortDirectionType, Table } from 'react-virtualized'
+import { AutoSizer, Column, SortDirectionType } from 'react-virtualized'
 import {
   compose,
   setDisplayName,
@@ -75,58 +75,56 @@ export default compose<TState & TStateHandles & TInner & TOutter, TOutter>(
     ({ onSort, sort, initialData }) => onSort(sort, initialData)
   )
 )(({ data, onSort, sort: { sortBy, sortDirection } }) => (
-  <DataTable>
-    <AutoSizer>
-      {({ width, height }) => (
-        <Table
-          width={width}
-          height={height}
-          headerHeight={35}
-          rowHeight={50}
-          rowCount={data.length}
-          rowGetter={({ index: i }) => data[i]}
-          rowRenderer={rowRenderer}
-          sort={onSort}
-          sortBy={sortBy}
-          sortDirection={sortDirection}
-          overscanRowCount={5}>
-          <Column
-            dataKey="image"
-            width={30}
-            headerRenderer={() => <Search />}
-            disableSort={true}
-            cellRenderer={Columns.Image}
-          />
+  <AutoSizer>
+    {({ width, height }) => (
+      <DataTable
+        width={width}
+        height={height}
+        headerHeight={35}
+        rowHeight={50}
+        rowCount={data.length}
+        rowGetter={({ index: i }) => data[i]}
+        rowRenderer={rowRenderer}
+        sort={onSort}
+        sortBy={sortBy}
+        sortDirection={sortDirection}
+        overscanRowCount={5}>
+        <Column
+          dataKey="image"
+          width={30}
+          headerRenderer={() => <Search />}
+          disableSort={true}
+          cellRenderer={props => <Columns.Image {...props} />}
+        />
 
-          <Column
-            dataKey="title"
-            width={100}
-            flexGrow={1}
-            disableSort={true}
-            cellRenderer={props => <Columns.Title {...props} />}
-          />
+        <Column
+          dataKey="title"
+          width={100}
+          flexGrow={1}
+          disableSort={true}
+          cellRenderer={props => <Columns.Title {...props} />}
+        />
 
-          <Column
-            label="Date"
-            headerRenderer={headerRenderer}
-            dataKey="date"
-            width={50}
-            headerStyle={{ textAlign: 'center' }}
-            style={{ textAlign: 'center' }}
-            cellRenderer={Columns.Date}
-          />
+        <Column
+          label="Date"
+          headerRenderer={headerRenderer}
+          dataKey="date"
+          width={50}
+          headerStyle={{ textAlign: 'center' }}
+          style={{ textAlign: 'center' }}
+          cellRenderer={Columns.Date}
+        />
 
-          <Column
-            label={<Icon icon="link" size={10} />}
-            dataKey="slug"
-            width={26}
-            style={{ margin: 0 }}
-            disableSort={true}
-            headerStyle={{ textAlign: 'right' }}
-            cellRenderer={Columns.Link}
-          />
-        </Table>
-      )}
-    </AutoSizer>
-  </DataTable>
+        <Column
+          label={<Icon icon="link" size={10} />}
+          dataKey="slug"
+          width={26}
+          style={{ margin: 0 }}
+          disableSort={true}
+          headerStyle={{ textAlign: 'right' }}
+          cellRenderer={Columns.Link}
+        />
+      </DataTable>
+    )}
+  </AutoSizer>
 ))

@@ -35,6 +35,25 @@ export const Inner = styled(Panel)`
   section {
     grid-row: 2;
     grid-column: 2 / -1;
+    overflow: hidden;
+
+    aside {
+      z-index: 10;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 80%;
+      transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.175);
+      transition-property: opacity, transform;
+      transform-origin: 100% 100%;
+      background: ${({ theme }) => theme.colours.bg};
+
+      &:not(.open) {
+        opacity: 0;
+        transform: scale(0.9) translate(-1px, -1px);
+      }
+    }
 
     > div[style] {
       width: 100% !important;

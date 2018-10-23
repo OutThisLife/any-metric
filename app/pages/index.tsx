@@ -1,3 +1,4 @@
+import PageLoader from '@/components/pageLoader'
 import Pod from '@/components/pod'
 import withDimensions, { DimProps } from '@/lib/withDimensions'
 import withLayout, { LayoutProps } from '@/lib/withLayout'
@@ -18,21 +19,25 @@ export default compose<TInner & DimProps & LayoutProps, {}>(
   withLayout(),
   withDimensions(true)
 )(({ onRef, changeLayout, layoutData: { layout }, width, height }) => (
-  <Home ref={onRef}>
-    <Grid
-      width={width}
-      rowHeight={height / layout.cols}
-      layout={layout.data}
-      cols={layout.cols}
-      onLayoutChange={changeLayout}
-      onResize={changeLayout}
-      margin={[35, 35]}
-      draggableHandle=".drag-h"
-      useCSSTransforms={typeof window !== 'undefined'}
-      compactType={null}>
-      {layout.data.map(l => (
-        <Pod key={l.i} name="UCAD Social" data-grid={l} />
-      ))}
-    </Grid>
-  </Home>
+  <>
+    <Home ref={onRef}>
+      <Grid
+        width={width}
+        rowHeight={height / layout.cols}
+        layout={layout.data}
+        cols={layout.cols}
+        onLayoutChange={changeLayout}
+        onResize={changeLayout}
+        margin={[35, 35]}
+        draggableHandle=".drag-h"
+        useCSSTransforms={typeof window !== 'undefined'}
+        compactType={null}>
+        {layout.data.map(l => (
+          <Pod key={l.i} name="UCAD Social" data-grid={l} />
+        ))}
+      </Grid>
+    </Home>
+
+    <PageLoader />
+  </>
 ))

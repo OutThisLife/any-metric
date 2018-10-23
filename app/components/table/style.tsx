@@ -1,9 +1,10 @@
 import 'react-virtualized/styles.css'
 
 import { darken, rgba } from 'polished'
+import { Table } from 'react-virtualized'
 import styled, { css } from 'styled-components'
 
-export default styled.section`
+export default styled(Table as any)`
   ${({ theme }) => css`
     [tabindex]:focus {
       outline: none;

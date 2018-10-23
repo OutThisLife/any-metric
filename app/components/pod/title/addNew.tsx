@@ -3,16 +3,16 @@ import { Pane, Popover, SelectField, TextInputField } from 'evergreen-ui'
 import { compose, withState } from 'recompose'
 
 interface TOutter {
-  children: React.ReactElement<any>
   [key: string]: any
 }
 
 export default compose<TOutter, TOutter>(
   withState('isLoading', 'setLoading', false)
-)(({ children, variant, setLoading, isLoading, ...props }) => (
+)(({ variant, setLoading, isLoading, ...props }) => (
   <Popover
     {...props}
     minWidth={0}
+    minHeight={0}
     onCloseComplete={() => setLoading(false)}
     content={({ close }) => (
       <>
@@ -54,7 +54,6 @@ export default compose<TOutter, TOutter>(
           </Pane>
         </Pane>
       </>
-    )}>
-    {children}
-  </Popover>
+    )}
+  />
 ))

@@ -9,9 +9,9 @@ import { branch, compose, renderComponent } from 'recompose'
 
 import { flatten } from './utils'
 
-export const Loading = () => (
-  <Pane>
-    <Spinner marginX="auto" marginY={120} />
+export const Loading = props => (
+  <Pane display="flex" alignItems="center" {...props}>
+    <Spinner marginX="auto" />
   </Pane>
 )
 
@@ -36,13 +36,25 @@ export const getFakeCrawl = () =>
       }
     ),
     branch(
-      ({ resultData: { loading } }) => loading,
+      ({ resultData: { networkStatus } }) => networkStatus !== 7,
       renderComponent(() => <Loading />)
     )
   )
 
 export const getLayout = () =>
   compose(
+    graphql<{}, { setLayout: SetLayout }>(
+      gql`
+        mutation setLayout($layout: String!) {
+          setLayout(layout: $layout) {
+            __typename
+            id
+            cols
+            data
+          }
+        }
+      `
+    ),
     graphql<{}, { layout: LayoutResult }>(
       gql`
         query GetLayout {
@@ -58,25 +70,24 @@ export const getLayout = () =>
       }
     ),
     branch(
-      ({ layoutData: { loading } }) => loading,
+      ({ layoutData: { networkStatus } }) => networkStatus !== 7,
       renderComponent(() => <Loading />)
-    ),
-    graphql<{}, { setLayout: SetLayout }>(
-      gql`
-        mutation setLayout($layout: String!) {
-          setLayout(layout: $layout) {
-            __typename
-            id
-            cols
-            data
-          }
-        }
-      `
     )
   )
 
 export const getTags = () =>
   compose(
+    graphql<{}, { setTags: SetTags }>(
+      gql`
+        mutation SetTags($ids: [String]!, $tags: [String]!) {
+          setTags(ids: $ids, tags: $tags) {
+            __typename
+            id
+            tags
+          }
+        }
+      `
+    ),
     graphql<
       {},
       { fakeCrawl: Partial<FakeCrawlResult[]> },
@@ -100,19 +111,7 @@ export const getTags = () =>
     ),
 
     branch(
-      ({ data: { loading } }) => loading,
+      ({ data: { networkStatus } }) => networkStatus !== 7,
       renderComponent(() => <Loading />)
-    ),
-
-    graphql<{}, { setTags: SetTags }>(
-      gql`
-        mutation SetTags($ids: [String]!, $tags: [String]!) {
-          setTags(ids: $ids, tags: $tags) {
-            __typename
-            id
-            tags
-          }
-        }
-      `
     )
   )

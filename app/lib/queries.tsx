@@ -2,30 +2,43 @@ import { SetLayout } from '@/server/schema/mutations/setLayout'
 import { SetTags } from '@/server/schema/mutations/setTags'
 import { LayoutResult } from '@/server/schema/queries/layout'
 import { FakeCrawlResult } from '@/server/schema/types'
+import { Pane, Spinner } from 'evergreen-ui'
 import gql from 'graphql-tag'
 import { ChildDataProps, graphql } from 'react-apollo'
 import { branch, compose, renderComponent } from 'recompose'
 
 import { flatten } from './utils'
 
+export const Loading = () => (
+  <Pane>
+    <Spinner marginX="auto" marginY={120} />
+  </Pane>
+)
+
 export const getFakeCrawl = () =>
-  graphql<{}, { fake: FakeCrawlResult[] }>(
-    gql`
-      query GetFakeResult {
-        fakeCrawl {
-          id
-          title
-          slug
-          image
-          copy
-          date
-          tags
+  compose(
+    graphql<{}, { fake: FakeCrawlResult[] }>(
+      gql`
+        query GetFakeResult {
+          fakeCrawl {
+            id
+            title
+            slug
+            image
+            copy
+            date
+            tags
+          }
         }
+      `,
+      {
+        name: 'resultData'
       }
-    `,
-    {
-      name: 'resultData'
-    }
+    ),
+    branch(
+      ({ resultData: { loading } }) => loading,
+      renderComponent(() => <Loading />)
+    )
   )
 
 export const getLayout = () =>
@@ -46,7 +59,7 @@ export const getLayout = () =>
     ),
     branch(
       ({ layoutData: { loading } }) => loading,
-      renderComponent(() => null)
+      renderComponent(() => <Loading />)
     ),
     graphql<{}, { setLayout: SetLayout }>(
       gql`
@@ -86,7 +99,10 @@ export const getTags = () =>
       }
     ),
 
-    branch(({ data: { loading } }) => loading, renderComponent(() => null)),
+    branch(
+      ({ data: { loading } }) => loading,
+      renderComponent(() => <Loading />)
+    ),
 
     graphql<{}, { setTags: SetTags }>(
       gql`

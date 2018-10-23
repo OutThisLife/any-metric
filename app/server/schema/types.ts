@@ -4,6 +4,7 @@ import { IFieldResolver } from 'graphql-tools'
 import * as LRU from 'lru-cache'
 
 export interface Result {
+  __typename?: string
   id: string
   err?: string
   title: string
@@ -17,6 +18,7 @@ export interface Result {
 }
 
 export interface FakeCrawlResult {
+  __typename?: string
   id: string
   image?: string
   title?: string

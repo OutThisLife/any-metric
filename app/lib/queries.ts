@@ -52,6 +52,7 @@ export const getLayout = () =>
       gql`
         mutation setLayout($layout: String!) {
           setLayout(layout: $layout) {
+            __typename
             id
             cols
             data
@@ -91,6 +92,7 @@ export const getTags = () =>
       gql`
         mutation SetTags($ids: [String]!, $tags: [String]!) {
           setTags(ids: $ids, tags: $tags) {
+            __typename
             id
             tags
           }

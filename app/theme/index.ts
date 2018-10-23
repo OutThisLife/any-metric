@@ -1,15 +1,18 @@
-import { between, rgba } from 'polished'
-import { css } from 'styled-components'
+import { defaultTheme } from 'evergreen-ui'
+import globalHash from 'evergreen-ui/commonjs/avatar/src/utils/hash'
+import { between } from 'polished'
+
+const { scales: egScales, colors: egColours, palette: egPalette } = defaultTheme
 
 export const colours = {
-  base: '#323648',
-  secondary: '#c60eff',
+  base: egColours.text.default,
+  secondary: egColours.text.selected,
+  panel: egScales.neutral.N1,
   bg: '#fff',
-  panel: '#F6F8F9',
 
-  good: 'rgb(97, 205, 187)',
-  bad: 'rgb(244, 117, 96)',
-  label: 'rgb(255, 212, 90)',
+  good: egColours.text.success,
+  bad: egColours.text.danger,
+  label: egPalette.yellow.base,
 
   get brand() {
     return this.base
@@ -22,21 +25,31 @@ export const fonts = {
   h2: between('24px', '36px', '320px', '1600px'),
 
   family: {
-    title: 'Old Standard',
-    copy: 'Rubik',
-    src() {
-      const fmt = (s: string): string => s.replace(' ', '+')
-      return `//fonts.googleapis.com/css?family=${fmt(this.title)}|${fmt(
-        this.copy
-      )}`
+    title:
+      'SF UI Display,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol',
+    get copy() {
+      return `SF UI Text, ${this.title}`
     }
   }
 }
 
-export const focusStyles = css`
-  outline: 1px solid ${colours.secondary};
-  box-shadow: 0 0 10px ${rgba(colours.secondary, 0.3)};
-`
+export const autoColour = <
+  T extends {
+    color: string
+    backgroundColor: string
+  }
+>(
+  s: string,
+  isSolid: boolean = false
+): T => {
+  const res: T = defaultTheme.getAvatarProps({
+    color: 'automatic',
+    isSolid,
+    hashValue: globalHash(s)
+  })
+
+  return res
+}
 
 // ---------------------------
 

@@ -1,14 +1,5 @@
-import { darken, rgba } from 'polished'
+import { darken } from 'polished'
 import styled, { css } from 'styled-components'
-
-export const Date = styled.time`
-  font-size: 0.9em;
-  margin-left: auto;
-`
-
-export const Image = styled.figure`
-  margin: 0;
-`
 
 export const Link = styled.a`
   ${({ theme }) => css`
@@ -30,7 +21,7 @@ export const Link = styled.a`
       position: absolute;
       top: 50%;
       left: calc(50% + 1px);
-      fill: ${theme.colours.secondary};
+      fill: ${theme.colours.base};
       stroke: none;
       transform: translate(-45%, -50%);
     }
@@ -50,78 +41,79 @@ export const Link = styled.a`
 `
 
 export const Title = styled.div`
-  ${({ theme }) => css`
-    h4 {
-      font-size: 1rem;
-      font-family: ${theme.fonts.family.copy};
-
-      > * {
-        vertical-align: middle;
-      }
-
-      > div {
-        margin-right: 0.5em;
-
-        [class$='Table__row']:not(:hover) & > a:only-child {
-          opacity: 0.4;
-        }
-      }
-
-      > a {
-        text-decoration: none;
-
-        [class$='Table__row']:hover & {
-          text-decoration: underline;
-        }
-      }
+  h4 {
+    > * {
+      vertical-align: middle;
     }
 
-    > div {
-      display: flex;
-      align-items: baseline;
-      max-width: 100%;
+    [class$='Table__row']:not(:hover) & > button {
+      opacity: 0.6;
+    }
+
+    > a {
+      text-decoration: none;
+
+      [class$='Table__row']:hover & {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  > div {
+    display: flex;
+    align-items: baseline;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    .copy {
+      flex: 1 0 50%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
 
-      span:first-of-type {
-        flex: 1 0 50%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+    .tags {
+      margin-left: 8px;
+
+      [class$='Table__row']:not(:hover) & {
+        opacity: 0.75;
       }
 
-      span:last-of-type {
-        margin-left: 8px;
+      strong {
+        position: relative;
+        display: inlien-flex;
+        align-items: center;
+        justify-content: space-between;
 
-        [class$='Table__row']:not(:hover) & {
-          opacity: 0.75;
+        a {
+          z-index: 1;
+          display: block;
+          margin-left: 0.5em;
+          transition: 0.15s ease-in-out;
+
+          svg {
+            transform: translate(0, -1px);
+          }
+        }
+
+        &:not(:hover) a {
+          margin-left: -8px;
+
+          svg {
+            opacity: 0;
+          }
         }
       }
     }
+  }
 
-    label {
-      cursor: pointer;
-      color: ${theme.colours.base};
-      font-size: 0.9em;
-      padding: 1px 5px;
-      border: 1px solid ${theme.colours.label};
-      border-radius: 2px;
-      background: ${theme.colours.label};
+  [data-tag] {
+    cursor: pointer;
 
-      [class$='Table__row']:not(:hover) & {
-        color: ${rgba(theme.colours.base, 0.7)};
-        background: ${rgba(theme.colours.label, 0.1)};
-      }
-
-      &:hover {
-        border-color: ${darken(0.25, theme.colours.label)};
-      }
-
-      + * {
-        margin-left: 3px;
-      }
+    + * {
+      margin-left: 3px;
     }
-  `}
   }
 `

@@ -11,17 +11,6 @@ export default styled.section`
 
     [class$='Table__headerRow'] {
       user-select: none;
-
-      [aria-sort] {
-        color: ${theme.colours.secondary};
-      }
-
-      [class*='sortableHeaderIcon'] {
-        vertical-align: top;
-        position: absolute;
-        fill: ${theme.colours.base} !important;
-        transform: translate(2px, 5px);
-      }
     }
 
     [class$='Table__row'] {
@@ -35,7 +24,7 @@ export default styled.section`
         z-index: 2;
         box-shadow: inset 0 1px 0 ${darken(0.05, theme.colours.panel)},
           inset 0 -1px 0 ${darken(0.05, theme.colours.panel)};
-        background: ${rgba(theme.colours.base, 0.03)};
+        background: ${rgba(theme.colours.base, 0.06)};
       }
     }
 

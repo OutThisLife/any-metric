@@ -1,8 +1,10 @@
 import Button from '@/components/button'
 import Header from '@/components/header/style'
 import Logo from '@/components/logo'
+import theme from '@/theme'
 import { setDisplayName } from 'recompose'
 
+import AddNew from './addNew'
 import Controls from './controls'
 import Nav from './nav'
 
@@ -17,8 +19,17 @@ export default setDisplayName('header')(() => (
       <Nav />
 
       <div>
-        <Button title="Create View" />
-        <Button variant="primary" title="Add Pod" />
+        <AddNew>
+          <Button
+            appearance="minimal"
+            color={theme.colours.base}
+            title="Create View"
+          />
+        </AddNew>
+
+        <AddNew>
+          <Button title="Add Pod" />
+        </AddNew>
       </div>
     </nav>
   </Header>

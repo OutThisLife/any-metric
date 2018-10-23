@@ -1,22 +1,16 @@
-import Button from '@/components/button/style'
-import { setDisplayName } from 'recompose'
+import { Button, IconButton } from 'evergreen-ui'
+import { compose, setDisplayName, withProps } from 'recompose'
 
 interface TOutter {
   title?: string
-  Icon?: JSX.Element | React.SFC
-  variant?: string
+  height?: number | string
   [key: string]: any
 }
 
-export default setDisplayName('Button')(
-  ({ title, Icon, ...props }: TOutter) => (
-    <Button {...props}>
-      {title && typeof Icon === 'object' ? Icon : null}
-      {title ? (
-        <span className="title">{title}</span>
-      ) : (
-        <span className="icon">{Icon}</span>
-      )}
-    </Button>
-  )
+export default compose<TOutter, TOutter>(
+  setDisplayName('Button'),
+  withProps(({ height = 32 }) => ({ height }))
+)(
+  ({ title = null, ...props }) =>
+    title ? <Button {...props}>{title}</Button> : <IconButton {...props} />
 )

@@ -5,16 +5,18 @@ dayjs.extend(relativeTime)
 
 export const flatten = <T extends Array<{ [key: string]: any }>, K = string>(
   arr: T,
-  key: string
+  ...keys: string[]
 ): K[] =>
   arr
-    .reduce(
-      (acc: K[], r) =>
-        (r[key] instanceof Array ? acc.push(...r[key]) : acc.push(r[key])) &&
-        acc,
-      []
-    )
+    .reduce((acc: K[], r) => {
+      keys.forEach(
+        key =>
+          r[key] instanceof Array ? acc.push(...r[key]) : acc.push(r[key])
+      )
+      return acc
+    }, [])
     .filter((r: K, i, self: K[]) => r && self.indexOf(r) === i)
+    .sort()
 
 export const dateFormat = (date: dayjs.ConfigType): string => {
   const d = dayjs(date)
@@ -45,3 +47,21 @@ export const unixDateFormat = (date: dayjs.ConfigType): string =>
 
 export const sortByDate = <T extends { date: Date }>(a: T, b: T): number =>
   dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1
+
+export const spawn = (fn: () => any): Worker =>
+  new Worker(URL.createObjectURL(new Blob([`(${fn})()`])))
+
+export const raf = cb => {
+  let t = 0
+
+  window.requestAnimationFrame(() => {
+    cb()
+
+    if (t) {
+      window.requestAnimationFrame(cb)
+      t = 0
+    }
+
+    t = 1
+  })
+}

@@ -5,7 +5,7 @@ export default styled.div`
 
   a {
     display: inline-block;
-    padding: 0.5em 0;
+    padding: 0.7em 0;
     box-shadow: inset 0 -2px currentColor;
 
     &.active sup {

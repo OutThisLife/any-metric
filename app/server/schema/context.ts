@@ -12,6 +12,7 @@ export const cache = LRU({
 const genFakeResults: Context['genFakeResults'] = async (lru, ids) => {
   if (!lru.has('data')) {
     faker.seed(100)
+
     lru.set(
       'data',
       [...Array(255).keys()].map(i => ({

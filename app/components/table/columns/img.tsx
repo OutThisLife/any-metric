@@ -1,8 +1,7 @@
 import { Cell } from '.'
-import { Image } from './style'
 
 export default ({ cellData: img, rowData: { title } }: Cell<string>) => (
-  <Image>
+  <figure style={{ width: 30, margin: 0 }}>
     <img src={img} alt={title} />
-  </Image>
+  </figure>
 )

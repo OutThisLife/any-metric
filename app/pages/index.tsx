@@ -18,7 +18,7 @@ export default compose<TInner & DimProps & LayoutProps, {}>(
   withLayout(),
   withDimensions(true)
 )(({ onRef, changeLayout, layoutData: { layout }, width, height }) => (
-  <Home innerRef={onRef}>
+  <Home ref={onRef}>
     <Grid
       width={width}
       rowHeight={height / layout.cols}

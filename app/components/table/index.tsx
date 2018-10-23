@@ -1,13 +1,7 @@
 import { sortByDate } from '@/lib/utils'
 import { FakeCrawlResult } from '@/server/schema/types'
-import { MdDateRange, MdLink, MdPhoto } from 'react-icons/md'
-import {
-  ArrowKeyStepper,
-  AutoSizer,
-  Column,
-  SortDirectionType,
-  Table
-} from 'react-virtualized'
+import { Icon } from 'evergreen-ui'
+import { AutoSizer, Column, SortDirectionType, Table } from 'react-virtualized'
 import {
   compose,
   setDisplayName,
@@ -18,12 +12,18 @@ import {
   withStateHandlers
 } from 'recompose'
 
+import { DataTableFilter } from '../pod'
 import * as Columns from './columns'
+import { headerRenderer, rowRenderer } from './renders'
+import Search from './search'
 import DataTable from './style'
 
 interface TOutter {
   initialData: FakeCrawlResult[]
-  filterData: (t: string) => void
+}
+
+interface TInner {
+  filter: DataTableFilter
 }
 
 interface TState {
@@ -40,7 +40,7 @@ interface TStateHandles extends StateHandlerMap<TState> {
   onSort: StateHandler<TState>
 }
 
-export default compose<TState & TStateHandles, TOutter>(
+export default compose<TState & TStateHandles & TInner & TOutter, TOutter>(
   setDisplayName('pod'),
   withStateHandlers<TState, TStateHandles, TOutter>(
     ({ initialData }) => {
@@ -74,66 +74,59 @@ export default compose<TState & TStateHandles, TOutter>(
       !shallowEqual(props.initialData, nextProps.initialData),
     ({ onSort, sort, initialData }) => onSort(sort, initialData)
   )
-)(({ filterData, onSort, sort: { sortBy, sortDirection }, data = [] }) => (
+)(({ data, onSort, sort: { sortBy, sortDirection } }) => (
   <DataTable>
-    <ArrowKeyStepper columnCount={4} rowCount={data.length}>
-      {({ onSectionRendered, scrollToColumn, scrollToRow }) => (
-        <AutoSizer>
-          {({ width, height }) => (
-            <Table
-              width={width}
-              height={height}
-              headerHeight={35}
-              rowHeight={50}
-              rowCount={data.length}
-              rowGetter={({ index: i }) => data[i]}
-              sort={onSort}
-              sortBy={sortBy}
-              sortDirection={sortDirection}
-              onSectionRendered={onSectionRendered}
-              scrollToColumn={scrollToColumn}
-              scrollToRow={scrollToRow}
-              overscanRowCount={5}>
-              <Column
-                label={<MdPhoto />}
-                dataKey="image"
-                width={30}
-                disableSort={true}
-                cellRenderer={Columns.Image}
-              />
+    <AutoSizer>
+      {({ width, height }) => (
+        <Table
+          width={width}
+          height={height}
+          headerHeight={35}
+          rowHeight={50}
+          rowCount={data.length}
+          rowGetter={({ index: i }) => data[i]}
+          rowRenderer={rowRenderer}
+          sort={onSort}
+          sortBy={sortBy}
+          sortDirection={sortDirection}
+          overscanRowCount={5}>
+          <Column
+            dataKey="image"
+            width={30}
+            headerRenderer={() => <Search />}
+            disableSort={true}
+            cellRenderer={Columns.Image}
+          />
 
-              <Column
-                label={<MdDateRange />}
-                dataKey="date"
-                width={80}
-                headerStyle={{ textAlign: 'center' }}
-                style={{ textAlign: 'center' }}
-                cellRenderer={Columns.Date}
-              />
+          <Column
+            dataKey="title"
+            width={100}
+            flexGrow={1}
+            disableSort={true}
+            cellRenderer={props => <Columns.Title {...props} />}
+          />
 
-              <Column
-                label="Content"
-                dataKey="title"
-                width={100}
-                flexGrow={1}
-                cellRenderer={props => (
-                  <Columns.Title {...props} filterData={filterData} />
-                )}
-              />
+          <Column
+            label="Date"
+            headerRenderer={headerRenderer}
+            dataKey="date"
+            width={50}
+            headerStyle={{ textAlign: 'center' }}
+            style={{ textAlign: 'center' }}
+            cellRenderer={Columns.Date}
+          />
 
-              <Column
-                label={<MdLink />}
-                dataKey="slug"
-                width={26}
-                style={{ margin: 0 }}
-                disableSort={true}
-                headerStyle={{ textAlign: 'right' }}
-                cellRenderer={Columns.Link}
-              />
-            </Table>
-          )}
-        </AutoSizer>
+          <Column
+            label={<Icon icon="link" size={10} />}
+            dataKey="slug"
+            width={26}
+            style={{ margin: 0 }}
+            disableSort={true}
+            headerStyle={{ textAlign: 'right' }}
+            cellRenderer={Columns.Link}
+          />
+        </Table>
       )}
-    </ArrowKeyStepper>
+    </AutoSizer>
   </DataTable>
 ))

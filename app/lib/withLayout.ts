@@ -4,7 +4,7 @@ import { MutationFunc } from 'react-apollo'
 import { compose, setDisplayName, withHandlers } from 'recompose'
 
 interface TInner {
-  mutate: MutationFunc<{}, { layout: ReactGridLayout.Layout[] }>
+  mutate: MutationFunc<{}, { layout: string }>
   layoutData: { layout: LayoutResult }
 }
 
@@ -22,18 +22,18 @@ export default () =>
       changeLayout: ({
         mutate,
         layoutData: {
-          layout: { id, cols }
+          layout: { __typename, id, cols }
         }
-      }) => (obj, layout = JSON.stringify(obj)) =>
+      }) => data =>
         mutate({
-          variables: { layout },
+          variables: { layout: JSON.stringify(data) },
           optimisticResponse: {
             __typename: 'Mutation',
             setLayout: {
-              __typename: 'LayoutResult',
+              __typename,
               id,
               cols,
-              data: JSON.parse(layout)
+              data
             }
           }
         })

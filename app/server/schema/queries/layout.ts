@@ -1,6 +1,7 @@
 import { Resolver } from '../types'
 
 export interface LayoutResult {
+  __typename?: string
   id: number | string
   cols: number
   data: ReactGridLayout.Layout[]
@@ -21,15 +22,9 @@ export default ((): LayoutResult => ({
       y: 0,
       w: cols - (cols / listFactor) * 2,
       h: cols / 3.5,
-      maxH: cols
-    },
-    {
-      i: 'b',
-      x: cols / listFactor,
-      y: 1,
-      w: cols - (cols / listFactor) * 2,
-      h: cols / 3.5,
-      maxH: cols
+      maxH: cols,
+      moved: false,
+      static: false
     }
   ]
 })) as Resolver

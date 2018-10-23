@@ -4,3 +4,5 @@ out/
 .env
 
 *.log
+
+app/static/fonts

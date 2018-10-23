@@ -6,6 +6,7 @@ export default styled.header`
     z-index: 500;
     position: relative;
     box-shadow: 0 1px 3px 0 ${rgba(theme.colours.base, 0.15)};
+    background: ${theme.colours.bg};
 
     > div {
       padding: var(--pad) calc(var(--pad) * 2);

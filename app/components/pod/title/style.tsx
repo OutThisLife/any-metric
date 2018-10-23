@@ -1,60 +1,48 @@
-import { darken } from 'polished'
+import { rgba } from 'polished'
 import styled, { css } from 'styled-components'
 
 export default styled.header`
   padding: 0 0 var(--pad);
 
   ${({ theme }) => css`
-    cursor: move;
     position: relative;
-    padding: var(--pad);
+    padding: calc(var(--pad) * 2);
 
     .drag-h {
-      z-index: 1;
+      z-index: 2;
       position: absolute;
       top: 0;
       right: 0;
       bottom: 0;
       left: 0;
 
-      ~ div {
-        pointer-events: none;
-
-        a[href],
-        button,
-        input {
-          pointer-events: auto;
-        }
+      svg {
+        opacity: 0.25;
+        position: absolute;
+        top: -0.5em;
+        left: 50%;
+        transform: translate(-50%, 0);
       }
     }
 
     > div {
-      z-index: 2;
       display: flex;
       align-items: center;
-      position: relative;
-      color: ${darken(0.15, theme.colours.panel)};
+      color: ${rgba(theme.colours.base, 0.5)};
       border-radius: inherit;
+
+      > * {
+        position: relative;
+        z-index: 3;
+      }
+
+      h2 {
+        display: inline-flex;
+        align-items: center;
+      }
 
       a[href] {
         color: inherit;
-      }
-    }
-
-    div:not(:hover) & small span {
-      visibility: hidden;
-    }
-
-    h2 {
-      color: ${theme.colours.base};
-      margin: 0;
-
-      a[href] {
-        text-decoration: none;
-
-        &:hover {
-          color: ${theme.colours.base};
-        }
       }
     }
 
@@ -73,7 +61,6 @@ export default styled.header`
         }
 
         svg {
-          fill: currentColor;
           width: 16px;
           height: auto;
         }

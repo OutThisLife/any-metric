@@ -1,6 +1,6 @@
 import withLayout, { LayoutProps } from '@/lib/withLayout'
 import { gridFactor, listFactor } from '@/server/schema/queries/layout'
-import { IoIosList, IoMdApps } from 'react-icons/io'
+import { Icon } from 'evergreen-ui'
 import { compose, setDisplayName, withProps } from 'recompose'
 
 import Controls from './style'
@@ -35,11 +35,10 @@ export default compose<TInner, {}>(
     isList
   }) => (
     <Controls>
-      <a
-        href="javascript:;"
-        className={isGrid ? 'active' : ''}
-        data-tip="Grid Style"
-        data-place="bottom"
+      <Option
+        title="Grid Style"
+        icon="layout-grid"
+        isActive={isGrid}
         onClick={() =>
           changeLayout(
             layout.map((d, y) => ({
@@ -49,15 +48,13 @@ export default compose<TInner, {}>(
               w: cols / gridFactor
             }))
           )
-        }>
-        <IoMdApps />
-      </a>
+        }
+      />
 
-      <a
-        href="javascript:;"
-        className={isList ? 'active' : ''}
-        data-tip="Feed Style"
-        data-place="bottom"
+      <Option
+        title="Feed Style"
+        icon="list"
+        isActive={isList}
         onClick={() =>
           changeLayout(
             layout.map((d, y) => ({
@@ -67,9 +64,38 @@ export default compose<TInner, {}>(
               w: cols - (cols / listFactor) * 2
             }))
           )
-        }>
-        <IoIosList />
-      </a>
+        }
+      />
+
+      <Option
+        title="Custom"
+        icon="layout-auto"
+        isActive={!(isList || isGrid)}
+      />
     </Controls>
   )
+)
+
+const Option = ({
+  title,
+  icon,
+  isActive,
+  onClick = () => 1,
+  ...props
+}: {
+  title: string
+  icon: string
+  isActive: boolean
+  onClick?: () => void
+  style?: { [key: string]: string | number }
+}) => (
+  <a
+    href="javascript:;"
+    className={isActive ? 'active' : ''}
+    data-tip={title}
+    data-place="bottom"
+    onClick={onClick}
+    {...props}>
+    <Icon icon={icon} size={14} />
+  </a>
 )

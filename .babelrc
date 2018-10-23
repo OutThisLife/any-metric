@@ -9,11 +9,7 @@
         "cwd": "babelrc",
         "alias": {
           "@types": "./typings/index.d.ts",
-          "@": "./app",
-          "@lib": "./app/lib",
-          "@components": "./app/components",
-          "@static": "./app/static",
-          "@vars": "./app/variables"
+          "@": "./app"
         }
       }
     ],

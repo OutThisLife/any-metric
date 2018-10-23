@@ -1,41 +1,69 @@
 import Button from '@/components/button'
-import { compose, mapProps, onlyUpdateForKeys } from 'recompose'
+import { autoColour } from '@/theme'
+import { Icon, SidebarTab, Tablist } from 'evergreen-ui'
+import { func } from 'prop-types'
+import { IoMdFunnel } from 'react-icons/io'
+import { compose, getContext, mapProps, onlyUpdateForKeys } from 'recompose'
 
+import { DataTableFilter } from '../'
+import AddNew from './addNew'
 import Nav from './style'
 
 interface TOutter {
   tags: string[]
-  filterData: (t: string) => void
-  active: string
+  current: string
 }
 
-export default compose<TOutter, TOutter>(
-  onlyUpdateForKeys(['active', 'tags']),
+interface TInner {
+  filter: DataTableFilter
+}
+
+export default compose<TInner & TOutter, TOutter>(
+  onlyUpdateForKeys(['current', 'tags']),
   mapProps(({ tags = [], ...props }) => ({
     ...props,
     tags: tags.filter((t, i, self) => t && self.indexOf(t) === i)
-  }))
-)(({ active, filterData, tags }) => (
-  <Nav>
-    <strong>Labels</strong>
+  })),
+  getContext({ filter: func })
+)(({ current, filter, tags, ...props }) => (
+  <Nav as="aside" {...props}>
+    <Tablist>
+      <SidebarTab
+        key="all"
+        height={20}
+        isSelected={!current}
+        onSelect={() => filter({ value: '', action: 'RESET' })}>
+        All Results
+      </SidebarTab>
 
-    <a
-      href="javascript:;"
-      className={!active ? 'active' : ''}
-      onClick={() => filterData('')}>
-      All Results
-    </a>
+      {tags.map(t => (
+        <SidebarTab
+          key={`tag-${t}`}
+          height={20}
+          isSelected={current === t}
+          onClick={() =>
+            filter({
+              value: t,
+              action: 'TAG'
+            })
+          }>
+          <Icon
+            icon="ring"
+            color={autoColour(t, true).backgroundColor}
+            size={8}
+          />
+          {t}
+        </SidebarTab>
+      ))}
+    </Tablist>
 
-    {tags.map(t => (
-      <a
-        key={`tag-${t}`}
-        href="javascript:;"
-        className={active === t ? 'active' : ''}
-        onClick={() => filterData(t)}
-        dangerouslySetInnerHTML={{ __html: t }}
+    <br />
+
+    <AddNew>
+      <Button
+        title="Create Filter"
+        iconBefore={<IoMdFunnel style={{ marginRight: '.33em' }} />}
       />
-    ))}
-
-    <Button title="Create Filter" />
+    </AddNew>
   </Nav>
 ))

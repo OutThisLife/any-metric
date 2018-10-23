@@ -1,58 +1,79 @@
 import Button from '@/components/button'
 import Title from '@/components/pod/title/style'
+import { Heading, Link, Position, Text } from 'evergreen-ui'
+import { func } from 'prop-types'
 import { IconType } from 'react-icons/lib/iconBase'
-import { MdLibraryAdd } from 'react-icons/md'
-import { compose, onlyUpdateForKeys, setDisplayName } from 'recompose'
+import {
+  compose,
+  getContext,
+  onlyUpdateForKeys,
+  setDisplayName
+} from 'recompose'
+
+import { DataTableFilter } from '../'
+import AddNew from './addNew'
 
 interface TOutter {
   title: string
   services: IconType[]
 }
+interface TInner {
+  filter: DataTableFilter
+}
 
-export default compose<TOutter, TOutter>(
+export default compose<TInner & TOutter, TOutter>(
   setDisplayName('pod-title'),
-  onlyUpdateForKeys(['title', 'services'])
+  onlyUpdateForKeys(['title', 'services']),
+  getContext({ filter: func })
 )(({ title, services = [] }) => (
   <Title>
     <div className="drag-h" />
 
     <div>
-      <h2>{title}</h2>
+      <Heading size={800} is="h2">
+        {title}
+
+        <AddNew position={Position.BOTTOM_LEFT} variant="select">
+          <Button
+            href="javascript:;"
+            icon="refresh"
+            data-tip="Change refresh interval"
+            display="inline-block"
+            appearance="minimal"
+            marginLeft={8}
+            style={{ top: -2 }}
+          />
+        </AddNew>
+      </Heading>
 
       <nav>
         {services.length && (
           <figure>
             {[].slice.call(services).map((I: IconType) => (
-              <a key={Math.random()} href="javascript:;">
+              <Link
+                key={Math.random()}
+                href="javascript:;"
+                target="_blank"
+                rel="noopener noreferrer">
                 <I />
-              </a>
+              </Link>
             ))}
           </figure>
         )}
 
-        <Button
-          href="javascript:;"
-          Icon={<MdLibraryAdd />}
-          data-tip="Add Source"
-        />
+        <AddNew position={Position.BOTTOM_RIGHT}>
+          <Button href="javascript:;" icon="series-add" data-tip="Add Source" />
+        </AddNew>
       </nav>
     </div>
 
     <div>
-      <small>
+      <Text is="small" color="muted" size={300}>
         Updated&nbsp;
-        <time>6 hours ago</time>
-        <span>
-          &mdash;
-          <a href="javascript:;" onClick={e => e.stopPropagation()}>
-            refresh
-          </a>
-          ,&nbsp;
-          <a href="javascript:;" onClick={e => e.stopPropagation()}>
-            schedule
-          </a>
-        </span>
-      </small>
+        <time>
+          6 hours ago, next update in <strong>15 minutes</strong>
+        </time>
+      </Text>
     </div>
   </Title>
 ))

@@ -2,8 +2,8 @@ import theme from '@/theme'
 import { Heading, Icon, Text } from 'evergreen-ui'
 import { rgba } from 'polished'
 import {
-  VictoryArea,
   VictoryAxis,
+  VictoryBar,
   VictoryChart,
   VictoryLine,
   VictoryScatter,
@@ -13,8 +13,8 @@ import {
 
 import Stats from './style'
 
-export default () => (
-  <Stats>
+export default props => (
+  <Stats {...props}>
     <div>
       <hgroup>
         <Heading is="h2" size={400} color="muted">
@@ -44,7 +44,7 @@ export default () => (
             }
           />
         }>
-        <VictoryArea
+        <VictoryBar
           data={[
             { x: new Date(2018, 1, 1), y: 40 },
             { x: new Date(2018, 1, 2), y: 45 },
@@ -60,22 +60,6 @@ export default () => (
               fontSize: 11,
               fill: theme.colours.bg
             }
-          }}
-        />
-        <VictoryArea
-          data={[
-            { x: new Date(2018, 1, 1), y: 15 },
-            { x: new Date(2018, 1, 2), y: 20 },
-            { x: new Date(2018, 1, 3), y: 20 },
-            { x: new Date(2018, 1, 4), y: 25 },
-            { x: new Date(2018, 1, 5), y: 30 }
-          ]}
-          style={{
-            data: {
-              strokeWidth: 0,
-              fill: '#fff'
-            },
-            labels: { fontSize: 11, fill: '#FFF' }
           }}
         />
         <VictoryLine

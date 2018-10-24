@@ -50,21 +50,6 @@ export default styled.header`
       display: inherit;
       align-items: inherit;
       margin-left: auto;
-
-      figure {
-        display: inherit;
-        align-items: inherit;
-        margin: 0 var(--pad);
-
-        a + a {
-          margin-left: calc(var(--pad) / 3);
-        }
-
-        svg {
-          width: 16px;
-          height: auto;
-        }
-      }
     }
   `};
 ` as any

@@ -1,10 +1,16 @@
 import DataTable from '@/components/table'
 import { flatten } from '@/lib/utils'
-import { Pane } from 'evergreen-ui'
-import { func } from 'prop-types'
+import { bool, func } from 'prop-types'
 import { DragDropContext } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
-import { compose, shouldUpdate, withContext, withState } from 'recompose'
+import {
+  compose,
+  shouldUpdate,
+  StateHandler,
+  StateHandlerMap,
+  withContext,
+  withStateHandlers
+} from 'recompose'
 
 import { TInner as TOutter } from '.'
 import Nav from './nav'
@@ -12,22 +18,33 @@ import Stats from './stats'
 import { Inner } from './style'
 import Title from './title'
 
-interface TInner {
+interface TState {
   showStats: boolean
-  toggleStats: (b: boolean) => void
 }
 
-export default compose<TInner & TOutter, TOutter>(
+interface TStateHandlers extends StateHandlerMap<TState> {
+  toggleStats: StateHandler<TState>
+}
+
+export default compose<TState & TOutter, TOutter>(
   DragDropContext(HTML5Backend),
   shouldUpdate<TOutter>(
     (_, nextProps) => !/(resizing|dragging)/.test(nextProps.className)
   ),
-  withState('showStats', 'toggleStats', true),
-  withContext<{}, TInner>(
+  withStateHandlers<TState, TStateHandlers>(
     {
+      showStats: false
+    },
+    {
+      toggleStats: ({ showStats }) => () => ({ showStats: !showStats })
+    }
+  ),
+  withContext<{}, TStateHandlers>(
+    {
+      showStats: bool,
       toggleStats: func
     },
-    ({ toggleStats }) => ({ toggleStats })
+    ({ showStats, toggleStats }) => ({ showStats, toggleStats })
   )
 )(
   ({
@@ -47,11 +64,7 @@ export default compose<TInner & TOutter, TOutter>(
       />
 
       <section>
-        {showStats && (
-          <Pane>
-            <Stats />
-          </Pane>
-        )}
+        <Stats className={showStats ? 'open' : ''} />
         <DataTable initialData={renderedData} />
       </section>
     </Inner>

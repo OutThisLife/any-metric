@@ -6,6 +6,7 @@ import styled from 'styled-components'
 export default styled.div`
   position: relative;
   height: auto;
+  overflow: hidden;
 
   > div {
     display: grid;

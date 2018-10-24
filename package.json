@@ -57,6 +57,7 @@
     "md5": "^2.2.1",
     "mime": "^2.3.1",
     "morgan": "^1.9.1",
+    "moving-averages": "^4.0.5",
     "newrelic": "^4.9.0",
     "next": "^7.0.2",
     "next-compose-plugins": "^2.1.1",

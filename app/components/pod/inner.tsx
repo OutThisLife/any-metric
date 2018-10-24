@@ -33,7 +33,7 @@ export default compose<TState & TOutter, TOutter>(
   ),
   withStateHandlers<TState, TStateHandlers>(
     {
-      showStats: false
+      showStats: true
     },
     {
       toggleStats: ({ showStats }) => () => ({ showStats: !showStats })
@@ -64,7 +64,7 @@ export default compose<TState & TOutter, TOutter>(
       />
 
       <section>
-        <Stats className={showStats ? 'open' : ''} />
+        {showStats && <Stats />}
         <DataTable initialData={renderedData} />
       </section>
     </Inner>

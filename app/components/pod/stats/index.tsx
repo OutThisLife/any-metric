@@ -21,7 +21,7 @@ interface TOutter {
 interface TInner {
   filter?: DataTableFilter
   priceData?: any[]
-  quantityData?: any[]
+  quantityData?: Partial<{ data: any[] }>
   volumeData?: any[]
   sentimentData?: any[]
 }
@@ -134,7 +134,7 @@ export const commonProps = {
 export const tooltipContainer = (
   <VictoryVoronoiContainer
     voronoiDimension="x"
-    labels={d => d.y}
+    labels={d => parseInt(d.y, 10)}
     labelComponent={
       <VictoryTooltip
         cornerRadius={2}

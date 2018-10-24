@@ -17,13 +17,14 @@ interface TOutter {
 }
 interface TInner {
   filter: DataTableFilter
+  toggleStats: (b: boolean) => void
 }
 
 export default compose<TInner & TOutter, TOutter>(
   setDisplayName('pod-title'),
   onlyUpdateForKeys(['title', 'services']),
-  getContext({ filter: func })
-)(({ title }) => (
+  getContext({ filter: func, toggleStats: func })
+)(({ title, toggleStats }) => (
   <Title>
     <div className="drag-h" />
 
@@ -38,9 +39,7 @@ export default compose<TInner & TOutter, TOutter>(
           icon="chart"
           data-tip="View Charts"
           appearance="minimal"
-          onClick={() => {
-            document.querySelector('section aside').classList.toggle('open')
-          }}
+          onClick={() => toggleStats(true)}
         />
 
         <Popover

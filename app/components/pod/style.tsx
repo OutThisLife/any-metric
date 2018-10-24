@@ -42,17 +42,22 @@ export const Inner = styled(Panel)`
       position: absolute;
       top: 0;
       right: 0;
-      bottom: 0;
-      width: 80%;
+      width: auto;
+      max-height: 100%;
       transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.175);
       transition-property: opacity, transform;
       transform-origin: 100% 100%;
       background: ${({ theme }) => theme.colours.bg};
 
-      &:not(.open) {
+      /* &:not(.open) {
+        pointer-events: none;
         opacity: 0;
         transform: scale(0.9) translate(-1px, -1px);
-      }
+
+        * {
+          pointer-events: none !important;
+        }
+      } */
     }
 
     > div[style] {

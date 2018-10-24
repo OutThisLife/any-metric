@@ -16,8 +16,8 @@ export default ({ cellData: img, rowData: { title } }: TOutter) => (
     {({ toggle, isShown, getRef }) => (
       <Card
         innerRef={getRef}
-        onMouseOver={!isShown && toggle}
-        onMouseLeave={isShown && toggle}>
+        onMouseOver={!isShown ? toggle : undefined}
+        onMouseLeave={isShown ? toggle : undefined}>
         <img src={img} alt={title} style={{ cursor: 'zoom-in' }} />
       </Card>
     )}

@@ -15,6 +15,11 @@ export default styled(props => <Pane is="aside" {...props} />)`
   justify-content: space-between;
   background: ${({ theme }) => theme.colours.bg};
 
+  > header {
+    position: sticky;
+    top: 0;
+  }
+
   > div {
     display: grid;
     align-items: center;

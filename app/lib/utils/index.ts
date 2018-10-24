@@ -16,6 +16,9 @@ export const flatten = <T extends Array<{ [key: string]: any }>, K = string>(
     .filter((r: K, i, self: K[]) => r && self.indexOf(r) === i)
     .sort()
 
+export const random = <T extends string>(r: { [key: string]: any }): T =>
+  Object.values(r)[Math.floor(Math.random() * Object.values(r).length)]
+
 export const spawn = (fn: () => any): Worker =>
   new Worker(URL.createObjectURL(new Blob([`(${fn})()`])))
 

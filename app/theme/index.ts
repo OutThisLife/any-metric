@@ -3,7 +3,6 @@ import globalHash from 'evergreen-ui/commonjs/avatar/src/utils/hash'
 import { between } from 'polished'
 
 const { scales: egScales, colors: egColours, palette: egPalette } = defaultTheme
-console.log(egScales)
 
 export const colours = {
   base: egColours.text.default,

@@ -1,17 +1,18 @@
-import { randomData, smooth } from '@/lib/utils'
+import { smooth } from '@/lib/utils'
 import theme from '@/theme'
 import dayjs from 'dayjs'
 import { rgba } from 'polished'
-import { VictoryAxis, VictoryBar, VictoryChart, VictoryLine } from 'victory'
+import {
+  VictoryAxis,
+  VictoryBar,
+  VictoryChart,
+  VictoryGroup,
+  VictoryLine
+} from 'victory'
 
 import { ChartTitle, commonProps, tooltipContainer } from '.'
 
-const data = randomData({
-  min: 10,
-  max: 60
-})
-
-export default () => (
+export default ({ data: initialData }: any) => (
   <div>
     <ChartTitle
       title="Volume"
@@ -24,24 +25,28 @@ export default () => (
     />
 
     <VictoryChart {...commonProps} containerComponent={tooltipContainer}>
-      <VictoryLine
-        data={smooth(data)}
-        interpolation="natural"
-        animate={{ duration: 200 }}
-        style={{
-          data: {
-            stroke: theme.colours.secondary,
-            strokeWidth: 1
-          },
-          labels: {
-            fontSize: 11,
-            fill: theme.colours.bg
-          }
-        }}
-      />
+      {initialData.map((data, idx) => (
+        <VictoryGroup key={idx}>
+          <VictoryLine
+            data={smooth(data)}
+            interpolation="natural"
+            animate={{ duration: 200 }}
+            style={{
+              data: {
+                stroke: data[0].colour,
+                strokeWidth: 1
+              },
+              labels: {
+                fontSize: 11,
+                fill: theme.colours.bg
+              }
+            }}
+          />
+        </VictoryGroup>
+      ))}
 
       <VictoryBar
-        data={data}
+        data={initialData[0]}
         animate={{ duration: 400 }}
         style={{
           data: {

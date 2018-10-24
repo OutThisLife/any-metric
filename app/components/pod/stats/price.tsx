@@ -1,4 +1,3 @@
-import { randomData } from '@/lib/utils'
 import theme from '@/theme'
 import dayjs from 'dayjs'
 import { rgba } from 'polished'
@@ -12,13 +11,7 @@ import {
 
 import { ChartTitle, commonProps, tooltipContainer } from '.'
 
-const data = randomData({
-  count: 10,
-  min: 3000,
-  max: 5000
-})
-
-export default () => (
+export default ({ data: initialData }: any) => (
   <div>
     <ChartTitle
       title="Price"
@@ -31,53 +24,58 @@ export default () => (
     />
 
     <VictoryChart {...commonProps} containerComponent={tooltipContainer}>
-      <VictoryLine
-        interpolation="natural"
-        data={data}
-        animate={{ duration: 700 }}
-        style={{
-          data: {
-            stroke: theme.colours.secondary,
-            strokeWidth: 1
-          },
-          labels: {
-            fontSize: 11,
-            fill: theme.colours.bg
-          }
-        }}
-      />
-
-      <VictoryGroup
-        style={{
-          data: {
-            fill: theme.colours.secondary
-          },
-          labels: {
-            fontSize: 11,
-            fill: theme.colours.bg
-          }
-        }}>
-        {data.map((d, i) => (
-          <VictoryScatter
-            key={i}
-            data={[Object.assign({}, d, { opacity: 1 })]}
+      {initialData.map((data, idx) => (
+        <VictoryGroup key={idx}>
+          <VictoryLine
+            interpolation="natural"
+            data={data}
+            animate={{ duration: 200 }}
             style={{
               data: {
-                opacity: d => d.opacity
-              }
-            }}
-            animate={{
-              duration: 700,
-              onLoad: {
-                duration: (700 / (700 / i + data.length)) * 700,
-                before: () => ({
-                  opacity: 0
-                })
+                stroke: data[0].colour,
+                strokeWidth: 1
+              },
+              labels: {
+                fontSize: 11,
+                fill: theme.colours.bg
               }
             }}
           />
-        ))}
-      </VictoryGroup>
+        </VictoryGroup>
+      ))}
+
+      {initialData.map((data, idx) => (
+        <VictoryGroup
+          key={idx}
+          style={{
+            labels: {
+              fontSize: 11,
+              fill: theme.colours.bg
+            }
+          }}>
+          {data.map((d, i) => (
+            <VictoryScatter
+              key={i}
+              data={[Object.assign({}, d, { opacity: 1 })]}
+              style={{
+                data: {
+                  fill: d.colour,
+                  opacity: d => d.opacity
+                }
+              }}
+              animate={{
+                duration: 200,
+                onLoad: {
+                  duration: (200 / (200 / i + data.length)) * 200,
+                  before: () => ({
+                    opacity: 0
+                  })
+                }
+              }}
+            />
+          ))}
+        </VictoryGroup>
+      ))}
 
       <VictoryAxis
         dependentAxis

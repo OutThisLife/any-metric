@@ -64,7 +64,9 @@ export default compose<TState & TOutter, TOutter>(
       />
 
       <section>
-        {showStats && <Stats />}
+        {showStats && (
+          <Stats current={filter.action === 'TAG' ? filter.value : ''} />
+        )}
         <DataTable initialData={renderedData} />
       </section>
     </Inner>

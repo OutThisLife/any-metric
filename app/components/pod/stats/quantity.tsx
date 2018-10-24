@@ -1,7 +1,4 @@
-import { getMaxima, processRadar } from '@/lib/utils'
-import { getAvg } from '@/lib/utils/maths'
 import theme from '@/theme'
-import faker from 'faker'
 import { rgba } from 'polished'
 import {
   VictoryArea,
@@ -13,19 +10,7 @@ import {
 
 import { ChartTitle, commonProps } from '.'
 
-const sources = [...Array(3).keys()].map(() => ({
-  ebay: faker.random.number({ min: 100, max: 200 }),
-  amazon: faker.random.number({ min: 100, max: 200 }),
-  facebook: faker.random.number({ min: 100, max: 200 }),
-  baidu: faker.random.number({ min: 100, max: 200 }),
-  listia: faker.random.number({ min: 100, max: 200 })
-}))
-
-const maxima = getMaxima(sources)
-const data = processRadar(sources)
-const avg = getAvg(sources)
-
-export default () => (
+export default ({ data, maxima, avg }: any) => (
   <div>
     <ChartTitle
       title={

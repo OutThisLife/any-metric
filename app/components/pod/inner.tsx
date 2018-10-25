@@ -33,7 +33,7 @@ export default compose<TState & TOutter, TOutter>(
   ),
   withStateHandlers<TState, TStateHandlers>(
     {
-      showStats: true
+      showStats: false
     },
     {
       toggleStats: ({ showStats }) => () => ({ showStats: !showStats })

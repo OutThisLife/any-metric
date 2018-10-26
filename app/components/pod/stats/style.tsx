@@ -1,32 +1,24 @@
 import { Pane } from 'evergreen-ui'
 import styled from 'styled-components'
 
-export default styled(props => <Pane is="aside" {...props} />)`
-  z-index: 10;
-  display: flex;
+export default styled(props => <Pane {...props} />)`
+  display: inline-flex;
   align-items: flex-start;
-  flex-wrap: wrap;
-  position: absolute;
-  top: -30px;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: auto;
+  flex-wrap: nowrap;
   justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
   background: ${({ theme }) => theme.colours.bg};
-
-  > header {
-    position: sticky;
-    top: 0;
-  }
 
   > div {
     display: grid;
     align-items: center;
     justify-content: center;
-    grid-template-columns: 150px 1fr;
+    grid-template-columns: 150px 250px;
     grid-gap: var(--pad);
-    width: 100%;
+    width: 500px;
+    height: 100%;
     margin: 0 auto;
 
     hgroup {
@@ -36,8 +28,13 @@ export default styled(props => <Pane is="aside" {...props} />)`
     }
 
     > div {
+      cursor: zoom-in;
       grid-column: 2;
       margin-left: auto;
+
+      * {
+        pointer-events: none;
+      }
     }
   }
 ` as any

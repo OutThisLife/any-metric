@@ -85,8 +85,8 @@ export const GlobalStyles = createGlobalStyle`
     box-sizing: border-box;
 
     &::-webkit-scrollbar {
-      width: 8px;
-      height: 5px;
+      width: 3px;
+      height: 3px;
       border: 1px ridge transparent;
       background: transparent;
     }
@@ -97,7 +97,12 @@ export const GlobalStyles = createGlobalStyle`
     }
 
     &::-webkit-scrollbar-thumb {
+      transition: .15s ease-in-out;
       background: ${colours.base};
+
+      *:not(:hover) & {
+        background: ${rgba(colours.base, 0.2)};
+      }
     }
 
     &::selection {

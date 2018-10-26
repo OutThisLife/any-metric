@@ -26,7 +26,7 @@ export default compose<TInner & TOutter, TOutter>(
   })),
   getContext({ filter: func })
 )(({ current, filter, tags, ...props }) => (
-  <Nav as="aside" {...props}>
+  <Nav {...props}>
     <Tablist>
       <SidebarTab
         key="all"

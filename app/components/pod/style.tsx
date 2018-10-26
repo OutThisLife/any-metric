@@ -4,14 +4,16 @@ import Panel from '@/components/panel'
 import styled from 'styled-components'
 
 export default styled.div`
+  contain: style paint;
   position: relative;
   height: auto;
   overflow: hidden;
+  will-change: transform, width, height;
 
   > div {
     display: grid;
     grid-template-columns: 150px repeat(40, 1fr);
-    grid-template-rows: min-content 1fr;
+    grid-template-rows: min-content 1fr 200px;
     height: 100%;
   }
 ` as any
@@ -33,6 +35,12 @@ export const Inner = styled(Panel)`
     grid-column: 1 / -1;
   }
 
+  aside {
+    z-index: 5;
+    grid-row: 2;
+    grid-column: 1;
+  }
+
   section {
     grid-row: 2;
     grid-column: 2 / -1;
@@ -47,9 +55,8 @@ export const Inner = styled(Panel)`
     }
   }
 
-  aside {
-    z-index: 5;
-    grid-row: 2;
-    grid-column: 1;
+  footer {
+    grid-row: 3;
+    grid-column: 2 / -1;
   }
 ` as any

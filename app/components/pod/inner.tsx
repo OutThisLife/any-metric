@@ -56,19 +56,24 @@ export default compose<TState & TOutter, TOutter>(
     showStats
   }) => (
     <Inner innerRef={onRef}>
-      <Title title={name} />
+      <header>
+        <Title title={name} />
+      </header>
 
-      <Nav
-        current={filter.action === 'TAG' ? filter.value : ''}
-        tags={flatten(data, 'tags').sort()}
-      />
+      <aside>
+        <Nav
+          current={filter.action === 'TAG' ? filter.value : ''}
+          tags={flatten(data, 'tags').sort()}
+        />
+      </aside>
 
       <section>
-        {showStats && (
-          <Stats current={filter.action === 'TAG' ? filter.value : ''} />
-        )}
         <DataTable initialData={renderedData} />
       </section>
+
+      <footer>
+        <Stats current={filter.action === 'TAG' ? filter.value : ''} />
+      </footer>
     </Inner>
   )
 )

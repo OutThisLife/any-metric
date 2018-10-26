@@ -1,7 +1,7 @@
 import { rgba } from 'polished'
 import styled, { css } from 'styled-components'
 
-export default styled.header`
+export default styled.div`
   padding: 0 0 var(--pad);
 
   ${({ theme }) => css`

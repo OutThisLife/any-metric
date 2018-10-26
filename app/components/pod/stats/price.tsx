@@ -9,10 +9,10 @@ import {
   VictoryScatter
 } from 'victory'
 
-import { ChartTitle, commonProps, tooltipContainer } from '.'
+import { ChartTitle, commonProps } from '.'
 
-export default ({ data: initialData }: any) => (
-  <div>
+export default ({ data: initialData, ...props }: any) => (
+  <div {...props}>
     <ChartTitle
       title="Price"
       stat={{
@@ -23,7 +23,7 @@ export default ({ data: initialData }: any) => (
       }}
     />
 
-    <VictoryChart {...commonProps} containerComponent={tooltipContainer}>
+    <VictoryChart {...commonProps}>
       {initialData.map((data, idx) => (
         <VictoryGroup key={idx}>
           <VictoryLine

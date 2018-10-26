@@ -1,95 +1,113 @@
-import { getMaxima, processRadar, randomData } from '@/lib/utils'
-import { getAvg } from '@/lib/utils/maths'
-import theme, { autoColour } from '@/theme'
-import { Heading, Icon, Text } from 'evergreen-ui'
-import faker from 'faker'
-import { func } from 'prop-types'
-import { compose, getContext, withPropsOnChange } from 'recompose'
+import theme from '@/theme'
+import { Dialog, Heading, Icon, Text } from 'evergreen-ui'
+import dynamic from 'next/dynamic'
+import {
+  cloneElement,
+  createElement,
+  createRef,
+  ReactElement,
+  ReactInstance,
+  RefObject,
+  SFCElement
+} from 'react'
+import {
+  compose,
+  StateHandler,
+  StateHandlerMap,
+  withStateHandlers
+} from 'recompose'
 import { VictoryTooltip, VictoryVoronoiContainer } from 'victory'
 
-import { DataTableFilter } from '..'
-import Price from './price'
-import Quantity from './quantity'
-import Sentiment from './sentiment'
+import withMocks, { TInner as MockInner } from './lib/mocks'
 import Stats from './style'
-import Volume from './volume'
+
+const Charts = {
+  Price: dynamic(import('./price') as any),
+  Quantity: dynamic(import('./quantity') as any),
+  Sentiment: dynamic(import('./sentiment') as any),
+  Volume: dynamic(import('./volume') as any)
+}
 
 interface TOutter {
   current: string
 }
 
-interface TInner {
-  filter?: DataTableFilter
-  priceData?: any[]
-  quantityData?: Partial<{ data: any[] }>
-  volumeData?: any[]
-  sentimentData?: any[]
+interface TState {
+  isChartOpen: boolean
+  chartTitle?: string
+  ChartComponent?: React.SFC
 }
 
-export default compose<TInner, TOutter>(
-  getContext({ filter: func }),
-  withPropsOnChange<TInner, TOutter>(['current'], ({ current }) => {
-    const applyColour = (d: any, i: number): string => ({
-      ...d,
-      colour:
-        i === 0
-          ? theme.colours.secondary
-          : autoColour(current, true).backgroundColor
-    })
+interface TStateHandles extends StateHandlerMap<TState> {
+  openChart: StateHandler<TState>
+  closeChart: StateHandler<TState>
+}
 
-    const volumeData = (_, i) =>
-      randomData({
-        min: 10,
-        max: 60
-      }).map(d => applyColour(d, i))
+export default compose<TStateHandles & TState & MockInner, TOutter>(
+  withMocks,
+  withStateHandlers<TState, TStateHandles>(
+    {
+      isChartOpen: false,
+      chartTitle: '',
+      ChartComponent: () => null
+    },
+    {
+      openChart: () => ref => {
+        // const el = findDOMNode(ref as any)
+        // console.log(<Ref />)
 
-    const priceData = (_, i) =>
-      randomData({
-        count: 10,
-        min: 3000,
-        max: 5000
-      }).map(d => applyColour(d, i))
-
-    const sentimentData = (_, i) =>
-      randomData({ count: 1, min: 25, max: 100 }).map(d => applyColour(d, i))
-
-    const quantityData = () => ({
-      sourceData: [...Array(3).keys()].map(() => ({
-        ebay: faker.random.number({ min: 100, max: 200 }),
-        amazon: faker.random.number({ min: 100, max: 200 }),
-        facebook: faker.random.number({ min: 100, max: 200 }),
-        baidu: faker.random.number({ min: 100, max: 200 }),
-        listia: faker.random.number({ min: 100, max: 200 })
-      })),
-      get data() {
-        return processRadar(this.sourceData)
+        return {
+          isChartOpen: true,
+          chartTitle: '',
+          ChartComponent: () => createElement(ref as any, {})
+        }
       },
-      get maxima() {
-        return getMaxima(this.sourceData)
-      },
-      get avg() {
-        return getAvg(this.sourceData)
-      }
-    })
 
-    const createSet = (cb: (a: any, i: number) => any) =>
-      [...Array(current.length ? 2 : 1).keys()].map(cb)
-
-    return {
-      volumeData: createSet(volumeData),
-      priceData: createSet(priceData),
-      sentimentData: createSet(sentimentData),
-      quantityData: quantityData()
+      closeChart: () => () => ({
+        isChartOpen: false,
+        chartTitle: '',
+        ChartComponent: () => null
+      })
     }
-  })
-)(({ sentimentData, volumeData, quantityData, priceData }) => (
-  <Stats>
-    <Price data={priceData} />
-    <Volume data={volumeData} />
-    <Sentiment data={sentimentData} />
-    <Quantity {...quantityData} />
-  </Stats>
-))
+  )
+)(
+  ({
+    mocks,
+    openChart,
+    closeChart,
+    isChartOpen,
+    chartTitle,
+    ChartComponent
+  }) => {
+    const refs = []
+    const types = Object.keys(Charts)
+
+    console.log(ChartComponent)
+
+    return (
+      <Stats onWheel={e => (e.currentTarget.scrollLeft += e.deltaY)}>
+        {types.map((t, i) => {
+          const C = Charts[t]
+
+          return (
+            <C
+              ref={r => refs.push(r)}
+              data={mocks[t.toLowerCase()]}
+              onClick={() => openChart(refs[i])}
+            />
+          )
+        })}
+
+        <Dialog
+          isShown={isChartOpen}
+          title={chartTitle}
+          onCloseComplete={closeChart}>
+          <></>
+        </Dialog>
+      </Stats>
+    )
+  }
+)
 
 export const ChartTitle = ({
   title,

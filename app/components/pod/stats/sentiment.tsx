@@ -2,16 +2,16 @@ import theme from '@/theme'
 import { rgba } from 'polished'
 import { VictoryAxis, VictoryChart, VictoryLine } from 'victory'
 
-import { ChartTitle, commonProps, tooltipContainer } from '.'
+import { ChartTitle, commonProps } from '.'
 
-export default ({ data: initialData }: any) => (
-  <div>
+export default ({ data: initialData, ...props }: any) => (
+  <div {...props}>
     <ChartTitle
       title="Sentiment"
       stat={{ title: 0.5, intent: 'danger', icon: 'trending-down', rate: '2%' }}
     />
 
-    <VictoryChart {...commonProps} containerComponent={tooltipContainer}>
+    <VictoryChart {...commonProps}>
       {initialData.map((data, i) => (
         <VictoryLine
           key={i}

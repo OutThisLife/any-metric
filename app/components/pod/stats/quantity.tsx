@@ -10,8 +10,8 @@ import {
 
 import { ChartTitle, commonProps } from '.'
 
-export default ({ data, maxima, avg }: any) => (
-  <div>
+export default ({ data: { data, maxima, avg }, ...props }: any) => (
+  <div {...props}>
     <ChartTitle
       title={
         <>

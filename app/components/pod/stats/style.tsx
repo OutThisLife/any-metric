@@ -26,7 +26,7 @@ export default styled(props => <Pane is="aside" {...props} />)`
     justify-content: center;
     grid-template-columns: 150px 1fr;
     grid-gap: var(--pad);
-    width: 50%;
+    width: 100%;
     margin: 0 auto;
 
     hgroup {

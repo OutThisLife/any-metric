@@ -1,6 +1,6 @@
 import { Args as SetTagArgs } from '@/server/schema/mutations/setTags'
 import { FakeCrawlResult } from '@/server/schema/types'
-import { MutationFunc, MutationUpdaterFn } from 'react-apollo'
+import { MutationFunc } from 'react-apollo'
 import { compose, onlyUpdateForKeys, withHandlers } from 'recompose'
 
 import { getTags } from './queries'
@@ -11,7 +11,7 @@ interface TInner {
 }
 
 export interface THandles {
-  setTag: (a: FakeCrawlResult, t: string, cb?: MutationUpdaterFn) => void
+  setTag: (a: FakeCrawlResult, t: string, cb: (t: string[]) => any) => void
 }
 
 export default () =>
@@ -19,7 +19,11 @@ export default () =>
     getTags(),
     onlyUpdateForKeys(['tags']),
     withHandlers<TInner, THandles>(() => ({
-      setTag: ({ mutate }) => ({ __typename, id, tags: curTags }, t = '') => {
+      setTag: ({ mutate }) => async (
+        { id, tags: curTags },
+        t = '',
+        cb = () => null
+      ) => {
         const ids: string[] = [id]
         const tags: string[] = [].slice.call(curTags)
 
@@ -33,17 +37,8 @@ export default () =>
           tags.push('')
         }
 
-        mutate({
-          variables: { ids, tags },
-          optimisticResponse: {
-            __typename: 'Mutation',
-            setTags: {
-              __typename,
-              id,
-              tags
-            }
-          }
-        })
+        await cb(tags)
+        window.requestAnimationFrame(() => mutate({ variables: { ids, tags } }))
       }
     }))
   )

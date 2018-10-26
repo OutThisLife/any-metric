@@ -93,7 +93,7 @@ export default compose<TState & TStateHandles & TInner & TOutter, TOutter>(
           dataKey="image"
           width={30}
           headerRenderer={() => <Search />}
-          disableSort={true}
+          disableSort
           cellRenderer={props => <Columns.Image {...props} />}
         />
 
@@ -101,7 +101,7 @@ export default compose<TState & TStateHandles & TInner & TOutter, TOutter>(
           dataKey="title"
           width={100}
           flexGrow={1}
-          disableSort={true}
+          disableSort
           cellRenderer={props => <Columns.Title {...props} />}
         />
 
@@ -120,7 +120,7 @@ export default compose<TState & TStateHandles & TInner & TOutter, TOutter>(
           dataKey="slug"
           width={26}
           style={{ margin: 0 }}
-          disableSort={true}
+          disableSort
           headerStyle={{ textAlign: 'right' }}
           cellRenderer={Columns.Link}
         />

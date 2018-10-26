@@ -1,6 +1,6 @@
 import Dropdown from '@/components/dropdown'
 import { DataTableFilter } from '@/components/pod'
-import withTags, { THandles } from '@/lib/withTags'
+import withTags, { THandles as SetTagHandles } from '@/lib/withTags'
 import theme, { autoColour } from '@/theme'
 import {
   Badge,
@@ -13,39 +13,49 @@ import {
 } from 'evergreen-ui'
 import { func } from 'prop-types'
 import { MdLabelOutline } from 'react-icons/md'
-import { compose, getContext, setDisplayName, withHandlers } from 'recompose'
+import {
+  compose,
+  getContext,
+  onlyUpdateForKeys,
+  setDisplayName,
+  withHandlers,
+  withState
+} from 'recompose'
 
 import { Cell } from '.'
 import { Title } from './style'
 
 interface TOutter extends Cell<string> {}
 
-interface TInner extends TOutter, THandles {
+interface TInner extends TOutter, SetTagHandles {
   tags: string[]
+  curTags: string[]
+  setCurTags: (t: string[]) => any
   filter?: DataTableFilter
-  update?: () => void
 }
 
-interface TInnerHandles {
+interface THandles {
   handleClick: (t: { value: string }, s?: boolean) => void
 }
 
-export default compose<TInner & THandles & TInnerHandles, TOutter>(
+export default compose<TInner & THandles, TOutter>(
   setDisplayName('col-title'),
-  withTags(),
   getContext({ filter: func }),
-  withHandlers<TInner, TInnerHandles>(() => ({
-    handleClick: ({ filter, setTag, rowData }) => item => {
-      setTag(rowData, item.value)
-      window.requestAnimationFrame(() => filter({}))
-    }
-  }))
+  withTags(),
+  withState('curTags', 'setCurTags', ({ rowData: { tags } }) => tags),
+  withHandlers<TInner, THandles>(() => ({
+    handleClick: ({ setCurTags, setTag, curTags: tags, rowData: { id } }) => ({
+      value
+    }) => setTag({ id, tags }, value, t => setCurTags(t))
+  })),
+  onlyUpdateForKeys(['curTags'])
 )(
   ({
     handleClick,
     tags,
+    curTags,
     filter,
-    rowData: { id, copy, tags: curTags },
+    rowData: { id, copy },
     cellData: title
   }) => (
     <Title>

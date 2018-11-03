@@ -2,7 +2,7 @@ import Button from '@/components/button'
 import AddNew from '@/components/header/addNew'
 import { autoColour } from '@/theme'
 import { Icon, SidebarTab, Tablist } from 'evergreen-ui'
-import { func } from 'prop-types'
+import { func, string } from 'prop-types'
 import { IoMdFunnel } from 'react-icons/io'
 import {
   compose,
@@ -17,15 +17,16 @@ import Nav from './style'
 
 interface TOutter {
   tags: string[]
-  current: string
 }
 
 interface TInner {
+  current: string
   filter: DataTableFilter
 }
 
 export default compose<TInner & TOutter, TOutter>(
   setDisplayName('nav'),
+  getContext({ current: string }),
   onlyUpdateForKeys(['current', 'tags']),
   mapProps(({ tags = [], ...props }) => ({
     ...props,

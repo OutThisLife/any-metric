@@ -19,10 +19,7 @@ export default compose<TOutter, TOutter>(
     </header>
 
     <aside>
-      <Nav
-        current={filter.action === 'TAG' ? filter.value : ''}
-        tags={flatten(results, 'tags').sort()}
-      />
+      <Nav tags={flatten(results, 'tags').sort()} />
     </aside>
 
     <section>

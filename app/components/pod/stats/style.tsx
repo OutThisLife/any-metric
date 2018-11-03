@@ -2,7 +2,7 @@ import { Pane } from 'evergreen-ui'
 import styled from 'styled-components'
 
 export default styled(props => <Pane {...props} />)`
-  > div {
+  .chart {
     display: grid;
     align-items: center;
     justify-content: center;

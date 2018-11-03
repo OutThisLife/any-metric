@@ -1,12 +1,16 @@
 import Button from '@/components/button'
 import SideSheet from '@/components/sideSheet'
 import theme from '@/theme'
+import { Position } from 'evergreen-ui'
 import dynamic from 'next/dynamic'
-import { compose } from 'recompose'
+import { createElement } from 'react'
+import { compose, setDisplayName } from 'recompose'
 import { VictoryTooltip, VictoryVoronoiContainer } from 'victory'
 
-import withMocks, { TInner } from './lib/mocks'
+import withMocks, { TInner as MockTInner } from './lib/mocks'
 import Stats from './style'
+
+export { default as ChartTitle } from './title'
 
 const Charts = {
   Price: dynamic(import('./price') as any),
@@ -15,14 +19,22 @@ const Charts = {
   Volume: dynamic(import('./volume') as any)
 }
 
-export default compose<TInner, {}>(withMocks)(({ mocks }) => (
+export default compose<MockTInner, {}>(
+  setDisplayName('stats'),
+  withMocks
+)(({ mocks }) => (
   <SideSheet
-    render={() => (
+    title="Data Visualizations"
+    position={Position.BOTTOM}
+    containerProps={{
+      height: '50vh'
+    }}
+    tabs={Object.keys(Charts)}
+    render={({ tab }) => (
       <Stats>
-        {Object.keys(Charts).map(t => {
-          const C = Charts[t]
-
-          return <C data={mocks[t.toLowerCase()]} />
+        {createElement(Charts[tab], {
+          data: mocks[tab.toLowerCase()],
+          className: 'chart'
         })}
       </Stats>
     )}>
@@ -39,14 +51,14 @@ export default compose<TInner, {}>(withMocks)(({ mocks }) => (
 ))
 
 export const commonProps = {
+  animate: false,
   domainPadding: 20,
   padding: {
     top: 50,
     right: 25,
     bottom: 50,
     left: 50
-  },
-  animate: false
+  }
 }
 
 export const tooltipContainer = (
@@ -64,5 +76,3 @@ export const tooltipContainer = (
     }
   />
 )
-
-export { default as ChartTitle } from './title'

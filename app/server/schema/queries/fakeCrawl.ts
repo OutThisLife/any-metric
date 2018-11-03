@@ -6,8 +6,8 @@ export default (async (
   { cache, fakeResultLoader, genFakeResults }
 ): Promise<FakeCrawlResult[]> => {
   if (id) {
-    return await fakeResultLoader(cache).loadMany(id)
+    return (await fakeResultLoader(cache).loadMany(id)) || []
   }
 
-  return await genFakeResults(cache)
+  return (await genFakeResults(cache)) || []
 }) as Resolver

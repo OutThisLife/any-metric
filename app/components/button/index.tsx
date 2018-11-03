@@ -8,7 +8,7 @@ interface TOutter {
 }
 
 export default compose<TOutter, TOutter>(
-  setDisplayName('Button'),
+  setDisplayName('button'),
   withProps(({ height = 32 }) => ({ height }))
 )(
   ({ title = null, ...props }) =>

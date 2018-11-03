@@ -45,21 +45,20 @@ interface TStateHandles extends StateHandlerMap<TState> {
 
 export default compose<TStateHandles & TState & MockInner, TOutter>(
   withMocks,
-  withStateHandlers<TState, TStateHandles>(
+  withStateHandlers<MockInner & TState, TStateHandles>(
     {
       isChartOpen: false,
       chartTitle: '',
       ChartComponent: () => null
     },
     {
-      openChart: () => ref => {
-        // const el = findDOMNode(ref as any)
-        // console.log(<Ref />)
+      openChart: (_, { mocks }) => t => {
+        const C = Charts[t]
 
         return {
           isChartOpen: true,
           chartTitle: '',
-          ChartComponent: () => createElement(ref as any, {})
+          ChartComponent: <C data={mocks[t.toLowerCase()]} />
         }
       },
 
@@ -78,35 +77,22 @@ export default compose<TStateHandles & TState & MockInner, TOutter>(
     isChartOpen,
     chartTitle,
     ChartComponent
-  }) => {
-    const refs = []
-    const types = Object.keys(Charts)
+  }) => (
+    <Stats onWheel={e => (e.currentTarget.scrollLeft += e.deltaY)}>
+      {Object.keys(Charts).map((t, i) => {
+        const C = Charts[t]
 
-    console.log(ChartComponent)
+        return <C data={mocks[t.toLowerCase()]} onClick={() => openChart(t)} />
+      })}
 
-    return (
-      <Stats onWheel={e => (e.currentTarget.scrollLeft += e.deltaY)}>
-        {types.map((t, i) => {
-          const C = Charts[t]
-
-          return (
-            <C
-              ref={r => refs.push(r)}
-              data={mocks[t.toLowerCase()]}
-              onClick={() => openChart(refs[i])}
-            />
-          )
-        })}
-
-        <Dialog
-          isShown={isChartOpen}
-          title={chartTitle}
-          onCloseComplete={closeChart}>
-          <></>
-        </Dialog>
-      </Stats>
-    )
-  }
+      <Dialog
+        isShown={isChartOpen}
+        title={chartTitle}
+        onCloseComplete={closeChart}>
+        <></>
+      </Dialog>
+    </Stats>
+  )
 )
 
 export const ChartTitle = ({

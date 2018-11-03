@@ -53,10 +53,21 @@ export const Inner = styled(Panel)`
         width: 100% !important;
       }
     }
+
+    &:last-child {
+      grid-row: 2 / 4;
+    }
   }
 
   footer {
     grid-row: 3;
     grid-column: 2 / -1;
+    display: inline-flex;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
   }
 ` as any

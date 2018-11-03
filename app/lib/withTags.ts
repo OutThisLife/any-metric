@@ -1,7 +1,12 @@
 import { Args as SetTagArgs } from '@/server/schema/mutations/setTags'
 import { FakeCrawlResult } from '@/server/schema/types'
 import { MutationFunc } from 'react-apollo'
-import { compose, onlyUpdateForKeys, withHandlers } from 'recompose'
+import {
+  compose,
+  onlyUpdateForKeys,
+  setDisplayName,
+  withHandlers
+} from 'recompose'
 
 import { getTags } from './queries'
 
@@ -16,6 +21,7 @@ export interface THandles {
 
 export default () =>
   compose<THandles & TInner, {}>(
+    setDisplayName('with-tags'),
     getTags(),
     onlyUpdateForKeys(['tags']),
     withHandlers<TInner, THandles>(() => ({

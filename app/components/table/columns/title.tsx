@@ -38,7 +38,7 @@ interface THandles {
   handleClick: (t: { value: string }, s?: boolean) => void
 }
 
-export default compose<TInner & THandles, TOutter>(
+export default (compose<TInner & THandles, TOutter>(
   setDisplayName('col-title'),
   getContext({ filter: func }),
   withTags(),
@@ -49,7 +49,7 @@ export default compose<TInner & THandles, TOutter>(
     }) => setTag({ id, tags }, value, t => setCurTags(t))
   })),
   onlyUpdateForKeys(['curTags'])
-)(
+) as any)(
   ({
     handleClick,
     tags,

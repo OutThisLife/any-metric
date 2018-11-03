@@ -4,7 +4,7 @@ import * as GraphQLJSON from 'graphql-type-json'
 
 import { setLayout, setTags } from './mutations'
 import { crawl, fakeCrawl, layout, search } from './queries'
-import { Context, Result } from './types'
+import { Context } from './types'
 
 export { crawl, layout, search, setLayout }
 export { typeDefs } from './types'
@@ -24,10 +24,5 @@ export default {
   Mutation: {
     setLayout,
     setTags
-  },
-
-  CrawlResult: {
-    data: ({ data }: Result, { limit }: { limit?: number }) =>
-      data.slice(0, limit)
   }
 } as IResolvers<{}, Context>

@@ -1,17 +1,24 @@
 import { Loading } from '@/lib/queries'
 import theme from '@/theme'
-import { withHandlers } from 'recompose'
+import { compose, setDisplayName, withHandlers } from 'recompose'
 
-export default withHandlers(() => ({
-  onRef: () => (ref: HTMLElement) => {
-    if (!ref) {
-      return
+interface TInner {
+  onRef: (r: HTMLElement) => void
+}
+
+export default compose<TInner, {}>(
+  setDisplayName('page-loader'),
+  withHandlers(() => ({
+    onRef: () => (ref: HTMLElement) => {
+      if (!ref) {
+        return
+      }
+
+      ref.addEventListener('transitionend', () => ref.remove(), { once: true })
+      window.requestAnimationFrame(() => (ref.style.opacity = '0'))
     }
-
-    ref.addEventListener('transitionend', () => ref.remove(), { once: true })
-    window.requestAnimationFrame(() => (ref.style.opacity = '0'))
-  }
-}))(({ onRef }) => (
+  }))
+)(({ onRef }) => (
   <Loading
     innerRef={onRef}
     style={{

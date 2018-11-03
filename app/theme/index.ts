@@ -54,21 +54,10 @@ export const autoColour = <
 
 // ---------------------------
 
-export default {
-  colours,
-  fonts,
-
-  egScales,
-  egColours,
-  egPalette
-}
-
-// ---------------------------
-
 export const GlobalStyles = createGlobalStyle`
   :root {
     --cellSize: calc(100vw / 40);
-    --pad: calc(8px + (16 - 9) * (100vw - 400px) / 1700);
+    --pad: ${between('8px', '16px')};
   }
 
   body, html {
@@ -187,3 +176,14 @@ export const GlobalStyles = createGlobalStyle`
     }
   }
 `
+
+// ---------------------------
+
+export default {
+  colours,
+  fonts,
+
+  egScales,
+  egColours,
+  egPalette
+}

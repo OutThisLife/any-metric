@@ -2,7 +2,6 @@ import { getFakeCrawl } from '@/lib/queries'
 import { FakeCrawlResult } from '@/server/schema/types'
 import omit from 'lodash/omit'
 import { func } from 'prop-types'
-import { DataValue } from 'react-apollo'
 import {
   compose,
   setDisplayName,
@@ -43,31 +42,31 @@ export type DataTableFilter = (args: DataFilterArgs) => void
 export type TInner = TState &
   TStateHandles &
   TOutter & {
-    resultData: DataValue<{ fakeCrawl: FakeCrawlResult[] }>
+    results: FakeCrawlResult[]
   }
 
 export default compose<TInner, TOutter>(
   setDisplayName('pod'),
   getFakeCrawl(),
   withStateHandlers<TState, TStateHandles, TInner>(
-    ({ resultData: { fakeCrawl: data } }) => ({
-      renderedData: data,
+    ({ results }) => ({
+      renderedData: results,
       filter: {
         value: '',
         action: 'RESET'
       }
     }),
     {
-      setFilter: state => ({
-        value = state.filter.value,
-        action = state.filter.action
+      setFilter: ({ filter }) => ({
+        value = filter.value,
+        action = filter.action
       }) => ({
         filter: { value, action }
       }),
 
-      updateRendered: (_, { resultData: { fakeCrawl: data } }) => (
-        renderedData = data
-      ) => ({ renderedData })
+      updateRendered: (_, { results }) => (renderedData = results) => ({
+        renderedData
+      })
     }
   ),
   withHandlers(() => ({
@@ -91,9 +90,9 @@ export default compose<TInner, TOutter>(
   ),
   withPropsOnChange<{}, TInner>(
     ['filter'],
-    ({ resultData: { fakeCrawl: data }, filter: { action, value } }) => {
+    ({ results, filter: { action, value } }) => {
       if (isWorkerReady()) {
-        worker.postMessage([data, action, value])
+        worker.postMessage([results, action, value])
       }
 
       return {}
@@ -103,7 +102,8 @@ export default compose<TInner, TOutter>(
   <Pod
     {...omit(props, [
       'name',
-      'resultData',
+      'results',
+      'data',
       'renderedData',
       'updateRendered',
       'onRef',

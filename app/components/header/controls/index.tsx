@@ -13,68 +13,49 @@ interface TInner extends LayoutProps {
 export default compose<TInner, {}>(
   setDisplayName('header-controls'),
   withLayout(),
-  withProps<Partial<TInner>, TInner>(
-    ({
-      layoutData: {
-        layout: { cols, data: layout }
+  withProps<Partial<TInner>, TInner>(({ layout: { cols, data } }) => ({
+    isGrid: data.every(
+      (l, i) => (!(i % 2) ? l.x === 0 : l.x === cols / gridFactor)
+    ),
+    isList: data.every(l => l.x === cols / listFactor)
+  }))
+)(({ layout: { cols, data }, changeLayout, isGrid, isList }) => (
+  <Controls>
+    <Option
+      title="Grid Style"
+      icon="layout-grid"
+      isActive={isGrid}
+      onClick={() =>
+        changeLayout(
+          data.map((d, y) => ({
+            ...d,
+            y: Math.max(0, y - gridFactor),
+            x: (y % gridFactor) * (cols / gridFactor),
+            w: cols / gridFactor
+          }))
+        )
       }
-    }) => ({
-      isGrid: layout.every(
-        (l, i) => (!(i % 2) ? l.x === 0 : l.x === cols / gridFactor)
-      ),
-      isList: layout.every(l => l.x === cols / listFactor)
-    })
-  )
-)(
-  ({
-    layoutData: {
-      layout: { cols, data: layout }
-    },
-    changeLayout,
-    isGrid,
-    isList
-  }) => (
-    <Controls>
-      <Option
-        title="Grid Style"
-        icon="layout-grid"
-        isActive={isGrid}
-        onClick={() =>
-          changeLayout(
-            layout.map((d, y) => ({
-              ...d,
-              y: Math.max(0, y - gridFactor),
-              x: (y % gridFactor) * (cols / gridFactor),
-              w: cols / gridFactor
-            }))
-          )
-        }
-      />
+    />
 
-      <Option
-        title="Feed Style"
-        icon="list"
-        isActive={isList}
-        onClick={() =>
-          changeLayout(
-            layout.map((d, y) => ({
-              ...d,
-              y,
-              x: cols / listFactor,
-              w: cols - (cols / listFactor) * 2
-            }))
-          )
-        }
-      />
+    <Option
+      title="Feed Style"
+      icon="list"
+      isActive={isList}
+      onClick={() =>
+        changeLayout(
+          data.map((d, y) => ({
+            ...d,
+            y,
+            x: cols / listFactor,
+            w: cols - (cols / listFactor) * 2
+          }))
+        )
+      }
+    />
 
-      <Option
-        title="Custom"
-        icon="layout-auto"
-        isActive={!(isList || isGrid)}
-      />
-    </Controls>
-  )
-)
+    <Option title="Custom" icon="layout-auto" isActive={!(isList || isGrid)} />
+  </Controls>
+))
 
 const Option = ({
   title,

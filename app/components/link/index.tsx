@@ -1,7 +1,8 @@
 import activeClass from '@/lib/activeClass'
 import Link, { LinkState } from 'next/link'
-import { RouterProps, withRouter } from 'next/router'
-import { compose, setDisplayName } from 'recompose'
+import { RouterProps } from 'next/router'
+import { object } from 'prop-types'
+import { compose, getContext, setDisplayName } from 'recompose'
 
 import A from './style'
 
@@ -19,8 +20,8 @@ interface TInner extends TOutter {
 }
 
 export default compose<TInner, TOutter>(
-  withRouter,
-  setDisplayName('baph-link')
+  setDisplayName('baph-link'),
+  getContext({ router: object })
 )(({ children, href, as = href, router, ...props }) => (
   <Link href={href} as={as} passHref>
     <A

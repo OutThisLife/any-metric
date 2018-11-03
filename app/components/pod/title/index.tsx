@@ -1,7 +1,7 @@
 import Button from '@/components/button'
 import Title from '@/components/pod/title/style'
 import { Heading, Menu, Popover, Position, Text } from 'evergreen-ui'
-import { bool, func } from 'prop-types'
+import { func } from 'prop-types'
 import { compose, getContext, setDisplayName } from 'recompose'
 
 import { DataTableFilter } from '../'
@@ -18,8 +18,8 @@ interface TInner {
 
 export default compose<TInner & TOutter, TOutter>(
   setDisplayName('pod-title'),
-  getContext({ filter: func, showStats: bool, toggleStats: func })
-)(({ title, showStats, toggleStats }) => (
+  getContext({ filter: func })
+)(({ title }) => (
   <Title>
     <div className="drag-h" />
 
@@ -29,14 +29,6 @@ export default compose<TInner & TOutter, TOutter>(
       </Heading>
 
       <nav>
-        <Button
-          href="javascript:;"
-          appearance="minimal"
-          icon={showStats ? 'arrow-left' : 'chart'}
-          data-tip={showStats ? 'View Data' : 'View Charts'}
-          onClick={() => toggleStats()}
-        />
-
         <Popover
           position={Position.BOTTOM_RIGHT}
           content={

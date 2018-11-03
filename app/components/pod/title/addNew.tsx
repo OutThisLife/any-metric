@@ -1,12 +1,13 @@
 import Button from '@/components/button'
 import { Pane, Popover, SelectField, TextInputField } from 'evergreen-ui'
-import { compose, withState } from 'recompose'
+import { compose, setDisplayName, withState } from 'recompose'
 
 interface TOutter {
   [key: string]: any
 }
 
 export default compose<TOutter, TOutter>(
+  setDisplayName('add-new'),
   withState('isLoading', 'setLoading', false)
 )(({ variant, setLoading, isLoading, ...props }) => (
   <Popover

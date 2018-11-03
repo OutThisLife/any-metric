@@ -23,6 +23,7 @@ export default withApolloClient(
 
             <Container key={router.asPath}>
               <Header key={Math.random() + router.asPath} />
+
               <section>
                 <Component
                   key={Math.random() + router.asPath}
@@ -30,6 +31,7 @@ export default withApolloClient(
                   {...pageProps}
                 />
               </section>
+
               <Tooltip effect="solid" />
             </Container>
           </ApolloProvider>

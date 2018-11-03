@@ -2,15 +2,6 @@ import { Pane } from 'evergreen-ui'
 import styled from 'styled-components'
 
 export default styled(props => <Pane {...props} />)`
-  display: inline-flex;
-  align-items: flex-start;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background: ${({ theme }) => theme.colours.bg};
-
   > div {
     display: grid;
     align-items: center;

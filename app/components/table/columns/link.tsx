@@ -1,10 +1,13 @@
 import { IoLogoReddit, IoLogoTwitter } from 'react-icons/io'
 import { MdOpenInNew } from 'react-icons/md'
+import { compose, setDisplayName } from 'recompose'
 
 import { Cell } from '.'
 import { Link } from './style'
 
-export default ({ cellData: link, rowIndex }: Cell<string>) => (
+export default (compose<Cell<string>, Cell<string>>(
+  setDisplayName('link')
+) as any)(({ cellData: link, rowIndex }) => (
   <Link
     href={`//twitter.com/${link}`}
     target="_blank"
@@ -13,4 +16,4 @@ export default ({ cellData: link, rowIndex }: Cell<string>) => (
     {rowIndex % 2 ? <IoLogoTwitter /> : <IoLogoReddit />}
     <MdOpenInNew />
   </Link>
-)
+))

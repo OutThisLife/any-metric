@@ -1,5 +1,5 @@
 import { SelectMenu } from 'evergreen-ui'
-import { compose, pure } from 'recompose'
+import { compose, setDisplayName } from 'recompose'
 
 interface TOutter {
   title: string
@@ -7,7 +7,7 @@ interface TOutter {
   [key: string]: any
 }
 
-export default compose<TOutter, TOutter>(pure)(
+export default compose<TOutter, TOutter>(setDisplayName('dropdown'))(
   ({ children, title, ...props }) => (
     <SelectMenu
       isMultiSelect

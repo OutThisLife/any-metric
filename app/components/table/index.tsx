@@ -41,7 +41,7 @@ interface TStateHandles extends StateHandlerMap<TState> {
 }
 
 export default compose<TState & TStateHandles & TInner & TOutter, TOutter>(
-  setDisplayName('pod'),
+  setDisplayName('table'),
   withStateHandlers<TState, TStateHandles, TOutter>(
     ({ initialData }) => {
       const data = [].slice.call(initialData).sort(sortByDate)
@@ -107,11 +107,11 @@ export default compose<TState & TStateHandles & TInner & TOutter, TOutter>(
 
         <Column
           label="Date"
-          headerRenderer={headerRenderer}
           dataKey="date"
           width={50}
           headerStyle={{ textAlign: 'center' }}
           style={{ textAlign: 'center' }}
+          headerRenderer={headerRenderer}
           cellRenderer={Columns.Date}
         />
 

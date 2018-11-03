@@ -1,7 +1,7 @@
-import { setDisplayName } from 'recompose'
+import { compose, setDisplayName } from 'recompose'
 import styled, { css } from 'styled-components'
 
-export default setDisplayName('logo')(() => (
+export default compose(setDisplayName('logo'))(() => (
   <Logo>
     <span>baphometric</span>
   </Logo>

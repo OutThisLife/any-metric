@@ -3,7 +3,12 @@ import { getAvg } from '@/lib/utils/maths'
 import theme, { autoColour } from '@/theme'
 import faker from 'faker'
 import { func } from 'prop-types'
-import { compose, getContext, withPropsOnChange } from 'recompose'
+import {
+  compose,
+  getContext,
+  setDisplayName,
+  withPropsOnChange
+} from 'recompose'
 
 import { DataTableFilter } from '../..'
 
@@ -22,6 +27,7 @@ export interface TInner {
 }
 
 export default compose<TInner, TOutter>(
+  setDisplayName('mocks'),
   getContext({ filter: func }),
   withPropsOnChange<TInner, TOutter>(['current'], ({ current }) => {
     const applyColour = (d: any, i: number): string => ({

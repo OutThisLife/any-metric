@@ -1,5 +1,5 @@
-import { cols as defaultCols, id, LayoutResult } from '../queries/layout'
-import { Resolver } from '../types'
+import { cols as defaultCols, id } from '../queries/layout'
+import { LayoutResult, Resolver } from '../types'
 
 export interface Args {
   cols?: number

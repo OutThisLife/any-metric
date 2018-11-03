@@ -11,33 +11,33 @@ import Home from './style'
 
 interface TInner {
   resultData: DataValue<{ fakeCrawl: FakeCrawlResult[] }>
-  layoutData: DataValue<{ layout: Layout[] }>
+  layout: Layout[]
 }
 
 export default compose<TInner & DimProps & LayoutProps, {}>(
-  setDisplayName('homepage'),
+  setDisplayName('dashboard'),
   withLayout(),
   withDimensions(true)
-)(({ onRef, changeLayout, layoutData: { layout }, width, height }) => (
+)(({ onRef, changeLayout, layout: { cols, data }, width, height }) => (
   <>
+    <PageLoader />
+
     <Home ref={onRef}>
       <Grid
         width={width}
-        rowHeight={height / layout.cols}
-        layout={layout.data}
-        cols={layout.cols}
+        rowHeight={height / cols}
+        layout={data}
+        cols={cols}
         onLayoutChange={changeLayout}
         onResize={changeLayout}
         margin={[35, 35]}
         draggableHandle=".drag-h"
         useCSSTransforms={typeof window !== 'undefined'}
         compactType={null}>
-        {layout.data.map(l => (
+        {data.map(l => (
           <Pod key={l.i} name="UCAD Social" data-grid={l} />
         ))}
       </Grid>
     </Home>
-
-    <PageLoader />
   </>
 ))

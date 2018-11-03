@@ -2,11 +2,9 @@ import { rgba } from 'polished'
 import styled, { css } from 'styled-components'
 
 export default styled.div`
-  padding: 0 0 var(--pad);
-
   ${({ theme }) => css`
     position: relative;
-    padding: calc(var(--pad) * 2);
+    padding: var(--pad);
 
     .drag-h {
       z-index: 2;

@@ -3,7 +3,13 @@ import { autoColour } from '@/theme'
 import { Icon, SidebarTab, Tablist } from 'evergreen-ui'
 import { func } from 'prop-types'
 import { IoMdFunnel } from 'react-icons/io'
-import { compose, getContext, mapProps, onlyUpdateForKeys } from 'recompose'
+import {
+  compose,
+  getContext,
+  mapProps,
+  onlyUpdateForKeys,
+  setDisplayName
+} from 'recompose'
 
 import { DataTableFilter } from '../'
 import AddNew from './addNew'
@@ -19,6 +25,7 @@ interface TInner {
 }
 
 export default compose<TInner & TOutter, TOutter>(
+  setDisplayName('nav'),
   onlyUpdateForKeys(['current', 'tags']),
   mapProps(({ tags = [], ...props }) => ({
     ...props,
@@ -60,10 +67,7 @@ export default compose<TInner & TOutter, TOutter>(
     <br />
 
     <AddNew>
-      <Button
-        title="Create Filter"
-        iconBefore={<IoMdFunnel style={{ marginRight: '.33em' }} />}
-      />
+      <Button title="New Label" iconBefore={<IoMdFunnel />} />
     </AddNew>
   </Nav>
 ))

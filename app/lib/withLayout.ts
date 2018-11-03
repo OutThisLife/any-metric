@@ -1,12 +1,12 @@
 import { getLayout } from '@/lib/queries'
-import { LayoutResult } from '@/server/schema/queries/layout'
+import { LayoutResult } from '@/server/schema/types'
 import { timeout, Timer } from 'd3-timer'
 import { MutationFunc } from 'react-apollo'
 import { compose, setDisplayName, withHandlers } from 'recompose'
 
 interface TInner {
   mutate: MutationFunc<{}, { layout: string }>
-  layoutData: { layout: LayoutResult }
+  layout: LayoutResult
 }
 
 interface THandles {
@@ -25,9 +25,7 @@ export default () =>
       return {
         changeLayout: ({
           mutate,
-          layoutData: {
-            layout: { __typename, id, cols }
-          }
+          layout: { __typename, id, cols }
         }) => data => {
           if (tm) {
             tm.stop()
@@ -43,7 +41,10 @@ export default () =>
                     __typename,
                     id,
                     cols,
-                    data
+                    data: data.map(d => ({
+                      ...d,
+                      __typename: 'Layout'
+                    }))
                   }
                 }
               }),

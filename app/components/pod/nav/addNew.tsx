@@ -1,6 +1,6 @@
 import { Card, Heading, Pane, SideSheet } from 'evergreen-ui'
 import { cloneElement } from 'react'
-import { compose, withState } from 'recompose'
+import { compose, setDisplayName, withState } from 'recompose'
 
 interface TOutter {
   children: React.ReactElement<any>
@@ -13,6 +13,7 @@ interface TState {
 }
 
 export default compose<TState & TOutter, TOutter>(
+  setDisplayName('add-new'),
   withState('isShown', 'toggle', false)
 )(({ children, isShown, toggle }) => (
   <>

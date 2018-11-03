@@ -1,82 +1,99 @@
 import { SetLayout } from '@/server/schema/mutations/setLayout'
 import { SetTags } from '@/server/schema/mutations/setTags'
-import { LayoutResult } from '@/server/schema/queries/layout'
-import { FakeCrawlResult } from '@/server/schema/types'
+import { cols as defaultCols } from '@/server/schema/queries/layout'
+import {
+  FakeCrawlResult,
+  fakeResultFrag,
+  layoutFrag,
+  LayoutResult
+} from '@/server/schema/types'
 import { Pane, Spinner } from 'evergreen-ui'
 import gql from 'graphql-tag'
-import { ChildDataProps, graphql } from 'react-apollo'
-import { branch, compose, renderComponent } from 'recompose'
+import { graphql } from 'react-apollo'
+import { branch, compose, renderComponent, setDisplayName } from 'recompose'
 
 import { flatten } from './utils'
 
 export const Loading = props => (
-  <Pane display="flex" alignItems="center" {...props}>
+  <Pane
+    display="flex"
+    alignItems="center"
+    width="100%"
+    height="100%"
+    {...props}>
     <Spinner marginX="auto" />
   </Pane>
 )
 
 export const getFakeCrawl = () =>
   compose(
-    graphql<{}, { fake: FakeCrawlResult[] }>(
+    setDisplayName('get-fake-crawl'),
+    graphql<{}, { results: FakeCrawlResult[] }>(
       gql`
         query GetFakeResult {
-          fakeCrawl {
-            id
-            title
-            slug
-            image
-            copy
-            date
-            tags
+          results: fakeCrawl {
+            ...fakeResultFields
           }
         }
+
+        ${fakeResultFrag}
       `,
       {
-        name: 'resultData'
+        options: { ssr: false },
+        props: ({ data: { results = [], ...data } }) => ({
+          data,
+          results
+        })
       }
     ),
     branch(
-      ({ resultData: { networkStatus } }) => networkStatus !== 7,
+      ({ data: { loading } }) => loading,
       renderComponent(() => <Loading />)
     )
   )
 
 export const getLayout = () =>
   compose(
+    setDisplayName('get-layout'),
     graphql<{}, { setLayout: SetLayout }>(
       gql`
         mutation setLayout($layout: String!) {
           setLayout(layout: $layout) {
             __typename
-            id
-            cols
-            data
+            ...layoutFields
           }
         }
+
+        ${layoutFrag}
       `
     ),
     graphql<{}, { layout: LayoutResult }>(
       gql`
         query GetLayout {
           layout {
-            id
-            cols
-            data
+            ...layoutFields
           }
         }
+
+        ${layoutFrag}
       `,
       {
-        name: 'layoutData'
+        props: ({
+          data: {
+            layout = {
+              cols: defaultCols,
+              data: []
+            },
+            ...data
+          }
+        }) => ({ data, layout })
       }
-    ),
-    branch(
-      ({ layoutData: { networkStatus } }) => networkStatus !== 7,
-      renderComponent(() => <Loading />)
     )
   )
 
 export const getTags = () =>
   compose(
+    setDisplayName('get-tags'),
     graphql<{}, { setTags: SetTags }>(
       gql`
         mutation SetTags($ids: [String]!, $tags: [String]!) {
@@ -88,30 +105,21 @@ export const getTags = () =>
         }
       `
     ),
-    graphql<
-      {},
-      { fakeCrawl: Partial<FakeCrawlResult[]> },
-      {},
-      ChildDataProps<{ tags: string[] }>
-    >(
+    graphql<{}, { tags: Partial<FakeCrawlResult[]> }>(
       gql`
         query GetTags {
-          fakeCrawl {
+          tags: fakeCrawl {
+            __typename
             id
             tags
           }
         }
       `,
       {
-        props: ({ data: { fakeCrawl, ...data } }) => ({
+        props: ({ data: { tags = [], ...data } }) => ({
           data,
-          tags: flatten(fakeCrawl, 'tags')
+          tags: flatten(tags, 'tags')
         })
       }
-    ),
-
-    branch(
-      ({ data: { networkStatus } }) => networkStatus !== 7,
-      renderComponent(() => <Loading />)
     )
   )

@@ -2,23 +2,9 @@ import { Pane } from 'evergreen-ui'
 import styled from 'styled-components'
 
 export default styled(props => <Pane {...props} />)`
-  .chart {
-    display: grid;
-    align-items: center;
-    justify-content: center;
-    grid-template-columns: 25% 1fr;
-    grid-gap: calc(var(--pad) * 2);
-    margin: 0 auto;
+  width: 100%;
 
-    hgroup {
-      grid-column: 1;
-      text-align: right;
-      margin: 0;
-    }
-
-    > div {
-      grid-column: 2;
-      margin-left: auto;
-    }
+  > div {
+    width: 50%;
   }
 ` as any

@@ -26,13 +26,12 @@ interface TInner {
 
 export default compose<TInner & TOutter, TOutter>(
   setDisplayName('nav'),
-  getContext({ current: string }),
+  getContext({ current: string, filter: func }),
   onlyUpdateForKeys(['current', 'tags']),
   mapProps(({ tags = [], ...props }) => ({
     ...props,
     tags: tags.filter((t, i, self) => t && self.indexOf(t) === i)
-  })),
-  getContext({ filter: func })
+  }))
 )(({ current, filter, tags, ...props }) => (
   <Nav {...props}>
     <Tablist>
@@ -40,7 +39,8 @@ export default compose<TInner & TOutter, TOutter>(
         key="all"
         height={20}
         isSelected={!current}
-        onSelect={() => filter({ value: '', action: 'RESET' })}>
+        onSelect={() => filter({ value: '', action: 'RESET' })}
+        onMouseEnter={() => filter({ value: '', action: 'RESET' })}>
         All Results
       </SidebarTab>
 
@@ -49,7 +49,13 @@ export default compose<TInner & TOutter, TOutter>(
           key={`tag-${t}`}
           height={20}
           isSelected={current === t}
-          onClick={() =>
+          onSelect={() =>
+            filter({
+              value: t,
+              action: 'TAG'
+            })
+          }
+          onMouseEnter={() =>
             filter({
               value: t,
               action: 'TAG'

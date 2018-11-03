@@ -7,10 +7,9 @@ import { createElement } from 'react'
 import { compose, setDisplayName } from 'recompose'
 import { VictoryTooltip, VictoryVoronoiContainer } from 'victory'
 
+import ChartTitle from './chartTitle'
 import withMocks, { TInner as MockTInner } from './lib/mocks'
 import Stats from './style'
-
-export { default as ChartTitle } from './title'
 
 const Charts = {
   Price: dynamic(import('./price') as any),
@@ -24,18 +23,29 @@ export default compose<MockTInner, {}>(
   withMocks
 )(({ mocks }) => (
   <SideSheet
-    title="Data Visualizations"
     position={Position.BOTTOM}
     containerProps={{
       height: '50vh'
     }}
     tabs={Object.keys(Charts)}
+    title={({ tab }) => (
+      <ChartTitle
+        title={tab}
+        stat={{
+          title: '3.3k',
+          intent: 'danger',
+          icon: 'trending-down',
+          rate: '10%'
+        }}
+      />
+    )}
     render={({ tab }) => (
       <Stats>
-        {createElement(Charts[tab], {
-          data: mocks[tab.toLowerCase()],
-          className: 'chart'
-        })}
+        <div>
+          {createElement(Charts[tab], {
+            data: mocks[tab.toLowerCase()]
+          })}
+        </div>
       </Stats>
     )}>
     {({ isShown, toggle }) => (
@@ -51,7 +61,6 @@ export default compose<MockTInner, {}>(
 ))
 
 export const commonProps = {
-  animate: false,
   domainPadding: 20,
   padding: {
     top: 50,
@@ -76,3 +85,5 @@ export const tooltipContainer = (
     }
   />
 )
+
+export { ChartTitle }

@@ -20,7 +20,7 @@ export interface TOutter {
   render: (a: any) => JSX.Element
   tabs?: string[]
 
-  title?: string
+  title?: string | ((a: any) => JSX.Element)
   sub?: string
   [key: string]: any
 }
@@ -72,37 +72,56 @@ export default compose<TStateHandles & TState & TOutter, TOutter>(
         isShown={state.isShown}
         onCloseComplete={() => toggle(false)}
         {...props}>
-        {tabs.length && (
-          <Pane display="flex" padding={8}>
-            <TabNavigation>
-              {tabs.map(t => (
-                <Tab
-                  key={t}
-                  is="a"
-                  href="javascript:;"
-                  id={t}
-                  isSelected={t === state.tab}
-                  onSelect={() => setTab(t)}>
-                  {t}
-                </Tab>
-              ))}
-            </TabNavigation>
-          </Pane>
-        )}
-
-        {title && (
-          <Pane zIndex={1} flexShrink={0} elevation={0} backgroundColor="white">
-            <Pane padding={16}>
-              <Heading size={600}>{title}</Heading>
-              {sub && <Paragraph size={400}>{sub}</Paragraph>}
+        <Pane
+          flex="1"
+          overflowY="scroll"
+          background="tint1"
+          padding={0}
+          height="100%">
+          {tabs.length && (
+            <Pane display="flex" padding={8} backgroundColor="white">
+              <TabNavigation>
+                {tabs.map(t => (
+                  <Tab
+                    key={t}
+                    is="a"
+                    href="javascript:;"
+                    id={t}
+                    isSelected={t === state.tab}
+                    onSelect={() => setTab(t)}
+                    onMouseEnter={() => setTab(t)}>
+                    {t}
+                  </Tab>
+                ))}
+              </TabNavigation>
             </Pane>
-          </Pane>
-        )}
+          )}
 
-        <Pane flex="1" overflowY="scroll" background="tint1" padding={16}>
-          <Card backgroundColor="white" elevation={0}>
-            {render({ ...state, toggle })}
-          </Card>
+          {title && (
+            <Pane
+              zIndex={1}
+              flexShrink={0}
+              elevation={0}
+              backgroundColor="white">
+              <Pane padding={16}>
+                <Heading size={600}>
+                  {typeof title === 'string' ? title : title({ ...state })}
+                </Heading>
+                {sub && <Paragraph size={400}>{sub}</Paragraph>}
+              </Pane>
+            </Pane>
+          )}
+
+          <Pane background="tint1" padding={16}>
+            <Card
+              elevation={0}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              backgroundColor="white">
+              {render({ ...state, toggle })}
+            </Card>
+          </Pane>
         </Pane>
       </SideSheet>
     </>

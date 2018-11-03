@@ -1,4 +1,5 @@
 import Button from '@/components/button'
+import AddNew from '@/components/header/addNew'
 import { autoColour } from '@/theme'
 import { Icon, SidebarTab, Tablist } from 'evergreen-ui'
 import { func } from 'prop-types'
@@ -12,7 +13,6 @@ import {
 } from 'recompose'
 
 import { DataTableFilter } from '../'
-import AddNew from './addNew'
 import Nav from './style'
 
 interface TOutter {

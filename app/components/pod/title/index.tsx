@@ -5,11 +5,13 @@ import { func } from 'prop-types'
 import { compose, getContext, setDisplayName } from 'recompose'
 
 import { DataTableFilter } from '../'
+import Stats from '../stats'
 import AddNew from './addNew'
 
 interface TOutter {
   title: string
 }
+
 interface TInner {
   filter: DataTableFilter
   showStats: boolean
@@ -29,12 +31,14 @@ export default compose<TInner & TOutter, TOutter>(
       </Heading>
 
       <nav>
+        <Stats />
+
         <Popover
           position={Position.BOTTOM_RIGHT}
           content={
             <Menu>
               <Menu.Group>
-                <Menu.Item icon="cog">Edit Targets&hellip;</Menu.Item>
+                <Menu.Item icon="cog">Settings&hellip;</Menu.Item>
                 <Menu.Item icon="circle-arrow-right">Move&hellip;</Menu.Item>
                 <Menu.Item icon="edit" secondaryText="⌘R">
                   Rename&hellip;

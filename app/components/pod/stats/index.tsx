@@ -1,24 +1,11 @@
+import Button from '@/components/button'
+import SideSheet from '@/components/sideSheet'
 import theme from '@/theme'
-import { Dialog, Heading, Icon, Text } from 'evergreen-ui'
 import dynamic from 'next/dynamic'
-import {
-  cloneElement,
-  createElement,
-  createRef,
-  ReactElement,
-  ReactInstance,
-  RefObject,
-  SFCElement
-} from 'react'
-import {
-  compose,
-  StateHandler,
-  StateHandlerMap,
-  withStateHandlers
-} from 'recompose'
+import { compose } from 'recompose'
 import { VictoryTooltip, VictoryVoronoiContainer } from 'victory'
 
-import withMocks, { TInner as MockInner } from './lib/mocks'
+import withMocks, { TInner } from './lib/mocks'
 import Stats from './style'
 
 const Charts = {
@@ -28,101 +15,28 @@ const Charts = {
   Volume: dynamic(import('./volume') as any)
 }
 
-interface TOutter {
-  current: string
-}
+export default compose<TInner, {}>(withMocks)(({ mocks }) => (
+  <SideSheet
+    render={() => (
+      <Stats>
+        {Object.keys(Charts).map(t => {
+          const C = Charts[t]
 
-interface TState {
-  isChartOpen: boolean
-  chartTitle?: string
-  ChartComponent?: React.SFC
-}
-
-interface TStateHandles extends StateHandlerMap<TState> {
-  openChart: StateHandler<TState>
-  closeChart: StateHandler<TState>
-}
-
-export default compose<TStateHandles & TState & MockInner, TOutter>(
-  withMocks,
-  withStateHandlers<MockInner & TState, TStateHandles>(
-    {
-      isChartOpen: false,
-      chartTitle: '',
-      ChartComponent: () => null
-    },
-    {
-      openChart: (_, { mocks }) => t => {
-        const C = Charts[t]
-
-        return {
-          isChartOpen: true,
-          chartTitle: '',
-          ChartComponent: <C data={mocks[t.toLowerCase()]} />
-        }
-      },
-
-      closeChart: () => () => ({
-        isChartOpen: false,
-        chartTitle: '',
-        ChartComponent: () => null
-      })
-    }
-  )
-)(
-  ({
-    mocks,
-    openChart,
-    closeChart,
-    isChartOpen,
-    chartTitle,
-    ChartComponent
-  }) => (
-    <Stats onWheel={e => (e.currentTarget.scrollLeft += e.deltaY)}>
-      {Object.keys(Charts).map((t, i) => {
-        const C = Charts[t]
-
-        return <C data={mocks[t.toLowerCase()]} onClick={() => openChart(t)} />
-      })}
-
-      <Dialog
-        isShown={isChartOpen}
-        title={chartTitle}
-        onCloseComplete={closeChart}>
-        <></>
-      </Dialog>
-    </Stats>
-  )
-)
-
-export const ChartTitle = ({
-  title,
-  stat
-}: {
-  title: string | JSX.Element
-  stat?: {
-    title: string | number
-    rate: string | number
-    intent: 'danger' | 'success' | string
-    icon: string
-  }
-}) => (
-  <hgroup>
-    <Heading is="h2" size={400} color="muted">
-      {title}
-    </Heading>
-
-    {stat && (
-      <>
-        <Text size={600}>{stat.title}</Text>
-        <Text size={500} color={stat.intent}>
-          <Icon icon={stat.icon} marginRight={4} marginLeft={4} />
-          {stat.rate}
-        </Text>
-      </>
+          return <C data={mocks[t.toLowerCase()]} />
+        })}
+      </Stats>
+    )}>
+    {({ isShown, toggle }) => (
+      <Button
+        href="javascript:;"
+        appearance="minimal"
+        icon="chart"
+        data-tip="View Charts"
+        onClick={() => toggle(!isShown)}
+      />
     )}
-  </hgroup>
-)
+  </SideSheet>
+))
 
 export const commonProps = {
   domainPadding: 20,
@@ -150,3 +64,5 @@ export const tooltipContainer = (
     }
   />
 )
+
+export { default as ChartTitle } from './title'

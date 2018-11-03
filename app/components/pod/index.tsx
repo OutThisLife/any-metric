@@ -1,7 +1,7 @@
 import { getFakeCrawl } from '@/lib/queries'
 import { FakeCrawlResult } from '@/server/schema/types'
 import omit from 'lodash/omit'
-import { func } from 'prop-types'
+import { func, string } from 'prop-types'
 import {
   compose,
   setDisplayName,
@@ -82,10 +82,15 @@ export default compose<TInner, TOutter>(
     }
   })),
   withContext(
-    { filter: func, update: func },
-    ({ updateRendered: update, setFilter: filter }) => ({
+    { filter: func, update: func, current: string },
+    ({
+      updateRendered: update,
+      setFilter: filter,
+      filter: { value: current }
+    }) => ({
       update,
-      filter
+      filter,
+      current
     })
   ),
   withPropsOnChange<{}, TInner>(

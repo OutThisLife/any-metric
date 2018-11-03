@@ -6,10 +6,8 @@ export default styled(props => <Pane {...props} />)`
     display: grid;
     align-items: center;
     justify-content: center;
-    grid-template-columns: 150px 250px;
-    grid-gap: var(--pad);
-    width: 500px;
-    height: 100%;
+    grid-template-columns: 25% 1fr;
+    grid-gap: calc(var(--pad) * 2);
     margin: 0 auto;
 
     hgroup {
@@ -19,13 +17,8 @@ export default styled(props => <Pane {...props} />)`
     }
 
     > div {
-      cursor: zoom-in;
       grid-column: 2;
       margin-left: auto;
-
-      * {
-        pointer-events: none;
-      }
     }
   }
 ` as any

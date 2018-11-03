@@ -4,6 +4,7 @@ import { compose, setDisplayName, withProps } from 'recompose'
 interface TOutter {
   title?: string
   height?: number | string
+  iconBefore?: string | JSX.Element
   [key: string]: any
 }
 

@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 export default styled.header`
   ${({ theme }) => css`
     contain: layout;
-    z-index: 500;
+    z-index: 10;
     position: relative;
     box-shadow: 0 1px 3px 0 ${rgba(theme.colours.base, 0.15)};
     background: ${theme.colours.bg};

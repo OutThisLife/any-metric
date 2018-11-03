@@ -2,7 +2,7 @@ import { getMaxima, processRadar, randomData } from '@/lib/utils'
 import { getAvg } from '@/lib/utils/maths'
 import theme, { autoColour } from '@/theme'
 import faker from 'faker'
-import { func } from 'prop-types'
+import { func, string } from 'prop-types'
 import {
   compose,
   getContext,
@@ -12,11 +12,8 @@ import {
 
 import { DataTableFilter } from '../..'
 
-interface TOutter {
-  current: string
-}
-
 export interface TInner {
+  current?: string
   filter?: DataTableFilter
   mocks: {
     price?: any[]
@@ -26,10 +23,10 @@ export interface TInner {
   }
 }
 
-export default compose<TInner, TOutter>(
+export default compose<TInner, {}>(
   setDisplayName('mocks'),
-  getContext({ filter: func }),
-  withPropsOnChange<TInner, TOutter>(['current'], ({ current }) => {
+  getContext({ filter: func, current: string }),
+  withPropsOnChange<TInner, { current: string }>(['current'], ({ current }) => {
     const applyColour = (d: any, i: number): string => ({
       ...d,
       colour:

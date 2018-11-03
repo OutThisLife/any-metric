@@ -20,7 +20,7 @@ export default compose(setDisplayName('price'))(
           <VictoryLine
             interpolation="natural"
             data={data}
-            animate={{ duration: 200 }}
+            animate={{ duration: 0, onLoad: { duration: 300 } }}
             style={{
               data: {
                 stroke: data[0].colour,
@@ -55,9 +55,9 @@ export default compose(setDisplayName('price'))(
                 }
               }}
               animate={{
-                duration: 200,
+                duration: 0,
                 onLoad: {
-                  duration: (200 / (200 / i + data.length)) * 200,
+                  duration: (150 / (150 / i + data.length)) * 150,
                   before: () => ({
                     opacity: 0
                   })

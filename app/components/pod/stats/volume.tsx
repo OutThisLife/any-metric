@@ -21,7 +21,7 @@ export default compose(setDisplayName('volume'))(
           <VictoryLine
             data={smooth(data)}
             interpolation="natural"
-            animate={{ duration: 200 }}
+            animate={{ duration: 0, onLoad: { duration: 200 } }}
             style={{
               data: {
                 stroke: data[0].colour,
@@ -38,7 +38,7 @@ export default compose(setDisplayName('volume'))(
 
       <VictoryBar
         data={initialData[0]}
-        animate={{ duration: 400 }}
+        animate={{ duration: 0, onLoad: { duration: 400 } }}
         style={{
           data: {
             fill: rgba(theme.colours.secondary, 0.06)

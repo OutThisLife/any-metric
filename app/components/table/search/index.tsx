@@ -1,10 +1,10 @@
 import { DataTableFilter } from '@/components/pod'
 import { timer as d3t } from 'd3-timer'
-import { SearchInput } from 'evergreen-ui'
 import fz from 'fuzzaldrin-plus'
 import { func } from 'prop-types'
 import { compose, getContext, setDisplayName, withHandlers } from 'recompose'
-import styled from 'styled-components'
+
+import Search from './style'
 
 interface TInner {
   filter: DataTableFilter
@@ -77,9 +77,3 @@ export default compose<THandles & TInner, {}>(
     onChange={handleChange}
   />
 ))
-
-const Search = styled(SearchInput)`
-  &:not(:focus) {
-    box-shadow: none;
-  }
-`

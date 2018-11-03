@@ -14,17 +14,6 @@ import { branch, compose, renderComponent, setDisplayName } from 'recompose'
 
 import { flatten } from './utils'
 
-export const Loading = props => (
-  <Pane
-    display="flex"
-    alignItems="center"
-    width="100%"
-    height="100%"
-    {...props}>
-    <Spinner marginX="auto" />
-  </Pane>
-)
-
 export const getFakeCrawl = () =>
   compose(
     setDisplayName('get-fake-crawl'),
@@ -123,3 +112,14 @@ export const getTags = () =>
       }
     )
   )
+
+export const Loading = (props: any) => (
+  <Pane
+    display="flex"
+    alignItems="center"
+    width="100%"
+    height="100%"
+    {...props}>
+    <Spinner marginX="auto" />
+  </Pane>
+)

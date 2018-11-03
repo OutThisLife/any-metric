@@ -14,7 +14,7 @@ export default compose(setDisplayName('sentiment'))(
           samples={20}
           y={d => Math[i % 2 ? 'sin' : 'cos'](5 * Math.PI * d.x)}
           interpolation="natural"
-          animate={{ duration: 400 }}
+          animate={{ duration: 0, onLoad: { duration: 400 } }}
           style={{
             data: {
               stroke: data[0].colour,

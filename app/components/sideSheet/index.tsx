@@ -88,8 +88,7 @@ export default compose<TStateHandles & TState & TOutter, TOutter>(
                     href="javascript:;"
                     id={t}
                     isSelected={t === state.tab}
-                    onSelect={() => setTab(t)}
-                    onMouseEnter={() => setTab(t)}>
+                    onSelect={() => setTab(t)}>
                     {t}
                   </Tab>
                 ))}

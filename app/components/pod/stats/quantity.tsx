@@ -35,9 +35,9 @@ export default compose(setDisplayName('quantity'))(
             key={i}
             data={d}
             animate={{
-              duration: 700,
+              duration: 0,
               onLoad: {
-                duration: 700 + i * 300
+                duration: i * 200
               }
             }}
           />

@@ -39,8 +39,7 @@ export default compose<TInner & TOutter, TOutter>(
         key="all"
         height={20}
         isSelected={!current}
-        onSelect={() => filter({ value: '', action: 'RESET' })}
-        onMouseEnter={() => filter({ value: '', action: 'RESET' })}>
+        onSelect={() => filter({ value: '', action: 'RESET' })}>
         All Results
       </SidebarTab>
 
@@ -50,12 +49,6 @@ export default compose<TInner & TOutter, TOutter>(
           height={20}
           isSelected={current === t}
           onSelect={() =>
-            filter({
-              value: t,
-              action: 'TAG'
-            })
-          }
-          onMouseEnter={() =>
             filter({
               value: t,
               action: 'TAG'

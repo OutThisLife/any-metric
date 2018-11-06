@@ -70,7 +70,13 @@ export default compose<TStateHandles & TState & TOutter, TOutter>(
 
       <SideSheet
         isShown={state.isShown}
-        onCloseComplete={() => toggle(false)}
+        onCloseComplete={() => {
+          toggle(false)
+
+          if ('onClose' in props) {
+            props.onClose()
+          }
+        }}
         {...props}>
         <Pane
           flex="1"
@@ -111,16 +117,18 @@ export default compose<TStateHandles & TState & TOutter, TOutter>(
             </Pane>
           )}
 
-          <Pane background="tint1" padding={16}>
-            <Card
-              elevation={0}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              backgroundColor="white">
-              {render({ ...state, toggle })}
-            </Card>
-          </Pane>
+          {state.isShown && (
+            <Pane background="tint1" padding={16}>
+              <Card
+                elevation={0}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                backgroundColor="white">
+                {render({ ...state, toggle })}
+              </Card>
+            </Pane>
+          )}
         </Pane>
       </SideSheet>
     </>

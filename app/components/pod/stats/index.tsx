@@ -38,6 +38,7 @@ export default compose<TInner, {}>(
     containerProps={{
       height: '50vh'
     }}
+    onClose={() => setLoadingState(true)}
     tabs={Object.keys(Charts)}
     title={({ tab }) => (
       <ChartTitle

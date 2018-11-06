@@ -43,6 +43,4 @@ export const rowRenderer: TableRowRenderer = (compose<
   shouldUpdate<{ rowData: FakeCrawlResult }>(
     (p, np) => !shallowEqual(p.rowData, np.rowData)
   )
-) as any)(({ TableRow, ...props }) => (
-  <TableRow key={props.rowData.id} {...props} />
-))
+) as any)(({ TableRow, ...props }) => <TableRow {...props} />)

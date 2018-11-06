@@ -24,7 +24,7 @@ module.exports = withPlugins(
               handler: 'cacheFirst'
             },
             {
-              urlPattern: /graphql/,
+              urlPattern: /graphql$/,
               handler: 'networkFirst',
               options: {
                 networkTimeoutSeconds: 15,
@@ -47,7 +47,7 @@ module.exports = withPlugins(
     assetPrefix: process.env.SERVER,
     useFileSystemPublicRoutes: false,
     publicRuntimeConfig: {
-      isDev: process.env.NODE_ENV !== 'production',
+      isDev: dev,
       API_URL: `${process.env.SERVER ||
         `http://localhost:${process.env.PORT || 3000}`}/graphql`
     },

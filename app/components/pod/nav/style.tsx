@@ -1,8 +1,8 @@
 import { Pane } from 'evergreen-ui'
 import styled from 'styled-components'
 
-export default styled(Pane)`
-  padding: 3px var(--pad);
+export default styled<any>(Pane)`
+  padding: 3px calc(var(--pad) / 2);
 
   > div > span:not([aria-selected='true']) > span {
     font-weight: 400;

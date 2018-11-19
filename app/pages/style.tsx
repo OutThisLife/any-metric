@@ -1,7 +1,7 @@
 import { rgba } from 'polished'
 import styled from 'styled-components'
 
-export default styled.div`
+export default styled<any>('div')`
   .react-grid-item {
     transition: none;
 
@@ -37,4 +37,4 @@ export default styled.div`
   .drag-h {
     cursor: move;
   }
-` as any
+`

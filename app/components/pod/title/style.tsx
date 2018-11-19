@@ -1,10 +1,10 @@
 import { rgba } from 'polished'
 import styled, { css } from 'styled-components'
 
-export default styled.div`
+export default styled<any>('div')`
   ${({ theme }) => css`
     position: relative;
-    padding: var(--pad);
+    padding: var(--pad) calc(var(--pad) / 2);
 
     .drag-h {
       z-index: 2;
@@ -50,4 +50,4 @@ export default styled.div`
       margin-left: auto;
     }
   `};
-` as any
+`

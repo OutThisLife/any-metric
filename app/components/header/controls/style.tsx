@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export default styled.div`
+export default styled<any>('div')`
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -8,8 +8,8 @@ export default styled.div`
   a {
     line-height: 0;
 
-    + a[href] {
-      margin-left: calc(var(--pad) / 2);
+    + a {
+      margin-left: calc(var(--pad) * 0.5);
     }
   }
 `

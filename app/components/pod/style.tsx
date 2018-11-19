@@ -3,7 +3,7 @@ import 'react-virtualized/styles.css'
 import Panel from '@/components/panel'
 import styled from 'styled-components'
 
-export default styled.div`
+export default styled<any>('div')`
   contain: style paint;
   position: relative;
   height: auto;
@@ -16,9 +16,9 @@ export default styled.div`
     grid-template-rows: min-content 1fr 200px;
     height: 100%;
   }
-` as any
+`
 
-export const Inner = styled(Panel)`
+export const Inner = styled<any>(Panel)`
   opacity: 0;
   transform: scale(0.98) translate(-1px, 0);
   transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.175);
@@ -70,4 +70,4 @@ export const Inner = styled(Panel)`
     height: 100%;
     overflow: auto;
   }
-` as any
+`

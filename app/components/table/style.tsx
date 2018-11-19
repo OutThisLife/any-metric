@@ -4,7 +4,7 @@ import { darken, rgba } from 'polished'
 import { Table } from 'react-virtualized'
 import styled, { css } from 'styled-components'
 
-export default styled(Table as any)`
+export default styled<any>(Table)`
   ${({ theme }) => css`
     [tabindex]:focus {
       outline: none;
@@ -15,7 +15,7 @@ export default styled(Table as any)`
     }
 
     [class$='Table__row'] {
-      box-shadow: inset 0 1px 0 ${theme.colours.panel};
+      box-shadow: inset 0 1px 0 ${darken(0.04, theme.colours.panel)};
 
       &:first-of-type {
         box-shadow: none;
@@ -37,4 +37,4 @@ export default styled(Table as any)`
       }
     }
   `};
-` as any
+`

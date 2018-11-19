@@ -7,7 +7,7 @@ export default compose(setDisplayName('logo'))(() => (
   </Logo>
 ))
 
-const Logo = styled.h1`
+const Logo = styled<any>('h1')`
   ${({ theme }) => css`
     display: inline-flex;
     align-items: center;

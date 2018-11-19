@@ -1,5 +1,6 @@
-import { SelectMenu } from 'evergreen-ui'
 import { compose, setDisplayName } from 'recompose'
+
+import Dropdown from './style'
 
 interface TOutter {
   title: string
@@ -9,7 +10,7 @@ interface TOutter {
 
 export default compose<TOutter, TOutter>(setDisplayName('dropdown'))(
   ({ children, title, ...props }) => (
-    <SelectMenu
+    <Dropdown
       isMultiSelect
       hasFilter={props.options.length > 10}
       title={title}
@@ -17,6 +18,6 @@ export default compose<TOutter, TOutter>(setDisplayName('dropdown'))(
       minPopoverHeight={0}
       {...props}>
       {children}
-    </SelectMenu>
+    </Dropdown>
   )
 )

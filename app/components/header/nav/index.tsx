@@ -6,15 +6,15 @@ import Nav from './style'
 export default compose(setDisplayName('header-nav'))(() => (
   <Nav>
     <Link size={300} href="javascript:;" className="active">
-      All Views <sup>(12)</sup>
+      All
     </Link>
 
     <Link size={300} href="javascript:;">
-      Social <sup>(2)</sup>
+      Social
     </Link>
 
     <Link size={300} href="javascript:;">
-      Finance <sup>(20)</sup>
+      Finance
     </Link>
   </Nav>
 ))

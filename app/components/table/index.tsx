@@ -81,7 +81,7 @@ export default compose<TState & TStateHandles & TInner & TOutter, TOutter>(
         width={width}
         height={height}
         headerHeight={35}
-        rowHeight={50}
+        rowHeight={65}
         rowCount={data.length}
         rowGetter={({ index: i }) => data[i]}
         rowRenderer={rowRenderer}

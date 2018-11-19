@@ -1,7 +1,10 @@
 import styled from 'styled-components'
 
-export default styled.div`
-  transform: translate(0, var(--pad));
+export default styled<any>('div')`
+  display: inherit;
+  height: inherit;
+  align-self: flex-end;
+  align-items: flex-end;
 
   a {
     display: inline-block;
@@ -14,6 +17,10 @@ export default styled.div`
 
     &:not(.active):not(:hover) {
       box-shadow: none;
+    }
+
+    + a {
+      margin-left: calc(var(--pad) * 1.25);
     }
   }
 `

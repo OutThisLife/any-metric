@@ -1,7 +1,7 @@
 import { rgba } from 'polished'
 import styled, { css } from 'styled-components'
 
-export default styled.header`
+export default styled<any>('header')`
   ${({ theme }) => css`
     contain: layout;
     z-index: 10;
@@ -10,14 +10,15 @@ export default styled.header`
     background: ${theme.colours.bg};
 
     > div {
-      padding: var(--pad) calc(var(--pad) * 2);
+      padding: calc(var(--pad) * 0.7) calc(var(--pad) * 2);
     }
 
     > nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: var(--pad) calc(var(--pad) * 2);
+      height: 100%;
+      padding: 0 calc(var(--pad) * 2);
 
       a {
         text-decoration: none !important;
@@ -32,10 +33,6 @@ export default styled.header`
           &:hover {
             color: ${rgba(theme.colours.base, 0.55)};
           }
-        }
-
-        + a {
-          margin-left: calc(var(--pad) * 2);
         }
       }
 

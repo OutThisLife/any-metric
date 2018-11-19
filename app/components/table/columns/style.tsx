@@ -1,7 +1,7 @@
 import { darken } from 'polished'
 import styled, { css } from 'styled-components'
 
-export const Link = styled.a`
+export const Link = styled<any>('a')`
   ${({ theme }) => css`
     display: block;
     position: relative;
@@ -40,7 +40,7 @@ export const Link = styled.a`
   `};
 `
 
-export const Title = styled.div`
+export const Title = styled<any>('div')`
   h4 {
     > * {
       vertical-align: middle;
@@ -83,9 +83,10 @@ export const Title = styled.div`
 
       strong {
         position: relative;
-        display: inlien-flex;
+        display: inline-flex;
         align-items: center;
         justify-content: space-between;
+        font-size: 10px;
 
         a {
           z-index: 1;

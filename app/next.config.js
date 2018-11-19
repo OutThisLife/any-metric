@@ -27,11 +27,6 @@ module.exports = withPlugins(
               urlPattern: /graphql$/,
               handler: 'networkFirst',
               options: {
-                networkTimeoutSeconds: 15,
-                expiration: {
-                  maxEntries: 150,
-                  maxAgeSeconds: 30 * 24 * 60 * 60
-                },
                 cacheableResponse: {
                   statuses: [0, 200]
                 }
@@ -45,30 +40,24 @@ module.exports = withPlugins(
   ],
   {
     assetPrefix: process.env.SERVER,
-    useFileSystemPublicRoutes: false,
+    useFileSystemPublicRoutes: true,
     publicRuntimeConfig: {
       isDev: dev,
       API_URL: `${process.env.SERVER ||
         `http://localhost:${process.env.PORT || 3000}`}/graphql`
     },
     webpack: (config, { isServer }) => {
-      config.module.rules.push(
-        {
-          test: /\.(png|jpg|gif|svg|eot|ttf|otf|woff|woff2)$/,
-          use: [
-            {
-              loader: 'url-loader',
-              options: {
-                limit: 10000
-              }
+      config.module.rules.push({
+        test: /\.(png|jpg|gif|svg|eot|ttf|otf|woff|woff2)$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 10000
             }
-          ]
-        },
-        {
-          test: /\.(scss)$/,
-          use: ['babel-loader', 'raw-loader']
-        }
-      )
+          }
+        ]
+      })
 
       return config
     }

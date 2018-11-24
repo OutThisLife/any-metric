@@ -4,12 +4,23 @@ import { FakeCrawlResult } from '@/server/schema/types'
 import { format } from 'd3'
 import { Pane } from 'evergreen-ui'
 import faker from 'faker'
+import { lighten } from 'polished'
 import { Chart, ChartCanvas } from 'react-stockcharts'
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes'
+import {
+  CrossHairCursor,
+  EdgeIndicator,
+  MouseCoordinateX,
+  MouseCoordinateY
+} from 'react-stockcharts/lib/coordinates'
 import { ema } from 'react-stockcharts/lib/indicator'
 import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
-import { BarSeries, LineSeries } from 'react-stockcharts/lib/series'
-import { HoverTooltip } from 'react-stockcharts/lib/tooltip'
+import {
+  BarSeries,
+  LineSeries,
+  ScatterSeries,
+  TriangleMarker
+} from 'react-stockcharts/lib/series'
 import { last } from 'react-stockcharts/lib/utils'
 import { compose, mapProps, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
@@ -20,13 +31,13 @@ export default compose<TInner, TOutter>(
     initialData: data.sort(sortByDate).map(d => ({
       id: d.id,
       date: new Date(d.date),
-      price: parseInt(d.price, 10),
+      price: parseFloat(d.price),
       volume: faker.random.number({ min: 10, max: 1000 })
     }))
   })),
   withTheme,
   withDimensions(true)
-)(({ onRef, theme: { egScales, egPalette }, initialData, width }) => {
+)(({ onRef, theme, initialData, width }) => {
   const avg = ema()
     .options({ sourcePath: 'price' })
     .merge((d, ema50) => ({ ...d, ema50 }))
@@ -44,8 +55,8 @@ export default compose<TInner, TOutter>(
   const xExtents = [xAccessor(last(data)), xAccessor(data[data.length - 75])]
 
   const grid = {
-    stroke: egPalette.neutral.dark,
-    tickStroke: egScales.neutral.N6,
+    stroke: theme.colours.base,
+    tickStroke: theme.colours.border,
     innerTickSize: -1 * width - 80 - 80,
     tickStrokeDashArray: 'Solid',
     tickStrokeOpacity: 0.2,
@@ -68,15 +79,43 @@ export default compose<TInner, TOutter>(
         displayXAccessor={displayXAccessor}>
         <Chart
           id={1}
+          height={75}
+          yAccessor={avg.accessor()}
+          yExtents={d => d.volume}
+          origin={(_, h) => [0, h - 75]}>
+          <BarSeries
+            yAccessor={d => d.volume}
+            fill={lighten(0.5, theme.colours.secondary)}
+            stroke="transparent"
+          />
+        </Chart>
+
+        <Chart
+          id={2}
           yExtents={[d => d.price, avg.accessor()]}
           padding={{ top: 10, bottom: 20 }}>
+          <ScatterSeries
+            yAccessor={d => d.price}
+            marker={TriangleMarker}
+            markerProps={{
+              width: 6,
+              fill: theme.colours.secondary,
+              stroke: 'transparent'
+            }}
+          />
           <LineSeries
             yAccessor={avg.accessor()}
-            stroke={egPalette.neutral.dark}
+            stroke={theme.colours.base}
             strokeWidth={2}
           />
 
           <XAxis axisAt="bottom" orient="bottom" {...grid} />
+          <MouseCoordinateX
+            snapX={false}
+            at="bottom"
+            orient="bottom"
+            displayFormat={format('.2f')}
+          />
 
           <YAxis
             axisAt="right"
@@ -84,34 +123,23 @@ export default compose<TInner, TOutter>(
             displayFormat={format('$.2s')}
             {...grid}
           />
+          <MouseCoordinateY
+            axisAt="left"
+            orient="left"
+            displayFormat={format('$.2s')}
+          />
 
-          <HoverTooltip
-            snapX={false}
+          <EdgeIndicator
+            itemType="last"
+            orient="right"
+            edgeAt="right"
             yAccessor={avg.accessor()}
-            fontSize={14}
-            opacity={1}
-            fill="#525252"
-            fontFill="#FFF"
-            bgFill="transparent"
-            stroke="transparent"
-            tooltipContent={({ currentItem }) => ({
-              x: format('$.2f')(currentItem.price),
-              y: []
-            })}
+            fill={theme.colours.base}
+            displayFormat={format('$.2s')}
           />
         </Chart>
 
-        <Chart
-          height={75}
-          yAccessor={avg.accessor()}
-          yExtents={d => d.volume}
-          origin={(_, h) => [0, h - 75]}>
-          <BarSeries
-            yAccessor={d => d.volume}
-            fill={egScales.blue.B5}
-            stroke="transparent"
-          />
-        </Chart>
+        <CrossHairCursor snapX={false} StrokeDasharray="ShortDashDot" />
       </ChartCanvas>
     </Pane>
   )
@@ -123,7 +151,7 @@ interface TOutter extends React.CSSProperties {
 
 interface TInner {
   initialData?: Array<{
-    id: FakeCrawlResult['id']
+    id: string | number
     date: Date
     price: number
     volume: number

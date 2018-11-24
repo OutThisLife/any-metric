@@ -125,10 +125,8 @@ const GlobalStyles = createGlobalStyle`
         'head head head'
         'body body body'
         'body body body';
-      grid-template-rows: min-content 1fr;
+      grid-template-rows: min-content max-content;
       grid-template-columns: 1fr;
-      height: 100vh;
-      width: 100vw;
       overflow-x: hidden;
       background: ${colours.panel};
 

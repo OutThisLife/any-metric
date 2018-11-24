@@ -8,6 +8,7 @@ export const colours = {
   base: egColours.text.default,
   secondary: egColours.text.selected,
   panel: egScales.neutral.N1,
+  border: egScales.neutral.N6,
   bg: '#fff',
 
   good: egColours.text.success,

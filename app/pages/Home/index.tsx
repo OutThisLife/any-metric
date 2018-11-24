@@ -73,27 +73,37 @@ export default compose<TInner & TState & TStateHandles, TOutter>(
     <Box
       is="main"
       contain="style paint"
-      height="calc(100vh - 50px)"
-      padding="var(--pad)"
-      overflow="auto">
+      height="calc(100vh - (var(--pad) * 2 + 50px))"
+      overflow="auto"
+      padding="var(--pad)">
       <Box
         is="section"
-        gridRow={1}
         display="grid"
-        gridTemplateColumns="repeat(4, 1fr)"
-        gridGap="var(--pad)"
-        position="relative"
-        overflow="auto"
-        padding="var(--pad)"
+        gridTemplateColumns="1fr 1fr"
+        padding="inherit"
         backgroundColor="white">
         <>
-          <Chart data={renderedData} float="right" gridColumn="1 / -1" />
+          <Box gridRow={1} gridColumn="1">
+            {renderedData.map((item, i) => (
+              <Box is="article" key={item.id} elevation={2}>
+                {item.title}
+              </Box>
+            ))}
+          </Box>
 
-          {renderedData.map((item, i) => (
-            <Box is="article" key={item.id} elevation={2}>
-              {item.title}
-            </Box>
-          ))}
+          <Box
+            gridRow={1}
+            gridColumn="2"
+            alignSelf="stretch"
+            display="flex"
+            alignItems="center"
+            position="sticky"
+            top="var(--pad)"
+            justifyContent="center"
+            height="calc(100vh - 70px)"
+            overflow="hidden">
+            <Chart data={renderedData} />
+          </Box>
         </>
       </Box>
     </Box>

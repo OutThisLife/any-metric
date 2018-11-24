@@ -1,36 +1,25 @@
-import Button from '@/components/button'
-import Header from '@/components/header/style'
-import Logo from '@/components/logo'
-import theme from '@/theme'
+import Box from '@/components/Box'
 import { compose, setDisplayName } from 'recompose'
 
-import AddNew from './addNew'
-import Controls from './controls'
-import Nav from './nav'
+import Search from './Search'
+import Header from './style'
 
 export default compose(setDisplayName('header'))(() => (
-  <Header>
-    <div>
-      <Logo />
-    </div>
+  <Header
+    is="header"
+    zIndex={10}
+    display="grid"
+    gridTemplateColumns="min-content 1fr"
+    alignItems="center"
+    height={50}>
+    <Box paddingX="var(--pad)">
+      <h1>
+        <span>baphometric</span>
+      </h1>
+    </Box>
 
-    <nav>
-      <Controls />
-      <Nav />
-
-      <div>
-        <AddNew>
-          <Button
-            appearance="minimal"
-            color={theme.colours.base}
-            title="Create View"
-          />
-        </AddNew>
-
-        <AddNew>
-          <Button title="Add Pod" />
-        </AddNew>
-      </div>
-    </nav>
+    <Box>
+      <Search />
+    </Box>
   </Header>
 ))

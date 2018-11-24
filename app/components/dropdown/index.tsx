@@ -2,12 +2,6 @@ import { compose, setDisplayName } from 'recompose'
 
 import Dropdown from './style'
 
-interface TOutter {
-  title: string
-  children: React.ReactNode
-  [key: string]: any
-}
-
 export default compose<TOutter, TOutter>(setDisplayName('dropdown'))(
   ({ children, title, ...props }) => (
     <Dropdown
@@ -21,3 +15,9 @@ export default compose<TOutter, TOutter>(setDisplayName('dropdown'))(
     </Dropdown>
   )
 )
+
+interface TOutter {
+  title: string
+  children: React.ReactNode
+  [key: string]: any
+}

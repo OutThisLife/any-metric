@@ -10,15 +10,6 @@ import {
 
 import { getTags } from './queries'
 
-interface TInner {
-  tags: string[]
-  mutate: MutationFunc<{}, SetTagArgs>
-}
-
-export interface THandles {
-  setTag: (a: FakeCrawlResult, t: string, cb: (t: string[]) => any) => void
-}
-
 export default () =>
   compose<THandles & TInner, {}>(
     setDisplayName('with-tags'),
@@ -48,3 +39,12 @@ export default () =>
       }
     }))
   )
+
+interface TInner {
+  tags: string[]
+  mutate: MutationFunc<{}, SetTagArgs>
+}
+
+export interface THandles {
+  setTag: (a: FakeCrawlResult, t: string, cb: (t: string[]) => any) => void
+}

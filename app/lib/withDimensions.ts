@@ -8,28 +8,6 @@ import {
 } from 'recompose'
 import ResizeObserver from 'resize-observer-polyfill'
 
-export interface TState {
-  width: number
-  height: number
-}
-
-export interface TStateHandles extends StateHandlerMap<TState> {
-  setDimensions: StateHandler<TState>
-}
-
-interface THandles<T = HTMLElement | Window> {
-  onRef?: (ref?: T, el?: T) => void
-}
-
-export type DimProps = TState & TStateHandles & THandles
-
-const ro = (cb: (a: any) => any) =>
-  new ResizeObserver(entries => {
-    for (const entry of entries) {
-      cb(entry.contentRect)
-    }
-  })
-
 export default (forceWindow: boolean = false) =>
   compose<DimProps & THandles, {}>(
     setDisplayName('with-dimensions'),
@@ -52,3 +30,25 @@ export default (forceWindow: boolean = false) =>
       }
     }))
   )
+
+const ro = (cb: (a: any) => any) =>
+  new ResizeObserver(entries => {
+    for (const entry of entries) {
+      cb(entry.contentRect)
+    }
+  })
+
+export interface TState {
+  width: number
+  height: number
+}
+
+export interface TStateHandles extends StateHandlerMap<TState> {
+  setDimensions: StateHandler<TState>
+}
+
+interface THandles<T = HTMLElement | Window> {
+  onRef?: (ref?: T, el?: T) => void
+}
+
+export type DimProps = TState & TStateHandles & THandles

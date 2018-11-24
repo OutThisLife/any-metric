@@ -1,4 +1,23 @@
+import { genFakeResults } from '../queries/fakeCrawl'
 import { FakeCrawlResult, Resolver } from '../types'
+
+export default (async (
+  _,
+  { ids, tags = [''] }: Args
+): Promise<FakeCrawlResult[]> => {
+  const initialData = await genFakeResults()
+
+  return initialData
+    .map(d =>
+      ids.includes(d.id)
+        ? {
+            ...d,
+            tags
+          }
+        : d
+    )
+    .filter(d => ids.includes(d.id))
+}) as Resolver
 
 export interface Args {
   ids: string[]
@@ -6,22 +25,3 @@ export interface Args {
 }
 
 export type SetTags = (Args) => Promise<FakeCrawlResult[]>
-
-export default (async (
-  _,
-  { ids, tags = [''] }: Args,
-  { cache, genFakeResults }
-): Promise<FakeCrawlResult[]> => {
-  const initialData = await genFakeResults(cache)
-  const newData = initialData.map(
-    d =>
-      ids.includes(d.id)
-        ? {
-            ...d,
-            tags
-          }
-        : d
-  )
-
-  return cache.set('data', newData) && newData.filter(d => ids.includes(d.id))
-}) as Resolver

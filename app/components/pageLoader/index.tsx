@@ -2,10 +2,6 @@ import { Loading } from '@/lib/queries'
 import theme from '@/theme'
 import { compose, setDisplayName, withHandlers } from 'recompose'
 
-interface TInner {
-  onRef: (r: HTMLElement) => void
-}
-
 export default compose<TInner, {}>(
   setDisplayName('page-loader'),
   withHandlers(() => ({
@@ -34,3 +30,7 @@ export default compose<TInner, {}>(
     }}
   />
 ))
+
+interface TInner {
+  onRef: (r: HTMLElement) => void
+}

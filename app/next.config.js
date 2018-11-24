@@ -40,7 +40,7 @@ module.exports = withPlugins(
   ],
   {
     assetPrefix: process.env.SERVER,
-    useFileSystemPublicRoutes: true,
+    useFileSystemPublicRoutes: false,
     publicRuntimeConfig: {
       isDev: dev,
       API_URL: `${process.env.SERVER ||

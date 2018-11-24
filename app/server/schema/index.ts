@@ -1,28 +1,33 @@
-import { GraphQLDateTime } from 'graphql-iso-date'
+import { ApolloServer } from 'apollo-server-express'
+import * as express from 'express'
 import { IResolvers } from 'graphql-tools'
-import * as GraphQLJSON from 'graphql-type-json'
 
-import { setLayout, setTags } from './mutations'
-import { crawl, fakeCrawl, layout, search } from './queries'
-import { Context } from './types'
+import { app, cache, dev } from '..'
+import { setTags } from './mutations'
+import { fakeCrawl } from './queries'
+import typeDefs, { Context } from './types'
 
-export { crawl, layout, search, setLayout }
-export { typeDefs } from './types'
-export { default as context } from './context'
-
-export default {
-  JSON: GraphQLJSON,
-  Date: GraphQLDateTime,
+const resolvers: IResolvers<{}, Context> = {
+  JSON: require('graphql-type-json'),
+  Date: require('graphql-iso-date').GraphQLDateTime,
 
   Query: {
-    crawl,
-    search,
-    layout,
     fakeCrawl
   },
 
   Mutation: {
-    setLayout,
     setTags
   }
-} as IResolvers<{}, Context>
+}
+
+new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: { cache },
+  introspection: dev,
+  playground: dev,
+  tracing: dev,
+  cacheControl: true
+}).applyMiddleware({ app })
+
+module.exports = express.Router()

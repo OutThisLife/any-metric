@@ -1,55 +1,31 @@
 import * as md5 from 'md5'
 import { parse } from 'url'
-import * as XRay from 'x-ray'
 
+import { getPage } from '../../../api'
 import { Resolver, Result } from '../../types'
 
-export interface Selector {
-  parent?: string
-  name: string
-  el: string
-}
+export default (async (_, { url, selectors = [] }: Args): Promise<Result> => {
+  const page = await getPage(url)
+
+  return page.run(
+    async (): Promise<Result> => {
+      const id = md5(`${url}${JSON.stringify(selectors)}`)
+      const { hostname } = parse(url)
+
+      try {
+        const title = await page.title()
+        const meta = await page.$eval('head > meta[name]', el => el.textContent)
+        const data = await page.$eval('div', el => el.textContent)
+
+        return { id, hostname, url, title, meta, data }
+      } catch (err) {
+        throw err
+      }
+    }
+  )
+}) as Resolver
 
 interface Args {
   url: string
-  parent?: string
-  children?: Selector[]
+  selectors?: string[]
 }
-
-export default (async (
-  _,
-  { url, parent = 'html', children = [] }: Args
-): Promise<Result> => {
-  const x = XRay()
-  const { hostname } = parse(url)
-
-  const selectors = children.reduce(
-    (acc, { name, el }: Selector) => ((acc[name] = el), acc),
-    {}
-  )
-
-  const id = md5(`${url}${JSON.stringify(selectors)}`)
-
-  const { err, title, meta, data }: Result = await x(url, {
-    title: 'title',
-    img: 'img:first-child@src',
-    meta: x('meta', [
-      {
-        name: '@name',
-        content: '@content'
-      },
-      {
-        name: '@property',
-        content: '@content'
-      }
-    ]),
-    data: x(parent, [selectors])
-  })
-
-  if (err) {
-    console.error(err)
-    throw err
-  }
-
-  return { id, title, meta, hostname, url, data }
-}) as Resolver

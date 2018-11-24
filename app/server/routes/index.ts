@@ -1,8 +1,7 @@
 import * as express from 'express'
 import * as path from 'path'
 
-import { dev, dir, nextApp } from '.'
-import { cache } from './schema/context'
+import { cache, dev, dir, nextApp } from '..'
 
 const router = express.Router()
 
@@ -53,14 +52,6 @@ router.use((req, res, resolve) => {
   return resolve()
 })
 
-router.get('/', render('/index'))
-
-router.get('/:slug([A-z-]+)/:id([A-z0-9-]+)?', (req, res, resolve) => {
-  if (req.params.slug === '_next') {
-    return resolve()
-  }
-
-  return render('/index')(req, res)
-})
+router.get('/', render('/Home'))
 
 module.exports = router

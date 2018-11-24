@@ -1,21 +1,6 @@
 import { dateFormat, sortByDate, unixDateFormat } from './date'
 import { getMaxima, processRadar, randomData, smooth } from './maths'
 
-export const flatten = <T extends Array<{ [key: string]: any }>, K = string>(
-  arr: T,
-  ...keys: string[]
-): K[] =>
-  arr
-    .reduce((acc: K[], r) => {
-      keys.forEach(
-        key =>
-          r[key] instanceof Array ? acc.push(...r[key]) : acc.push(r[key])
-      )
-      return acc
-    }, [])
-    .filter((r: K, i, self: K[]) => r && self.indexOf(r) === i)
-    .sort()
-
 export const random = <T extends string>(r: { [key: string]: any }): T =>
   Object.values(r)[Math.floor(Math.random() * Object.values(r).length)]
 

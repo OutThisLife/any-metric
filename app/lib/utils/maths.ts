@@ -1,8 +1,7 @@
 import dayjs from 'dayjs'
 import faker from 'faker'
 import { ema } from 'moving-averages'
-
-import { flatten } from '.'
+import { DataPoint } from 'typings'
 
 export const randomData = ({ min = 40, max = 50, count = 50 }): DataPoint[] =>
   [...Array(count).keys()].map(i => ({
@@ -14,7 +13,7 @@ export const randomData = ({ min = 40, max = 50, count = 50 }): DataPoint[] =>
   }))
 
 export const smooth = (r: DataPoint[]): DataPoint[] => {
-  const s = ema(flatten(r, 'y'), 8)
+  const s = ema(r.map(({ y }) => y), 8)
   const diff = r.length / s.length + 1
 
   return r.map(({ x }, i) => ({

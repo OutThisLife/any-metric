@@ -1,18 +1,10 @@
-import { SetLayout } from '@/server/schema/mutations/setLayout'
+import Box from '@/components/Box'
 import { SetTags } from '@/server/schema/mutations/setTags'
-import { cols as defaultCols } from '@/server/schema/queries/layout'
-import {
-  FakeCrawlResult,
-  fakeResultFrag,
-  layoutFrag,
-  LayoutResult
-} from '@/server/schema/types'
-import { Pane, Spinner } from 'evergreen-ui'
+import { FakeCrawlResult } from '@/server/schema/types'
+import { Spinner } from 'evergreen-ui'
 import gql from 'graphql-tag'
 import { graphql } from 'react-apollo'
 import { branch, compose, renderComponent, setDisplayName } from 'recompose'
-
-import { flatten } from './utils'
 
 export const getFakeCrawl = () =>
   compose(
@@ -21,11 +13,18 @@ export const getFakeCrawl = () =>
       gql`
         query GetFakeResult {
           results: fakeCrawl {
-            ...fakeResultFields
+            id
+            slug
+            image
+            title
+            price
+            shipping
+            quantity
+            copy
+            date
+            tags
           }
         }
-
-        ${fakeResultFrag}
       `,
       {
         options: { ssr: false },
@@ -38,45 +37,6 @@ export const getFakeCrawl = () =>
     branch(
       ({ data: { loading } }) => loading,
       renderComponent(() => <Loading />)
-    )
-  )
-
-export const getLayout = () =>
-  compose(
-    setDisplayName('get-layout'),
-    graphql<{}, { setLayout: SetLayout }>(
-      gql`
-        mutation setLayout($layout: String!) {
-          setLayout(layout: $layout) {
-            __typename
-            ...layoutFields
-          }
-        }
-
-        ${layoutFrag}
-      `
-    ),
-    graphql<{}, { layout: LayoutResult }>(
-      gql`
-        query GetLayout {
-          layout {
-            ...layoutFields
-          }
-        }
-
-        ${layoutFrag}
-      `,
-      {
-        props: ({
-          data: {
-            layout = {
-              cols: defaultCols,
-              data: []
-            },
-            ...data
-          }
-        }) => ({ data, layout })
-      }
     )
   )
 
@@ -107,19 +67,14 @@ export const getTags = () =>
       {
         props: ({ data: { tags = [], ...data } }) => ({
           data,
-          tags: flatten(tags, 'tags')
+          tags
         })
       }
     )
   )
 
 export const Loading = (props: any) => (
-  <Pane
-    display="flex"
-    alignItems="center"
-    width="100%"
-    height="100%"
-    {...props}>
+  <Box display="flex" alignItems="center" width="100%" height="100%" {...props}>
     <Spinner marginX="auto" />
-  </Pane>
+  </Box>
 )

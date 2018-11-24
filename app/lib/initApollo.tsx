@@ -1,10 +1,11 @@
 import 'isomorphic-unfetch'
 
-import { typeDefs } from '@/server/schema/types'
 import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from 'apollo-boost'
 import { onError } from 'apollo-link-error'
 import { toIdValue } from 'apollo-utilities'
 import getConfig from 'next/config'
+
+import typeDefs from '../server/schema/types'
 
 const {
   publicRuntimeConfig: { API_URL, isDev }
@@ -30,8 +31,8 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   }
 })
 
-let apolloClient
-const createStore = (initialState = {}) => {
+let client
+const create = (initialState = {}) => {
   const cache = new InMemoryCache({
     dataIdFromObject: o => ('id' in o ? `${o.__typename}:${o.id}` : null),
     cacheRedirects: {
@@ -64,14 +65,12 @@ const createStore = (initialState = {}) => {
 
 export default (initialState = {}): ApolloClient<{}> => {
   if (!('browser' in process)) {
-    return createStore(initialState)
+    return create(initialState)
   }
 
-  if (!apolloClient) {
-    apolloClient = createStore(
-      (window as any).__NEXT_DATA__.props.apolloState || {}
-    )
+  if (!client) {
+    client = create((window as any).__NEXT_DATA__.props.apolloState || {})
   }
 
-  return apolloClient
+  return client
 }

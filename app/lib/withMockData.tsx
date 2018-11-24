@@ -1,5 +1,6 @@
 import { getMaxima, processRadar, randomData } from '@/lib/utils'
 import { getAvg } from '@/lib/utils/maths'
+import { DataTableFilter } from '@/pages/home'
 import theme, { autoColour } from '@/theme'
 import faker from 'faker'
 import { func, string } from 'prop-types'
@@ -9,8 +10,6 @@ import {
   setDisplayName,
   withPropsOnChange
 } from 'recompose'
-
-import { DataTableFilter } from '../..'
 
 export interface TInner {
   current?: string

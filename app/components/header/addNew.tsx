@@ -1,16 +1,7 @@
-import { Dialog, Pane, Paragraph } from 'evergreen-ui'
+import Box from '@/components/Box'
+import { Dialog, Paragraph } from 'evergreen-ui'
 import { cloneElement } from 'react'
 import { compose, setDisplayName, withState } from 'recompose'
-
-interface TOutter {
-  children: React.ReactElement<any>
-  [key: string]: any
-}
-
-interface TState {
-  isShown: boolean
-  toggle: (b: boolean) => void
-}
 
 export default compose<TState & TOutter, TOutter>(
   setDisplayName('add-new'),
@@ -27,14 +18,24 @@ export default compose<TState & TOutter, TOutter>(
       onCloseComplete={() => toggle(false)}
       topOffset="33vmin"
       {...props}>
-      <Pane>
+      <Box>
         <Paragraph>
           Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corporis
           alias reprehenderit aut placeat fugit illum sapiente minima, rem at
           distinctio nam, dolorum fuga esse maxime doloremque ipsam iusto a
           dolore.
         </Paragraph>
-      </Pane>
+      </Box>
     </Dialog>
   </>
 ))
+
+interface TOutter {
+  children: React.ReactElement<any>
+  [key: string]: any
+}
+
+interface TState {
+  isShown: boolean
+  toggle: (b: boolean) => void
+}

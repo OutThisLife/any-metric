@@ -2,11 +2,6 @@ import { spawn } from '@/lib/utils'
 import { FakeCrawlResult } from '@/server/schema/types'
 import fz from 'fuzzaldrin-plus'
 
-export interface PodWorker extends Worker {
-  importScripts?: (s: string) => void
-  fuzzaldrin?: typeof fz
-}
-
 export const worker: PodWorker =
   typeof window !== 'undefined' &&
   spawn(function(this: PodWorker) {
@@ -45,3 +40,8 @@ export const isWorkerReady = () =>
   typeof window !== 'undefined' && worker instanceof Worker
 
 export default worker
+
+export interface PodWorker extends Worker {
+  importScripts?: (s: string) => void
+  fuzzaldrin?: typeof fz
+}

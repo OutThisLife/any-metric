@@ -21,12 +21,14 @@ export default (forceWindow: boolean = false) =>
       }
     ),
     withHandlers<TStateHandles, THandles>(() => ({
-      onRef: ({ setDimensions }) => (ref, el = ref) => {
-        if (!(el instanceof HTMLElement)) {
+      onRef: ({ setDimensions }) => ref => {
+        if (!ref) {
           return
         }
 
-        ro(setDimensions).observe(forceWindow ? document.body : el)
+        ro(setDimensions).observe(
+          forceWindow ? document.body : (ref as HTMLElement)
+        )
       }
     }))
   )

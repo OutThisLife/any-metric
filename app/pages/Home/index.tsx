@@ -12,11 +12,10 @@ import {
   withStateHandlers
 } from 'recompose'
 
-import Stats from './Stats'
+import Chart from './Chart'
 import worker, { isWorkerReady } from './worker'
 
 export default compose<TInner & TState & TStateHandles, TOutter>(
-  setDisplayName('dashboard'),
   getFakeCrawl(),
   withStateHandlers<TState, TStateHandles, TInner>(
     ({ results }) => ({
@@ -60,42 +59,46 @@ export default compose<TInner & TState & TStateHandles, TOutter>(
 
       return {}
     }
-  )
-)(({ renderedData, updateRendered }) => (
-  <Box
-    is="main"
-    innerRef={() => {
-      if (isWorkerReady()) {
-        worker.onmessage = ({ data }) => updateRendered(data)
-        worker.onerror = e => {
-          throw e
-        }
-      }
-    }}
-    contain="style paint"
-    height="calc(100vh - 50px)"
-    overflow="auto">
-    <Box
-      is="section"
-      gridRow={1}
-      display="grid"
-      gridTemplateColumns="repeat(4, 1fr)"
-      gridGap="var(--pad)"
-      position="relative"
-      overflow="auto"
-      padding="var(--pad)">
-      <>
-        <Stats data={renderedData} float="right" gridColumn="1 / -1" />
+  ),
+  setDisplayName('dashboard')
+)(({ renderedData, updateRendered }) => {
+  if (isWorkerReady()) {
+    worker.onmessage = ({ data }) => updateRendered(data)
+    worker.onerror = e => {
+      throw e
+    }
+  }
 
-        {renderedData.map((item, i) => (
-          <Box is="article" key={item.id} elevation={2}>
-            {item.title}
-          </Box>
-        ))}
-      </>
+  return (
+    <Box
+      is="main"
+      contain="style paint"
+      height="calc(100vh - 50px)"
+      padding="var(--pad)"
+      overflow="auto">
+      <Box
+        is="section"
+        gridRow={1}
+        display="grid"
+        gridTemplateColumns="repeat(4, 1fr)"
+        gridGap="var(--pad)"
+        position="relative"
+        overflow="auto"
+        padding="var(--pad)"
+        backgroundColor="white">
+        <>
+          <Chart data={renderedData} float="right" gridColumn="1 / -1" />
+
+          {renderedData.map((item, i) => (
+            <Box is="article" key={item.id} elevation={2}>
+              {item.title}
+            </Box>
+          ))}
+        </>
+      </Box>
     </Box>
-  </Box>
-))
+  )
+})
 
 interface TOutter {
   children?: React.ReactNode

@@ -15,10 +15,10 @@ import {
 import Chart from './Chart'
 import worker, { isWorkerReady } from './worker'
 
-export default compose<TInner & TState & TStateHandles, TOutter>(
+export default compose<TInner, TOutter>(
   getFakeCrawl(),
   withStateHandlers<TState, TStateHandles, TInner>(
-    ({ results }) => ({
+    ({ results = [] }) => ({
       renderedData: results,
       filter: {
         value: '',
@@ -29,10 +29,7 @@ export default compose<TInner & TState & TStateHandles, TOutter>(
       setFilter: ({ filter }) => ({
         value = filter.value,
         action = filter.action
-      }) => ({
-        filter: { value, action }
-      }),
-
+      }) => ({ filter: { value, action } }),
       updateRendered: (_, { results }) => (renderedData = results) => ({
         renderedData
       })
@@ -71,40 +68,27 @@ export default compose<TInner & TState & TStateHandles, TOutter>(
 
   return (
     <Box
-      is="main"
-      contain="style paint"
-      height="calc(100vh - (var(--pad) * 2 + 50px))"
+      is="section"
+      height="calc(100% - var(--offset))"
       overflow="auto"
-      padding="var(--pad)">
+      marginY="var(--pad)"
+      marginX="calc(var(--pad) * 2)"
+      padding="var(--pad)"
+      paddingBottom="var(--offset)">
       <Box
-        is="section"
-        display="grid"
-        gridTemplateColumns="1fr 1fr"
-        padding="inherit"
-        backgroundColor="white">
-        <>
-          <Box gridRow={1} gridColumn="1">
-            {renderedData.map((item, i) => (
-              <Box is="article" key={item.id} elevation={2}>
-                {item.title}
-              </Box>
-            ))}
-          </Box>
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        overflow="hidden">
+        <Chart data={renderedData} />
+      </Box>
 
-          <Box
-            gridRow={1}
-            gridColumn="2"
-            alignSelf="stretch"
-            display="flex"
-            alignItems="center"
-            position="sticky"
-            top="var(--pad)"
-            justifyContent="center"
-            height="calc(100vh - 70px)"
-            overflow="hidden">
-            <Chart data={renderedData} />
+      <Box>
+        {renderedData.map(item => (
+          <Box is="article" key={item.id} elevation={2}>
+            {item.title}
           </Box>
-        </>
+        ))}
       </Box>
     </Box>
   )
@@ -126,8 +110,9 @@ interface TStateHandles extends StateHandlerMap<TState> {
   setFilter: StateHandler<TState>
 }
 
-interface TInner {
+type TInner = {
   results: TState['renderedData']
-}
+} & TState &
+  TStateHandles
 
 export type DataTableFilter = (a: TState['filter']) => void

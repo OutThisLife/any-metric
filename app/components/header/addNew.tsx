@@ -4,8 +4,8 @@ import { cloneElement } from 'react'
 import { compose, setDisplayName, withState } from 'recompose'
 
 export default compose<TState & TOutter, TOutter>(
-  setDisplayName('add-new'),
-  withState('isShown', 'toggle', false)
+  withState('isShown', 'toggle', false),
+  setDisplayName('add-new')
 )(({ children, isShown, toggle, ...props }) => (
   <>
     {cloneElement(children, {

@@ -3,7 +3,6 @@ import theme from '@/theme'
 import { compose, setDisplayName, withHandlers } from 'recompose'
 
 export default compose<TInner, {}>(
-  setDisplayName('page-loader'),
   withHandlers(() => ({
     onRef: () => (ref: HTMLElement) => {
       if (!ref) {
@@ -13,7 +12,8 @@ export default compose<TInner, {}>(
       ref.addEventListener('transitionend', () => ref.remove(), { once: true })
       window.requestAnimationFrame(() => (ref.style.opacity = '0'))
     }
-  }))
+  })),
+  setDisplayName('page-loader')
 )(({ onRef }) => (
   <Loading
     innerRef={onRef}

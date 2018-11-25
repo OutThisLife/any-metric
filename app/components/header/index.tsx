@@ -1,25 +1,33 @@
 import Box from '@/components/Box'
+import Text from '@/components/Text'
 import { compose, setDisplayName } from 'recompose'
+import { withTheme } from 'styled-components'
+import { BaphoTheme } from 'typings'
 
-import Search from './Search'
-import Header from './style'
-
-export default compose(setDisplayName('header'))(() => (
-  <Header
+export default compose<BaphoTheme, {}>(
+  withTheme,
+  setDisplayName('header')
+)(({ theme }) => (
+  <Box
     is="header"
-    zIndex={10}
-    display="grid"
-    gridTemplateColumns="min-content 1fr"
+    contain="layout"
+    display="flex"
     alignItems="center"
-    height={50}>
-    <Box paddingX="var(--pad)">
-      <h1>
-        <span>baphometric</span>
-      </h1>
+    justifyContent="space-between"
+    paddingY="var(--pad)"
+    paddingX="calc(var(--pad) * 2)">
+    <Box>
+      <Text
+        is="h1"
+        fontSize="1rem"
+        fontFamily={theme.fonts.family}
+        textTransform="uppercase"
+        letterSpacing={-1}
+        backgroundImage={theme.colours.brand}>
+        baphometric
+      </Text>
     </Box>
 
-    <Box>
-      <Search />
-    </Box>
-  </Header>
+    <Box>.</Box>
+  </Box>
 ))

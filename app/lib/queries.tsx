@@ -4,45 +4,36 @@ import { FakeCrawlResult } from '@/server/schema/types'
 import { Spinner } from 'evergreen-ui'
 import gql from 'graphql-tag'
 import { graphql } from 'react-apollo'
-import { branch, compose, renderComponent, setDisplayName } from 'recompose'
+import { compose } from 'recompose'
 
 export const getFakeCrawl = () =>
-  compose(
-    setDisplayName('get-fake-crawl'),
-    graphql<{}, { results: FakeCrawlResult[] }>(
-      gql`
-        query GetFakeResult {
-          results: fakeCrawl {
-            id
-            slug
-            image
-            title
-            price
-            shipping
-            quantity
-            copy
-            date
-            tags
-          }
+  graphql<{}, { results: FakeCrawlResult[] }>(
+    gql`
+      query GetFakeResult {
+        results: fakeCrawl {
+          id
+          slug
+          image
+          title
+          price
+          shipping
+          quantity
+          copy
+          date
+          tags
         }
-      `,
-      {
-        options: { ssr: false },
-        props: ({ data: { results = [], ...data } }) => ({
-          data,
-          results
-        })
       }
-    ),
-    branch(
-      ({ data: { loading } }) => loading,
-      renderComponent(() => <Loading />)
-    )
+    `,
+    {
+      props: ({ data: { results = [], ...data } }) => ({
+        data,
+        results
+      })
+    }
   )
 
 export const getTags = () =>
   compose(
-    setDisplayName('get-tags'),
     graphql<{}, { setTags: SetTags }>(
       gql`
         mutation SetTags($ids: [String]!, $tags: [String]!) {

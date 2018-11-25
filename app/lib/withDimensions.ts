@@ -17,12 +17,13 @@ export default (forceWindow: boolean = false) =>
         height: 768
       }),
       {
-        setDimensions: () => ({ width, height }) => ({ width, height })
+        setDimensions: () => ({ width, height }) =>
+          console.log(width) || { width, height }
       }
     ),
     withHandlers<TStateHandles, THandles>(() => ({
       onRef: ({ setDimensions }) => ref => {
-        if (!ref) {
+        if (!('browser' in process)) {
           return
         }
 

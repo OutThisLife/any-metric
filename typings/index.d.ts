@@ -12,14 +12,8 @@ declare interface DataPoint {
   y: number
 }
 
-declare type BaphoTheme = ThemeProps<{
-  colours: {
-    [key: string]: any
-  }
-
-  fonts: {
-    [key: string]: any
-  }
-
-  [key: string]: any
+declare type BaphoTheme<T = { [key: string]: any }> = ThemeProps<{
+  colours: T
+  fonts: T
+  inputs: T
 }>

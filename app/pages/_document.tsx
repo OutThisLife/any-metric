@@ -14,8 +14,9 @@ export default class extends Document<{
     const page = renderPage(App => props =>
       sheet.collectStyles(<App {...props} />)
     )
-    const styleTags = sheet.getStyleElement()
     const { css, hydrationScript } = extractStyles()
+
+    const styleTags = sheet.getStyleElement().filter(k => k.key !== 'evergreen')
 
     styleTags.push(
       <style key="evergreen" dangerouslySetInnerHTML={{ __html: css }} />

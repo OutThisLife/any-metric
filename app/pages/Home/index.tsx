@@ -1,4 +1,7 @@
 import Box from '@/components/Box'
+import Categories from '@/components/Categories'
+import PriceChart from '@/components/Charts/Price'
+import Table from '@/components/Table'
 import { getFakeCrawl } from '@/lib/queries'
 import { FakeCrawlResult } from '@/server/schema/types'
 import { func, string } from 'prop-types'
@@ -12,7 +15,6 @@ import {
   withStateHandlers
 } from 'recompose'
 
-import Chart from './Chart'
 import worker, { isWorkerReady } from './worker'
 
 export default compose<TInner, TOutter>(
@@ -69,26 +71,40 @@ export default compose<TInner, TOutter>(
   return (
     <Box
       is="section"
+      display="grid"
+      gridTemplateColumns="repeat(40, 1fr)"
+      alignItems="flex-start"
+      width="auto"
       height="calc(100% - var(--offset))"
       overflow="auto"
       marginY="var(--pad)"
-      marginX="calc(var(--pad) * 2)"
       padding="var(--pad)"
-      paddingBottom="var(--offset)">
+      paddingBottom={0}>
       <Box
+        gridRow={1}
+        gridColumn="23 / -1"
         display="flex"
-        alignItems="center"
-        justifyContent="center"
-        overflow="hidden">
-        <Chart data={renderedData} />
+        flexWrap="wrap"
+        alignItems="flex-start"
+        height="100%">
+        <Box is="section" display="block" width="100%" paddingX="var(--offset)">
+          <Categories />
+        </Box>
+
+        <Box
+          is="section"
+          zIndex={10}
+          display="block"
+          position="relative"
+          width="100%"
+          alignSelf="flex-end"
+          marginBottom="var(--pad)">
+          <PriceChart data={renderedData} />
+        </Box>
       </Box>
 
-      <Box>
-        {renderedData.map(item => (
-          <Box is="article" key={item.id} elevation={2}>
-            {item.title}
-          </Box>
-        ))}
+      <Box gridRow={1} gridColumn="1 / 23" height="100%">
+        <Table data={renderedData} />
       </Box>
     </Box>
   )

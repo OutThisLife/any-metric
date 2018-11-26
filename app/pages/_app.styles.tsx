@@ -4,7 +4,7 @@ import styled, { createGlobalStyle, css } from 'styled-components'
 import { BaphoTheme } from 'typings'
 
 export default createGlobalStyle`
-  ${({ theme: { colours, fonts } }: BaphoTheme) => css`
+  ${({ theme }: BaphoTheme) => css`
     :root {
       --cellSize: calc(100vw / 40);
       --pad: ${between('8px', '16px')};
@@ -18,31 +18,37 @@ export default createGlobalStyle`
     ::-webkit-scrollbar {
       width: 3px;
       height: 3px;
-      background: ${colours.scrollbarBg};
+      background: ${theme.colours.scrollbarBg};
     }
 
     ::-webkit-scrollbar-thumb {
-      background: ${colours.scrollbarHandle};
+      background: ${theme.colours.scrollbarHandle};
     }
 
-    body,
-    html {
-      color: ${colours.base};
-      font-weight: 400;
-      font-family: ${fonts.family.copy};
-      line-height: 1.75;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+    html,
+    body {
       margin: 0;
       padding: 0;
     }
 
-    body {
-      background: fixed ${colours.bg} center top / 100vw 100vh no-repeat;
+    * {
+      cursor: crosshair;
+      font-family: ${theme.fonts.family.copy};
+      box-sizing: border-box;
     }
 
-    * {
-      box-sizing: border-box;
+    html {
+      color: ${theme.colours.base};
+      font-weight: 400;
+      font-family: ${theme.fonts.family.copy};
+      font-size: ${theme.fonts.size};
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background: fixed ${theme.colours.bg} center top / 100vw 100vh no-repeat;
     }
 
     img,
@@ -57,6 +63,10 @@ export default createGlobalStyle`
       vertical-align: middle;
       margin: 0;
       border: 0;
+    }
+
+    svg.react-stockchart {
+      max-width: none;
     }
 
     input + button,
@@ -76,9 +86,9 @@ export default createGlobalStyle`
 `
 
 export const Main = styled<any>(Box)`
-  --offset: calc(var(--pad) * 4);
+  --offset: calc(var(--pad) * 3);
 
-  ${({ theme: { colours } }: BaphoTheme) => css`
+  ${({ theme }: BaphoTheme) => css`
     box-shadow: 0 17px 50px -5px #040617;
 
     &:before,
@@ -100,16 +110,53 @@ export const Main = styled<any>(Box)`
     }
 
     &:after {
-      z-index: 500;
+      z-index: 9;
       bottom: calc(var(--offset) / 2.4);
       height: calc(var(--offset) * 2);
       border-radius: inherit;
       background: linear-gradient(
         180deg,
         transparent 22%,
-        ${colours.panel} 82%,
-        ${colours.panel}
+        ${theme.colours.panel} 82%,
+        ${theme.colours.panel}
       );
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-weight: 300;
+      color: ${theme.colours.base};
+
+      span:first-of-type:not(:only-of-type) {
+        color: ${theme.colours.muted};
+        margin-right: 0.4em;
+      }
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    input[type],
+    button[type] {
+      font-family: ${theme.fonts.family.title};
+    }
+
+    a[href] {
+      cursor: pointer;
+      color: ${theme.colours.base};
+      text-decoration: none;
+      transition: 0.1s ease-in-out;
+
+      &:hover {
+        color: ${theme.colours.secondary};
+      }
     }
   `}
 `

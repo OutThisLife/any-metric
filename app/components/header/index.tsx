@@ -1,8 +1,10 @@
 import Box from '@/components/Box'
-import Text from '@/components/Text'
 import { compose, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 import { BaphoTheme } from 'typings'
+
+import Form from '../Form'
+import Heading from '../Heading'
 
 export default compose<BaphoTheme, {}>(
   withTheme,
@@ -14,20 +16,35 @@ export default compose<BaphoTheme, {}>(
     display="flex"
     alignItems="center"
     justifyContent="space-between"
-    paddingY="var(--pad)"
-    paddingX="calc(var(--pad) * 2)">
+    padding="var(--offset)"
+    paddingTop="calc(var(--pad) * 2)"
+    paddingBottom={0}>
     <Box>
-      <Text
+      <Heading
         is="h1"
-        fontSize="1rem"
-        fontFamily={theme.fonts.family}
+        title="baphometric"
+        fontSize="1.1rem"
         textTransform="uppercase"
-        letterSpacing={-1}
-        backgroundImage={theme.colours.brand}>
-        baphometric
-      </Text>
+        backgroundImage={theme.colours.brand}
+      />
     </Box>
 
-    <Box>.</Box>
+    <Box marginLeft="auto">
+      <Form display="inline-flex" alignItems="center">
+        <Form.Input
+          placeholder="Enter product name &hellip;"
+          marginRight="-2em"
+          borderRadius={32}
+          paddingRight="calc(var(--pad) * 2)"
+        />
+
+        <Form.Button
+          zIndex={1}
+          position="relative"
+          iconBefore="plus"
+          iconSize={32}
+        />
+      </Form>
+    </Box>
   </Box>
 ))

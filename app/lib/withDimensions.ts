@@ -1,45 +1,50 @@
+import { findDOMNode } from 'react-dom'
 import {
   compose,
+  lifecycle,
   setDisplayName,
   StateHandler,
   StateHandlerMap,
-  withHandlers,
   withStateHandlers
 } from 'recompose'
 import ResizeObserver from 'resize-observer-polyfill'
 
-export default (forceWindow: boolean = false) =>
-  compose<DimProps & THandles, {}>(
-    setDisplayName('with-dimensions'),
-    withStateHandlers<TState, TStateHandles>(
-      () => ({
-        width: 1024,
-        height: 768
-      }),
-      {
-        setDimensions: () => ({ width, height }) =>
-          console.log(width) || { width, height }
-      }
-    ),
-    withHandlers<TStateHandles, THandles>(() => ({
-      onRef: ({ setDimensions }) => ref => {
-        if (!('browser' in process)) {
-          return
+export default compose<DimProps, {}>(
+  setDisplayName('with-dimensions'),
+  withStateHandlers<TState, TStateHandles>(
+    () => ({
+      width: 1024,
+      height: 768
+    }),
+    {
+      setDimensions: () => ({ width, height }) => ({ width, height })
+    }
+  ),
+  lifecycle<TState & TStateHandles, TState, any>({
+    componentDidMount() {
+      this.observer = new ResizeObserver(entries => {
+        for (const entry of entries) {
+          this.props.setDimensions(entry.contentRect)
         }
+      })
 
-        ro(setDimensions).observe(
-          forceWindow ? document.body : (ref as HTMLElement)
+      try {
+        const el = findDOMNode(this).parentElement
+        this.observer.observe(el)
+
+        window.requestAnimationFrame(() =>
+          window.dispatchEvent(new CustomEvent('resize'))
         )
+      } catch (e) {
+        // noop
       }
-    }))
-  )
+    },
 
-const ro = (cb: (a: any) => any) =>
-  new ResizeObserver(entries => {
-    for (const entry of entries) {
-      cb(entry.contentRect)
+    componentWillUnmount() {
+      this.observer.disconnect()
     }
   })
+)
 
 export interface TState {
   width: number
@@ -50,8 +55,4 @@ export interface TStateHandles extends StateHandlerMap<TState> {
   setDimensions: StateHandler<TState>
 }
 
-interface THandles<T = HTMLElement | Window> {
-  onRef?: (ref?: T, el?: T) => void
-}
-
-export type DimProps = TState & TStateHandles & THandles
+export type DimProps = TState & TStateHandles

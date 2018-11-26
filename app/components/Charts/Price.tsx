@@ -1,5 +1,7 @@
+import { BoxProps } from '@/components/Box'
+import { moneyFormat, numFormat } from '@/lib/utils'
 import withDimensions from '@/lib/withDimensions'
-import { FakeCrawlResult } from '@/server/schema/types'
+import { FakeResult } from '@/server/schema/types'
 import * as d3 from 'd3'
 import faker from 'faker'
 import sortedUniqBy from 'lodash/sortedUniqBy'
@@ -28,8 +30,8 @@ import {
 import { compose, mapProps, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
-export default compose<TInner, TOutter>(
-  mapProps<TInner, TOutter>(({ data }) => ({
+export default compose<ChartProps, ChartOutterProps>(
+  mapProps<ChartProps, ChartOutterProps>(({ data }) => ({
     initialData: sortedUniqBy(data, 'date').map(d => ({
       id: d.id,
       date: new Date(d.date),
@@ -69,7 +71,7 @@ export default compose<TInner, TOutter>(
       data={data}
       seriesName="Price"
       width={width}
-      height={width * 0.54}
+      height={parseInt(width.toString(), 10) * 0.54}
       clamp={true}
       ratio={1}
       margin={{ left: 50, right: 50, top: 50, bottom: 50 }}
@@ -139,7 +141,7 @@ export default compose<TInner, TOutter>(
           orient="bottom"
           fill={theme.colours.border}
           fillText={theme.colours.base}
-          displayFormat={d => `Volume: ${d3.format('.2f')(d)}`}
+          displayFormat={d => `Volume: ${numFormat(d)}`}
         />
 
         <YAxis
@@ -148,7 +150,7 @@ export default compose<TInner, TOutter>(
           tickStroke={theme.colours.base}
           axisAt="right"
           orient="right"
-          displayFormat={d3.format('$.2f')}
+          displayFormat={moneyFormat}
         />
         <MouseCoordinateY
           fontSize={11}
@@ -156,7 +158,7 @@ export default compose<TInner, TOutter>(
           orient="left"
           fill={theme.colours.border}
           fillText={theme.colours.base}
-          displayFormat={d3.format('$.2f')}
+          displayFormat={moneyFormat}
         />
 
         <EdgeIndicator
@@ -167,7 +169,7 @@ export default compose<TInner, TOutter>(
           yAccessor={avg.accessor()}
           fill={theme.colours.secondary}
           fillText={theme.colours.base}
-          displayFormat={d3.format('$.2f')}
+          displayFormat={moneyFormat}
         />
       </Chart>
 
@@ -180,16 +182,15 @@ export default compose<TInner, TOutter>(
   )
 })
 
-interface TOutter extends React.CSSProperties {
-  data: FakeCrawlResult[]
+interface ChartOutterProps extends BoxProps<HTMLDivElement> {
+  data?: FakeResult[]
 }
 
-interface TInner {
+interface ChartProps extends ChartOutterProps {
   initialData?: Array<{
     id: string | number
     date: Date
     price: number
     volume: number
   }>
-  [key: string]: any
 }

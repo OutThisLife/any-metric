@@ -46,5 +46,8 @@ export const getAvg = r => {
 export const processRadar = (r, maxByGroup = getMaxima(r)) =>
   r.map(d => Object.keys(d).map(x => ({ x, y: d[x] / maxByGroup[x] })))
 
-const average = (arr: number[]): number =>
+export const average = (arr: number[]): number =>
   arr.reduce((p, c) => p + c, 0) / arr.length
+
+export const random = <T extends string>(r: { [key: string]: any }): T =>
+  Object.values(r)[Math.floor(Math.random() * Object.values(r).length)]

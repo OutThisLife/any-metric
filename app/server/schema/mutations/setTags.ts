@@ -1,10 +1,10 @@
 import { genFakeResults } from '../queries/fakeCrawl'
-import { FakeCrawlResult, Resolver } from '../types'
+import { FakeResult, Resolver } from '../types'
 
 export default (async (
   _,
   { ids, tags = [''] }: Args
-): Promise<FakeCrawlResult[]> => {
+): Promise<FakeResult[]> => {
   const initialData = await genFakeResults()
 
   return initialData
@@ -24,4 +24,4 @@ export interface Args {
   tags: string[]
 }
 
-export type SetTags = (Args) => Promise<FakeCrawlResult[]>
+export type SetTags = (Args) => Promise<FakeResult[]>

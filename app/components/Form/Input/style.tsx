@@ -1,6 +1,6 @@
+import { BaphoTheme } from '@/theme'
 import { rgba } from 'polished'
 import styled, { css } from 'styled-components'
-import { BaphoTheme } from 'typings'
 
 export default styled<any>('div')`
   ${({ theme }: BaphoTheme) => css`

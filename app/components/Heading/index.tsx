@@ -1,22 +1,29 @@
-import Text from '@/components/Text'
+import { BoxProps } from '@/components/Box'
 import { compose, defaultProps, setDisplayName } from 'recompose'
 
-export default compose<Props, Props>(
-  defaultProps({
+import Heading from './style'
+
+export default compose<HeadingProps, HeadingProps>(
+  defaultProps<HeadingProps>({
     is: 'h2',
+    display: 'inline-flex',
+    alignItems: 'center',
     fontSize: '2rem',
-    letterSpacing: '-0.03em'
+    letterSpacing: '-0.03em',
+    cta: () => null
   }),
   setDisplayName('heading')
-)(({ title, ...props }) => (
-  <Text {...props}>
+)(({ title, cta, ...props }) => (
+  <Heading {...props}>
     {title.split(' ').map(w => (
       <span key={Math.random()}>{w}</span>
     ))}
-  </Text>
+
+    {cta()}
+  </Heading>
 ))
 
-interface Props extends React.CSSProperties {
-  title: string
-  [key: string]: any
+export interface HeadingProps extends BoxProps<HTMLHeadingElement> {
+  title?: string
+  cta?: () => JSX.Element
 }

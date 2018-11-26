@@ -61,6 +61,7 @@ const create = (initialState = {}) => {
     ssrForceFetchDelay: 100
   })
 }
+
 // --------------------------------
 
 export default (initialState = {}): ApolloClient<{}> => {

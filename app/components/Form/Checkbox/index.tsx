@@ -1,6 +1,7 @@
 import Box from '@/components/Box'
 import { compose, setDisplayName } from 'recompose'
 
+import { CheckboxProps } from '..'
 import Checkbox from './style'
 
 export default compose<CheckboxProps, CheckboxProps>(
@@ -11,7 +12,3 @@ export default compose<CheckboxProps, CheckboxProps>(
     <div />
   </Checkbox>
 ))
-
-export type CheckboxProps = { [key: string]: any } & React.HTMLAttributes<
-  HTMLInputElement
->

@@ -1,13 +1,11 @@
-import Box from '@/components/Box'
 import { SetTags } from '@/server/schema/mutations/setTags'
-import { FakeCrawlResult } from '@/server/schema/types'
-import { Spinner } from 'evergreen-ui'
+import { FakeResult } from '@/server/schema/types'
 import gql from 'graphql-tag'
 import { graphql } from 'react-apollo'
 import { compose } from 'recompose'
 
 export const getFakeCrawl = () =>
-  graphql<{}, { results: FakeCrawlResult[] }>(
+  graphql<{}, { results: FakeResult[] }>(
     gql`
       query GetFakeResult {
         results: fakeCrawl {
@@ -18,6 +16,7 @@ export const getFakeCrawl = () =>
           price
           shipping
           quantity
+          bids
           copy
           date
           tags
@@ -45,7 +44,7 @@ export const getTags = () =>
         }
       `
     ),
-    graphql<{}, { tags: Partial<FakeCrawlResult[]> }>(
+    graphql<{}, { tags: Partial<FakeResult[]> }>(
       gql`
         query GetTags {
           tags: fakeCrawl {
@@ -63,9 +62,3 @@ export const getTags = () =>
       }
     )
   )
-
-export const Loading = (props: any) => (
-  <Box display="flex" alignItems="center" width="100%" height="100%" {...props}>
-    <Spinner marginX="auto" />
-  </Box>
-)

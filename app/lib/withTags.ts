@@ -1,5 +1,5 @@
 import { Args as SetTagArgs } from '@/server/schema/mutations/setTags'
-import { FakeCrawlResult } from '@/server/schema/types'
+import { FakeResult } from '@/server/schema/types'
 import { MutationFunc } from 'react-apollo'
 import {
   compose,
@@ -11,11 +11,10 @@ import {
 import { getTags } from './queries'
 
 export default () =>
-  compose<THandles & TInner, {}>(
-    setDisplayName('with-tags'),
+  compose<TagHandles & TagProps, {}>(
     getTags(),
     onlyUpdateForKeys(['tags']),
-    withHandlers<TInner, THandles>(() => ({
+    withHandlers<TagProps, TagHandles>(() => ({
       setTag: ({ mutate }) => async (
         { id, tags: curTags },
         t = '',
@@ -37,14 +36,15 @@ export default () =>
         await cb(tags)
         window.requestAnimationFrame(() => mutate({ variables: { ids, tags } }))
       }
-    }))
+    })),
+    setDisplayName('with-tags')
   )
 
-interface TInner {
+interface TagProps {
   tags: string[]
   mutate: MutationFunc<{}, SetTagArgs>
 }
 
-export interface THandles {
-  setTag: (a: FakeCrawlResult, t: string, cb: (t: string[]) => any) => void
+export interface TagHandles {
+  setTag: (a: FakeResult, t: string, cb: (t: string[]) => any) => void
 }

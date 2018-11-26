@@ -1,6 +1,9 @@
 import { defaultTheme } from 'evergreen-ui'
 import globalHash from 'evergreen-ui/commonjs/avatar/src/utils/hash'
-import { between, darken, lighten } from 'polished'
+import { between, darken, lighten, timingFunctions } from 'polished'
+import { ThemeProps } from 'styled-components'
+
+const easing = timingFunctions('easeInOutQuad')
 
 export const autoColour = <
   T extends {
@@ -21,65 +24,74 @@ export const autoColour = <
 }
 
 export const createTextGradient = (colour: string) =>
-  `linear-gradient(180deg, ${lighten(0.1, colour)} 42%, ${colour} 50%, ${darken(
-    0.5,
+  `linear-gradient(180deg, ${lighten(0.1, colour)} 42%, ${colour} 60%, ${darken(
+    0.3,
     colour
   )})`
 
 // ---------------------------
 
-const colours = {
-  base: '#DFDFDF',
-  secondary: '#CB6EA7',
-  tertiary: '#5FF0CB',
-  focus: '#1C69DA',
+const theme = {
+  colours: {
+    base: '#DFDFDF',
+    secondary: '#CB6EA7',
+    tertiary: '#5FF0CB',
+    focus: '#1C69DA',
 
-  muted: '#9AA2C2',
-  label: '#3A477A',
+    muted: '#9AA2C2',
+    label: '#3A477A',
+    star: '#f4c37d',
 
-  border: '#212B4D',
-  bg: 'linear-gradient(20deg, #313756 50%, #6A7799)',
+    border: '#212B4D',
+    bg: 'linear-gradient(20deg, #313756 50%, #6A7799)',
 
-  panel: '#0C1029',
-  panelBg:
-    'radial-gradient(circle at 50% 20%, #a7abb5, transparent 70%), linear-gradient(20deg, #0C1029 50%, #212D4F)',
+    panel: '#0C1029',
+    panelBg:
+      'radial-gradient(circle at 50% 20%, #a7abb5, transparent 70%), linear-gradient(20deg, #0C1029 50%, #212D4F)',
 
-  scrollbarHandle: '#6F7A9B',
-  scrollbarBg: '#1A2243',
+    moduleBg: 'linear-gradient(180deg, #20294B, #171B38)',
 
-  brand: 'linear-gradient(90deg, #7648c2 10%, #EF74CC 50%, #ff8d92)',
+    scrollbarHandle: '#6F7A9B',
+    scrollbarBg: '#1A2243',
 
-  price: {
-    up: createTextGradient('#5CF0CB'),
-    down: createTextGradient('#F67BB0')
-  }
-}
+    brand: 'linear-gradient(90deg, #7648c2 10%, #EF74CC 50%, #ff8d92)',
 
-const fonts = {
-  size: between('10px', '12px', '320px', '1600px'),
-
-  family: {
-    title: '"SF UI Display", sans-serif',
-    get copy() {
-      return `\"SF UI Text\", ${this.title}`
+    price: {
+      up: createTextGradient('#5CF0CB'),
+      down: createTextGradient('#F67BB0'),
+      neutral: createTextGradient('#f4c37d')
     }
+  },
+
+  fonts: {
+    size: between('10px', '12px', '320px', '1600px'),
+
+    family: {
+      title: '"SF UI Display", sans-serif',
+      get copy() {
+        return `\"SF UI Text\", ${this.title}`
+      }
+    }
+  },
+
+  inputs: {
+    bg: '#0D1227',
+    border: '#3A477A',
+
+    checkbox: '#dfdfdf',
+    radio: 'linear-gradient(40deg, #E2808D, #BE65AD, #7F53C9)',
+    text: 'linear-gradient(180deg, transparent, #7F53C9)',
+
+    button: 'linear-gradient(120deg, #E2808D, #BE65AD, #7F53C9)'
+  },
+
+  eases: {
+    base: `0.15s ${easing}`,
+    button: `0.25s ${easing}`,
+    buttonGradient: `opacity 0.1s ${easing}, transform 0.125s ${easing}, background 0.15s ${easing}`
   }
 }
 
-const inputs = {
-  bg: '#0D1227',
-  border: '#3A477A',
+export type BaphoTheme = ThemeProps<typeof theme>
 
-  checkbox: colours.base,
-  radio: 'linear-gradient(40deg, #E2808D, #BE65AD, #7F53C9)',
-  button: 'linear-gradient(40deg, #E2808D, #BE65AD, #7F53C9)',
-  text: 'linear-gradient(180deg, transparent, #7F53C9)'
-}
-
-// ---------------------------
-
-export default {
-  colours,
-  fonts,
-  inputs
-}
+export default theme

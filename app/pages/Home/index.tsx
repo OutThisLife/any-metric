@@ -3,7 +3,7 @@ import Categories from '@/components/Categories'
 import PriceChart from '@/components/Charts/Price'
 import Table from '@/components/Table'
 import { getFakeCrawl } from '@/lib/queries'
-import { FakeCrawlResult } from '@/server/schema/types'
+import { FakeResult } from '@/server/schema/types'
 import { func, string } from 'prop-types'
 import {
   compose,
@@ -17,9 +17,9 @@ import {
 
 import worker, { isWorkerReady } from './worker'
 
-export default compose<TInner, TOutter>(
+export default compose<HomeProps, HomeOutterProps>(
   getFakeCrawl(),
-  withStateHandlers<TState, TStateHandles, TInner>(
+  withStateHandlers<HomeState, HomeStateHandlers, HomeProps>(
     ({ results = [] }) => ({
       renderedData: results,
       filter: {
@@ -49,7 +49,7 @@ export default compose<TInner, TOutter>(
       current
     })
   ),
-  withPropsOnChange<{}, TInner & TState>(
+  withPropsOnChange<{}, HomeProps & HomeState>(
     ['filter'],
     ({ results, filter: { action, value } }) => {
       if (isWorkerReady()) {
@@ -110,25 +110,25 @@ export default compose<TInner, TOutter>(
   )
 })
 
-interface TOutter {
+interface HomeOutterProps {
   children?: React.ReactNode
 }
 
-interface TState {
-  renderedData: FakeCrawlResult[]
+interface HomeState {
+  renderedData: FakeResult[]
   filter: {
     value?: string
     action?: 'RESET' | 'TAG' | 'SEARCH'
   }
 }
 
-interface TStateHandles extends StateHandlerMap<TState> {
-  setFilter: StateHandler<TState>
+interface HomeStateHandlers extends StateHandlerMap<HomeState> {
+  setFilter: StateHandler<HomeState>
 }
 
-type TInner = {
-  results: TState['renderedData']
-} & TState &
-  TStateHandles
+type HomeProps = {
+  results: HomeState['renderedData']
+} & HomeState &
+  HomeStateHandlers
 
-export type DataTableFilter = (a: TState['filter']) => void
+export type DataTableFilter = (a: HomeState['filter']) => void

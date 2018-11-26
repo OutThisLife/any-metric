@@ -1,9 +1,14 @@
-import Particles from 'react-particles-js'
+import Particles, { IParticlesParams } from 'react-particles-js'
+import { compose, defaultProps, setDisplayName } from 'recompose'
 
-import params from './params.ts'
+import defaultParams from './params'
 
-export default () => (
+export default compose<ParticleProps, ParticleProps>(
+  defaultProps<ParticleProps>({ params: defaultParams }),
+  setDisplayName('particles')
+)(props => (
   <Particles
+    {...props}
     style={{
       opacity: 0.2,
       zIndex: 100,
@@ -13,6 +18,9 @@ export default () => (
       left: 0,
       mixBlendMode: 'soft-light'
     }}
-    params={params}
   />
-)
+))
+
+interface ParticleProps {
+  params: Partial<IParticlesParams>
+}

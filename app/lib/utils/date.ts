@@ -6,17 +6,9 @@ dayjs.extend(relativeTime)
 export const dateFormat = (date: dayjs.ConfigType): string => {
   const d = dayjs(date)
 
-  if (
-    dayjs()
-      .add(12, 'hour')
-      .diff(d, 'day', true) < 1.4
-  ) {
+  if (isOld(d, 12, 1.4)) {
     return d.format('h:mm a')
-  } else if (
-    dayjs()
-      .add(24, 'hour')
-      .diff(d, 'day', true) < 2
-  ) {
+  } else if (isOld(d)) {
     return (d as any).fromNow()
   } else if (d.year() === dayjs().year()) {
     return d.format('MMM DD')
@@ -24,6 +16,11 @@ export const dateFormat = (date: dayjs.ConfigType): string => {
 
   return d.format('MMM DD, YY')
 }
+
+export const isOld = (date: dayjs.Dayjs | Date, h = 24, r = 2): boolean =>
+  dayjs()
+    .add(h, 'hour')
+    .diff(date instanceof Date ? dayjs(date) : date, 'day', true) < r
 
 export const unixDateFormat = (date: dayjs.ConfigType): string =>
   dayjs(date)

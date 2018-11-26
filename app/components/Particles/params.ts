@@ -1,3 +1,5 @@
+import { IParticlesParams } from 'react-particles-js'
+
 export default {
   particles: {
     number: {
@@ -107,4 +109,4 @@ export default {
     }
   },
   retina_detect: true
-}
+} as IParticlesParams

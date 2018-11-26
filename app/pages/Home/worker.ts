@@ -1,5 +1,5 @@
 import { spawn } from '@/lib/utils'
-import { FakeCrawlResult } from '@/server/schema/types'
+import { FakeResult } from '@/server/schema/types'
 import fz from 'fuzzaldrin-plus'
 
 export const worker: PodWorker =
@@ -14,7 +14,7 @@ export const worker: PodWorker =
     )
 
     this.onmessage = e => {
-      const data: FakeCrawlResult[] = e.data[0]
+      const data: FakeResult[] = e.data[0]
       const action: string = e.data[1]
       const value: string = e.data[2]
 
@@ -39,9 +39,9 @@ export const worker: PodWorker =
 export const isWorkerReady = () =>
   typeof window !== 'undefined' && worker instanceof Worker
 
-export default worker
-
 export interface PodWorker extends Worker {
   importScripts?: (s: string) => void
   fuzzaldrin?: typeof fz
 }
+
+export default worker

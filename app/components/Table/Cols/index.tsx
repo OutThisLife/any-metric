@@ -1,3 +1,4 @@
+import { BoxProps, ReactBox } from '@/components/Box'
 import dynamic from 'next/dynamic'
 import {
   branch,
@@ -7,27 +8,40 @@ import {
   setDisplayName
 } from 'recompose'
 
-import Table from '../style'
+import Table, { ITable } from '../style'
 
-export const Cols = compose<Props, Props>(
-  defaultProps({
+export const Cols = compose<ColumnProps, ColumnProps>(
+  defaultProps<ColumnProps>({
     isHeader: false,
     flex: 2.5,
     textAlign: 'left'
   }),
-  branch<Props>(props => props.isHeader, renderComponent(Table.HeaderCell)),
-  setDisplayName('cell')
-)(Table.Cell) as any
+  setDisplayName('cell'),
+  branch<ColumnProps>(
+    props => props.isHeader,
+    renderComponent(Table.HeaderCell)
+  )
+)(Table.Cell) as ReactBox<ColumnProps> & IColumns
 
-Cols.Cell = Cols
-Cols.Title = dynamic(import('./Title'))
-Cols.Check = dynamic(import('./Check'))
-Cols.Time = dynamic(import('./Time'))
-Cols.Price = dynamic(import('./Price'))
+Cols.Base = Cols
+Cols.Title = dynamic(import('./Title') as Promise<any>)
+Cols.Check = dynamic(import('./Check') as Promise<any>)
+Cols.Time = dynamic(import('./Time') as Promise<any>)
+Cols.Status = dynamic(import('./Status') as Promise<any>)
+Cols.Price = dynamic(import('./Price') as Promise<any>)
 
-export interface Props extends React.CSSProperties {
-  isHeader?: boolean
-  [key: string]: any
+export type ColumnProps = { isHeader?: boolean } & BoxProps<
+  HTMLTableCellElement
+>
+
+export interface IColumns<T = ITable['Cell']> {
+  Base?: T
+  Title?: T
+  Check?: T
+  Time?: T
+  Status?: T
+  Price?: T
 }
 
+export { Table }
 export default Cols

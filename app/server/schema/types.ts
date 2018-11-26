@@ -7,11 +7,11 @@ export default gql`
   scalar Date
 
   type Query {
-    fakeCrawl(id: [String]): [FakeCrawlResult]
+    fakeCrawl(id: [String]): [FakeResult]
   }
 
   type Mutation {
-    setTags(ids: [String]!, tags: [String]!): [FakeCrawlResult]
+    setTags(ids: [String]!, tags: [String]!): [FakeResult]
   }
 
   input Selector {
@@ -32,7 +32,7 @@ export default gql`
     tags: [String]
   }
 
-  type FakeCrawlResult {
+  type FakeResult {
     id: ID!
     slug: String
     image: String
@@ -40,6 +40,7 @@ export default gql`
     price: String
     shipping: String
     quantity: String
+    bids: String
     copy: String
     date: Date
     tags: [String]
@@ -48,7 +49,7 @@ export default gql`
 
 export interface Result {
   __typename?: string
-  id?: string
+  id: string
   err?: string
   title?: string
   img?: string
@@ -60,7 +61,7 @@ export interface Result {
   tags?: string[]
 }
 
-export interface FakeCrawlResult {
+export interface FakeResult {
   __typename?: string
   id: string
   slug?: string
@@ -69,12 +70,13 @@ export interface FakeCrawlResult {
   price?: string
   shipping?: string
   quantity?: string
+  bids?: string
   copy?: string
   date?: Date
   tags?: string[]
 }
 
-export interface Context<Cache = LRU.Cache<string, FakeCrawlResult[]>> {
+export interface Context<Cache = LRU.Cache<string, FakeResult[]>> {
   cache: Cache
 }
 

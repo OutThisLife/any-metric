@@ -1,7 +1,7 @@
 import Box from '@/components/Box'
+import { BaphoTheme } from '@/theme'
 import { between } from 'polished'
 import styled, { createGlobalStyle, css } from 'styled-components'
-import { BaphoTheme } from 'typings'
 
 export default createGlobalStyle`
   ${({ theme }: BaphoTheme) => css`
@@ -152,7 +152,7 @@ export const Main = styled<any>(Box)`
       cursor: pointer;
       color: ${theme.colours.base};
       text-decoration: none;
-      transition: 0.1s ease-in-out;
+      transition: ${theme.eases.base};
 
       &:hover {
         color: ${theme.colours.secondary};

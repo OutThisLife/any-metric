@@ -1,26 +1,61 @@
-import { compose, defaultProps } from 'recompose'
-import styled from 'styled-components'
+import Box from '@/components/Box'
+import { FakeResult } from '@/server/schema/types'
+import { BaphoTheme } from '@/theme'
+import { Icon } from 'evergreen-ui'
+import { compose, setDisplayName, withProps } from 'recompose'
+import { withTheme } from 'styled-components'
 
-import { Cols, Props } from '..'
+import { ColumnProps, Table } from '..'
+import Title from './style'
 
-const Title = compose<Props, Props>(defaultProps({ flex: 17 }))(Cols)
+export default compose<TitleProps & BaphoTheme, TitleProps>(
+  withProps<TitleProps, TitleProps>(() => ({ position: 'relative', flex: 17 })),
+  withTheme,
+  setDisplayName('col-title')
+)(({ theme, children, item = {}, ...props }) => (
+  <Title {...props}>
+    {!('id' in item) ? (
+      children
+    ) : (
+      <>
+        <Box is="figure" display="block" flexBasis={35} margin={0}>
+          <img src={item.image} data-src={item.image} alt={item.title} />
+        </Box>
 
-export default styled<any>(Title)`
-  padding: 15px 0;
+        <Box
+          position="relative"
+          width="100%"
+          overflow="hidden"
+          textOverflow="ellipsis"
+          paddingRight="2rem"
+          paddingLeft="1rem">
+          <a
+            href={item.slug}
+            target="_blank"
+            rel="noopener"
+            style={{
+              zIndex: 1,
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 0
+            }}
+          />
 
-  svg {
-    width: 13px;
-    margin: 0 0 0 5px;
-    color: ${({ theme }) => theme.colours.label};
-  }
+          <Table.Text is="a" href={item.slug} fontSize="1rem" fontWeight={500}>
+            {item.title} <Icon icon="document-open" />
+          </Table.Text>
 
-  .row:not(:hover) & svg {
-    visibility: hidden;
-  }
+          <Table.Text is="p" whiteSpace="nowrap" color={theme.colours.muted}>
+            {item.copy}
+          </Table.Text>
+        </Box>
+      </>
+    )}
+  </Title>
+))
 
-  > a {
-    align-self: stretch;
-    display: inline-flex;
-    align-items: center;
-  }
-`
+interface TitleProps extends ColumnProps {
+  item?: FakeResult
+}

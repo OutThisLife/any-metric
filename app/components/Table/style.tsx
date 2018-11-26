@@ -1,21 +1,24 @@
+import { ReactBox } from '@/components/Box'
 import Text from '@/components/Text'
+import { BaphoTheme } from '@/theme'
 import { Table as BaseTable } from 'evergreen-ui'
+import omit from 'lodash/omit'
 import { rgba } from 'polished'
 import { compose, defaultProps, mapProps } from 'recompose'
 import styled, { css, withTheme } from 'styled-components'
-import { BaphoTheme } from 'typings'
 
-const enhance = compose<Props & BaphoTheme, Props>(
-  withTheme,
-  defaultProps({
-    marginX: 0,
-    marginY: 0,
-    paddingX: 0,
-    paddingY: 0,
-    borderBottom: '0px'
-  }),
-  mapProps(({ isHeader, ...props }) => props)
-)
+const enhance = (...funcs: any[]) =>
+  compose<ITable & BaphoTheme, ITable>(
+    defaultProps({
+      marginX: 0,
+      marginY: 0,
+      paddingX: 0,
+      paddingY: 0,
+      borderBottom: '0px'
+    }),
+    mapProps(props => omit(props, ['isHeader', 'theme'])),
+    ...funcs
+  )
 
 const Table = styled<any>(BaseTable)`
   ${({ theme }: BaphoTheme) => css`
@@ -34,7 +37,7 @@ const Table = styled<any>(BaseTable)`
       outline: 2px solid transparent;
 
       &:not(:hover) {
-        transition: 0.1s ease-in-out;
+        transition: ${theme.eases.base};
       }
 
       &:hover {
@@ -51,34 +54,34 @@ const Table = styled<any>(BaseTable)`
     [data-evergreen-table-body] > div {
       padding-right: var(--pad);
     }
+
+    .dragging a {
+      pointer-events: none !important;
+    }
   `}
-` as BaseTable
+` as ITable<BaphoTheme> & ReactBox<BaphoTheme, HTMLTableElement>
 
 // ---------------------------
 
-Table.Head = enhance(({ theme, ...props }) => (
-  <BaseTable.Head background="none" {...props} />
-))
+Table.Head = enhance()(props => <BaseTable.Head background="none" {...props} />)
 
-Table.Body = enhance(({ theme, ...props }) => (
+Table.Body = enhance()(props => (
   <BaseTable.VirtualBody allowAutoHeight {...props} />
 ))
 
-Table.Row = enhance(({ theme, ...props }) => (
+Table.Row = enhance()(props => (
   <BaseTable.Row className="row" height="auto" {...props} />
 ))
 
-Table.Cell = enhance(({ theme, ...props }) => (
-  <BaseTable.Cell className="cell" {...props} />
-))
+Table.Cell = enhance()(props => <BaseTable.Cell className="cell" {...props} />)
 
-Table.HeaderCell = enhance(({ theme, children, ...props }) => (
+Table.HeaderCell = enhance(withTheme)(({ theme, children, ...props }) => (
   <BaseTable.HeaderCell {...props}>
     <Table.Text color={theme.colours.label}>{children}</Table.Text>
   </BaseTable.HeaderCell>
 ))
 
-Table.Text = enhance(({ theme, ...props }) => (
+Table.Text = enhance()(props => (
   <Text
     display="inline-block"
     width="100%"
@@ -91,8 +94,13 @@ Table.Text = enhance(({ theme, ...props }) => (
 
 // ---------------------------
 
-interface Props {
-  [key: string]: any
+export interface ITable<P = {}> {
+  Head?: ReactBox<P, HTMLTableElement>
+  HeaderCell?: ReactBox<P, HTMLTableHeaderCellElement>
+  Body?: ReactBox<P, HTMLTableElement>
+  Row?: ReactBox<P, HTMLTableRowElement>
+  Cell?: ReactBox<P, HTMLTableCellElement>
+  Text?: ReactBox<P, HTMLTableCellElement>
 }
 
 export default Table

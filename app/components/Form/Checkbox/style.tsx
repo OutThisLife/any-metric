@@ -1,13 +1,13 @@
+import { BaphoTheme } from '@/theme'
 import { rgba } from 'polished'
 import styled, { css } from 'styled-components'
 
-export default styled.div`
-  display: block;
-  position: relative;
-  width: 10px;
-  height: 10px;
-
-  ${({ theme }) => css`
+export default styled<any>('div')`
+  ${({ theme }: BaphoTheme) => css`
+    display: block;
+    position: relative;
+    width: 10px;
+    height: 10px;
     background: ${theme.inputs.bg};
 
     input[type='checkbox'] {
@@ -32,7 +32,7 @@ export default styled.div`
     > div {
       &:before,
       &:after {
-        transition: 0.1s ease-in-out;
+        transition: ${theme.eases.base};
       }
 
       &:before {

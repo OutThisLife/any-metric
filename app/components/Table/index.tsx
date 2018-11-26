@@ -1,25 +1,33 @@
-import Box from '@/components//Box'
-import withDimensions, { DimProps } from '@/lib/withDimensions'
-import { FakeCrawlResult } from '@/server/schema/types'
-import { Icon } from 'evergreen-ui'
+import { dateFormat } from '@/lib/utils'
+import withDimensions, { DimState } from '@/lib/withDimensions'
+import { FakeResult } from '@/server/schema/types'
+import { BaphoTheme } from '@/theme'
+import * as d3 from 'd3'
 import { compose, setDisplayName, withHandlers, withProps } from 'recompose'
 import { withTheme } from 'styled-components'
-import { BaphoTheme } from 'typings'
 
 import Cols from './Cols'
 import Table from './style'
 
-export default compose<TOutter & DimProps & BaphoTheme, TOutter>(
+let tm
+
+export default compose<
+  TableProps & TableOutterProps & BaphoTheme,
+  TableOutterProps
+>(
   withTheme,
   withDimensions,
-  withProps(({ height }) => ({ height: height * 0.9 })),
+  withProps<TableProps, TableProps>(({ height }) => ({
+    height: height * 0.9
+  })),
   withHandlers(() => ({
     handleMouse: () => ({
       currentTarget: $table,
       target: { tagName, offsetParent: $row },
-      shiftKey
+      shiftKey,
+      button
     }) => {
-      if (tagName.toLowerCase() === 'input') {
+      if (tagName.toLowerCase() === 'input' || button) {
         return
       }
 
@@ -42,7 +50,7 @@ export default compose<TOutter & DimProps & BaphoTheme, TOutter>(
         }
       }
 
-      if ($first && firstIdx !== idx && shiftKey) {
+      if (shiftKey && $first && firstIdx !== idx) {
         const c = firstIdx < idx ? idx : firstIdx
         let n = firstIdx < idx ? firstIdx + 1 : idx
 
@@ -53,8 +61,10 @@ export default compose<TOutter & DimProps & BaphoTheme, TOutter>(
 
       select($row)
 
-      const handleMouseMove = ({ target: { offsetParent: $hoverRow } }) =>
+      const handleMouseMove = ({ target: { offsetParent: $hoverRow } }) => {
+        $table.classList.add('dragging')
         select($hoverRow)
+      }
 
       $table.addEventListener('mousemove', handleMouseMove)
       $table.addEventListener(
@@ -64,6 +74,7 @@ export default compose<TOutter & DimProps & BaphoTheme, TOutter>(
             .call(document.getElementsByClassName('seen'))
             .forEach(el => el.classList.remove('seen'))
 
+          $table.classList.remove('dragging')
           $table.removeEventListener('mousemove', handleMouseMove)
         },
         { once: true }
@@ -94,6 +105,17 @@ export default compose<TOutter & DimProps & BaphoTheme, TOutter>(
       if ($row instanceof HTMLElement) {
         $row.dataset.checked = String(target.checked)
       }
+    },
+
+    handleScroll: () => ({ currentTarget }) => {
+      const el = currentTarget.firstChild.firstChild
+      el.style.pointerEvents = 'none'
+
+      if (typeof tm === 'object') {
+        tm.stop()
+      }
+
+      tm = d3.timeout(() => (el.style.pointerEvents = 'auto'), 400)
     }
   })),
   setDisplayName('table')
@@ -103,6 +125,7 @@ export default compose<TOutter & DimProps & BaphoTheme, TOutter>(
     handleMouse,
     handleChangeAll,
     handleChange,
+    handleScroll,
     data = [],
     height
   }) => (
@@ -117,13 +140,18 @@ export default compose<TOutter & DimProps & BaphoTheme, TOutter>(
         />
 
         <Cols.Title isHeader>Product</Cols.Title>
-        <Cols.Time isHeader>Date</Cols.Time>
-        <Cols.Cell isHeader>Status</Cols.Cell>
+        <Cols.Time isHeader textAlign="right">
+          Date
+        </Cols.Time>
+        <Cols.Status isHeader>Status</Cols.Status>
         <Cols.Price isHeader>Price</Cols.Price>
       </Table.Head>
 
-      <Table.Body height={height} onMouseDown={handleMouse}>
-        {data.map((d, i) => (
+      <Table.Body
+        height={height}
+        onMouseDown={handleMouse}
+        onScroll={handleScroll}>
+        {data.map(d => (
           <Table.Row key={d.id}>
             <Cols.Check
               checkboxProps={{
@@ -133,63 +161,16 @@ export default compose<TOutter & DimProps & BaphoTheme, TOutter>(
               }}
             />
 
-            <Cols.Title>
-              <Box
-                is="img"
-                src={d.image}
-                alt={d.title}
-                width={35}
-                marginRight={15}
-                style={{ filter: 'grayscale(1) opacity(0.5)' }}
-              />
-
-              <Box
-                paddingRight="2rem"
-                overflow="hidden"
-                textOverflow="ellipsis">
-                <Table.Text
-                  is="a"
-                  href={d.slug}
-                  target="_blank"
-                  rel="noopener"
-                  fontSize="1rem"
-                  fontWeight={500}>
-                  {d.title} <Icon icon="document-open" />
-                </Table.Text>
-
-                <Table.Text
-                  is="p"
-                  whiteSpace="nowrap"
-                  color={theme.colours.muted}>
-                  {d.copy}
-                </Table.Text>
-              </Box>
-            </Cols.Title>
+            <Cols.Title item={d} />
 
             <Cols.Time>
               <Table.Text color={theme.colours.muted}>
-                2/12/2017 - 11.30.05
+                {dateFormat(d.date)}
               </Table.Text>
             </Cols.Time>
 
-            <Cols.Cell>
-              <Table.Text
-                color={i > 10 ? theme.colours.label : theme.colours.muted}>
-                {i > 10 ? 'Sold' : 'Pending'}
-              </Table.Text>
-            </Cols.Cell>
-
-            <Cols.Price>
-              <Table.Text
-                fontWeight={700}
-                backgroundImage={
-                  Math.random() > 0.2
-                    ? theme.colours.price.up
-                    : theme.colours.price.down
-                }>
-                $100
-              </Table.Text>
-            </Cols.Price>
+            <Cols.Status item={d} />
+            <Cols.Price item={d} />
           </Table.Row>
         ))}
       </Table.Body>
@@ -197,6 +178,13 @@ export default compose<TOutter & DimProps & BaphoTheme, TOutter>(
   )
 )
 
-interface TOutter {
-  data: FakeCrawlResult[]
+export interface TableProps extends Partial<DimState> {
+  handleMouse?: (e?: React.MouseEvent<HTMLElement>) => void
+  handleChangeAll?: (e?: React.MouseEvent<HTMLElement>) => void
+  handleChange?: (e?: React.MouseEvent<HTMLElement>) => void
+  handleScroll?: (e?: React.UIEvent<HTMLElement>) => void
+}
+
+interface TableOutterProps {
+  data?: FakeResult[]
 }

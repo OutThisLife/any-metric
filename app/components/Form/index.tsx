@@ -1,23 +1,40 @@
+import { BoxProps, ReactBox } from '@/components/Box'
 import dynamic from 'next/dynamic'
 import { compose, defaultProps, setDisplayName } from 'recompose'
 
 import BaseForm from './style'
 
-const Form = compose<Props, Props>(
-  defaultProps({
+const Form = compose<FormProps, FormProps>(
+  defaultProps<FormProps>({
     is: 'form',
     action: 'javascript:;',
-    method: 'post'
+    method: 'post',
+    display: 'inline-flex',
+    alignItems: 'center'
   }),
   setDisplayName('form')
-)(BaseForm) as any
+)(({ children, ...props }) => (
+  <BaseForm {...props}>
+    <fieldset>{children}</fieldset>
+  </BaseForm>
+)) as IForm & React.ComponentType<FormProps>
 
-Form.Input = dynamic(import('./Input'))
-Form.Checkbox = dynamic(import('./Checkbox'))
-Form.Button = dynamic(import('./Button'))
+Form.Input = dynamic(import('./Input') as Promise<any>)
+Form.Checkbox = dynamic(import('./Checkbox') as Promise<any>)
+Form.Button = dynamic(import('./Button') as Promise<any>)
 
-type Props = {
-  [key: string]: any
-} & React.HTMLAttributes<HTMLFormElement>
+export interface FormProps extends BoxProps<HTMLFormElement> {
+  groupFields?: boolean
+}
+
+export type InputProps = BoxProps<HTMLInputElement>
+export type CheckboxProps = BoxProps<HTMLInputElement>
+export type ButtonProps = BoxProps<HTMLButtonElement>
+
+export interface IForm {
+  Input?: ReactBox<{}, HTMLInputElement>
+  Checkbox?: ReactBox<{}, HTMLInputElement>
+  Button?: ReactBox<{}, HTMLButtonElement>
+}
 
 export default Form

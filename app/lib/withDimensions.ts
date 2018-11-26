@@ -10,8 +10,7 @@ import {
 import ResizeObserver from 'resize-observer-polyfill'
 
 export default compose<DimProps, {}>(
-  setDisplayName('with-dimensions'),
-  withStateHandlers<TState, TStateHandles>(
+  withStateHandlers<DimState, DimStateHandlers>(
     () => ({
       width: 1024,
       height: 768
@@ -20,7 +19,7 @@ export default compose<DimProps, {}>(
       setDimensions: () => ({ width, height }) => ({ width, height })
     }
   ),
-  lifecycle<TState & TStateHandles, TState, any>({
+  lifecycle<DimState & DimStateHandlers, DimState, any>({
     componentDidMount() {
       this.observer = new ResizeObserver(entries => {
         for (const entry of entries) {
@@ -43,16 +42,17 @@ export default compose<DimProps, {}>(
     componentWillUnmount() {
       this.observer.disconnect()
     }
-  })
+  }),
+  setDisplayName('with-dimensions')
 )
 
-export interface TState {
+export interface DimState {
   width: number
   height: number
 }
 
-export interface TStateHandles extends StateHandlerMap<TState> {
-  setDimensions: StateHandler<TState>
+export interface DimStateHandlers extends StateHandlerMap<DimState> {
+  setDimensions: StateHandler<DimState>
 }
 
-export type DimProps = TState & TStateHandles
+export type DimProps = DimState & DimStateHandlers

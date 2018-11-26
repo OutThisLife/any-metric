@@ -1,5 +1,8 @@
-import { compose, withProps } from 'recompose'
+import { compose, setDisplayName, withProps } from 'recompose'
 
-import { Cols, Props } from '..'
+import { Cols, ColumnProps } from '..'
 
-export default compose<Props, Props>(withProps({ flex: 6 }))(Cols)
+export default compose<ColumnProps, ColumnProps>(
+  withProps<ColumnProps, ColumnProps>({ flex: 2.2, textAlign: 'center' }),
+  setDisplayName('col-datetime')
+)(Cols)

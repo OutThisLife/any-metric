@@ -53,11 +53,12 @@ nextApp.prepare().then(() => {
     })
 
     .use(require('./schema')({ app, cache, dev }))
-    .use(require('./routes')({ nextApp, cache, dev })
+    .use(require('./routes')({ nextApp, cache, dev }))
 
     .get('*', handle)
     .listen(port, err => {
       if (err) {
+        console.error(err)
         throw err
       }
 

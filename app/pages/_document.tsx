@@ -1,6 +1,3 @@
-import 'react-grid-layout/css/styles.css'
-import 'react-resizable/css/styles.css'
-
 import { extractStyles } from 'evergreen-ui'
 import Document, { Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'

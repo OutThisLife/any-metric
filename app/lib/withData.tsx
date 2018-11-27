@@ -1,3 +1,4 @@
+import theme from '@/theme'
 import ApolloClient from 'apollo-client'
 import Head from 'next/head'
 import { Component } from 'react'
@@ -18,7 +19,12 @@ export default App =>
         const client = initApollo()
 
         await getDataFromTree(
-          <App client={client} router={ctx.router} Component={ctx.Component} />,
+          <App
+            client={client}
+            router={ctx.router}
+            Component={ctx.Component}
+            theme={theme}
+          />,
           ctx
         )
 
@@ -52,6 +58,6 @@ export default App =>
 
     public render() {
       const { serverState, ...props } = this.props
-      return <App client={this.client} {...props} />
+      return <App client={this.client} theme={theme} {...props} />
     }
   }

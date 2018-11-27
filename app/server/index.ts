@@ -8,22 +8,24 @@ import * as next from 'next'
 import * as path from 'path'
 
 export const dev = process.env.NODE_ENV !== 'production'
+
+if (!dev && process.env.NEW_RELIC_HOME) {
+  require('newrelic')
+}
+
 export const dir = path.resolve(process.cwd(), 'app')
 export const port = parseInt(process.env.PORT, 10) || 3000
 export const nextApp = next({ dir, dev })
 export const handle = nextApp.getRequestHandler() as RequestHandlerParams
-export const app = express()
 
 export const cache = LRU({
   max: 152,
   maxAge: 36e2
 })
 
-if (!dev && process.env.NEW_RELIC_HOME) {
-  require('newrelic')
-}
+nextApp.prepare().then(() => {
+  const app = express()
 
-nextApp.prepare().then(() =>
   app
     .use(helmet())
     .use(morgan('combined', {}))
@@ -33,9 +35,11 @@ nextApp.prepare().then(() =>
         filter: () => true
       })
     )
-    .use(require('./schema'))
+
+    .use(require('./schema')(app))
     .use(require('./routes'))
     .get('*', handle)
+
     .listen(port, err => {
       if (err) {
         throw err
@@ -43,4 +47,4 @@ nextApp.prepare().then(() =>
 
       console.log(`>ready on http://[::1]:${port}\n🚀`)
     })
-)
+})

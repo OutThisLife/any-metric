@@ -42,7 +42,7 @@ module.exports = withPlugins(
     useFileSystemPublicRoutes: false,
     publicRuntimeConfig: {
       isDev: dev,
-      API_URL: `http://localhost:${process.env.PORT || 3000}}/graphql`
+      API_URL: `http://localhost:${process.env.PORT || 3000}/graphql`
     },
     webpack: (config, { isServer }) => {
       config.module.rules.push({
@@ -61,7 +61,7 @@ module.exports = withPlugins(
     },
 
     exportPathMap: async () => ({
-      '/': { page: '/home', query: {} }
+      '/': { page: '/Home', query: {} }
     })
   }
 )

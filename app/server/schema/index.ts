@@ -2,7 +2,7 @@ import { ApolloServer } from 'apollo-server-express'
 import * as express from 'express'
 import { IResolvers } from 'graphql-tools'
 
-import { app, cache, dev } from '..'
+import { cache, dev } from '..'
 import { setTags } from './mutations'
 import { fakeCrawl } from './queries'
 import typeDefs, { Context } from './types'
@@ -20,14 +20,16 @@ const resolvers: IResolvers<{}, Context> = {
   }
 }
 
-new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: { cache },
-  introspection: dev,
-  playground: dev,
-  tracing: dev,
-  cacheControl: true
-}).applyMiddleware({ app })
+module.exports = (app: express.Express) => {
+  new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: { cache },
+    introspection: dev,
+    playground: dev,
+    tracing: dev,
+    cacheControl: true
+  }).applyMiddleware({ app })
 
-module.exports = express.Router()
+  return express.Router()
+}

@@ -17,13 +17,7 @@
     "lib": ["dom", "es2017"],
     "typeRoots": ["./typings", "./node_modules/@types"],
     "paths": {
-      "@/*": ["app/*"],
-      "@lib/*": ["app/lib/*"],
-      "@components/*": ["app/components/*"],
-      "@pages/*": ["app/pages/*"],
-      "@static/*": ["app/static/*"],
-      "@vars": ["app/variables/index"],
-      "@vars/*": ["app/variables/*"]
+      "@/*": ["app/*"]
     },
     "plugins": [
       {
@@ -32,5 +26,5 @@
     ]
   },
   "include": ["app/**/*", "typings/*.d.ts"],
-  "exclude": ["**/*.spec", "app/out/**", "app/.next/**"]
+  "exclude": ["node_modules/**", "**/*.spec", "app/out/**", "app/.next/**"]
 }

@@ -1,3 +1,4 @@
+import { lighten } from 'polished'
 import styled, { css } from 'styled-components'
 
 import { Cols } from '..'
@@ -20,15 +21,26 @@ export default styled<any>(Cols)`
       color: ${theme.colours.secondary};
     }
 
-    figure img {
-      width: 100%;
-      filter: grayscale(1) opacity(0.5);
-      transform: translateZ(0);
-      transition: ${theme.eases.base};
+    figure {
+      width: 30px;
+      height: 30px;
+      overflow: hidden;
+      background: ${lighten(0.33, '#7648c2')};
 
-      .row:hover &,
-      .row[data-checked] & {
-        filter: none;
+      .row:not(:hover):not([data-checked]) & {
+        opacity: 0.65;
+        transition: ${theme.eases.base};
+
+        img {
+          filter: grayscale(1);
+          mix-blend-mode: color-burn;
+          transition: ${theme.eases.base};
+        }
+      }
+
+      img {
+        object-fit: cover;
+        transform: translateZ(0);
       }
     }
   `}

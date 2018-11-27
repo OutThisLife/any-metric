@@ -20,7 +20,7 @@ export default gql`
     el: String
   }
 
-  type CrawlResult {
+  type CrawlResult @cacheControl(maxAge: 10e5) {
     id: ID!
     title: String
     img: String
@@ -32,7 +32,7 @@ export default gql`
     tags: [String]
   }
 
-  type FakeResult {
+  type FakeResult @cacheControl(maxAge: 10e5) {
     id: ID!
     slug: String
     image: String

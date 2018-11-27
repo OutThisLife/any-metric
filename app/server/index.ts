@@ -7,23 +7,25 @@ import * as morgan from 'morgan'
 import * as next from 'next'
 import * as path from 'path'
 
-export const dev = process.env.NODE_ENV !== 'production'
-export const dir = path.resolve(process.cwd(), 'app')
-export const port = parseInt(process.env.PORT, 10) || 3000
-export const nextApp = next({ dir, dev })
-export const handle = nextApp.getRequestHandler() as RequestHandlerParams
-export const app = express()
+const dev = process.env.NODE_ENV !== 'production'
+
+if (!dev && process.env.NEW_RELIC_HOME) {
+  require('newrelic')
+}
+
+const dir = path.resolve(process.cwd(), 'app')
+const port = parseInt(process.env.PORT, 10) || 3000
+const nextApp = next({ dir, dev })
+const handle = nextApp.getRequestHandler() as RequestHandlerParams
 
 export const cache = LRU({
   max: 152,
   maxAge: 36e2
 })
 
-if (!dev && process.env.NEW_RELIC_HOME) {
-  require('newrelic')
-}
+nextApp.prepare().then(() => {
+  const app = express()
 
-nextApp.prepare().then(() =>
   app
     .use(helmet())
     .use(morgan('combined', {}))
@@ -33,14 +35,33 @@ nextApp.prepare().then(() =>
         filter: () => true
       })
     )
-    .use(require('./schema'))
-    .use(require('./routes'))
+
+    .use((req, res, resolve) => {
+      let staticUrl
+
+      if (req.url.endsWith('service-worker.js')) {
+        staticUrl = path.join(dir, `./.next/${req.url}`)
+      } else if (/(robots\.txt)$/.test(req.url)) {
+        staticUrl = path.join(dir, `./static/${req.url}`)
+      }
+
+      if (staticUrl) {
+        return nextApp.serveStatic(req, res, staticUrl)
+      }
+
+      return resolve()
+    })
+
+    .use(require('./schema')({ app, cache, dev }))
+    .use(require('./routes')({ nextApp, cache, dev }))
+
     .get('*', handle)
     .listen(port, err => {
       if (err) {
+        console.error(err)
         throw err
       }
 
       console.log(`>ready on http://[::1]:${port}\n🚀`)
     })
-)
+})

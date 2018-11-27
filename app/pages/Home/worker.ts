@@ -3,7 +3,7 @@ import { FakeResult } from '@/server/schema/types'
 import fz from 'fuzzaldrin-plus'
 
 export const worker: PodWorker =
-  typeof window !== 'undefined' &&
+  'browser' in process &&
   spawn(function(this: PodWorker) {
     if (typeof this.importScripts !== 'function') {
       return
@@ -37,7 +37,7 @@ export const worker: PodWorker =
   })
 
 export const isWorkerReady = () =>
-  typeof window !== 'undefined' && worker instanceof Worker
+  'browser' in process && worker instanceof Worker
 
 export interface PodWorker extends Worker {
   importScripts?: (s: string) => void

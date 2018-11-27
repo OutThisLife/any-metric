@@ -1,48 +1,63 @@
-import { ApolloClient } from 'apollo-boost'
+import theme from '@/theme'
+import ApolloClient from 'apollo-client'
 import Head from 'next/head'
 import { Component } from 'react'
 import { getDataFromTree } from 'react-apollo'
+import { getDisplayName } from 'recompose'
 
 import initApollo from './initApollo'
 
 export default App =>
-  class extends Component {
-    public static displayName = 'withApollo(App)'
+  class extends Component<{ serverState: any }> {
+    public static displayName = `withApollo(${getDisplayName(App)})`
 
     public static async getInitialProps(ctx) {
-      let appProps = {}
-      const apollo = initApollo()
+      let serverState = {}
+      const pageProps: any = {}
 
       try {
-        if (App.getInitialProps) {
-          appProps = await App.getInitialProps(ctx)
-        }
+        const client = initApollo()
 
         await getDataFromTree(
-          <App {...appProps} apolloClient={apollo} {...ctx} />
+          <App
+            client={client}
+            router={ctx.router}
+            Component={ctx.Component}
+            theme={theme}
+          />,
+          ctx
         )
 
+        serverState = client.cache.extract() || {}
+
         if (!('browser' in process)) {
+          const {
+            ctx: { req }
+          } = ctx
+
+          pageProps.headers = req.headers
+
           Head.rewind()
         }
       } catch (err) {
-        console.error(err)
+        console.error('Error while running `getDataFromTree`', err)
+
+        err.code = 'ENOENT'
+        throw err
       }
 
-      return {
-        ...appProps,
-        apolloState: apollo.cache.extract()
-      }
+      return { pageProps, serverState }
     }
 
-    private apolloClient: ApolloClient<{}>
+    private client: ApolloClient<{}>
 
     constructor(props) {
       super(props)
-      this.apolloClient = initApollo(props.apolloState)
+      this.client = initApollo(this.props.serverState)
     }
 
     public render() {
-      return <App {...this.props} apolloClient={this.apolloClient} />
+      const { serverState, ...props } = this.props
+      return <App client={this.client} theme={theme} {...props} />
     }
   }

@@ -1,6 +1,3 @@
-import 'react-grid-layout/css/styles.css'
-import 'react-resizable/css/styles.css'
-
 import { extractStyles } from 'evergreen-ui'
 import Document, { Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
@@ -38,6 +35,7 @@ export default class extends Document<{
           <title>baphometric</title>
 
           {styleTags}
+          <script src="//polyfill.io/v2/polyfill.min.js?features=IntersectionObserver,MutationObserver,URL,es6" />
         </Head>
 
         <body>

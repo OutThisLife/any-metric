@@ -3,7 +3,7 @@ import { compose, defaultProps, setDisplayName } from 'recompose'
 
 import defaultParams from './params'
 
-export default compose<ParticleProps, ParticleProps>(
+export default compose<ParticleProps, {}>(
   defaultProps<ParticleProps>({ params: defaultParams }),
   setDisplayName('particles')
 )(props => (

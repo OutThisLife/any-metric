@@ -1,11 +1,13 @@
 import { ApolloServer } from 'apollo-server-express'
 import * as express from 'express'
 import { IResolvers } from 'graphql-tools'
+import * as LRU from 'lru-cache'
 
-import { cache, dev } from '..'
 import { setTags } from './mutations'
 import { fakeCrawl } from './queries'
 import typeDefs, { Context } from './types'
+
+const router = express.Router()
 
 const resolvers: IResolvers<{}, Context> = {
   JSON: require('graphql-type-json'),
@@ -20,7 +22,15 @@ const resolvers: IResolvers<{}, Context> = {
   }
 }
 
-module.exports = (app: express.Express) => {
+module.exports = ({
+  app,
+  cache,
+  dev
+}: {
+  app: express.Express
+  cache: LRU.Cache<any, any>
+  dev?: boolean
+}) => {
   new ApolloServer({
     typeDefs,
     resolvers,
@@ -31,5 +41,5 @@ module.exports = (app: express.Express) => {
     cacheControl: true
   }).applyMiddleware({ app })
 
-  return express.Router()
+  return router
 }

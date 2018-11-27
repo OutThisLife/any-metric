@@ -13,10 +13,10 @@ if (!dev && process.env.NEW_RELIC_HOME) {
   require('newrelic')
 }
 
-export const dir = path.resolve(process.cwd(), 'app')
-export const port = parseInt(process.env.PORT, 10) || 3000
-export const nextApp = next({ dir, dev })
-export const handle = nextApp.getRequestHandler() as RequestHandlerParams
+const dir = path.resolve(process.cwd(), 'app')
+const port = parseInt(process.env.PORT, 10) || 3000
+const nextApp = next({ dir, dev })
+const handle = nextApp.getRequestHandler() as RequestHandlerParams
 
 export const cache = LRU({
   max: 152,
@@ -36,10 +36,26 @@ nextApp.prepare().then(() => {
       })
     )
 
-    .use(require('./schema')(app))
-    .use(require('./routes'))
-    .get('*', handle)
+    .use((req, res, resolve) => {
+      let staticUrl
 
+      if (req.url.endsWith('service-worker.js')) {
+        staticUrl = path.join(dir, `./.next/${req.url}`)
+      } else if (/(robots\.txt)$/.test(req.url)) {
+        staticUrl = path.join(dir, `./static/${req.url}`)
+      }
+
+      if (staticUrl) {
+        return nextApp.serveStatic(req, res, staticUrl)
+      }
+
+      return resolve()
+    })
+
+    .use(require('./schema')({ app, cache, dev }))
+    .use(require('./routes')({ nextApp, cache, dev })
+
+    .get('*', handle)
     .listen(port, err => {
       if (err) {
         throw err

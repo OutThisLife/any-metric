@@ -1,6 +1,6 @@
 import Box from '@/components/Box'
 import Form from '@/components/Form'
-import Heading from '@/components/Heading'
+import Text from '@/components/Text'
 import { BaphoTheme } from '@/theme'
 import { compose, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
@@ -8,7 +8,7 @@ import { withTheme } from 'styled-components'
 export default compose<HeaderProps, {}>(
   withTheme,
   setDisplayName('header')
-)(({ theme: { colours: { brand } } }) => (
+)(({ theme: { fonts, colours: { brand } } }) => (
   <Box
     is="header"
     contain="layout"
@@ -19,13 +19,16 @@ export default compose<HeaderProps, {}>(
     paddingTop="calc(var(--pad) * 2)"
     paddingBottom={0}>
     <Box>
-      <Heading
+      <Text
         is="h1"
-        title="baphometric"
         fontSize="1.1rem"
+        lineHeight={1}
+        fontFamily={fonts.family.title}
         textTransform="uppercase"
-        backgroundImage={brand}
-      />
+        margin={0}
+        backgroundImage={brand}>
+        baphometric
+      </Text>
     </Box>
 
     <Box marginLeft="auto">

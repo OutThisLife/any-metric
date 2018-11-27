@@ -23,9 +23,9 @@ export const autoColour = <
   return res
 }
 
-export const createTextGradient = (colour: string) =>
+export const createTextGradient = (colour: string, amt: number = 0.3) =>
   `linear-gradient(180deg, ${lighten(0.1, colour)} 42%, ${colour} 60%, ${darken(
-    0.3,
+    amt,
     colour
   )})`
 
@@ -55,6 +55,10 @@ const theme = {
     scrollbarBg: '#1A2243',
 
     brand: 'linear-gradient(90deg, #7648c2 10%, #EF74CC 50%, #ff8d92)',
+    company: `linear-gradient(150deg, ${lighten(
+      0.05,
+      '#ff8d92'
+    )} 10%, ${lighten(0.05, '#EF74CC')} 50%, ${lighten(0.05, '#7648c2')})`,
 
     price: {
       up: createTextGradient('#5CF0CB'),

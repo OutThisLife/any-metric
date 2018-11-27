@@ -127,21 +127,6 @@ export const Main = styled<any>(Box)`
     h3,
     h4,
     h5,
-    h6 {
-      font-weight: 300;
-      color: ${theme.colours.base};
-
-      span:first-of-type:not(:only-of-type) {
-        color: ${theme.colours.muted};
-        margin-right: 0.4em;
-      }
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
     h6,
     input[type],
     button[type] {
@@ -157,6 +142,10 @@ export const Main = styled<any>(Box)`
       &:hover {
         color: ${theme.colours.secondary};
       }
+    }
+
+    .dragging a[href] {
+      pointer-events: none !important;
     }
   `}
 `

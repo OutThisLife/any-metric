@@ -27,7 +27,7 @@ export default styled<any>(Cols)`
       transition: ${theme.eases.base};
 
       .row:hover &,
-      .row[data-checked='true'] & {
+      .row[data-checked] & {
         filter: none;
       }
     }

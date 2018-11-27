@@ -8,9 +8,9 @@ export default compose<InputProps, InputProps>(
   defaultProps<InputProps>({
     type: 'text',
     autoComplete: 'off',
-    paddingTop: 'calc(var(--pad) / 4)',
+    paddingTop: 'calc(var(--pad) / 3.2)',
     paddingRight: 'var(--pad)',
-    paddingBottom: 'calc(var(--pad) / 4)',
+    paddingBottom: 'calc(var(--pad) / 3.2)',
     paddingLeft: 'var(--pad)',
     borderRadius: 4
   }),

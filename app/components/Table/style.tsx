@@ -45,7 +45,7 @@ const Table = styled<any>(BaseTable)`
         background: ${rgba(theme.colours.base, 0.01)};
       }
 
-      &[data-checked='true'] {
+      &[data-checked] {
         outline-color: ${theme.colours.focus};
         background: #1a213f;
       }
@@ -53,10 +53,6 @@ const Table = styled<any>(BaseTable)`
 
     [data-evergreen-table-body] > div {
       padding-right: var(--pad);
-    }
-
-    .dragging a {
-      pointer-events: none !important;
     }
   `}
 ` as ITable<BaphoTheme> & ReactBox<BaphoTheme, HTMLTableElement>

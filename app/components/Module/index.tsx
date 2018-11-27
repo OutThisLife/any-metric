@@ -5,16 +5,17 @@ import { rgba } from 'polished'
 import { compose, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
+import Module from './style'
+
 export default compose<ModuleProps & BaphoTheme, ModuleProps>(
   withTheme,
   setDisplayName('module')
-)(({ theme, title, cta, children, ...props }) => (
+)(({ theme, children, title, cta, ...props }) => (
   <>
-    {title && <Heading title={title} cta={cta} />}
+    {title && <Heading title={title} cta={cta} paddingBottom={15} />}
 
-    <Box is="div" borderRadius={4} {...props}>
+    <Module {...props}>
       <Box
-        width="calc(100% - (var(--pad) / 2))"
         boxShadow={`0 0 1px ${rgba(
           theme.colours.panel,
           0.2
@@ -30,7 +31,7 @@ export default compose<ModuleProps & BaphoTheme, ModuleProps>(
         padding="var(--pad)">
         {children}
       </Box>
-    </Box>
+    </Module>
   </>
 ))
 

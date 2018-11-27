@@ -9,6 +9,6 @@ export default compose<CheckboxProps, CheckboxProps>(
 )(props => (
   <Checkbox>
     <Box is="input" type="checkbox" {...props} />
-    <div />
+    <div style={{ cursor: 'pointer' }} />
   </Checkbox>
 ))

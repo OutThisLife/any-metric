@@ -7,7 +7,7 @@ import * as morgan from 'morgan'
 import * as next from 'next'
 import * as path from 'path'
 
-export const dev = process.env.NODE_ENV !== 'production'
+const dev = process.env.NODE_ENV !== 'production'
 
 if (!dev && process.env.NEW_RELIC_HOME) {
   require('newrelic')

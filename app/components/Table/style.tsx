@@ -1,14 +1,14 @@
-import { ReactBox } from '@/components/Box'
+import { BoxProps, ReactBox } from '@/components/Box'
 import Text from '@/components/Text'
 import { BaphoTheme } from '@/theme'
 import { Table as BaseTable } from 'evergreen-ui'
 import omit from 'lodash/omit'
 import { rgba } from 'polished'
-import { compose, defaultProps, mapProps } from 'recompose'
+import { compose, defaultProps, mapProps, withProps } from 'recompose'
 import styled, { css, withTheme } from 'styled-components'
 
-const enhance = (...funcs: any[]) =>
-  compose<ITable & BaphoTheme, ITable>(
+const enhance = <T extends {}>(...funcs: any[]) =>
+  compose<ITable & T, ITable>(
     defaultProps({
       marginX: 0,
       marginY: 0,
@@ -74,34 +74,41 @@ const Table = styled<any>(BaseTable)`
 
 // ---------------------------
 
-Table.Head = enhance()(props => <BaseTable.Head background="none" {...props} />)
+Table.Head = enhance(
+  withProps({
+    background: 'none'
+  })
+)(BaseTable.Head)
 
-Table.Body = enhance()(props => (
-  <BaseTable.VirtualBody allowAutoHeight {...props} />
-))
+Table.Body = enhance(withProps({ allowAutoHeight: true }))(
+  BaseTable.VirtualBody
+)
 
-Table.Row = enhance()(props => (
-  <BaseTable.Row className="row" height="auto" {...props} />
-))
+Table.Row = enhance(
+  withProps({
+    className: 'row',
+    height: 'auto'
+  })
+)(BaseTable.Row)
 
-Table.Cell = enhance()(props => <BaseTable.Cell className="cell" {...props} />)
+Table.Cell = enhance(withProps({ className: 'cell' }))(BaseTable.Cell)
 
-Table.HeaderCell = enhance(withTheme)(({ theme, children, ...props }) => (
-  <BaseTable.HeaderCell {...props}>
-    <Table.Text color={theme.colours.label}>{children}</Table.Text>
-  </BaseTable.HeaderCell>
-))
+Table.HeaderCell = enhance<BaphoTheme>(withTheme)(
+  ({ theme, children, ...props }) => (
+    <BaseTable.HeaderCell {...props}>
+      <Table.Text color={theme.colours.label}>{children}</Table.Text>
+    </BaseTable.HeaderCell>
+  )
+)
 
-Table.Text = enhance()(props => (
-  <Text
-    display="inline-block"
-    width="100%"
-    fontWeight={300}
-    fontSize="0.9rem"
-    textAlign="inherit"
-    {...props}
-  />
-))
+Table.Text = enhance<BoxProps<HTMLParagraphElement>>(
+  withProps({
+    width: '100%',
+    fontWeight: 300,
+    fontSize: '0.9rem',
+    textAlign: 'inherit'
+  })
+)(Text)
 
 // ---------------------------
 

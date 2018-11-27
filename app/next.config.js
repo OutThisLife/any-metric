@@ -44,7 +44,7 @@ module.exports = withPlugins(
       isDev: dev,
       API_URL: `http://localhost:${process.env.PORT || 3000}/graphql`
     },
-    webpack: (config, { isServer }) => {
+    webpack: config => {
       config.module.rules.push({
         test: /\.(png|jpg|gif|svg|eot|ttf|otf|woff|woff2)$/,
         use: [

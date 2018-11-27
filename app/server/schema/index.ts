@@ -25,7 +25,7 @@ const resolvers: IResolvers<{}, Context> = {
 module.exports = ({
   app,
   cache,
-  dev
+  dev = false
 }: {
   app: express.Express
   cache: LRU.Cache<any, any>

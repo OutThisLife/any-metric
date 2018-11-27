@@ -10,3 +10,7 @@ export type DataPoint = {
   x: Dayjs
   y: number
 }
+
+declare interface IObject {
+  [key: string]: any
+}

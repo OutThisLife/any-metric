@@ -38,6 +38,7 @@ export default class extends Document<{
           <title>baphometric</title>
 
           {styleTags}
+          <script src="//polyfill.io/v2/polyfill.min.js?features=IntersectionObserver,MutationObserver,URL,es6" />
         </Head>
 
         <body>

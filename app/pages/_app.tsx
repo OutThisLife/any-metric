@@ -13,6 +13,16 @@ import GlobalStyles, { Main } from './_app.styles'
 
 export default withData(
   class extends App<{ apolloClient: ApolloClient<{}> }> {
+    public static async getInitialProps({ Component }) {
+      let pageProps = {}
+
+      if (Component.getInitialProps) {
+        pageProps = await Component.getInitialProps()
+      }
+
+      return { pageProps }
+    }
+
     public render() {
       const { apolloClient } = this.props
 

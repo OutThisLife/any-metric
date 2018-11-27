@@ -9,7 +9,11 @@ import { ColumnProps, Table } from '..'
 import Title from './style'
 
 export default compose<TitleProps & BaphoTheme, TitleProps>(
-  withProps<TitleProps, TitleProps>(() => ({ position: 'relative', flex: 17 })),
+  withProps<TitleProps, TitleProps>(() => ({
+    name: 'title',
+    position: 'relative',
+    flex: 17
+  })),
   withTheme,
   setDisplayName('col-title')
 )(({ theme, children, item = {}, ...props }) => (

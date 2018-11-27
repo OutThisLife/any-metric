@@ -1,27 +1,49 @@
 import { BoxProps, ReactBox } from '@/components/Box'
+import { Icon } from 'evergreen-ui'
 import dynamic from 'next/dynamic'
+import { func, shape } from 'prop-types'
 import {
   branch,
   compose,
   defaultProps,
+  getContext,
   renderComponent,
   setDisplayName
 } from 'recompose'
 
+import { SortProps } from '..'
 import Table, { ITable } from '../style'
 
-export const Cols = compose<ColumnProps, ColumnProps>(
+export const Cols = compose<ColumnProps & SortProps, ColumnProps>(
   defaultProps<ColumnProps>({
+    name: Math.random().toString(),
     isHeader: false,
     flex: 2.5,
     textAlign: 'left'
   }),
+  getContext({
+    sort: shape({}),
+    sortBy: func
+  }),
   setDisplayName('cell'),
-  branch<ColumnProps>(
-    props => props.isHeader,
-    renderComponent(Table.HeaderCell)
-  )
-)(Table.Cell) as ReactBox<ColumnProps> & IColumns
+  branch<ColumnProps>(props => !props.isHeader, renderComponent(Table.Cell))
+)(({ children, name, sort, sortBy, ...props }) => (
+  <Table.HeaderCell
+    display="flex"
+    alignItems="center"
+    onClick={() => sortBy({ name, dir: sort.dir === 'asc' ? 'desc' : 'asc' })}
+    {...props}>
+    <span>{children}</span>
+
+    {sort.name === name && (
+      <Icon
+        size={13}
+        icon={`caret-${sort.dir === 'desc' ? 'down' : 'up'}`}
+        marginLeft={2}
+      />
+    )}
+  </Table.HeaderCell>
+)) as ReactBox<ColumnProps> & IColumns
 
 Cols.Base = Cols
 Cols.Title = dynamic(import('./Title') as Promise<any>)
@@ -30,9 +52,10 @@ Cols.Time = dynamic(import('./Time') as Promise<any>)
 Cols.Status = dynamic(import('./Status') as Promise<any>)
 Cols.Price = dynamic(import('./Price') as Promise<any>)
 
-export type ColumnProps = { isHeader?: boolean } & BoxProps<
-  HTMLTableCellElement
->
+export interface ColumnProps extends BoxProps<HTMLTableCellElement> {
+  name?: string
+  isHeader?: boolean
+}
 
 export interface IColumns<T = ITable['Cell']> {
   Base?: T

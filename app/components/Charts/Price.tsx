@@ -27,7 +27,7 @@ import {
   hexToRGBA,
   last
 } from 'react-stockcharts/lib/utils'
-import { compose, mapProps, setDisplayName } from 'recompose'
+import { compose, mapProps, onlyUpdateForKeys, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
 export default compose<ChartProps, ChartOutterProps>(
@@ -41,6 +41,7 @@ export default compose<ChartProps, ChartOutterProps>(
   })),
   withTheme,
   withDimensions,
+  onlyUpdateForKeys(['width']),
   setDisplayName('price')
 )(({ onRef, theme, initialData, width }) => {
   const avg = ema()

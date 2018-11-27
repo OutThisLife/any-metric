@@ -10,6 +10,7 @@ import Status, { StatusText } from './style'
 
 export default compose<StatusProps & BaphoTheme, StatusProps>(
   withProps({
+    name: 'bids',
     textAlign: 'center'
   }),
   withTheme,

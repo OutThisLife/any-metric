@@ -2,18 +2,25 @@ import { BoxProps } from '@/components/Box'
 import Form from '@/components/Form'
 import Module from '@/components/Module'
 import withSelections, { SelectionsProps } from '@/lib/withSelections'
+import { DataTableFilter } from '@/pages/home'
 import { BaphoTheme } from '@/theme'
 import faker from 'faker'
-import { compose, setDisplayName } from 'recompose'
+import { func } from 'prop-types'
+import { compose, getContext, setDisplayName, shouldUpdate } from 'recompose'
 import { withTheme } from 'styled-components'
 
 import Text from '../Text'
 import Categories, { Group } from './style'
 
-export default compose<CategoryProps, CategoryProps>(
-  setDisplayName('categories'),
-  withSelections
-)(({ handleMouse, ...props }) => (
+export default compose<
+  CategoryProps & { filter: DataTableFilter },
+  CategoryProps
+>(
+  getContext({ filter: func }),
+  withSelections,
+  shouldUpdate(() => false),
+  setDisplayName('categories')
+)(({ handleMouse, filter, ...props }) => (
   <Module
     title="Category Filters"
     cta={() => (
@@ -30,16 +37,36 @@ export default compose<CategoryProps, CategoryProps>(
       listStyle="none"
       onMouseDown={handleMouse}
       {...props}>
-      <Filler title="Cognex" />
-      <Filler title="Keyence" />
-      <Filler title="Equi" />
-      <Filler title="Motrox" />
+      <Filler
+        title="Cognex"
+        onClick={() => filter({ value: 'Important', action: 'TAG' })}
+      />
+
+      <Filler
+        title="Keyence"
+        onClick={() => filter({ value: '', action: 'RESET' })}
+      />
+
+      <Filler
+        title="Equi"
+        onClick={() => filter({ value: 'Lead', action: 'TAG' })}
+      />
+
+      <Filler
+        title="Motrox"
+        onClick={() => filter({ value: 'Broken', action: 'TAG' })}
+      />
     </Categories>
   </Module>
 ))
 
 export const Filler = withTheme(
-  ({ theme, title, ...props }: CategoryProps & BaphoTheme) => (
+  ({
+    theme,
+    title,
+    onClick = () => null,
+    ...props
+  }: CategoryProps & BaphoTheme) => (
     <Group is="li" {...props}>
       <Text is="a" href="javascript:;" display="flex" alignItems="center">
         <Text is="span" backgroundImage={theme.colours.company}>
@@ -60,7 +87,9 @@ export const Filler = withTheme(
 
       <ul>
         <li className="row">
-          <a href="javascript:;">8050 series</a>
+          <a href="javascript:;" onClick={onClick}>
+            8050 series
+          </a>
 
           <ul>
             <li className="row">

@@ -4,7 +4,8 @@ import PriceChart from '@/components/Charts/Price'
 import Table from '@/components/Table'
 import { getFakeCrawl } from '@/lib/queries'
 import { FakeResult } from '@/server/schema/types'
-import { func, string } from 'prop-types'
+import orderBy from 'lodash/orderBy'
+import { func, shape, string } from 'prop-types'
 import {
   compose,
   setDisplayName,
@@ -22,6 +23,10 @@ export default compose<HomeProps, HomeOutterProps>(
   withStateHandlers<HomeState, HomeStateHandlers, HomeProps>(
     ({ results = [] }) => ({
       renderedData: results,
+      sort: {
+        name: 'date',
+        dir: 'desc'
+      },
       filter: {
         value: '',
         action: 'RESET'
@@ -32,18 +37,31 @@ export default compose<HomeProps, HomeOutterProps>(
         value = filter.value,
         action = filter.action
       }) => ({ filter: { value, action } }),
+
       updateRendered: (_, { results }) => (renderedData = results) => ({
         renderedData
-      })
+      }),
+
+      sortBy: () => sort => ({ sort })
     }
   ),
   withContext(
-    { filter: func, update: func, current: string },
+    {
+      sort: shape({}),
+      sortBy: func,
+      filter: func,
+      update: func,
+      current: string
+    },
     ({
+      sort,
+      sortBy,
       updateRendered: update,
       setFilter: filter,
       filter: { value: current }
     }) => ({
+      sort,
+      sortBy,
       update,
       filter,
       current
@@ -60,7 +78,7 @@ export default compose<HomeProps, HomeOutterProps>(
     }
   ),
   setDisplayName('dashboard')
-)(({ renderedData, updateRendered }) => {
+)(({ sort, renderedData, updateRendered }) => {
   if (isWorkerReady()) {
     worker.onmessage = ({ data }) => updateRendered(data)
     worker.onerror = e => {
@@ -104,7 +122,7 @@ export default compose<HomeProps, HomeOutterProps>(
       </Box>
 
       <Box gridRow={1} gridColumn="1 / 23" height="100%">
-        <Table data={renderedData} />
+        <Table data={orderBy(renderedData, sort.name, [sort.dir])} />
       </Box>
     </Box>
   )
@@ -114,8 +132,14 @@ interface HomeOutterProps {
   children?: React.ReactNode
 }
 
-interface HomeState {
+export interface HomeState {
   renderedData: FakeResult[]
+
+  sort: {
+    name?: string
+    dir?: 'asc' | 'desc'
+  }
+
   filter: {
     value?: string
     action?: 'RESET' | 'TAG' | 'SEARCH'

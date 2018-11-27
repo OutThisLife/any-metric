@@ -28,7 +28,22 @@ const Table = styled<any>(BaseTable)`
     }
 
     .head {
+      user-select: none;
       padding-right: calc(var(--pad) * 2);
+
+      > div * {
+        cursor: pointer;
+      }
+
+      > div > span > {
+        span:not(:only-child) {
+          color: ${theme.colours.muted};
+        }
+
+        svg {
+          fill: ${theme.colours.muted} !important;
+        }
+      }
     }
 
     .row {
@@ -55,7 +70,7 @@ const Table = styled<any>(BaseTable)`
       padding-right: var(--pad);
     }
   `}
-` as ITable<BaphoTheme> & ReactBox<BaphoTheme, HTMLTableElement>
+` as ITable<{}> & ReactBox<{}, HTMLTableElement>
 
 // ---------------------------
 

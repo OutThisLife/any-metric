@@ -5,6 +5,7 @@ import { Cols, ColumnProps } from '..'
 
 export default compose<CheckProps, CheckProps>(
   withProps<CheckProps, CheckProps>(() => ({
+    name: 'id',
     flex: 0.7,
     flexBasis: 'auto',
     overflow: 'visible'

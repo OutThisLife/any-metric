@@ -9,6 +9,7 @@ import { Cols, ColumnProps, Table } from '..'
 
 export default compose<PriceProps & BaphoTheme, PriceProps>(
   withProps<PriceProps, PriceProps>({
+    name: 'price',
     flexGrow: 0,
     flexBasis: 80,
     paddingRight: 20,

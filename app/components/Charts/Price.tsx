@@ -65,6 +65,7 @@ export default compose<ChartProps, ChartOutterProps>(
     { stop: 0.5, color: hexToRGBA('#425087', 0.2) },
     { stop: 1, color: hexToRGBA('#425087', 0.5) }
   ])
+  console.log(width)
 
   return (
     <ChartCanvas
@@ -129,23 +130,27 @@ export default compose<ChartProps, ChartOutterProps>(
         />
 
         <XAxis
+          ticks={width >= 1025 ? 12 : 4}
           fontSize={9}
           stroke={theme.colours.border}
           tickStroke="#8B96B5"
           axisAt="bottom"
           orient="bottom"
         />
-        <MouseCoordinateX
-          fontSize={11}
-          snapX={false}
-          at="bottom"
-          orient="bottom"
-          fill={theme.colours.border}
-          fillText={theme.colours.base}
-          displayFormat={d => `Volume: ${numFormat(d)}`}
-        />
+        {width >= 1025 && (
+          <MouseCoordinateX
+            fontSize={11}
+            snapX={false}
+            at="bottom"
+            orient="bottom"
+            fill={theme.colours.border}
+            fillText={theme.colours.base}
+            displayFormat={d => `Volume: ${numFormat(d)}`}
+          />
+        )}
 
         <YAxis
+          ticks={width >= 1025 ? 12 : 4}
           fontSize={9}
           stroke={theme.colours.border}
           tickStroke={theme.colours.base}
@@ -153,14 +158,16 @@ export default compose<ChartProps, ChartOutterProps>(
           orient="right"
           displayFormat={moneyFormat}
         />
-        <MouseCoordinateY
-          fontSize={11}
-          axisAt="left"
-          orient="left"
-          fill={theme.colours.border}
-          fillText={theme.colours.base}
-          displayFormat={moneyFormat}
-        />
+        {width >= 1025 && (
+          <MouseCoordinateY
+            fontSize={11}
+            axisAt="left"
+            orient="left"
+            fill={theme.colours.border}
+            fillText={theme.colours.base}
+            displayFormat={moneyFormat}
+          />
+        )}
 
         <EdgeIndicator
           type="horizontal"

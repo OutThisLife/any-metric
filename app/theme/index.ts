@@ -38,6 +38,7 @@ const theme = {
     focus: '#1C69DA',
 
     muted: '#9AA2C2',
+    success: '#5CF0CB',
     label: '#3A477A',
     star: '#f4c37d',
 

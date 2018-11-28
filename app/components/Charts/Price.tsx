@@ -2,6 +2,7 @@ import { BoxProps } from '@/components/Box'
 import { moneyFormat, numFormat } from '@/lib/utils'
 import withDimensions from '@/lib/withDimensions'
 import { FakeResult } from '@/server/schema/types'
+import { BaphoTheme } from '@/theme'
 import * as d3 from 'd3'
 import faker from 'faker'
 import sortedUniqBy from 'lodash/sortedUniqBy'
@@ -18,22 +19,31 @@ import { ema } from 'react-stockcharts/lib/indicator'
 import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
 import {
   AreaSeries,
+  CircleMarker,
   LineSeries,
-  ScatterSeries,
-  TriangleMarker
+  ScatterSeries
 } from 'react-stockcharts/lib/series'
+import { HoverTooltip } from 'react-stockcharts/lib/tooltip'
 import {
   createVerticalLinearGradient,
   hexToRGBA,
   last
 } from 'react-stockcharts/lib/utils'
-import { compose, mapProps, onlyUpdateForKeys, setDisplayName } from 'recompose'
+import {
+  branch,
+  compose,
+  mapProps,
+  onlyUpdateForKeys,
+  renderComponent,
+  setDisplayName
+} from 'recompose'
 import { withTheme } from 'styled-components'
 
-export default compose<ChartProps, ChartOutterProps>(
+export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
+  branch(() => !('browser' in process), renderComponent(() => null)),
   mapProps<ChartProps, ChartOutterProps>(({ data }) => ({
     initialData: sortedUniqBy(data, 'date').map(d => ({
-      id: d.id,
+      ...d,
       date: new Date(d.date),
       price: parseFloat(d.price),
       volume: faker.random.number({ min: 10, max: 1000 })
@@ -61,11 +71,12 @@ export default compose<ChartProps, ChartOutterProps>(
   const xExtents = [xAccessor(last(data)), xAccessor(data[data.length - 75])]
 
   const canvasGradient = createVerticalLinearGradient([
-    { stop: 0, color: hexToRGBA('#425087', 0) },
-    { stop: 0.5, color: hexToRGBA('#425087', 0.2) },
-    { stop: 1, color: hexToRGBA('#425087', 0.5) }
+    { stop: 0, color: hexToRGBA(theme.colours.border, 0) },
+    { stop: 0.5, color: hexToRGBA(theme.colours.border, 0.2) },
+    { stop: 1, color: hexToRGBA(theme.colours.border, 0.5) }
   ])
-  console.log(width)
+
+  const w = window.innerWidth
 
   return (
     <ChartCanvas
@@ -94,9 +105,23 @@ export default compose<ChartProps, ChartOutterProps>(
             y1="100%"
             x2="0"
             y2="0%">
-            <stop offset="0%" stopColor="#425087" stopOpacity={0} />
-            <stop offset="50%" stopColor="#425087" stopOpacity={0.2} />
-            <stop offset="100%" stopColor="#425087" stopOpacity={0.5} />
+            <stop
+              offset="0%"
+              stopColor={theme.colours.border}
+              stopOpacity={0}
+            />
+
+            <stop
+              offset="50%"
+              stopColor={theme.colours.border}
+              stopOpacity={0.2}
+            />
+
+            <stop
+              offset="100%"
+              stopColor={theme.colours.border}
+              stopOpacity={0.5}
+            />
           </linearGradient>
         </defs>
 
@@ -116,13 +141,43 @@ export default compose<ChartProps, ChartOutterProps>(
         padding={{ top: 10, bottom: 20 }}>
         <ScatterSeries
           yAccessor={d => d.price}
-          marker={TriangleMarker}
+          marker={CircleMarker}
           markerProps={{
             width: 6,
-            fill: theme.colours.price.up,
+            r: 2.5,
+            fill: theme.colours.star,
             stroke: 'transparent'
           }}
         />
+
+        {w >= 1025 && (
+          <HoverTooltip
+            yAccessor={d => d.price}
+            fontSize={12}
+            bgOpacity={1}
+            fontFill={theme.colours.base}
+            fontFamily={theme.fonts.family.title}
+            fill={hexToRGBA('#000000', 0)}
+            stroke="transparent"
+            bgFill={hexToRGBA(theme.colours.secondary, 0.1)}
+            tooltipContent={({ currentItem }: { currentItem: FakeResult }) =>
+              currentItem.price && {
+                x: currentItem.title,
+                y: [
+                  {
+                    label: 'Price',
+                    value: moneyFormat(parseFloat(currentItem.price))
+                  },
+                  {
+                    label: 'Qty',
+                    value: numFormat(parseInt(currentItem.quantity, 10))
+                  }
+                ]
+              }
+            }
+          />
+        )}
+
         <LineSeries
           yAccessor={avg.accessor()}
           stroke={theme.colours.secondary}
@@ -130,14 +185,15 @@ export default compose<ChartProps, ChartOutterProps>(
         />
 
         <XAxis
-          ticks={width >= 1025 ? 12 : 4}
+          ticks={w >= 1025 ? 12 : 4}
           fontSize={9}
+          fontFamily={theme.fonts.family.title}
           stroke={theme.colours.border}
-          tickStroke="#8B96B5"
+          tickStroke={hexToRGBA(theme.colours.base, 0.5)}
           axisAt="bottom"
           orient="bottom"
         />
-        {width >= 1025 && (
+        {w >= 1025 && (
           <MouseCoordinateX
             fontSize={11}
             snapX={false}
@@ -150,15 +206,16 @@ export default compose<ChartProps, ChartOutterProps>(
         )}
 
         <YAxis
-          ticks={width >= 1025 ? 12 : 4}
+          ticks={w >= 1025 ? 12 : 4}
           fontSize={9}
+          fontFamily={theme.fonts.family.title}
           stroke={theme.colours.border}
           tickStroke={theme.colours.base}
           axisAt="right"
           orient="right"
           displayFormat={moneyFormat}
         />
-        {width >= 1025 && (
+        {w >= 1025 && (
           <MouseCoordinateY
             fontSize={11}
             axisAt="left"
@@ -170,22 +227,24 @@ export default compose<ChartProps, ChartOutterProps>(
         )}
 
         <EdgeIndicator
-          type="horizontal"
+          yAccessor={d => d.price}
           itemType="last"
           orient="right"
           edgeAt="right"
-          yAccessor={avg.accessor()}
+          fontFamily={theme.fonts.family.title}
           fill={theme.colours.secondary}
-          fillText={theme.colours.base}
+          textFill={theme.colours.base}
           displayFormat={moneyFormat}
         />
       </Chart>
 
-      <CrossHairCursor
-        snapX={false}
-        StrokeDasharray="ShortDashDot"
-        stroke={rgba(theme.colours.base, 0.1)}
-      />
+      {w >= 1025 && (
+        <CrossHairCursor
+          snapX={false}
+          StrokeDasharray="ShortDashDot"
+          stroke={rgba(theme.colours.base, 0.1)}
+        />
+      )}
     </ChartCanvas>
   )
 })

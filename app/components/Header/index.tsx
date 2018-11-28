@@ -8,7 +8,7 @@ import { withTheme } from 'styled-components'
 export default compose<HeaderProps, {}>(
   withTheme,
   setDisplayName('header')
-)(({ theme: { fonts, colours: { brand } } }) => (
+)(({ theme }) => (
   <Box
     is="header"
     contain="layout"
@@ -23,10 +23,10 @@ export default compose<HeaderProps, {}>(
         is="h1"
         fontSize="1.1rem"
         lineHeight={1}
-        fontFamily={fonts.family.title}
+        fontFamily={theme.fonts.family.title}
         textTransform="uppercase"
         margin={0}
-        backgroundImage={brand}>
+        backgroundImage={theme.colours.brand}>
         baphometric
       </Text>
     </Box>

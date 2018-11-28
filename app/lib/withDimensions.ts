@@ -39,6 +39,8 @@ export default compose<DimProps, {}>(
       try {
         el = findDOMNode(this).parentElement
 
+        window.dispatchEvent(new CustomEvent('resize'))
+
         this.handleResize()
         window.addEventListener('resize', this.handleResize)
       } catch (e) {

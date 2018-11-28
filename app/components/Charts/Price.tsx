@@ -119,7 +119,7 @@ export default compose<ChartProps, ChartOutterProps>(
           marker={TriangleMarker}
           markerProps={{
             width: 6,
-            fill: theme.colours.tertiary,
+            fill: theme.colours.price.up,
             stroke: 'transparent'
           }}
         />

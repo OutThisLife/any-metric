@@ -8,7 +8,7 @@
     "start:universal": "node --optimize_for_size --max_old_space_size=460 --gc_interval=100 ./app/.next/production-server/index.js",
     "start:graphql": "ts-node -P tsconfig.server.json ./bin/apollo.ts",
     "build:app": "next build ./app",
-    "export": "node bin/export",
+    "export": "ts-node -P tsconfig.server.json ./bin/export.ts",
     "export:app": "next export ./app",
     "build:server": "tsc -p ./tsconfig.server.json",
     "build:universal": "npm run build:app && npm run build:server",

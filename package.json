@@ -4,7 +4,7 @@
   "description": "",
   "main": "app/server/index.ts",
   "scripts": {
-    "start:static": "serve ./app/out -p $PORT",
+    "start:static": "serve ./app/out",
     "start:universal": "node --optimize_for_size --max_old_space_size=460 --gc_interval=100 ./app/.next/production-server/index.js",
     "start:graphql": "ts-node -P tsconfig.server.json ./app/server/apollo.ts",
     "build:app": "next build ./app",

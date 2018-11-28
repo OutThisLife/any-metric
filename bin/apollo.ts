@@ -10,7 +10,7 @@ const cache = LRU({
 })
 
 const server = app
-  .use(require('./schema')({ app, cache, dev }))
+  .use(require('../app/server/schema')({ app, cache, dev }))
   .listen(3e3, err => {
     if (err) {
       console.error(err)
@@ -21,4 +21,5 @@ const server = app
     console.log('Graphql standalone started')
   })
 
+process.send('graphql')
 process.on('exit', () => server.close())

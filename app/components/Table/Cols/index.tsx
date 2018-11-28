@@ -1,4 +1,5 @@
 import { BoxProps, ReactBox } from '@/components/Box'
+import { HomeState } from '@/pages/home'
 import { Icon } from 'evergreen-ui'
 import dynamic from 'next/dynamic'
 import { func, shape } from 'prop-types'
@@ -11,10 +12,9 @@ import {
   setDisplayName
 } from 'recompose'
 
-import { SortProps } from '..'
 import Table, { ITable } from '../style'
 
-export const Cols = compose<ColumnProps & SortProps, ColumnProps>(
+export const Cols = compose<ColumnProps, ColumnProps>(
   defaultProps<ColumnProps>({
     name: Math.random().toString(),
     isHeader: false,
@@ -53,6 +53,7 @@ Cols.Status = dynamic(import('./Status') as Promise<any>)
 Cols.Price = dynamic(import('./Price') as Promise<any>)
 
 export interface ColumnProps extends BoxProps<HTMLTableCellElement> {
+  sort?: HomeState['sort']
   name?: string
   isHeader?: boolean
 }

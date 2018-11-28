@@ -85,13 +85,15 @@ Table.Body = enhance(withProps({ allowAutoHeight: true }))(
 )
 
 Table.Row = enhance(
-  withProps({
-    className: 'row',
+  withProps(({ className }) => ({
+    className: `${className} row`,
     height: 'auto'
-  })
+  }))
 )(BaseTable.Row)
 
-Table.Cell = enhance(withProps({ className: 'cell' }))(BaseTable.Cell)
+Table.Cell = enhance(
+  withProps(({ className }) => ({ className: `${className} cell` }))
+)(BaseTable.Cell)
 
 Table.HeaderCell = enhance<BaphoTheme>(withTheme)(
   ({ theme, children, ...props }) => (

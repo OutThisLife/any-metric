@@ -6,7 +6,8 @@ import { compose, setDisplayName, withProps } from 'recompose'
 import { withTheme } from 'styled-components'
 
 import { ColumnProps } from '..'
-import Status, { StatusText } from './style'
+import Status from './style'
+import Text from './text'
 
 export default compose<StatusProps & BaphoTheme, StatusProps>(
   withProps({
@@ -22,14 +23,14 @@ export default compose<StatusProps & BaphoTheme, StatusProps>(
     ) : (
       <Box display="flex" flexWrap="wrap" marginX="auto">
         {isOld(item.date, 32) ? (
-          <StatusText>Sold</StatusText>
+          <Text>Sold</Text>
         ) : (
           <>
-            <StatusText color={theme.colours.star} lineHeight={2}>
+            <Text color={theme.colours.star} lineHeight={2}>
               {pointFormat(parseInt(item.bids, 10))}
-            </StatusText>
+            </Text>
 
-            <StatusText>bids</StatusText>
+            <Text>bids</Text>
           </>
         )}
       </Box>

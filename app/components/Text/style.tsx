@@ -9,5 +9,6 @@ export default styled<any>(Text)`
     css`
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      transform: translateZ(0);
     `}
 `

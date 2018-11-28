@@ -99,7 +99,7 @@ export default styled<any>('span')`
     }
 
     &[aria-label^='cta'] {
-      --padding: ${/pill/i.test(variant) ? '13px 15px' : '16px'};
+      --padding: ${/pill/i.test(variant) ? '0.9rem 1rem' : '1rem'};
 
       button[type]:not([disabled]) {
         height: auto;
@@ -114,8 +114,11 @@ export default styled<any>('span')`
     }
 
     &[aria-label^='icon'] button[type]:not([disabled]) {
+      width: 2.5rem;
+      height: 2.5rem;
+
       svg {
-        width: 16px;
+        width: 1rem;
         height: auto;
         max-width: none;
         margin: auto;

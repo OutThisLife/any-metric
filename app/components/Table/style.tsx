@@ -1,26 +1,10 @@
-import { BoxProps, ReactBox } from '@/components/Box'
-import Text from '@/components/Text'
+import { ReactBox } from '@/components/Box'
 import { BaphoTheme } from '@/theme'
 import { Table as BaseTable } from 'evergreen-ui'
-import omit from 'lodash/omit'
 import { rgba } from 'polished'
-import { compose, defaultProps, mapProps, withProps } from 'recompose'
-import styled, { css, withTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
-const enhance = <T extends {}>(...funcs: any[]) =>
-  compose<ITable & T, ITable>(
-    defaultProps({
-      marginX: 0,
-      marginY: 0,
-      paddingX: 0,
-      paddingY: 0,
-      borderBottom: '0px'
-    }),
-    mapProps(props => omit(props, ['isHeader', 'theme'])),
-    ...funcs
-  )
-
-const Table = styled<any>(BaseTable)`
+export default styled<any>(BaseTable)`
   ${({ theme }: BaphoTheme) => css`
     .head,
     .row {
@@ -72,48 +56,6 @@ const Table = styled<any>(BaseTable)`
   `}
 ` as ITable<{}> & ReactBox<{}, HTMLTableElement>
 
-// ---------------------------
-
-Table.Head = enhance(
-  withProps({
-    background: 'none'
-  })
-)(BaseTable.Head)
-
-Table.Body = enhance(withProps({ allowAutoHeight: true }))(
-  BaseTable.VirtualBody
-)
-
-Table.Row = enhance(
-  withProps(({ className }) => ({
-    className: `${className} row`,
-    height: 'auto'
-  }))
-)(BaseTable.Row)
-
-Table.Cell = enhance(
-  withProps(({ className }) => ({ className: `${className} cell` }))
-)(BaseTable.Cell)
-
-Table.HeaderCell = enhance<BaphoTheme>(withTheme)(
-  ({ theme, children, ...props }) => (
-    <BaseTable.HeaderCell {...props}>
-      <Table.Text color={theme.colours.label}>{children}</Table.Text>
-    </BaseTable.HeaderCell>
-  )
-)
-
-Table.Text = enhance<BoxProps<HTMLParagraphElement>>(
-  withProps({
-    width: '100%',
-    fontWeight: 300,
-    fontSize: '0.9rem',
-    textAlign: 'inherit'
-  })
-)(Text)
-
-// ---------------------------
-
 export interface ITable<P = {}> {
   Head?: ReactBox<P, HTMLTableElement>
   HeaderCell?: ReactBox<P, HTMLTableHeaderCellElement>
@@ -122,5 +64,3 @@ export interface ITable<P = {}> {
   Cell?: ReactBox<P, HTMLTableCellElement>
   Text?: ReactBox<P, HTMLTableCellElement>
 }
-
-export default Table

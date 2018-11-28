@@ -12,21 +12,18 @@ export default compose<BaphoTheme & LayoutProps, LayoutProps>(
   withTheme,
   setDisplayName('layout')
 )(({ theme, Component, pageProps }) => (
-  <Box display="flex" alignItems="center" height="100vh" width="100vw">
-    <Main
+  <Main>
+    <Box
       id="app"
       position="relative"
-      width="calc(100% - var(--offset))"
-      height="calc(100% - var(--offset))"
-      overflow="hidden"
       margin="auto"
       borderRadius={10}
       background={theme.colours.panelBg}
       backgroundBlendMode="overlay">
       <Header />
       <Component {...pageProps} />
-    </Main>
-  </Box>
+    </Box>
+  </Main>
 ))
 
 export interface LayoutProps extends Partial<AppProps> {

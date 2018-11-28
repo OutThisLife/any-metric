@@ -89,37 +89,58 @@ export const Main = styled<any>(Box)`
   --offset: calc(var(--pad) * 3);
 
   ${({ theme }: BaphoTheme) => css`
-    box-shadow: 0 17px 50px -5px #040617;
-
-    &:before,
-    &:after {
-      pointer-events: none;
-      content: '';
-      position: fixed;
-      right: calc(var(--offset) / 2.1);
-      left: calc(var(--offset) / 2.1);
+    @media (min-width: 1440px) {
+      display: flex;
+      align-items: center;
+      height: 100vh;
+      width: 100vw;
     }
 
-    &:before {
-      z-index: -1;
-      top: calc(var(--offset) / 2);
-      bottom: calc(var(--offset) / 2);
-      width: 90%;
-      margin: auto;
-      box-shadow: 0 17px 150px -10px #040617;
-    }
+    #app {
+      width: calc(100% - var(--offset));
+      box-shadow: 0 17px 50px -5px #040617;
 
-    &:after {
-      z-index: 9;
-      bottom: calc(var(--offset) / 2.4);
-      height: calc(var(--offset) * 2);
-      border-radius: inherit;
-      background: linear-gradient(
-        180deg,
-        transparent 22%,
-        ${theme.colours.panel} 82%,
-        ${theme.colours.panel}
-      );
+      @media (min-width: 1440px) {
+        height: calc(100% - var(--offset));
+        overflow: hidden;
+      }
+
+      @media (max-width: 1440px) {
+        margin: calc(var(--offset) / 2) auto;
+      }
+
+      &:before,
+      &:after {
+        pointer-events: none;
+        content: '';
+        position: fixed;
+        right: calc(var(--offset) / 2.1);
+        left: calc(var(--offset) / 2.1);
+      }
+
+      &:before {
+        z-index: -1;
+        top: calc(var(--offset) / 2);
+        bottom: calc(var(--offset) / 2);
+        width: 90%;
+        margin: auto;
+        box-shadow: 0 17px 150px -10px #040617;
+      }
+
+      @media (min-width: 1440px) {
+        &:after {
+          z-index: 9;
+          bottom: calc(var(--offset) / 2.4);
+          height: calc(var(--offset) * 2);
+          border-radius: inherit;
+          background: linear-gradient(
+            180deg,
+            transparent 22%,
+            ${theme.colours.panel} 82%,
+            ${theme.colours.panel}
+          );
+        }
+      }
     }
 
     h1,

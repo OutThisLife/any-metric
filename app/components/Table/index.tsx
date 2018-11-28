@@ -8,7 +8,7 @@ import { compose, setDisplayName, withHandlers, withProps } from 'recompose'
 import { withTheme } from 'styled-components'
 
 import Cols from './Cols'
-import Table from './style'
+import Table from './generics'
 
 let tm
 

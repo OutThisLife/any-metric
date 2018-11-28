@@ -1,3 +1,4 @@
+import * as d3 from 'd3'
 import { findDOMNode } from 'react-dom'
 import {
   compose,
@@ -7,7 +8,6 @@ import {
   StateHandlerMap,
   withStateHandlers
 } from 'recompose'
-import ResizeObserver from 'resize-observer-polyfill'
 
 export default compose<DimProps, {}>(
   withStateHandlers<DimState, DimStateHandlers>(
@@ -21,26 +21,33 @@ export default compose<DimProps, {}>(
   ),
   lifecycle<DimState & DimStateHandlers, DimState, any>({
     componentDidMount() {
-      this.observer = new ResizeObserver(entries => {
-        for (const entry of entries) {
-          this.props.setDimensions(entry.contentRect)
-        }
-      })
+      let el
+
+      this.handleResize = () => {
+        document.body.style.pointerEvents = 'none'
+
+        d3.timeout(() => {
+          this.props.setDimensions({
+            width: el.clientWidth * 0.95,
+            height: el.clientHeight
+          })
+
+          document.body.style.pointerEvents = 'auto'
+        }, 150)
+      }
 
       try {
-        const el = findDOMNode(this).parentElement
-        this.observer.observe(el)
+        el = findDOMNode(this).parentElement
 
-        window.requestAnimationFrame(() =>
-          window.dispatchEvent(new CustomEvent('resize'))
-        )
+        this.handleResize()
+        window.addEventListener('resize', this.handleResize)
       } catch (e) {
         // noop
       }
     },
 
     componentWillUnmount() {
-      this.observer.disconnect()
+      window.removeEventListener('resize', this.handleResize)
     }
   }),
   setDisplayName('with-dimensions')

@@ -16,6 +16,7 @@ import {
   withStateHandlers
 } from 'recompose'
 
+import Home from './style'
 import worker, { isWorkerReady } from './worker'
 
 export default compose<HomeProps, HomeOutterProps>(
@@ -87,24 +88,14 @@ export default compose<HomeProps, HomeOutterProps>(
   }
 
   return (
-    <Box
+    <Home
       is="section"
-      display="grid"
-      gridTemplateColumns="repeat(40, 1fr)"
       alignItems="flex-start"
       width="auto"
-      height="calc(100% - var(--offset))"
-      overflow="auto"
       marginY="var(--pad)"
       padding="var(--pad)"
       paddingBottom={0}>
-      <Box
-        gridRow={1}
-        gridColumn="23 / -1"
-        display="flex"
-        flexWrap="wrap"
-        alignItems="flex-start"
-        height="100%">
+      <Box display="flex" flexWrap="wrap" alignItems="flex-start">
         <Box is="section" display="block" width="100%" paddingX="var(--offset)">
           <Categories />
         </Box>
@@ -121,10 +112,10 @@ export default compose<HomeProps, HomeOutterProps>(
         </Box>
       </Box>
 
-      <Box gridRow={1} gridColumn="1 / 23" height="100%">
+      <Box>
         <Table data={orderBy(renderedData, sort.name, [sort.dir])} />
       </Box>
-    </Box>
+    </Home>
   )
 })
 

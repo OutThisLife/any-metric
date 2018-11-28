@@ -14,6 +14,7 @@ export default styled<any>('div')`
       position: relative;
       color: ${theme.colours.base};
       font-weight: 300;
+      font-size: 1rem;
       letter-spacing: 0.01em;
       border: 0;
       background: ${theme.inputs.bg};

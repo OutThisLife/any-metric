@@ -1,4 +1,4 @@
-import { BoxProps, ReactBox } from '@/components/Box'
+import Box, { BoxProps, ReactBox } from '@/components/Box'
 import dynamic from 'next/dynamic'
 import { compose, defaultProps, setDisplayName } from 'recompose'
 
@@ -14,8 +14,14 @@ const Form = compose<FormProps, FormProps>(
   }),
   setDisplayName('form')
 )(({ children, ...props }) => (
-  <BaseForm {...props}>
-    <fieldset>{children}</fieldset>
+  <BaseForm
+    display="flex"
+    alignItems="center"
+    margin={0}
+    padding={0}
+    border={0}
+    {...props}>
+    {children}
   </BaseForm>
 )) as IForm & React.ComponentType<FormProps>
 

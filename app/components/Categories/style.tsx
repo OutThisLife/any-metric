@@ -5,13 +5,31 @@ import styled, { css } from 'styled-components'
 
 export default styled<any>(Box)`
   ${({ theme }: BaphoTheme) => css`
+    --cols: 4;
+
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(var(--cols), 1fr);
     grid-gap: var(--pad);
     align-items: stretch;
     list-style: none;
     margin: 0;
     padding: 0;
+
+    @media (max-width: 1200px) {
+      --cols: 3;
+
+      a {
+        text-align: center;
+      }
+
+      > li > a[href] {
+        display: block;
+      }
+    }
+
+    @media (max-width: 768px) {
+      --cols: 2;
+    }
 
     ul,
     li {

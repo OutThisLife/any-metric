@@ -3,7 +3,6 @@ import * as express from 'express'
 import * as LRU from 'lru-cache'
 
 const app = express()
-const dev = process.env.NODE_ENV !== 'production'
 const cmd = /^win/.test(process.platform) ? 'yarn.cmd' : 'yarn'
 
 const cache = LRU({
@@ -13,10 +12,9 @@ const cache = LRU({
 
 try {
   const server = app
-    .use(require('../app/server/schema')({ app, cache, dev }))
+    .use(require('../app/server/schema')({ app, cache, dev: false }))
     .listen(3e3, err => {
       if (err) {
-        console.error(err)
         throw err
       }
 

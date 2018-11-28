@@ -2,13 +2,13 @@ import Box from '@/components/Box'
 import { moneyFormat, numFormat } from '@/lib/utils'
 import { FakeResult } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
-import { compose, setDisplayName, withProps } from 'recompose'
+import { compose, defaultProps, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
 import { Cols, ColumnProps, Table } from '..'
 
 export default compose<PriceProps & BaphoTheme, PriceProps>(
-  withProps<PriceProps, PriceProps>({
+  defaultProps<PriceProps>({
     name: 'price',
     flexGrow: 0,
     flexBasis: 80,

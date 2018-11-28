@@ -2,7 +2,7 @@ import Box from '@/components/Box'
 import { isOld, pointFormat } from '@/lib/utils'
 import { FakeResult } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
-import { compose, setDisplayName, withProps } from 'recompose'
+import { compose, defaultProps, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
 import { ColumnProps } from '..'
@@ -10,7 +10,7 @@ import Status from './style'
 import Text from './text'
 
 export default compose<StatusProps & BaphoTheme, StatusProps>(
-  withProps({
+  defaultProps<StatusProps>({
     name: 'bids',
     textAlign: 'center'
   }),

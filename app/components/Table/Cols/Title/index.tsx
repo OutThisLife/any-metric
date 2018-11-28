@@ -2,18 +2,18 @@ import Box from '@/components/Box'
 import { FakeResult } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import { Icon } from 'evergreen-ui'
-import { compose, setDisplayName, withProps } from 'recompose'
+import { compose, defaultProps, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
 import { ColumnProps, Table } from '..'
 import Title from './style'
 
 export default compose<TitleProps & BaphoTheme, TitleProps>(
-  withProps<TitleProps, TitleProps>(() => ({
+  defaultProps<TitleProps>({
     name: 'title',
     position: 'relative',
     flex: 17
-  })),
+  }),
   withTheme,
   setDisplayName('col-title')
 )(({ theme, children, item = {}, ...props }) => (

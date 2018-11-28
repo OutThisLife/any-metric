@@ -50,9 +50,7 @@ export default compose<
       />
 
       <Cols.Title isHeader>Product</Cols.Title>
-      <Cols.Time isHeader textAlign="right">
-        Date
-      </Cols.Time>
+      <Cols.Time isHeader>Date</Cols.Time>
       <Cols.Status isHeader>Status</Cols.Status>
       <Cols.Price isHeader>Price</Cols.Price>
     </Table.Head>

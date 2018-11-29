@@ -4,7 +4,7 @@ import withSelections, { select, SelectionsProps } from '@/lib/withSelections'
 import { FakeResult } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import * as d3 from 'd3'
-import { compose, setDisplayName, withHandlers, withProps } from 'recompose'
+import { compose, setDisplayName, withHandlers } from 'recompose'
 import { withTheme } from 'styled-components'
 
 import Cols from './Cols'
@@ -19,9 +19,6 @@ export default compose<
   withTheme,
   withDimensions,
   withSelections,
-  withProps<TableProps, TableProps>(({ height }) => ({
-    height: height * 0.9
-  })),
   withHandlers<{}, TableProps>(() => ({
     handleScroll: () => ({ currentTarget }) => {
       const el = currentTarget.firstChild.firstChild as HTMLElement
@@ -60,7 +57,7 @@ export default compose<
       onMouseDown={handleMouse}
       onScroll={handleScroll}>
       {data.map(d => (
-        <Table.Row key={d.id}>
+        <Table.Row key={d.id} id={d.id} height={52}>
           <Cols.Check
             checkboxProps={{
               pointerEvents: 'none',

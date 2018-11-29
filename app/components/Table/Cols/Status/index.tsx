@@ -12,6 +12,8 @@ import Text from './text'
 export default compose<StatusProps & BaphoTheme, StatusProps>(
   defaultProps<StatusProps>({
     name: 'bids',
+    flex: 'unset',
+    flexBasis: 53,
     textAlign: 'center'
   }),
   withTheme,

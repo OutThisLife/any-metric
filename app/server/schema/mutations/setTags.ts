@@ -5,7 +5,7 @@ export default (async (
   _,
   { ids, tags = [''] }: Args
 ): Promise<FakeResult[]> => {
-  const initialData = await genFakeResults()
+  const initialData = await genFakeResults({})
 
   return initialData
     .map(d =>

@@ -4,12 +4,16 @@ import { FakeResult, Resolver } from '../types'
 
 faker.seed(100)
 
-export default (async (): Promise<FakeResult[]> =>
-  (await genFakeResults()) || []) as Resolver
+export default (async (_, args = {}): Promise<FakeResult[]> =>
+  (await genFakeResults(args)) || []) as Resolver
 
 export const genFakeResults: (
-  ids?: string[]
-) => Promise<FakeResult[]> = async ids => {
+  args: {
+    ids?: string[]
+    offset?: number
+    limit?: number
+  }
+) => Promise<FakeResult[]> = async ({ ids = [], offset = 0, limit = 25 }) => {
   const data = [...Array(255).keys()].map(i => ({
     id: faker.random.uuid(),
     slug: faker.lorem.slug(),
@@ -28,9 +32,9 @@ export const genFakeResults: (
     ])
   }))
 
-  if (!ids) {
-    return data
+  if (ids.length) {
+    return data.filter(({ id }) => ids.includes(id))
   }
 
-  return data.filter(({ id }) => ids.includes(id))
+  return data.slice(offset, limit)
 }

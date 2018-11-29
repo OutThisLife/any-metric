@@ -1,9 +1,12 @@
 import Box from '@/components/Box'
+import omit from 'lodash/omit'
 import styled, { css } from 'styled-components'
 
 import { FormProps } from '.'
 
-export default styled<any>(Box)`
+const Item = props => <Box {...omit(props, ['groupFields'])} />
+
+export default styled<any>(Item)`
   ${({ groupFields = false }: FormProps) =>
     groupFields &&
     css`

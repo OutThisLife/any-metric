@@ -6,8 +6,8 @@ import { Cols, ColumnProps } from '..'
 export default compose<CheckProps, CheckProps>(
   defaultProps<CheckProps>({
     name: 'id',
-    flex: 0.7,
-    flexBasis: 'auto',
+    flex: 'unset',
+    flexBasis: 30,
     overflow: 'visible'
   }),
   setDisplayName('col-checkbox')

@@ -7,7 +7,7 @@ export default gql`
   scalar Date
 
   type Query {
-    fakeCrawl(id: [String]): [FakeResult]
+    fakeCrawl(ids: [String], offset: Int, limit: Int): [FakeResult]
   }
 
   type Mutation {

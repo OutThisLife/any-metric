@@ -10,14 +10,15 @@ import { Cols, ColumnProps, Table } from '..'
 export default compose<PriceProps & BaphoTheme, PriceProps>(
   defaultProps<PriceProps>({
     name: 'price',
+    flex: 'unset',
     flexGrow: 0,
     flexBasis: 80,
-    paddingRight: 20,
     textAlign: 'right',
     flexWrap: 'wrap',
     alignItems: 'center',
     alignSelf: 'stretch',
-    lineHeight: 0
+    lineHeight: 0,
+    padding: 0
   }),
   withTheme,
   setDisplayName('col-price')
@@ -26,7 +27,7 @@ export default compose<PriceProps & BaphoTheme, PriceProps>(
     {!('id' in item) ? (
       children
     ) : (
-      <Box display="inline-block" lineHeight={1.2}>
+      <Box display="inline-block" width="100%" lineHeight={1.2}>
         <Table.Text
           fontWeight={700}
           backgroundImage={

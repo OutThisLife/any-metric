@@ -39,7 +39,9 @@ export default compose<HomeProps, HomeOutterProps>(
         action = filter.action
       }) => ({ filter: { value, action } }),
 
-      updateRendered: (_, { results }) => (renderedData = results) => ({
+      updateRendered: (_, { results }) => (
+        renderedData: FakeResult[] = results
+      ) => ({
         renderedData
       }),
 
@@ -108,7 +110,7 @@ export default compose<HomeProps, HomeOutterProps>(
           width="100%"
           alignSelf="flex-end"
           marginBottom="var(--pad)">
-          <PriceChart data={renderedData} />
+          <PriceChart data={orderBy(renderedData, 'date', 'asc')} />
         </Box>
       </Box>
 

@@ -12,7 +12,7 @@ export default compose<TitleProps & BaphoTheme, TitleProps>(
   defaultProps<TitleProps>({
     name: 'title',
     position: 'relative',
-    flex: 17
+    padding: 0
   }),
   withTheme,
   setDisplayName('col-title')
@@ -31,7 +31,6 @@ export default compose<TitleProps & BaphoTheme, TitleProps>(
           width="100%"
           overflow="hidden"
           textOverflow="ellipsis"
-          paddingRight="2rem"
           paddingLeft="1rem">
           <a
             href={item.slug}

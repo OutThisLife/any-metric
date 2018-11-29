@@ -13,7 +13,6 @@ export default styled<any>(BaseTable)`
 
     .head {
       user-select: none;
-      padding-right: calc(var(--pad) * 2);
 
       > div * {
         cursor: pointer;
@@ -48,10 +47,10 @@ export default styled<any>(BaseTable)`
         outline-color: ${theme.colours.focus};
         background: #1a213f;
       }
-    }
 
-    [data-evergreen-table-body] > div {
-      padding-right: var(--pad);
+      &.chart-link {
+        outline-color: ${theme.colours.star};
+      }
     }
   `}
 ` as ITable<{}> & ReactBox<{}, HTMLTableElement>

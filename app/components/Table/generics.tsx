@@ -3,7 +3,8 @@ import Text from '@/components/Text'
 import { BaphoTheme } from '@/theme'
 import { Table as BaseTable } from 'evergreen-ui'
 import omit from 'lodash/omit'
-import { compose, defaultProps, mapProps } from 'recompose'
+import { bool } from 'prop-types'
+import { compose, defaultProps, mapProps, withContext } from 'recompose'
 import { withTheme } from 'styled-components'
 
 import Table, { ITable } from './style'
@@ -17,14 +18,13 @@ const enhance = <T extends {}>(...funcs: any[]) =>
       paddingY: 0,
       borderBottom: '0px'
     }),
-    mapProps(props => omit(props, ['isHeader', 'theme'])),
+    mapProps(props => omit(props, ['theme'])),
     ...funcs
   )
 
 Table.Head = enhance(
-  defaultProps({
-    background: 'none'
-  })
+  defaultProps({ background: 'none' }),
+  withContext({ isHeader: bool }, () => ({ isHeader: true }))
 )(BaseTable.Head)
 
 Table.Body = enhance(defaultProps({ allowAutoHeight: true }))(

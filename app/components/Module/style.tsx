@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 
 const Module = ({ className, ...props }) => (
   <Box position="relative" className={className}>
-    <Box width="calc(100% - (var(--pad) / 2))" {...props} />
+    <Box {...props} />
   </Box>
 )
 

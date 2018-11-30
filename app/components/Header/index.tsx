@@ -1,23 +1,21 @@
-import Box from '@/components/Box'
+import Box, { BoxProps } from '@/components/Box'
 import Form from '@/components/Form'
 import Text from '@/components/Text'
 import { BaphoTheme } from '@/theme'
 import { compose, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
-export default compose<HeaderProps, {}>(
+export default compose<HeaderProps & BaphoTheme, HeaderProps>(
   withTheme,
   setDisplayName('header')
-)(({ theme }) => (
+)(({ theme, ...props }) => (
   <Box
     is="header"
-    contain="layout"
+    gridArea="head"
     display="flex"
     alignItems="center"
     justifyContent="space-between"
-    padding="var(--offset)"
-    paddingTop="calc(var(--pad) * 2)"
-    paddingBottom={0}>
+    {...props}>
     <Box>
       <Text
         is="h1"
@@ -46,4 +44,4 @@ export default compose<HeaderProps, {}>(
   </Box>
 ))
 
-export type HeaderProps = BaphoTheme
+export type HeaderProps = BoxProps<HTMLDivElement>

@@ -16,7 +16,8 @@
     "fix": "tslint app/**/*.tsx --fix",
     "dev": "nodemon ./app/server/index.ts",
     "build": "yarn build:static",
-    "start": "yarn start:static"
+    "start": "yarn start:static",
+    "stats": "webpack --json > stats.json"
   },
   "keywords": [],
   "author": "",

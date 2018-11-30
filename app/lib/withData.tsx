@@ -1,5 +1,6 @@
 import theme from '@/theme'
 import ApolloClient from 'apollo-client'
+import { omit } from 'lodash'
 import Head from 'next/head'
 import { Component } from 'react'
 import { getDataFromTree } from 'react-apollo'
@@ -13,40 +14,26 @@ export default App =>
 
     public static async getInitialProps(ctx) {
       let serverState = {}
-      const pageProps: any = {}
 
-      try {
-        const client = initApollo()
+      const client = initApollo()
 
-        await getDataFromTree(
-          <App
-            client={client}
-            router={ctx.router}
-            Component={ctx.Component}
-            theme={theme}
-          />,
-          ctx
-        )
+      await getDataFromTree(
+        <App
+          Component={ctx.Component}
+          client={client}
+          router={ctx.router}
+          theme={theme}
+        />,
+        ctx
+      )
 
-        serverState = client.cache.extract() || {}
+      serverState = client.cache.extract() || {}
 
-        if (!('browser' in process)) {
-          const {
-            ctx: { req }
-          } = ctx
-
-          pageProps.headers = req.headers
-
-          Head.rewind()
-        }
-      } catch (err) {
-        console.error('Error while running `getDataFromTree`', err)
-
-        err.code = 'ENOENT'
-        throw err
+      if (!('browser' in process)) {
+        Head.rewind()
       }
 
-      return { pageProps, serverState }
+      return { serverState }
     }
 
     private client: ApolloClient<{}>
@@ -57,7 +44,12 @@ export default App =>
     }
 
     public render() {
-      const { serverState, ...props } = this.props
-      return <App client={this.client} theme={theme} {...props} />
+      return (
+        <App
+          client={this.client}
+          theme={theme}
+          {...omit(this.props, ['serverState'])}
+        />
+      )
     }
   }

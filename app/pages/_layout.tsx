@@ -3,29 +3,24 @@ import Header from '@/components/Header'
 import { BaphoTheme } from '@/theme'
 import { AppProps } from 'next/app'
 import { compose, setDisplayName } from 'recompose'
-import { withTheme } from 'styled-components'
-import { IObject } from 'typings'
 
 import { Main } from './_app.styles'
 
 export default compose<BaphoTheme & LayoutProps, LayoutProps>(
-  withTheme,
   setDisplayName('layout')
-)(({ theme, Component, pageProps }) => (
+)(({ Component }) => (
   <Main>
     <Box
       id="app"
-      position="relative"
-      margin="auto"
-      borderRadius={10}
-      background={theme.colours.panelBg}
-      backgroundBlendMode="overlay">
+      display="grid"
+      gridTemplate="'head' 'main'"
+      gridTemplateRows="min-content 1fr"
+      gridGap="calc(var(--offset) / 2)"
+      padding="var(--offset)">
       <Header />
-      <Component {...pageProps} />
+      <Component />
     </Box>
   </Main>
 ))
 
-export interface LayoutProps extends Partial<AppProps> {
-  pageProps: IObject
-}
+export type LayoutProps = Partial<AppProps>

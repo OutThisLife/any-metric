@@ -6,11 +6,6 @@ import styled, { css } from 'styled-components'
 
 export default styled<any>(BaseTable)`
   ${({ theme }: BaphoTheme) => css`
-    .head,
-    .row {
-      padding: 0 var(--pad);
-    }
-
     .head {
       user-select: none;
 
@@ -36,6 +31,7 @@ export default styled<any>(BaseTable)`
 
       &:not(:hover) {
         transition: ${theme.eases.base};
+        transition-property: background, outline;
       }
 
       &:hover {

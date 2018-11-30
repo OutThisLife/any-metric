@@ -18,7 +18,8 @@ export default compose<PriceProps & BaphoTheme, PriceProps>(
     alignItems: 'center',
     alignSelf: 'stretch',
     lineHeight: 0,
-    padding: 0
+    padding: 0,
+    paddingRight: 15
   }),
   withTheme,
   setDisplayName('col-price')

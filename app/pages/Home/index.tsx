@@ -1,10 +1,10 @@
-import Box from '@/components/Box'
+import Box, { BoxProps } from '@/components/Box'
 import Categories from '@/components/Categories'
 import PriceChart from '@/components/Charts/Price'
 import Table from '@/components/Table'
 import { getFakeCrawl } from '@/lib/queries'
 import { FakeResult } from '@/server/schema/types'
-import orderBy from 'lodash/orderBy'
+import { orderBy } from 'lodash'
 import { func, shape, string } from 'prop-types'
 import {
   compose,
@@ -92,36 +92,39 @@ export default compose<HomeProps, HomeOutterProps>(
   return (
     <Home
       is="section"
+      gridArea="main"
+      display="grid"
+      gridTemplate="'table controls'"
       alignItems="flex-start"
-      width="auto"
-      marginY="var(--pad)"
-      padding="var(--pad)"
+      gridGap="inherit"
       paddingBottom={0}>
-      <Box display="flex" flexWrap="wrap" alignItems="flex-start">
-        <Box is="section" display="block" width="100%" paddingX="var(--offset)">
+      <Box gridArea="table">
+        <Table data={orderBy(renderedData, sort.name, [sort.dir])} />
+      </Box>
+
+      <Box
+        display="flex"
+        flexWrap="wrap"
+        alignItems="flex-start"
+        gridArea="controls">
+        <Box is="section" width="100%">
           <Categories />
         </Box>
 
         <Box
           is="section"
           zIndex={10}
-          display="block"
-          position="relative"
-          width="100%"
           alignSelf="flex-end"
-          marginBottom="var(--pad)">
+          width="100%"
+          minHeight="40%">
           <PriceChart data={orderBy(renderedData, 'date', 'asc')} />
         </Box>
-      </Box>
-
-      <Box>
-        <Table data={orderBy(renderedData, sort.name, [sort.dir])} />
       </Box>
     </Home>
   )
 })
 
-interface HomeOutterProps {
+interface HomeOutterProps extends BoxProps<HTMLDivElement> {
   children?: React.ReactNode
 }
 

@@ -77,10 +77,10 @@ export default {
         mode: 'grab'
       },
       onclick: {
-        enable: true,
+        enable: false,
         mode: 'push'
       },
-      resize: true
+      resize: false
     },
     modes: {
       grab: {

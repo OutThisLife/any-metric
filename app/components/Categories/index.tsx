@@ -23,13 +23,13 @@ export default compose<
 )(({ handleMouse, filter, ...props }) => (
   <Module
     title="Category Filters"
+    maxHeight="45%"
+    overflow="auto"
     cta={() => (
       <Form.Button variant="basic | pill" marginLeft={20}>
         New Filter
       </Form.Button>
-    )}
-    maxHeight="calc(100vh * 0.7 / 2.4)"
-    overflow="auto">
+    )}>
     <Categories
       is="ul"
       margin={0}

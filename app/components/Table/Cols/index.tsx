@@ -2,14 +2,15 @@ import { BoxProps, ReactBox } from '@/components/Box'
 import { HomeState } from '@/pages/home'
 import { Icon } from 'evergreen-ui'
 import dynamic from 'next/dynamic'
-import { func, shape } from 'prop-types'
+import { bool, func, shape } from 'prop-types'
 import {
   branch,
   compose,
   defaultProps,
   getContext,
   renderComponent,
-  setDisplayName
+  setDisplayName,
+  shouldUpdate
 } from 'recompose'
 
 import Table, { ITable } from '../style'
@@ -17,16 +18,17 @@ import Table, { ITable } from '../style'
 export const Cols = compose<ColumnProps, ColumnProps>(
   defaultProps<ColumnProps>({
     name: Math.random().toString(),
-    isHeader: false,
     flex: 2.5,
     textAlign: 'left'
   }),
   getContext({
+    isHeader: bool,
     sort: shape({}),
     sortBy: func
   }),
   setDisplayName('cell'),
-  branch<ColumnProps>(props => !props.isHeader, renderComponent(Table.Cell))
+  branch<ColumnProps>(props => !props.isHeader, renderComponent(Table.Cell)),
+  shouldUpdate<ColumnProps>(props => props.isHeader)
 )(({ children, name, sort, sortBy, ...props }) => (
   <Table.HeaderCell
     display="flex"

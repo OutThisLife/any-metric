@@ -11,8 +11,8 @@ export default createGlobalStyle`
     }
 
     ::selection {
-      color: #fff;
-      background: #f36;
+      color: ${theme.colours.base};
+      background: ${theme.colours.label};
     }
 
     ::-webkit-scrollbar {
@@ -65,10 +65,6 @@ export default createGlobalStyle`
       border: 0;
     }
 
-    svg.react-stockchart {
-      max-width: none;
-    }
-
     input + button,
     select + button {
       margin-left: -3px !important;
@@ -88,50 +84,42 @@ export default createGlobalStyle`
 export const Main = styled<any>(Box)`
   --offset: calc(var(--pad) * 3);
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--offset);
+
+  @media (min-width: 1025px) {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+
   ${({ theme }: BaphoTheme) => css`
-    @media (min-width: 1440px) {
-      display: flex;
-      align-items: center;
-      height: 100vh;
-      width: 100vw;
-    }
-
     #app {
-      width: calc(100% - var(--offset));
-      box-shadow: 0 17px 50px -5px #040617;
+      position: relative;
+      width: 100%;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      box-shadow: 0 17px 50px -5px #040617, 0 17px 150px -10px #040617;
+      background: ${theme.colours.panelBg};
+      background-blend-mode: overlay;
 
-      @media (min-width: 1440px) {
-        height: calc(100% - var(--offset));
+      @media (min-width: 1025px) {
+        height: 100%;
         overflow: hidden;
       }
 
-      @media (max-width: 1440px) {
-        margin: calc(var(--offset) / 2) auto;
-      }
-
-      &:before,
-      &:after {
-        pointer-events: none;
-        content: '';
-        position: fixed;
-        right: calc(var(--offset) / 2.1);
-        left: calc(var(--offset) / 2.1);
-      }
-
-      &:before {
-        z-index: -1;
-        top: calc(var(--offset) / 2);
-        bottom: calc(var(--offset) / 2);
-        width: 90%;
-        margin: auto;
-        box-shadow: 0 17px 150px -10px #040617;
-      }
-
-      @media (min-width: 1440px) {
+      @media (min-width: 1025px) {
         &:after {
           z-index: 9;
-          bottom: calc(var(--offset) / 2.4);
-          height: calc(var(--offset) * 2);
+          pointer-events: none;
+          content: '';
+          position: fixed;
+          right: var(--offset);
+          left: var(--offset);
+          bottom: var(--offset);
+          height: 20%;
           border-radius: inherit;
           background: linear-gradient(
             180deg,

@@ -8,6 +8,7 @@ export default compose<CheckProps, CheckProps>(
     name: 'id',
     flex: 'unset',
     flexBasis: 30,
+    padding: 0,
     overflow: 'visible'
   }),
   setDisplayName('col-checkbox')

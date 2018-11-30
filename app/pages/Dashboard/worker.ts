@@ -24,13 +24,17 @@ export const worker: PodWorker =
           break
 
         case 'TAG':
-          this.postMessage(data.filter(d => d.tags.includes(value)))
+          const tags = value.split(',')
+
+          this.postMessage(data.filter(d => d.tags.some(t => tags.includes(t))))
+
           break
 
         case 'SEARCH':
           this.postMessage(
             this.fuzzaldrin.filter(data, value, { key: 'title' })
           )
+
           break
       }
     }

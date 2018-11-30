@@ -15,8 +15,8 @@ export default compose<HeaderProps & BaphoTheme, HeaderProps>(
     display="flex"
     alignItems="center"
     justifyContent="space-between"
-    padding="var(--offset)"
-    paddingBottom={0}>
+    paddingTop="var(--pad)"
+    paddingX="var(--offset)">
     <Box>
       <Text
         is="h1"
@@ -36,10 +36,9 @@ export default compose<HeaderProps & BaphoTheme, HeaderProps>(
           zIndex={1}
           tabIndex={1}
           placeholder="Enter product name &hellip;"
-          borderRadius={32}
         />
 
-        <Form.Button zIndex={2} iconBefore="plus" iconSize={32} />
+        <Form.Button zIndex={2} icon="plus" iconSize={32} />
       </Form>
     </Box>
   </Box>

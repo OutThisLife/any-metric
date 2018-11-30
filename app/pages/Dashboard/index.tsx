@@ -1,6 +1,7 @@
 import Box, { BoxProps } from '@/components/Box'
 import Categories from '@/components/Categories'
-import PriceChart from '@/components/Charts/Price'
+import Chart from '@/components/Chart'
+import Table from '@/components/Table'
 import { getFakeCrawl } from '@/lib/queries'
 import { FakeResult } from '@/server/schema/types'
 import { orderBy } from 'lodash'
@@ -15,7 +16,6 @@ import {
   withStateHandlers
 } from 'recompose'
 
-import DataTable from './DataTable'
 import Home from './style'
 import worker, { isWorkerReady } from './worker'
 
@@ -70,18 +70,15 @@ export default compose<HomeProps, HomeOutterProps>(
       current
     })
   ),
-  withPropsOnChange<{}, HomeProps & HomeState>(
+  withPropsOnChange<any, HomeProps & HomeState>(
     ['filter'],
-    ({ results, filter: { action, value } }) => {
-      if (isWorkerReady()) {
-        worker.postMessage([results, action, value])
-      }
-
-      return {}
-    }
+    ({ results, filter: { action, value } }) =>
+      isWorkerReady() && worker.postMessage([results, action, value])
   ),
   setDisplayName('dashboard')
-)(({ sort, renderedData, updateRendered }) => {
+)(({ sort, results, renderedData, updateRendered, width, height }) => {
+  const isDesktop = (width || 1920) > 1025
+
   if (isWorkerReady()) {
     worker.onmessage = ({ data }) => updateRendered(data)
     worker.onerror = e => {
@@ -90,40 +87,78 @@ export default compose<HomeProps, HomeOutterProps>(
   }
 
   return (
-    <Home
-      is="section"
-      gridArea="main"
-      display="grid"
-      gridTemplate="'table controls'"
-      alignItems="flex-start"
-      gridGap="inherit">
-      <Box gridArea="table">
-        <DataTable data={orderBy(renderedData, sort.name, [sort.dir])} />
+    <Home is="section" display="grid" alignItems="flex-start" gridGap="inherit">
+      <Box gridArea="table" alignSelf="inherit">
+        <Table
+          isDesktop={isDesktop}
+          data={orderBy(renderedData, sort.name, [sort.dir])}
+          height={isDesktop ? height : 400}
+          columns={[
+            {
+              label: 'Product',
+              key: 'title'
+            },
+            {
+              label: 'Date',
+              key: 'time'
+            },
+            {
+              label: 'Status',
+              key: 'status'
+            },
+            {
+              label: 'Price',
+              key: 'price'
+            }
+          ]}
+        />
       </Box>
 
       <Box
         display="flex"
         flexWrap="wrap"
         alignItems="flex-start"
-        gridArea="controls">
-        <Box is="section" width="100%">
-          <Categories />
+        gridArea="controls"
+        alignSelf="inherit">
+        <Box
+          is="section"
+          width="100%"
+          paddingY="var(--pad)"
+          paddingX="calc(var(--pad) / 2)">
+          {results.length && (
+            <Categories data={orderBy(results, 'date', 'asc')} />
+          )}
         </Box>
 
         <Box
           is="section"
           zIndex={10}
-          alignSelf="flex-end"
-          width="100%"
-          minHeight="40%">
-          <PriceChart data={orderBy(renderedData, 'date', 'asc')} />
+          alignSelf={isDesktop ? 'flex-end' : 'center'}
+          margin={isDesktop ? 0 : 'auto'}
+          marginLeft={isDesktop ? 'auto' : 0}
+          marginTop={isDesktop ? 0 : 'var(--offset)'}>
+          {renderedData && (
+            <Chart
+              data={orderBy(renderedData, 'date', 'asc')}
+              isDesktop={isDesktop}
+              width={isDesktop ? width / 2 - width / 15 : width / 1.5}
+            />
+          )}
         </Box>
       </Box>
     </Home>
   )
 })
 
+type HomeProps = {
+  results: HomeState['renderedData']
+} & HomeState &
+  HomeOutterProps &
+  HomeStateHandlers
+
 interface HomeOutterProps extends BoxProps<HTMLDivElement> {
+  width?: number
+  height?: number
   children?: React.ReactNode
 }
 
@@ -144,10 +179,5 @@ export interface HomeState {
 interface HomeStateHandlers extends StateHandlerMap<HomeState> {
   setFilter: StateHandler<HomeState>
 }
-
-type HomeProps = {
-  results: HomeState['renderedData']
-} & HomeState &
-  HomeStateHandlers
 
 export type DataTableFilter = (a: HomeState['filter']) => void

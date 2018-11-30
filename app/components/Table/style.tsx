@@ -4,6 +4,8 @@ import { Table } from 'evergreen-ui'
 import { rgba } from 'polished'
 import styled, { css } from 'styled-components'
 
+import { ITable } from './Elements'
+
 export default styled<any>(Table)`
   ${({ theme }: BaphoTheme) => css`
     .head {
@@ -21,6 +23,16 @@ export default styled<any>(Table)`
         svg {
           fill: ${theme.colours.muted} !important;
         }
+      }
+    }
+
+    @media (max-width: 1025px) {
+      .head {
+        display: none;
+      }
+
+      .row {
+        min-width: 1024px;
       }
     }
 
@@ -50,12 +62,3 @@ export default styled<any>(Table)`
     }
   `}
 ` as ITable<{}> & ReactBox<{}, HTMLTableElement>
-
-export interface ITable<P = {}> {
-  Head?: ReactBox<P, HTMLTableElement>
-  HeaderCell?: ReactBox<P, HTMLTableHeaderCellElement>
-  Body?: ReactBox<P, HTMLTableElement>
-  Row?: ReactBox<P, HTMLTableRowElement>
-  Cell?: ReactBox<P, HTMLTableCellElement>
-  Text?: ReactBox<P, HTMLTableCellElement>
-}

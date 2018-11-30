@@ -87,11 +87,12 @@ export const Main = styled<any>(Box)`
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100vw;
+  min-height: 100vh;
   padding: var(--offset);
 
   @media (min-width: 1025px) {
     height: 100vh;
-    width: 100vw;
     overflow: hidden;
   }
 
@@ -115,10 +116,10 @@ export const Main = styled<any>(Box)`
           z-index: 9;
           pointer-events: none;
           content: '';
-          position: fixed;
-          right: var(--offset);
-          left: var(--offset);
-          bottom: var(--offset);
+          position: absolute;
+          right: 0;
+          left: 0;
+          bottom: 0;
           height: 20%;
           border-radius: inherit;
           background: linear-gradient(

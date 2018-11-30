@@ -1,4 +1,4 @@
-import { BoxProps } from '@/components/Box'
+import { BoxProps, ReactBox } from '@/components/Box'
 import BaseText from '@/components/Text'
 import { BaphoTheme } from '@/theme'
 import { Table as BaseTable } from 'evergreen-ui'
@@ -7,7 +7,7 @@ import { bool } from 'prop-types'
 import { compose, defaultProps, mapProps, withContext } from 'recompose'
 import { withTheme } from 'styled-components'
 
-import Table, { ITable } from './style'
+import Table from '../style'
 
 const enhance = <T extends {}>(...funcs: any[]) =>
   compose<ITable & T, ITable>(
@@ -18,7 +18,16 @@ const enhance = <T extends {}>(...funcs: any[]) =>
       paddingY: 0,
       borderBottom: '0px'
     }),
-    mapProps(props => omit(props, ['theme', 'sort', 'name'])),
+    mapProps(props =>
+      omit(props, [
+        'theme',
+        'sort',
+        'sortBy',
+        'name',
+        'disableSort',
+        'isHeader'
+      ])
+    ),
     ...funcs
   )
 
@@ -60,5 +69,14 @@ Table.HeaderCell = enhance<BaphoTheme>(withTheme)(
     </BaseTable.HeaderCell>
   )
 )
+
+export interface ITable<P = {}> {
+  Head?: ReactBox<P, HTMLTableElement>
+  HeaderCell?: ReactBox<P, HTMLTableHeaderCellElement>
+  Body?: ReactBox<P, HTMLTableElement>
+  Row?: ReactBox<P, HTMLTableRowElement>
+  Cell?: ReactBox<P, HTMLTableCellElement>
+  Text?: ReactBox<P, HTMLTableCellElement>
+}
 
 export default Table

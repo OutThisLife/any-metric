@@ -1,9 +1,9 @@
-import { BoxProps } from '@/components/Box'
+import Box, { BoxProps } from '@/components/Box'
 import { moneyFormat, numFormat } from '@/lib/utils'
 import { FakeResult } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import * as d3 from 'd3'
-import faker from 'faker'
+import { Spinner } from 'evergreen-ui'
 import { rgba } from 'polished'
 import { Chart, ChartCanvas } from 'react-stockcharts'
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes'
@@ -12,7 +12,6 @@ import {
   MouseCoordinateX,
   MouseCoordinateY
 } from 'react-stockcharts/lib/coordinates'
-import { fitDimensions } from 'react-stockcharts/lib/helper'
 import { sma } from 'react-stockcharts/lib/indicator'
 import { ClickCallback } from 'react-stockcharts/lib/interactive'
 import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
@@ -29,11 +28,11 @@ import {
   last
 } from 'react-stockcharts/lib/utils'
 import {
+  branch,
   compose,
-  mapProps,
+  renderComponent,
   setDisplayName,
-  withPropsOnChange,
-  withState
+  withProps
 } from 'recompose'
 import { withTheme } from 'styled-components'
 
@@ -43,18 +42,17 @@ const MA = sma()
   .accessor(d => d.MA)
 
 export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
-  mapProps<ChartProps, ChartOutterProps>(({ data }) => ({
-    initialData: data.map(d => ({
-      ...d,
-      date: new Date(d.date),
-      price: parseFloat(d.price),
-      volume: faker.random.number({ min: 10, max: 1000 })
-    }))
-  })),
-  withTheme,
-  fitDimensions,
-  withState('chartProps', 'updateChart', ({ initialData }) => {
-    const calculatedData = MA(initialData)
+  withProps<Partial<ChartProps>, ChartOutterProps>(({ data: initialData }) => {
+    const calculatedData = MA(
+      initialData.map(d => ({
+        ...d,
+        date: new Date(d.date),
+        price: parseFloat(d.price),
+        volume: initialData
+          .filter(({ slug }) => slug === d.slug)
+          .reduce((acc, { quantity }) => (acc += parseInt(quantity, 10)), 0)
+      }))
+    )
 
     const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
       d => d.date
@@ -76,25 +74,32 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
       xExtents
     }
   }),
-  withPropsOnChange(['width'], ({ chartProps, width, height }) => ({
-    isDesktop: window.innerWidth >= 1025,
-    chartProps: {
-      ...chartProps,
-      width,
-      height,
-      ratio: width / height
-    }
-  })),
+  withTheme,
+  branch<ChartProps>(
+    props => !('data' in props) || isNaN(props.width) || props.width <= 0,
+    renderComponent(() => (
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        padding="var(--offset)">
+        <Spinner />
+      </Box>
+    ))
+  ),
   setDisplayName('price')
-)(({ theme, chartProps = {}, isDesktop }) => (
+)(({ theme, isDesktop, width, ...props }) => (
   <div onMouseLeave={() => d3.timeout(unlink, 700)}>
     <ChartCanvas
-      {...chartProps}
+      {...props}
+      ratio={1}
+      width={width}
+      height={width * 0.456}
       seriesName="Price"
       clamp={true}
       type="hybrid"
       pointsPerPxThreshold={6}
-      margin={{ top: 0, right: 50, bottom: 50, left: 0 }}>
+      margin={{ top: 0, right: 30, bottom: 30, left: 0 }}>
       <Chart id={2} yExtents={[d => d.price, MA.accessor()]} yPan={false}>
         <XAxis
           axisAt="bottom"
@@ -104,9 +109,10 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
           stroke={theme.colours.border}
           tickStroke={theme.colours.muted}
         />
+
         {isDesktop && (
           <MouseCoordinateX
-            fontSize={11}
+            fontSize={10}
             snapX={false}
             at="bottom"
             orient="bottom"
@@ -126,9 +132,10 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
           tickStroke={theme.colours.base}
           displayFormat={moneyFormat}
         />
+
         {isDesktop && (
           <MouseCoordinateY
-            fontSize={11}
+            fontSize={10}
             at="right"
             orient="right"
             fontFamily="monospace"
@@ -291,15 +298,24 @@ const unlink = () => {
 
 interface ChartOutterProps extends BoxProps<HTMLDivElement> {
   data?: FakeResult[]
+  isDesktop?: boolean
+  width?: number
+  height?: number
 }
 
 interface ChartProps extends ChartOutterProps {
-  chartProps?: any
-  isDesktop?: boolean
+  width: number
+  height: number
+  ratio: number
+  data: any[]
+  xScale: any[]
+  displayXAccessor: any
+  xAccessor: any
+  xExtents: any
   initialData?: Array<{
     id: string | number
     date: Date
     price: number
-    volume: number
+    volume?: number
   }>
 }

@@ -19,7 +19,7 @@ const Form = compose<FormProps, FormProps>(
     alignItems="center"
     margin={0}
     padding={0}
-    border={0}
+    border="none"
     {...props}>
     {children}
   </BaseForm>

@@ -1,5 +1,4 @@
 import { BoxProps, ReactBox } from '@/components/Box'
-import { HomeState } from '@/pages/home'
 import { Icon } from 'evergreen-ui'
 import dynamic from 'next/dynamic'
 import { array, bool, func, shape } from 'prop-types'
@@ -14,9 +13,10 @@ import {
 } from 'recompose'
 
 import { TableOutterProps } from '..'
-import Table, { ITable } from '../style'
+import Table, { ITable } from '../Elements'
 
 export const Cols = compose<ColumnProps, ColumnProps>(
+  setDisplayName('cell'),
   defaultProps<ColumnProps>({
     name: Math.random().toString(),
     flex: 2.5,
@@ -27,24 +27,23 @@ export const Cols = compose<ColumnProps, ColumnProps>(
     sort: shape({}),
     sortBy: func
   }),
-  setDisplayName('cell'),
   branch<ColumnProps>(
     props => !props.isHeader || props.disableSort,
     renderComponent(Table.Cell)
   ),
   shouldUpdate<ColumnProps>(props => props.isHeader)
-)(({ children, name, sort, sortBy, ...props }) => (
+)(({ children, name, sort: { dir, name: sortKey }, sortBy, ...props }) => (
   <Table.HeaderCell
     display="flex"
     alignItems="center"
-    onClick={() => sortBy({ name, dir: sort.dir === 'asc' ? 'desc' : 'asc' })}
+    onClick={() => sortBy({ name, dir: dir === 'asc' ? 'desc' : 'asc' })}
     {...props}>
     <span>{children}</span>
 
-    {sort.name === name && (
+    {sortKey === name && (
       <Icon
         size={13}
-        icon={`caret-${sort.dir === 'desc' ? 'down' : 'up'}`}
+        icon={`caret-${dir === 'desc' ? 'down' : 'up'}`}
         marginLeft={2}
       />
     )}
@@ -70,7 +69,10 @@ export const RenderColumns = compose<RenderColumnProps, RenderColumnProps>(
 ))
 
 export interface ColumnProps extends BoxProps<HTMLTableCellElement> {
-  sort?: HomeState['sort']
+  sort?: {
+    dir: string
+    name: string
+  }
   name?: string
   disableSort?: boolean
   isHeader?: boolean

@@ -7,28 +7,19 @@ export default styled<any>(Box)`
   ${({ theme }: BaphoTheme) => css`
     --cols: 4;
 
-    display: grid;
-    grid-template-columns: repeat(var(--cols), 1fr);
-    grid-gap: var(--pad);
+    display: flex;
     align-items: stretch;
+    justify-content: left;
     list-style: none;
     margin: 0;
     padding: 0;
 
-    @media (max-width: 1200px) {
-      --cols: 3;
-
-      a {
-        text-align: center;
-      }
-
-      > li > a[href] {
-        display: block;
-      }
-    }
-
     @media (max-width: 768px) {
-      --cols: 2;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+      justify-content: space-between;
+      overflow: auto;
+      padding-bottom: var(--pad);
     }
 
     ul,
@@ -40,8 +31,12 @@ export default styled<any>(Box)`
     }
 
     > li {
-      display: block;
-      padding: 0 4px 4px;
+      display: inline-block;
+      width: auto;
+
+      @media (min-width: 768px) {
+        padding: 0 4px 4px;
+      }
 
       a[href] {
         font-weight: 300;
@@ -49,6 +44,7 @@ export default styled<any>(Box)`
       }
 
       > a[href] {
+        white-space: nowrap;
         text-transform: uppercase;
         padding: calc(var(--pad) / 2);
         padding-bottom: calc(var(--pad) / 4);
@@ -87,25 +83,6 @@ export default styled<any>(Box)`
         padding-top: 0.3em;
         padding-bottom: 0.3em;
       }
-    }
-  `}
-`
-
-export const Group = styled<any>(Box)`
-  ${({ theme }: BaphoTheme) => css`
-    outline: 1px solid transparent;
-    border: 1px solid;
-    border-image: linear-gradient(
-        180deg,
-        ${rgba(theme.colours.label, 0.2)},
-        transparent
-      )
-      1;
-    transition: ${theme.eases.base};
-    background: transparent;
-
-    &:hover {
-      outline-color: ${theme.colours.focus};
     }
   `}
 `

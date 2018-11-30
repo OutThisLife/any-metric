@@ -44,7 +44,7 @@ module.exports = ({
     }
   }
 
-  router.get('/', render('/Home'))
+  router.get('/', render('/Dashboard'))
 
   return router
 }

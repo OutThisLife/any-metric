@@ -13,43 +13,54 @@ export default compose<ButtonProps & BaphoTheme, ButtonProps>(
     variant: 'cta'
   }),
   withProps<ButtonProps, ButtonProps>(props => {
-    const iconOnly = 'iconSize' in props && !('children' in props)
+    const iconOnly = 'icon' in props && !('children' in props)
 
     return {
+      iconOnly,
       C: iconOnly ? IconButton : EgButton,
       borderRadius: iconOnly ? props.iconSize : 4,
       ...props
     }
   }),
   setDisplayName('button')
-)(({ C, variant, style = {}, className, children, ...props }: ButtonProps) => (
-  <Button
-    aria-label={'iconSize' in props ? 'icon-cta' : 'cta'}
-    className={className}
-    style={style}
-    variant={variant}>
-    <C {...props}>
-      <em>{children}</em>
-    </C>
+)(
+  ({
+    C,
+    iconOnly,
+    variant,
+    style = {},
+    className,
+    children,
+    ...props
+  }: ButtonProps) => (
+    <Button
+      aria-label={iconOnly ? 'icon-cta' : 'cta'}
+      className={className}
+      style={style}
+      variant={variant}>
+      <C {...props}>
+        <em>{children}</em>
+      </C>
 
-    {'iconSize' in props ? (
-      <Box
-        is="span"
-        width={props.iconSize}
-        height={props.iconSize}
-        borderRadius={props.borderRadius}
-      />
-    ) : (
-      <Box
-        is="span"
-        display="block"
-        width="100%"
-        height="100%"
-        borderRadius={props.borderRadius}
-      />
-    )}
-  </Button>
-))
+      {iconOnly ? (
+        <Box
+          is="span"
+          width={props.iconSize}
+          height={props.iconSize}
+          borderRadius={props.borderRadius}
+        />
+      ) : (
+        <Box
+          is="span"
+          display="block"
+          width="100%"
+          height="100%"
+          borderRadius={props.borderRadius}
+        />
+      )}
+    </Button>
+  )
+)
 
 export interface ButtonProps extends BaseButton {
   C?: IForm['Button']

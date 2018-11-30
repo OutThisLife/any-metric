@@ -1,5 +1,7 @@
 import { IParticlesParams } from 'react-particles-js'
 
+const enable = () => 'browser' in process && window.innerWidth > 1025
+
 export default {
   particles: {
     number: {
@@ -108,5 +110,5 @@ export default {
       }
     }
   },
-  retina_detect: true
+  retina_detect: false
 } as IParticlesParams

@@ -1,30 +1,57 @@
-import { BoxProps } from '@/components/Box'
+import { BoxProps } from '@/components//Box'
 import Form from '@/components/Form'
 import Module from '@/components/Module'
 import withSelections, { SelectionsProps } from '@/lib/withSelections'
-import { DataTableFilter } from '@/pages/home'
-import { BaphoTheme } from '@/theme'
-import faker from 'faker'
-import { func } from 'prop-types'
-import { compose, getContext, setDisplayName, shouldUpdate } from 'recompose'
-import { withTheme } from 'styled-components'
+import { FakeResult } from '@/server/schema/types'
+import {
+  compose,
+  onlyUpdateForKeys,
+  setDisplayName,
+  withProps
+} from 'recompose'
 
-import Text from '../Text'
-import Categories, { Group } from './style'
+import Category, { CategoryItem } from './Category'
+import Categories from './style'
 
 export default compose<
-  CategoryProps & { filter: DataTableFilter },
-  CategoryProps
+  CategoriesProps & CategoriesOutterProps,
+  CategoriesOutterProps
 >(
-  getContext({ filter: func }),
+  setDisplayName('categories'),
   withSelections,
-  shouldUpdate(() => false),
-  setDisplayName('categories')
-)(({ handleMouse, filter, ...props }) => (
+  withProps<CategoriesProps, CategoriesOutterProps>(({ data }) => {
+    data = data.filter(d => d.tags.length)
+
+    return {
+      data: data
+        .map(d => d.tags[0])
+        .filter((t, i, s) => s.indexOf(t) === i)
+        .map(title => {
+          const rel = data.filter(d => d.tags.includes(title)) || []
+
+          return {
+            title,
+            total: rel.length,
+            items: rel.reduce(
+              (acc, { tags }) =>
+                tags.map(
+                  t =>
+                    !(acc.find(a => a.title === t) || t === title) &&
+                    acc.push({
+                      title: t,
+                      total: (rel.filter(d => d.tags.includes(t)) || []).length
+                    })
+                ) && acc,
+              []
+            )
+          }
+        })
+    }
+  }),
+  onlyUpdateForKeys(['data'])
+)(({ data = [], handleMouse }) => (
   <Module
     title="Category Filters"
-    maxHeight="45%"
-    overflow="auto"
     cta={() => (
       <Form.Button variant="basic | pill" marginLeft={20}>
         New Filter
@@ -35,87 +62,20 @@ export default compose<
       margin={0}
       padding={0}
       listStyle="none"
-      onMouseDown={handleMouse}
-      {...props}>
-      <Filler
-        title="Cognex"
-        onClick={() => filter({ value: 'Important', action: 'TAG' })}
-      />
-
-      <Filler
-        title="Keyence"
-        onClick={() => filter({ value: '', action: 'RESET' })}
-      />
-
-      <Filler
-        title="Equi"
-        onClick={() => filter({ value: 'Lead', action: 'TAG' })}
-      />
-
-      <Filler
-        title="Motrox"
-        onClick={() => filter({ value: 'Broken', action: 'TAG' })}
-      />
+      onMouseDown={handleMouse}>
+      {data.map(d => (
+        <Category key={d.title} {...d} />
+      ))}
     </Categories>
   </Module>
 ))
 
-export const Filler = withTheme(
-  ({
-    theme,
-    title,
-    onClick = () => null,
-    ...props
-  }: CategoryProps & BaphoTheme) => (
-    <Group is="li" {...props}>
-      <Text is="a" href="javascript:;" display="flex" alignItems="center">
-        <Text is="span" backgroundImage={theme.colours.company}>
-          {title}
-        </Text>
+export interface CategoriesProps {
+  data: CategoryItem[]
+}
 
-        <Text
-          is="span"
-          display="inline-block"
-          fontSize="0.9em"
-          lineHeight={1}
-          verticalAlign="middle"
-          margin={0}
-          paddingX={5}>
-          ({faker.random.number({ max: 25 })})
-        </Text>
-      </Text>
-
-      <ul>
-        <li className="row">
-          <a href="javascript:;" onClick={onClick}>
-            8050 series
-          </a>
-
-          <ul>
-            <li className="row">
-              <a href="javascript:;">empty</a>
-            </li>
-
-            <li className="row">
-              <a href="javascript:;">cables</a>
-            </li>
-          </ul>
-        </li>
-
-        {Math.random() > 0.5 && (
-          <li className="row">
-            <a href="javascript:;">8050 series</a>
-          </li>
-        )}
-
-        {Math.random() > 0.5 && (
-          <li className="row">
-            <a href="javascript:;">8050 series</a>
-          </li>
-        )}
-      </ul>
-    </Group>
-  )
-)
-
-export type CategoryProps = BoxProps<HTMLUListElement> & SelectionsProps
+export interface CategoriesOutterProps
+  extends BoxProps<HTMLUListElement>,
+    SelectionsProps {
+  data?: FakeResult[]
+}

@@ -16,19 +16,16 @@ export default compose<ModuleProps & BaphoTheme, ModuleProps>(
 
     <Module {...props}>
       <Box
+        padding="var(--pad)"
         boxShadow={`0 0 1px ${rgba(
           theme.colours.panel,
           0.2
         )}, 0 16px 24px -8px ${rgba(theme.colours.panel, 0.5)}`}
         borderWidth="1px"
         borderStyle="solid"
-        borderRadius="inherit"
-        borderTopWidth={0}
-        borderBottomColor="#1e2233"
-        borderLeftColor="#122263"
-        borderRightColor="#232b4a"
-        background={theme.colours.moduleBg}
-        padding="var(--pad)">
+        borderColor="#20294B"
+        borderRadius={4}
+        background={theme.colours.moduleBg}>
         {children}
       </Box>
     </Module>

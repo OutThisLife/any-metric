@@ -91,9 +91,11 @@ export default styled<any>('span')`
         position: absolute;
         top: 0;
         left: 0;
+        width: 100%;
+        height: 100%;
         box-shadow: var(--shadow);
-        transition: ${theme.eases.buttonGradient};
         transform: scaleY(-1);
+        transition: ${theme.eases.buttonGradient};
         background: var(--bg);
       }
     }
@@ -118,6 +120,7 @@ export default styled<any>('span')`
       height: 2.5rem;
 
       svg {
+        fill: ${theme.colours.base} !important;
         width: 1rem;
         height: auto;
         max-width: none;

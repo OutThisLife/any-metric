@@ -77,16 +77,16 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
     }
   }),
   withPropsOnChange(['width'], ({ chartProps, width, height }) => ({
+    isDesktop: window.innerWidth >= 1025,
     chartProps: {
       ...chartProps,
       width,
       height,
-      ratio: width / height,
-      isTablet: width < 1025
+      ratio: width / height
     }
   })),
   setDisplayName('price')
-)(({ theme, chartProps = {}, isTablet }) => (
+)(({ theme, chartProps = {}, isDesktop }) => (
   <div onMouseLeave={() => d3.timeout(unlink, 700)}>
     <ChartCanvas
       {...chartProps}
@@ -104,7 +104,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
           stroke={theme.colours.border}
           tickStroke={theme.colours.muted}
         />
-        {isTablet && (
+        {isDesktop && (
           <MouseCoordinateX
             fontSize={11}
             snapX={false}
@@ -126,7 +126,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
           tickStroke={theme.colours.base}
           displayFormat={moneyFormat}
         />
-        {isTablet && (
+        {isDesktop && (
           <MouseCoordinateY
             fontSize={11}
             at="right"
@@ -164,7 +164,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
           interpolation={d3.curveMonotoneX}
         />
 
-        {isTablet && (
+        {isDesktop && (
           <HoverTooltip
             yAccessor={d => d.price}
             fontSize={11}
@@ -191,7 +191,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
           />
         )}
 
-        {isTablet && (
+        {isDesktop && (
           <ClickCallback
             onMouseMove={({ currentItem }) => {
               unlink()
@@ -270,7 +270,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
         />
       </Chart>
 
-      {isTablet && (
+      {isDesktop && (
         <CrossHairCursor
           snapX={false}
           StrokeDasharray="ShortDashDot"
@@ -295,6 +295,7 @@ interface ChartOutterProps extends BoxProps<HTMLDivElement> {
 
 interface ChartProps extends ChartOutterProps {
   chartProps?: any
+  isDesktop?: boolean
   initialData?: Array<{
     id: string | number
     date: Date

@@ -1,10 +1,10 @@
 import { ReactBox } from '@/components/Box'
 import { BaphoTheme } from '@/theme'
-import { Table as BaseTable } from 'evergreen-ui'
+import { Table } from 'evergreen-ui'
 import { rgba } from 'polished'
 import styled, { css } from 'styled-components'
 
-export default styled<any>(BaseTable)`
+export default styled<any>(Table)`
   ${({ theme }: BaphoTheme) => css`
     .head {
       user-select: none;

@@ -1,22 +1,15 @@
-import { dateFormat } from '@/lib/utils'
 import withSelections, { select, SelectionsProps } from '@/lib/withSelections'
-import { FakeResult } from '@/server/schema/types'
-import { BaphoTheme } from '@/theme'
 import * as d3 from 'd3'
+import { array } from 'prop-types'
 import { fitDimensions } from 'react-stockcharts/lib/helper'
-import { compose, setDisplayName, withHandlers } from 'recompose'
-import { withTheme } from 'styled-components'
+import { compose, setDisplayName, withContext, withHandlers } from 'recompose'
 
-import Cols from './Cols'
-import Table from './generics'
+import Cols, { RenderColumns } from './Cols'
+import Table from './Table'
 
 let tm: d3.Timer | {} = {}
 
-export default compose<
-  TableProps & TableOutterProps & BaphoTheme,
-  TableOutterProps
->(
-  withTheme,
+export default compose<TableProps & TableOutterProps, TableOutterProps>(
   withSelections,
   fitDimensions,
   withHandlers<{}, TableProps>(() => ({
@@ -31,13 +24,15 @@ export default compose<
       tm = d3.timeout(() => (el.style.pointerEvents = 'auto'), 300)
     }
   })),
+  withContext({ columns: array }, ({ columns }) => ({ columns })),
   setDisplayName('table')
-)(({ theme, handleMouse, handleScroll, height, data = [] }) => (
+)(({ data = [], handleMouse, handleScroll, height }) => (
   <Table>
-    <Table.Head className="head">
+    <Table.Head>
       <Cols.Check
+        disableSort
         checkboxProps={{
-          name: 'product-checked',
+          name: 'checked',
           value: 'all',
           onClick: ({ target }) =>
             [].slice
@@ -46,10 +41,7 @@ export default compose<
         }}
       />
 
-      <Cols.Title>Product</Cols.Title>
-      <Cols.Time>Date</Cols.Time>
-      <Cols.Status>Status</Cols.Status>
-      <Cols.Price>Price</Cols.Price>
+      <RenderColumns props={c => ({ children: c.label })} />
     </Table.Head>
 
     <Table.Body
@@ -63,21 +55,12 @@ export default compose<
           <Cols.Check
             checkboxProps={{
               pointerEvents: 'none',
-              name: 'product-checked',
+              name: 'checked',
               value: d.id
             }}
           />
 
-          <Cols.Title item={d} />
-
-          <Cols.Time>
-            <Table.Text color={theme.colours.muted}>
-              {dateFormat(d.date)}
-            </Table.Text>
-          </Cols.Time>
-
-          <Cols.Status item={d} />
-          <Cols.Price item={d} />
+          <RenderColumns props={() => ({ item: d })} />
         </Table.Row>
       ))}
     </Table.Body>
@@ -90,5 +73,9 @@ export interface TableProps extends SelectionsProps {
 }
 
 export interface TableOutterProps {
-  data?: FakeResult[]
+  data?: any[]
+  columns: Array<{
+    label: string
+    key: string
+  }>
 }

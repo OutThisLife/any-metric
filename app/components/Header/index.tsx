@@ -8,14 +8,15 @@ import { withTheme } from 'styled-components'
 export default compose<HeaderProps & BaphoTheme, HeaderProps>(
   withTheme,
   setDisplayName('header')
-)(({ theme, ...props }) => (
+)(({ theme }) => (
   <Box
     is="header"
     gridArea="head"
     display="flex"
     alignItems="center"
     justifyContent="space-between"
-    {...props}>
+    padding="var(--offset)"
+    paddingBottom={0}>
     <Box>
       <Text
         is="h1"

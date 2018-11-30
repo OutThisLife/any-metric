@@ -15,8 +15,7 @@ export default compose<BaphoTheme & LayoutProps, LayoutProps>(
       display="grid"
       gridTemplate="'head' 'main'"
       gridTemplateRows="min-content 1fr"
-      gridGap="calc(var(--offset) / 2)"
-      padding="var(--offset)">
+      gridGap="calc(var(--offset) / 2)">
       <Header />
       <Component />
     </Box>

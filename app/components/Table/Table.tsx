@@ -1,5 +1,5 @@
 import { BoxProps } from '@/components/Box'
-import Text from '@/components/Text'
+import BaseText from '@/components/Text'
 import { BaphoTheme } from '@/theme'
 import { Table as BaseTable } from 'evergreen-ui'
 import omit from 'lodash/omit'
@@ -18,12 +18,12 @@ const enhance = <T extends {}>(...funcs: any[]) =>
       paddingY: 0,
       borderBottom: '0px'
     }),
-    mapProps(props => omit(props, ['theme'])),
+    mapProps(props => omit(props, ['theme', 'sort', 'name'])),
     ...funcs
   )
 
 Table.Head = enhance(
-  defaultProps({ background: 'none' }),
+  defaultProps({ className: 'head', background: 'none' }),
   withContext({ isHeader: bool }, () => ({ isHeader: true }))
 )(BaseTable.Head)
 
@@ -51,7 +51,7 @@ Table.Text = enhance<BoxProps<HTMLParagraphElement>>(
     fontSize: '0.9rem',
     textAlign: 'inherit'
   })
-)(Text)
+)(BaseText)
 
 Table.HeaderCell = enhance<BaphoTheme>(withTheme)(
   ({ theme, children, ...props }) => (

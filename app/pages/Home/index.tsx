@@ -1,7 +1,6 @@
 import Box, { BoxProps } from '@/components/Box'
 import Categories from '@/components/Categories'
 import PriceChart from '@/components/Charts/Price'
-import Table from '@/components/Table'
 import { getFakeCrawl } from '@/lib/queries'
 import { FakeResult } from '@/server/schema/types'
 import { orderBy } from 'lodash'
@@ -16,6 +15,7 @@ import {
   withStateHandlers
 } from 'recompose'
 
+import DataTable from './DataTable'
 import Home from './style'
 import worker, { isWorkerReady } from './worker'
 
@@ -96,10 +96,9 @@ export default compose<HomeProps, HomeOutterProps>(
       display="grid"
       gridTemplate="'table controls'"
       alignItems="flex-start"
-      gridGap="inherit"
-      paddingBottom={0}>
+      gridGap="inherit">
       <Box gridArea="table">
-        <Table data={orderBy(renderedData, sort.name, [sort.dir])} />
+        <DataTable data={orderBy(renderedData, sort.name, [sort.dir])} />
       </Box>
 
       <Box

@@ -1,117 +1,80 @@
 import { BaphoTheme } from '@/theme'
-import { darken, lighten, rgba } from 'polished'
+import { darken, rgba } from 'polished'
 import styled, { css } from 'styled-components'
 
 import { ButtonProps } from '..'
 
 export default styled<any>('span')`
-  ${({ zIndex = 1, variant, theme }: ButtonProps & BaphoTheme) => css`
+  display: inline-block;
+
+  ${({ variant, theme }: ButtonProps & BaphoTheme) => css`
     --colour: ${theme.colours.base};
 
     ${/cta/i.test(variant) &&
       css`
         --bg: ${theme.inputs.button};
-        --shadow: 1px 1px 20px -2px ${rgba(theme.colours.secondary, 0)};
-        --border: none;
+        --shadow: none;
       `};
 
     ${/basic/i.test(variant) &&
       css`
-        --bg: transparent;
-        --shadow: none;
-        --border: 1px solid ${theme.colours.label};
+        --colour: ${theme.inputs.button};
+        --bg: ${theme.inputs.button};
+        --shadow: inset 0 0 0 var(--bg), 0 0 1px 1px var(--bg);
+        --padding: 14px 15px;
       `};
-
-    cursor: pointer;
-    z-index: ${zIndex};
-    display: inline-block;
-    position: relative;
-
-    * {
-      cursor: pointer;
-    }
 
     button[type]:not([disabled]) {
       position: static;
-      color: var(--colour) !important;
-      border: var(--border) !important;
-      box-shadow: var(--shadow) !important;
-      transition: ${theme.eases.button};
-      background: var(--bg) !important;
-
-      svg,
-      em {
-        z-index: 3;
-        position: relative;
-        font-style: normal;
-        font: inherit;
-        line-height: 0;
-      }
-
-      &:focus,
-      &:hover,
-      &:active {
-        ${/cta/i.test(variant) &&
-          css`
-            --shadow: 1px 1px 20px -2px ${rgba(lighten(0.2, theme.colours.secondary), 0.7)};
-          `};
-      }
+      width: fit-content;
+      height: fit-content;
+      vertical-align: middle;
+      color: var(--colour);
+      text-transform: lowercase;
+      font-variant: small-caps;
+      line-height: 0;
+      padding: var(--padding, 0px);
+      border: 0;
+      box-shadow: var(--shadow);
+      transition: ${theme.eases.base};
+      background-image: none !important;
+      background: var(--bg);
 
       &:hover {
         ${/basic/i.test(variant) &&
           css`
-            --shadow: none;
-            --border: 1px solid ${theme.colours.focus};
-            --bg: ${theme.colours.focus};
+            --colour: ${theme.colours.base};
+            --bg: ${theme.inputs.button};
+            box-shadow: inset 0 0 0 0 rgba(0, 0, 0, 0);
 
             &:active {
-              --bg: ${darken(0.05, theme.colours.focus)};
+              --bg: ${darken(0.05, theme.inputs.button)};
             }
           `};
       }
 
-      &:not(:active) svg {
-        filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.2));
-      }
-
       &:active {
-        --colour: ${rgba(theme.colours.base, 0.9)};
-
-        + span {
-          opacity: 1;
-          transform: scaleY(-1);
-        }
+        --colour: ${rgba(theme.colours.base, 0.5)};
       }
 
-      + span {
-        z-index: 2;
-        content: '';
-        opacity: 0;
-        pointer-events: none;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        box-shadow: var(--shadow);
-        transform: scaleY(-1);
-        transition: ${theme.eases.buttonGradient};
-        background: var(--bg);
+      svg {
+        fill: var(--colour) !important;
       }
     }
 
-    &[aria-label^='cta'] {
-      --padding: ${/pill/i.test(variant) ? '0.9rem 1rem' : '1rem'};
+    &[aria-label^='cta'] button[type]:not([disabled]) {
+      height: auto;
+      font-weight: 400;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      line-height: 0;
 
-      button[type]:not([disabled]) {
-        height: auto;
-        font-size: 0.9rem;
-        line-height: 0;
-        padding: var(--padding) !important;
+      &:not(:hover) {
+        background: transparent;
+      }
 
-        em {
-          transform: translate(0, -0.05em);
-        }
+      span {
+        transform: translate(0, -0.1em);
       }
     }
 
@@ -120,20 +83,11 @@ export default styled<any>('span')`
       height: 2.5rem;
 
       svg {
-        fill: ${theme.colours.base} !important;
         width: 1rem;
         height: auto;
         max-width: none;
         margin: auto;
-        transform: translate(0, -0.12em);
-      }
-
-      + span {
-        transform: initial;
-      }
-
-      &:active + span {
-        transform: rotate(-90deg);
+        transition: ${theme.eases.base};
       }
     }
   `}

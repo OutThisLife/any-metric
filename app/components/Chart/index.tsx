@@ -101,7 +101,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
           axisAt="bottom"
           orient="bottom"
           fontSize={10}
-          fontFamily="monospace"
+          fontFamily={theme.fonts.family.title}
           stroke={theme.colours.border}
           tickStroke={theme.colours.muted}
         />
@@ -112,7 +112,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
             snapX={false}
             at="bottom"
             orient="bottom"
-            fontFamily="monospace"
+            fontFamily={theme.fonts.family.title}
             fill={theme.colours.border}
             fillText={theme.colours.base}
             displayFormat={d => `Volume: ${numFormat(d)}`}
@@ -123,7 +123,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
           axisAt="right"
           orient="right"
           fontSize={10}
-          fontFamily="monospace"
+          fontFamily={theme.fonts.family.title}
           stroke={theme.colours.border}
           tickStroke={theme.colours.base}
           displayFormat={moneyFormat}
@@ -134,7 +134,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
             fontSize={10}
             at="right"
             orient="right"
-            fontFamily="monospace"
+            fontFamily={theme.fonts.family.title}
             fill={theme.colours.border}
             fillText={theme.colours.base}
             displayFormat={moneyFormat}
@@ -147,14 +147,14 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
           markerProps={{
             width: 8,
             r: 2.5,
-            fill: theme.colours.star,
+            fill: theme.colours.price.hl,
             stroke: 'transparent'
           }}
         />
 
         <LineSeries
           yAccessor={d => d.price}
-          stroke={rgba(theme.colours.star, 0.33)}
+          stroke={rgba(theme.colours.price.hl, 0.33)}
           strokeWidth={1}
           interpolation={d3.curveMonotoneX}
           strokeDasharray="Dot"

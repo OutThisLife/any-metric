@@ -8,8 +8,7 @@ import {
   defaultProps,
   getContext,
   renderComponent,
-  setDisplayName,
-  shouldUpdate
+  setDisplayName
 } from 'recompose'
 
 import { TableOutterProps } from '..'
@@ -30,8 +29,7 @@ export const Cols = compose<ColumnProps, ColumnProps>(
   branch<ColumnProps>(
     props => !props.isHeader || props.disableSort,
     renderComponent(Table.Cell)
-  ),
-  shouldUpdate<ColumnProps>(props => props.isHeader)
+  )
 )(({ children, name, sort: { dir, name: sortKey }, sortBy, ...props }) => (
   <Table.HeaderCell
     display="flex"

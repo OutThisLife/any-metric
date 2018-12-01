@@ -48,27 +48,18 @@ export default styled<any>(Box)`
         text-transform: uppercase;
         padding: calc(var(--pad) / 2);
         padding-bottom: calc(var(--pad) / 4);
-
-        &:hover {
-          color: inherit;
-        }
       }
 
       li > a[href] {
         display: block;
-        color: ${theme.colours.muted};
         font-size: 0.9em;
         outline: 1px solid transparent;
         outline-offset: -2px;
         transition: none;
 
         &:not(:hover) {
+          color: ${theme.colours.muted};
           transition: ${theme.eases.base};
-        }
-
-        &:hover {
-          color: ${theme.colours.base};
-          background: ${rgba(theme.inputs.bg, 0.5)};
         }
       }
 

@@ -1,6 +1,6 @@
 import Box from '@/components/Box'
 import { BaphoTheme } from '@/theme'
-import { between, darken, rgba } from 'polished'
+import { between, darken, rgba, tint } from 'polished'
 import styled, { createGlobalStyle, css } from 'styled-components'
 
 export default createGlobalStyle`
@@ -49,10 +49,20 @@ export default createGlobalStyle`
       box-sizing: border-box;
     }
 
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    input[type],
+    button[type] {
+      font-family: ${theme.fonts.family.title};
+    }
+
     html {
       color: ${theme.colours.base};
       font-weight: 400;
-      font-family: ${theme.fonts.family.copy};
       font-size: ${theme.fonts.size};
       line-height: 1.75;
       -webkit-font-smoothing: antialiased;
@@ -60,7 +70,7 @@ export default createGlobalStyle`
     }
 
     body {
-      background: fixed ${theme.colours.bg} center top / 100vw 100vh no-repeat;
+      background: #000;
     }
 
     img,
@@ -85,6 +95,22 @@ export default createGlobalStyle`
       border-bottom-left-radius: 0 !important;
     }
 
+    a[href] {
+      cursor: pointer;
+      color: ${theme.colours.base};
+      text-decoration: none;
+      transition: ${theme.eases.base};
+
+      &:hover,
+      &:hover + a[href] {
+        color: ${tint(0.4, theme.colours.secondary)};
+      }
+    }
+
+    .dragging a[href] {
+      pointer-events: none !important;
+    }
+
     [data-id='tooltip'] {
       font-size: 11px;
       padding: 2px 8px;
@@ -95,13 +121,6 @@ export default createGlobalStyle`
 
 export const Main = styled<any>(Box)`
   --offset: calc(var(--pad) * 3);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100vw;
-  min-height: 100vh;
-  padding: var(--offset);
 
   @media (min-width: 1025px) {
     height: 100vh;
@@ -114,9 +133,9 @@ export const Main = styled<any>(Box)`
       width: 100%;
       border: 1px solid transparent;
       border-radius: 10px;
-      box-shadow: 0 17px 50px -5px #040617, 0 17px 150px -10px #040617;
-      background: ${theme.colours.panelBg};
-      background-blend-mode: overlay;
+      box-shadow: 0 17px 50px -5px ${rgba(theme.colours.panel, 0.7)},
+        0 17px 150px -10px ${rgba(theme.colours.panel, 0.7)};
+      background: ${theme.colours.panel};
 
       @media (min-width: 1025px) {
         height: 100%;
@@ -142,28 +161,6 @@ export const Main = styled<any>(Box)`
           );
         }
       }
-    }
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    input[type],
-    button[type] {
-      font-family: ${theme.fonts.family.title};
-    }
-    a[href] {
-      cursor: pointer;
-      color: ${theme.colours.base};
-      text-decoration: none;
-      transition: ${theme.eases.base};
-      &:hover {
-        color: ${theme.colours.secondary};
-      }
-    }
-    .dragging a[href] {
-      pointer-events: none !important;
     }
   `}
 `

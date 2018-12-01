@@ -1,5 +1,7 @@
 import Box from '@/components/Box'
-import { compose, defaultProps, setDisplayName } from 'recompose'
+import { BaphoTheme } from '@/theme'
+import { compose, defaultProps, mapProps, setDisplayName } from 'recompose'
+import { withTheme } from 'styled-components'
 
 import { InputProps } from '..'
 import Input from './style'
@@ -14,10 +16,16 @@ export default compose<InputProps, InputProps>(
     paddingLeft: 'var(--pad)',
     borderRadius: 4
   }),
+  withTheme,
+  mapProps<InputProps, InputProps & BaphoTheme>(
+    ({ theme, background = theme.inputs.bg, ...props }) => ({
+      background,
+      ...props
+    })
+  ),
   setDisplayName('input')
 )(props => (
   <Input>
     <Box is="input" {...props} />
-    <Box {...props} />
   </Input>
 ))

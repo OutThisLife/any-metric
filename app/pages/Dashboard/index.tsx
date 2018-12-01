@@ -5,6 +5,7 @@ import Table from '@/components/Table'
 import { getFakeCrawl } from '@/lib/queries'
 import { FakeResult } from '@/server/schema/types'
 import { orderBy } from 'lodash'
+import Head from 'next/head'
 import { func, shape, string } from 'prop-types'
 import {
   compose,
@@ -88,6 +89,10 @@ export default compose<HomeProps, HomeOutterProps>(
 
   return (
     <Home is="section" display="grid" alignItems="flex-start" gridGap="inherit">
+      <Head>
+        <title key="title">Δ</title>
+      </Head>
+
       <Box gridArea="table" alignSelf="inherit">
         <Table
           isDesktop={isDesktop}

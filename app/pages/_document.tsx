@@ -32,10 +32,10 @@ export default class extends Document<{
           <meta httpEquiv="X-UA-Compatible" content="IE=edge,chrome=1" />
           <meta name="robots" content="noindex" />
 
-          <title>baphometric</title>
-
           {styleTags}
-          <script src="//polyfill.io/v2/polyfill.min.js?features=IntersectionObserver,MutationObserver,URL,es6" />
+
+          <link rel="shortcut icon" href="/static/favicon.ico" />
+          <script src="//polyfill.io/v2/polyfill.min.js" />
         </Head>
 
         <body>

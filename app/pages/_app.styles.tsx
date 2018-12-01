@@ -131,7 +131,6 @@ export const Main = styled<any>(Box)`
         }
       }
     }
-
     h1,
     h2,
     h3,
@@ -142,18 +141,15 @@ export const Main = styled<any>(Box)`
     button[type] {
       font-family: ${theme.fonts.family.title};
     }
-
     a[href] {
       cursor: pointer;
       color: ${theme.colours.base};
       text-decoration: none;
       transition: ${theme.eases.base};
-
       &:hover {
         color: ${theme.colours.secondary};
       }
     }
-
     .dragging a[href] {
       pointer-events: none !important;
     }

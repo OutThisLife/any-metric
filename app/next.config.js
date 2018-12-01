@@ -60,7 +60,7 @@ module.exports = withPlugins(
     },
     webpack: config => {
       config.module.rules.push({
-        test: /\.(png|jpg|gif|svg|eot|ttf|otf|woff|woff2)$/,
+        test: /\.(png|jpg|gif|svg|eot|ttf|otf|woff|woff2|ico)$/,
         use: [
           {
             loader: 'url-loader',

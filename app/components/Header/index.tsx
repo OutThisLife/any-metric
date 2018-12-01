@@ -24,9 +24,10 @@ export default compose<HeaderProps & BaphoTheme, HeaderProps>(
         lineHeight={1}
         fontFamily={theme.fonts.family.title}
         textTransform="uppercase"
+        fontWeight={100}
         margin={0}
         backgroundImage={theme.colours.brand}>
-        baphometric
+        ɮΔքɦօʍɛ✞ʀɨƈ
       </Text>
     </Box>
 

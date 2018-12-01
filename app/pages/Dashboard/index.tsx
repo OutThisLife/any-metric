@@ -97,7 +97,13 @@ export default compose<HomeProps, HomeOutterProps>(
         <Table
           isDesktop={isDesktop}
           data={orderBy(renderedData, sort.name, [sort.dir])}
-          height={isDesktop ? height : 400}
+          height={
+            isDesktop
+              ? height
+              : 'browser' in process
+              ? window.innerHeight / 2
+              : 400
+          }
           columns={[
             {
               label: 'Product',
@@ -140,7 +146,6 @@ export default compose<HomeProps, HomeOutterProps>(
           zIndex={10}
           alignSelf={isDesktop ? 'flex-end' : 'center'}
           margin={isDesktop ? 0 : 'auto'}
-          marginLeft={isDesktop ? 'auto' : 0}
           marginTop={isDesktop ? 0 : 'var(--offset)'}>
           {renderedData && (
             <Chart

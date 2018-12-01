@@ -1,6 +1,6 @@
 import Box from '@/components/Box'
 import { BaphoTheme } from '@/theme'
-import { between } from 'polished'
+import { between, darken, rgba } from 'polished'
 import styled, { createGlobalStyle, css } from 'styled-components'
 
 export default createGlobalStyle`
@@ -18,11 +18,23 @@ export default createGlobalStyle`
     ::-webkit-scrollbar {
       width: 3px;
       height: 3px;
+      background: transparent;
+    }
+
+    *:hover::-webkit-scrollbar {
       background: ${theme.colours.scrollbarBg};
+    }
+
+    ::-webkit-scrollbar-corner {
+      background: ${darken(0.5, theme.colours.scrollbarBg)};
     }
 
     ::-webkit-scrollbar-thumb {
       background: ${theme.colours.scrollbarHandle};
+    }
+
+    *:not(:hover)::-webkit-scrollbar-thumb {
+      background: ${rgba(theme.colours.scrollbarHandle, 0.05)};
     }
 
     html,

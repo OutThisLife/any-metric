@@ -31,6 +31,7 @@ export default styled(Box)`
 
       @media (max-width: 1025px) {
         grid-row: 2;
+        padding: 0 var(--offset) var(--offset);
       }
     }
 
@@ -42,7 +43,7 @@ export default styled(Box)`
 
       @media (max-width: 1025px) {
         grid-row: 1;
-        padding-bottom: 0;
+        padding: 0 var(--offset) 0;
       }
     }
   }

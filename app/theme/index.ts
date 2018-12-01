@@ -1,6 +1,6 @@
 import { defaultTheme } from 'evergreen-ui'
 import globalHash from 'evergreen-ui/commonjs/avatar/src/utils/hash'
-import { between, darken, lighten, timingFunctions } from 'polished'
+import { between, darken, lighten, rgba, timingFunctions } from 'polished'
 import { ThemeProps } from 'styled-components'
 
 export const autoColour = <
@@ -51,10 +51,8 @@ const theme = {
 
     moduleBg: 'linear-gradient(180deg, #20294B, #171B38)',
 
-    scrollbarHandle: '#6F7A9B',
-    get scrollbarBg() {
-      return this.border
-    },
+    scrollbarHandle: rgba('#6F7A9B', 0.2),
+    scrollbarBg: rgba('#212B4D', 0.2),
 
     brand: 'linear-gradient(90deg, #7648c2 10%, #EF74CC 50%, #ff8d92)',
     company: `linear-gradient(150deg, ${lighten(

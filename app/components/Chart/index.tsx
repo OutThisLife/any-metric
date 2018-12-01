@@ -22,11 +22,7 @@ import {
   TriangleMarker
 } from 'react-stockcharts/lib/series'
 import { HoverTooltip } from 'react-stockcharts/lib/tooltip'
-import {
-  createVerticalLinearGradient,
-  hexToRGBA,
-  last
-} from 'react-stockcharts/lib/utils'
+import { createVerticalLinearGradient, last } from 'react-stockcharts/lib/utils'
 import {
   branch,
   compose,
@@ -158,7 +154,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
 
         <LineSeries
           yAccessor={d => d.price}
-          stroke={hexToRGBA(theme.colours.star, 0.33)}
+          stroke={rgba(theme.colours.star, 0.33)}
           strokeWidth={1}
           interpolation={d3.curveMonotoneX}
           strokeDasharray="Dot"
@@ -270,9 +266,9 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
           strokeWidth={0}
           interpolation={d3.curveMonotoneX}
           canvasGradient={createVerticalLinearGradient([
-            { stop: 0, color: hexToRGBA(theme.colours.border, 0) },
-            { stop: 0.5, color: hexToRGBA(theme.colours.border, 0.2) },
-            { stop: 1, color: hexToRGBA(theme.colours.border, 0.5) }
+            { stop: 0, color: rgba(theme.colours.border, 0) },
+            { stop: 0.5, color: rgba(theme.colours.border, 0.2) },
+            { stop: 1, color: rgba(theme.colours.border, 0.5) }
           ])}
         />
       </Chart>

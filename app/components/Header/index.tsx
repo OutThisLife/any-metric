@@ -1,4 +1,4 @@
-import Box, { BoxProps } from '@/components/Box'
+import { BoxProps } from '@/components/Box'
 import Form from '@/components/Form'
 import Text from '@/components/Text'
 import { BaphoTheme } from '@/theme'
@@ -6,12 +6,13 @@ import { compose, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
 import Picker from './Picker'
+import Header from './style'
 
 export default compose<HeaderProps & BaphoTheme, HeaderProps>(
   withTheme,
   setDisplayName('header')
 )(({ theme }) => (
-  <Box
+  <Header
     is="header"
     gridArea="head"
     display="flex"
@@ -43,7 +44,7 @@ export default compose<HeaderProps & BaphoTheme, HeaderProps>(
 
       <Form.Button zIndex={2} icon="plus" iconSize={32} />
     </Form>
-  </Box>
+  </Header>
 ))
 
 export type HeaderProps = BoxProps<HTMLDivElement>

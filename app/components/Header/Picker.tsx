@@ -18,7 +18,7 @@ export default compose<MutateProps, {}>(
   )
 )(({ mutate }) => (
   <CirclePicker
-    circleSize={10}
+    circleSize={6}
     onChange={c => {
       const theme = createTheme(['#fafafa', '#0A0F14', c.hex])
 

@@ -1,7 +1,5 @@
 import { IParticlesParams } from 'react-particles-js'
 
-const enable = () => 'browser' in process && window.innerWidth > 1025
-
 export default {
   particles: {
     number: {
@@ -18,7 +16,7 @@ export default {
       type: 'edge',
       stroke: {
         width: 0,
-        color: '#000000'
+        color: '#ffffff'
       },
       polygon: {
         nb_sides: 5

@@ -12,8 +12,11 @@ export default compose<ParticleProps, {}>(
       const params = defaultParams
 
       const b = contentRect.bounds.width > 1025
-      // params.interactivity.events.onhover.enable = b
-      // params.particles.move.enable = b
+
+      params.particles.color.value = '#FFF'
+      params.particles.line_linked.color = params.particles.color.value
+      params.interactivity.events.onhover.enable = b
+      params.particles.move.enable = b
 
       return { params }
     }
@@ -23,15 +26,21 @@ export default compose<ParticleProps, {}>(
   <div
     ref={measureRef}
     style={{
-      opacity: 0.2,
       zIndex: 100,
       pointerEvents: 'none',
       position: 'fixed',
       top: 0,
       left: 0,
+      width: '100%',
+      height: '100%',
       mixBlendMode: 'soft-light'
     }}>
-    <Particles params={params} />
+    <Particles
+      params={params}
+      style={{
+        opacity: 0.2
+      }}
+    />
   </div>
 ))
 

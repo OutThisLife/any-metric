@@ -82,9 +82,6 @@ export default compose<HomeProps, HomeOutterProps>(
 
   if (isWorkerReady()) {
     worker.onmessage = ({ data }) => updateRendered(data)
-    worker.onerror = e => {
-      throw e
-    }
   }
 
   return (

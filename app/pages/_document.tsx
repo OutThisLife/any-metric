@@ -3,7 +3,8 @@ import Document, { Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
 
 export default class extends Document<{
-  styleTags?: string
+  styleTags?: Array<React.ReactElement<{}>>
+  css?: string
   hydrationScript?: any
 }> {
   public static async getInitialProps({ renderPage }) {
@@ -11,19 +12,15 @@ export default class extends Document<{
     const page = renderPage(App => props =>
       sheet.collectStyles(<App {...props} />)
     )
+    const styleTags = sheet.getStyleElement()
+
     const { css, hydrationScript } = extractStyles()
 
-    const styleTags = sheet.getStyleElement().filter(k => k.key !== 'evergreen')
-
-    styleTags.push(
-      <style key="evergreen" dangerouslySetInnerHTML={{ __html: css }} />
-    )
-
-    return { ...page, styleTags, hydrationScript }
+    return { ...page, css, styleTags, hydrationScript }
   }
 
   public render() {
-    const { styleTags, hydrationScript } = this.props
+    const { css, styleTags, hydrationScript } = this.props
 
     return (
       <html lang="en-US">
@@ -33,6 +30,8 @@ export default class extends Document<{
           <meta name="robots" content="noindex" />
 
           {styleTags}
+
+          <style key="evergreen" dangerouslySetInnerHTML={{ __html: css }} />
 
           <link rel="shortcut icon" href="/static/favicon.ico" />
           <script src="//polyfill.io/v2/polyfill.min.js" />

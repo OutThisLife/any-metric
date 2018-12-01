@@ -1,6 +1,6 @@
-import { BoxProps } from '@/components/Box'
+import Box, { BoxProps } from '@/components/Box'
 import Text from '@/components/Text'
-import { BaphoTheme, createTextGradient } from '@/theme'
+import { BaphoTheme } from '@/theme'
 import { compose, defaultProps, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
@@ -19,23 +19,24 @@ export default compose<HeadingProps & BaphoTheme, HeadingProps>(
   withTheme,
   setDisplayName('heading')
 )(({ theme, title, cta, ...props }) => (
-  <Text fontFamily={theme.fonts.family.title} {...props}>
-    {title.split(' ').map((w, i) => (
-      <Text
-        key={Math.random()}
-        is="div"
-        backgroundImage={createTextGradient(
-          i === 0 ? theme.colours.base : theme.colours.muted,
-          0.1
-        )}
-        font="inherit"
-        marginLeft={i && 8}>
-        {w}
-      </Text>
-    ))}
+  <Box display="inline-flex" alignItems="center">
+    {title
+      .split(' ')
+      .slice(0, 2)
+      .map((w, i) => (
+        <Text
+          key={w}
+          fontWeight={100}
+          fontSize="2rem"
+          paddingLeft={i * 8}
+          color={i === 1 ? theme.colours.muted : theme.colours.base}
+          {...props}>
+          {w}
+        </Text>
+      ))}
 
     {cta()}
-  </Text>
+  </Box>
 ))
 
 export interface HeadingProps extends BoxProps<HTMLHeadingElement> {

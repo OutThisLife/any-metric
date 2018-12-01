@@ -14,16 +14,27 @@ export default compose<
   withContentRect('bounds'),
   setDisplayName('layout')
 )(({ Component, measureRef, contentRect }) => (
-  <Main>
-    <Box
-      id="app"
-      display="grid"
-      gridTemplate="'head' 'main'"
-      gridTemplateRows="min-content 1fr"
-      gridGap="calc(var(--offset) / 2)">
-      <Header />
+  <Main
+    display="grid"
+    gridTemplate="'head' 'main'"
+    gridTemplateRows="min-content 1fr"
+    alignItems="flex-start"
+    justifyContent="center"
+    width="100vw"
+    minHeight="100vh"
+    padding="var(--offset)"
+    paddingTop="calc(var(--offset) / 2)">
+    <Header />
 
-      <div ref={measureRef} style={{ gridArea: 'main', gridGap: 'inherit' }}>
+    <Box id="app" gridArea="main" paddingY="var(--offset)">
+      <div
+        ref={measureRef}
+        style={{
+          display: 'flex',
+          alignItems: 'stretch',
+          height: '100%',
+          gridGap: 'calc(var(--offset) / 2)'
+        }}>
         <Component {...contentRect.bounds} />
       </div>
     </Box>

@@ -46,7 +46,7 @@ export default compose<CategoryProps & CategoryHandlers, CategoryOutterProps>(
 )(({ theme, handleClick, title: groupTitle, total: maxItems, items = [] }) => (
   <Category>
     <Text is="a" href="javascript:;" display="flex" alignItems="center">
-      <Text fontSize="0.9rem" backgroundImage={theme.colours.company}>
+      <Text fontSize="0.9rem" color={theme.colours.base}>
         {groupTitle}
       </Text>
 
@@ -57,6 +57,7 @@ export default compose<CategoryProps & CategoryHandlers, CategoryOutterProps>(
         lineHeight={1}
         margin={0}
         paddingX={5}
+        color={theme.colours.label}
         style={{ verticalAlign: 'middle' }}>
         ({maxItems})
       </Text>
@@ -64,7 +65,7 @@ export default compose<CategoryProps & CategoryHandlers, CategoryOutterProps>(
 
     <Category.Children>
       {items.map(({ title, total }) => (
-        <li className="row" data-tag={title}>
+        <li key={title} className="row" data-tag={title}>
           <a href="javascript:;" onClick={handleClick}>
             {title} ({total})
           </a>

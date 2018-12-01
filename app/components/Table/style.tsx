@@ -38,8 +38,8 @@ export default styled<any>(Table)`
 
     .row {
       user-select: none;
-      outline-offset: -4px;
-      outline: 2px solid transparent;
+      outline-offset: -3px;
+      outline: 1px solid transparent;
 
       &:not(:hover) {
         transition: ${theme.eases.base};
@@ -47,17 +47,16 @@ export default styled<any>(Table)`
       }
 
       &:hover {
-        outline-color: ${rgba(theme.colours.focus, 0.1)};
+        outline-color: ${rgba(theme.colours.border, 0.4)};
         background: ${rgba(theme.colours.base, 0.01)};
       }
 
       &[data-checked] {
         outline-color: ${theme.colours.focus};
-        background: #1a213f;
       }
 
       &.chart-link {
-        outline-color: ${theme.colours.star};
+        outline-color: ${theme.colours.price.hl};
       }
     }
   `}

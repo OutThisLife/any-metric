@@ -17,15 +17,11 @@ export default styled<any>(Cols)`
       transform: translate(8px, 0);
     }
 
-    a[href][target]:hover + a {
-      color: ${theme.colours.secondary};
-    }
-
     figure {
       width: 30px;
       height: 30px;
       overflow: hidden;
-      background: ${lighten(0.33, '#7648c2')};
+      background: ${lighten(0.33, theme.colours.secondary)};
 
       .row:not(:hover):not([data-checked]) & {
         opacity: 0.65;

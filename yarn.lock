@@ -1371,6 +1371,13 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.2.tgz#fa8e1ad1d474688a757140c91de6dace6f4abc8d"
   integrity sha512-HtKGu+qG1NPvYe1z7ezLsyIaXYyi8SoAVqWDZgDQ8dLrsZvSzUNCwZyfX33uhWxL/SU0ZDQZ3nwZ0nimt507Kw==
 
+"@types/react-color@^2.13.6":
+  version "2.13.6"
+  resolved "https://registry.yarnpkg.com/@types/react-color/-/react-color-2.13.6.tgz#8ba9c600fbc4c6c43037d3a5eeeff77c0db995d7"
+  integrity sha512-c9DgSaSsSm4xR3FLoYAicaS1m93Jg4utkz04B02/9gq4hm6pcbeoCDv26jQAL5KKpAnaEI0LqY5CdRgA2RCAbQ==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-content-loader@^3.1.3":
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/@types/react-content-loader/-/react-content-loader-3.1.3.tgz#65264a46d56ef01a98a7234220c2f602ac4ddbb3"
@@ -4094,10 +4101,10 @@ events@^1.0.0:
   resolved "https://registry.yarnpkg.com/events/-/events-1.1.1.tgz#9ebdb7635ad099c70dcc4c2a1f5004288e8bd924"
   integrity sha1-nr23Y1rQmccNzEwqH1AEKI6L2SQ=
 
-evergreen-ui@^4.7.1:
-  version "4.7.1"
-  resolved "https://registry.yarnpkg.com/evergreen-ui/-/evergreen-ui-4.7.1.tgz#21c9bc5346a2c6834c768cbd662d8554f5479650"
-  integrity sha512-ZZsZz69boWNmpnBF2jl5MTP+RbLLaPlP2TNCfvRd2yoASU8bEn3eSkLMiIUrD4j/EGMhP4JK9nuQfC/4i6yxSA==
+evergreen-ui@^4.8.0:
+  version "4.8.0"
+  resolved "https://registry.yarnpkg.com/evergreen-ui/-/evergreen-ui-4.8.0.tgz#c0835b19fae88321be593438fbd8a74e512dd9d7"
+  integrity sha512-0WW/S3UGzpKprT/+JYwK+vNnZV1sxHgT9hZMcinfXyJmedHUmvNVJtWNqRHi3yEC2cAkZpr6G5Z/TOUM2ogmYw==
   dependencies:
     "@babel/runtime" "^7.1.2"
     "@blueprintjs/icons" "^3.2.0"
@@ -5819,7 +5826,7 @@ lodash.unescape@4.0.1:
   resolved "https://registry.yarnpkg.com/lodash.unescape/-/lodash.unescape-4.0.1.tgz#bf2249886ce514cda112fae9218cdc065211fc9c"
   integrity sha1-vyJJiGzlFM2hEvrpIYzcBlIR/Jw=
 
-lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.3.0:
+lodash@^4.0.1, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.3.0:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
@@ -5913,6 +5920,11 @@ map-visit@^1.0.0:
   integrity sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
   dependencies:
     object-visit "^1.0.0"
+
+material-colors@^1.2.1:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/material-colors/-/material-colors-1.2.6.tgz#6d1958871126992ceecc72f4bcc4d8f010865f46"
+  integrity sha512-6qE4B9deFBIa9YSpOc9O0Sgc43zTeVYbgDT5veRKSlB2+ZuHNoVVxA1L/ckMUayV9Ay9y7Z/SZCLcGteW9i7bg==
 
 maximatch@^0.1.0:
   version "0.1.0"
@@ -7333,6 +7345,17 @@ react-apollo@^2.3.1:
     lodash.isequal "^4.5.0"
     prop-types "^15.6.0"
 
+react-color@^2.14.1:
+  version "2.14.1"
+  resolved "https://registry.yarnpkg.com/react-color/-/react-color-2.14.1.tgz#db8ad4f45d81e74896fc2e1c99508927c6d084e0"
+  integrity sha512-ssv2ArSZdhTbIs29hyfw8JW+s3G4BCx/ILkwCajWZzrcx/2ZQfRpsaLVt38LAPbxe50LLszlmGtRerA14JzzRw==
+  dependencies:
+    lodash "^4.0.1"
+    material-colors "^1.2.1"
+    prop-types "^15.5.10"
+    reactcss "^1.2.0"
+    tinycolor2 "^1.4.1"
+
 react-content-loader@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/react-content-loader/-/react-content-loader-3.2.0.tgz#39a6a035a5dddc2270432c1df7950e37f179dcf2"
@@ -7460,6 +7483,13 @@ react@^16.6.3:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
     scheduler "^0.11.2"
+
+reactcss@^1.2.0:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/reactcss/-/reactcss-1.2.3.tgz#c00013875e557b1cf0dfd9a368a1c3dab3b548dd"
+  integrity sha512-KiwVUcFu1RErkI97ywr8nvx8dNOpT03rbnma0SSalTYjkrPYaEajR4a/MRt6DZ46K6arDRbWMNHF+xH7G7n/8A==
+  dependencies:
+    lodash "^4.0.1"
 
 read-pkg@^2.0.0:
   version "2.0.0"

@@ -31,8 +31,8 @@ export default compose<PriceProps & BaphoTheme, PriceProps>(
       <Box display="inline-block" width="100%" lineHeight={1.2}>
         <Table.Text
           fontWeight={700}
-          backgroundImage={
-            Math.random() > 0.2
+          color={
+            parseInt(item.price, 10) % 3
               ? theme.colours.price.up
               : theme.colours.price.down
           }>

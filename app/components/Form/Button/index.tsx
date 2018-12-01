@@ -1,4 +1,3 @@
-import Box from '@/components/Box'
 import { BaphoTheme } from '@/theme'
 import { Button as EgButton, IconButton } from 'evergreen-ui'
 import { compose, defaultProps, setDisplayName, withProps } from 'recompose'
@@ -18,7 +17,7 @@ export default compose<ButtonProps & BaphoTheme, ButtonProps>(
     return {
       iconOnly,
       C: iconOnly ? IconButton : EgButton,
-      borderRadius: iconOnly ? props.iconSize : 4,
+      borderRadius: iconOnly ? props.iconSize : '100em',
       ...props
     }
   }),
@@ -39,25 +38,10 @@ export default compose<ButtonProps & BaphoTheme, ButtonProps>(
       style={style}
       variant={variant}>
       <C {...props}>
-        <em>{children}</em>
+        <span style={{ font: 'inherit', lineHeight: 'inherit' }}>
+          {children}
+        </span>
       </C>
-
-      {iconOnly ? (
-        <Box
-          is="span"
-          width={props.iconSize}
-          height={props.iconSize}
-          borderRadius={props.borderRadius}
-        />
-      ) : (
-        <Box
-          is="span"
-          display="block"
-          width="100%"
-          height="100%"
-          borderRadius={props.borderRadius}
-        />
-      )}
     </Button>
   )
 )

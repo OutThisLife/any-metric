@@ -28,11 +28,11 @@ export default compose<StatusProps & BaphoTheme, StatusProps>(
           <Text>Sold</Text>
         ) : (
           <>
-            <Text color={theme.colours.star} lineHeight={2}>
+            <Text color={theme.colours.price.hl} lineHeight={2}>
               {pointFormat(parseInt(item.bids, 10))}
             </Text>
 
-            <Text>bids</Text>
+            <Text color={theme.colours.label}>bids</Text>
           </>
         )}
       </Box>

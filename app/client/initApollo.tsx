@@ -1,50 +1,18 @@
 import 'isomorphic-unfetch'
 
 import { ApolloClient, ApolloLink, InMemoryCache } from 'apollo-boost'
-import { onError } from 'apollo-link-error'
-import { createHttpLink } from 'apollo-link-http'
-import { createPersistedQueryLink } from 'apollo-link-persisted-queries'
 import { toIdValue } from 'apollo-utilities'
 import getConfig from 'next/config'
 
+import { errorLink, httpLink, stateLink } from './links'
+
 const {
-  publicRuntimeConfig: { API_URL, isDev }
+  publicRuntimeConfig: { isDev }
 } = getConfig()
-
-// -------------------------------------
-
-const errorLink = () =>
-  onError(({ graphQLErrors, networkError }) => {
-    if (graphQLErrors) {
-      graphQLErrors.map(
-        ({ message, locations, path }) =>
-          isDev &&
-          console.error(
-            `[GraphQL error]: Message: ${message}, Location: ${JSON.stringify(
-              locations
-            )}, Path: ${path}`
-          )
-      )
-    }
-
-    if (networkError && isDev) {
-      console.error('[Network error]', networkError)
-    }
-  })
-
-const httpLink = () =>
-  createPersistedQueryLink().concat(
-    createHttpLink({
-      uri: API_URL,
-      credentials: 'same-origin'
-    })
-  )
-
-// -------------------------------------
 
 let client
 
-const createCache = () => {
+const createCache = (): InMemoryCache => {
   const redir = typeName => (_, args = {}) =>
     toIdValue(
       cache.config.dataIdFromObject({
@@ -67,7 +35,7 @@ const createCache = () => {
 
 const create = (initialState = {}) => {
   const cache = createCache().restore(initialState)
-  const link = ApolloLink.from([errorLink(), httpLink()])
+  const link = ApolloLink.from([errorLink(), stateLink(cache), httpLink()])
 
   return new ApolloClient({
     link,

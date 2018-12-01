@@ -4,10 +4,12 @@ import styled, { css } from 'styled-components'
 
 export default styled<any>('div')`
   ${({ theme }: BaphoTheme) => css`
+    --size: 10px;
+
     display: block;
     position: relative;
-    width: 10px;
-    height: 10px;
+    width: var(--size);
+    height: var(--size);
     background: ${theme.inputs.bg};
 
     input[type='checkbox'] {
@@ -19,37 +21,17 @@ export default styled<any>('div')`
       left: 0;
       border: 0;
 
-      &:checked + div {
-        &:before {
-        }
+      &:not(:checked) + div:before {
+        opacity: 1;
+      }
 
-        &:after {
-          opacity: 1;
-        }
+      &:checked + div:after {
+        opacity: 1;
       }
     }
 
     > div {
       &:before,
-      &:after {
-        transition: ${theme.eases.base};
-      }
-
-      &:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        border: 1px solid;
-        border-image: linear-gradient(
-            ${theme.inputs.border},
-            ${rgba(theme.inputs.border, 0.5)}
-          )
-          1;
-      }
-
       &:after {
         opacity: 0;
         content: '';
@@ -59,10 +41,20 @@ export default styled<any>('div')`
         right: 0;
         bottom: 0;
         left: 0;
-        background: linear-gradient(
-          ${theme.inputs.border},
-          ${rgba(theme.inputs.border, 0.5)}
-        );
+        transition: ${theme.eases.base};
+      }
+
+      &:before {
+        border: 1px solid;
+        border-image: linear-gradient(
+            ${theme.inputs.border},
+            ${rgba(theme.inputs.border, 0.5)}
+          )
+          1;
+      }
+
+      &:after {
+        background: ${theme.inputs.border};
       }
     }
   `}

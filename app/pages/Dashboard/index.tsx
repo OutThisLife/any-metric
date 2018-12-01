@@ -90,7 +90,9 @@ export default compose<HomeProps, HomeOutterProps>(
   return (
     <Home is="section" display="grid" alignItems="flex-start" gridGap="inherit">
       <Head>
-        <title key="title">Δ</title>
+        <title key="title">
+          {renderedData.length} results found :: ɮΔքɦօʍɛ✞ʀɨƈ
+        </title>
       </Head>
 
       <Box gridArea="table" alignSelf="inherit">

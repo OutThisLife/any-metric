@@ -2,13 +2,14 @@ import { createTheme } from '@/theme'
 import * as d3 from 'd3'
 import gql from 'graphql-tag'
 import { graphql, MutateProps } from 'react-apollo'
-import { CirclePicker } from 'react-color'
-import { compose, setDisplayName } from 'recompose'
+import { CirclePicker, ColorChangeHandler, SketchPicker } from 'react-color'
+import { compose, setDisplayName, withHandlers, withState } from 'recompose'
 
 let tm: d3.Timer | {} = {}
 
-export default compose<MutateProps, {}>(
+export default compose<PickerProps, {}>(
   setDisplayName('theme-picker'),
+  withState('isOpen', 'open', false),
   graphql(
     gql`
       mutation setTheme($theme: String!) {
@@ -32,13 +33,10 @@ export default compose<MutateProps, {}>(
         ]
       }
     }
-  )
-)(({ mutate }) => (
-  <CirclePicker
-    circleSize={6}
-    circleSpacing={6}
-    onChange={c => {
-      const theme = JSON.stringify(createTheme(['#fafafa', '#0A0F14', c.hex]))
+  ),
+  withHandlers<MutateProps, PickerProps>(() => ({
+    onChange: ({ mutate }) => ({ hex }) => {
+      const theme = JSON.stringify(createTheme(hex))
 
       if ('stop' in tm) {
         tm.stop()
@@ -58,6 +56,38 @@ export default compose<MutateProps, {}>(
           }),
         15
       )
-    }}
-  />
+    }
+  }))
+)(({ isOpen, open, onChange }) => (
+  <div className="picker">
+    <CirclePicker
+      width="224px"
+      onChange={onChange}
+      circleSize={6}
+      circleSpacing={6}
+    />
+
+    <a
+      href="javascript:;"
+      tabIndex={1}
+      onClick={() => open(!isOpen)}
+      onBlur={() => open(false)}>
+      &hellip;
+    </a>
+
+    {isOpen && (
+      <SketchPicker
+        width="150px"
+        onChange={onChange}
+        disableAlpha
+        presetColors={[]}
+      />
+    )}
+  </div>
 ))
+
+export interface PickerProps {
+  isOpen?: boolean
+  open?: (b: boolean) => void
+  onChange?: ColorChangeHandler
+}

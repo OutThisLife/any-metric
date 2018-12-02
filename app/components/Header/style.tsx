@@ -17,11 +17,29 @@ export default styled<any>(Box)`
       text-transform: uppercase;
     }
 
-    .circle-picker[style] {
-      width: 33% !important;
-      white-space: nowrap !important;
-      flex-wrap: nowrap !important;
-      justify-content: center !important;
+    .picker {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: ${theme.eases.base};
+
+      &:not(:hover) {
+        opacity: 0.4;
+      }
+
+      > a {
+        display: inline-block;
+        line-height: 0;
+        vertical-align: middle;
+      }
+
+      .sketch-picker {
+        z-index: 100;
+        position: absolute;
+        top: 100%;
+        right: 0;
+      }
     }
 
     form {

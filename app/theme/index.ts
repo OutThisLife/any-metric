@@ -10,11 +10,11 @@ import {
 } from 'polished'
 import { ThemeProps } from 'styled-components'
 
-export const createTheme = (hues: string[]) => {
+export const createTheme = (secondary: string) => {
   const colours = {
-    base: hues[0],
-    panel: hues[1],
-    secondary: hues[2],
+    base: '#fafafa',
+    panel: '#0A0F14',
+    secondary,
 
     get module() {
       return lighten(0.021, this.panel)
@@ -87,7 +87,7 @@ export const createTheme = (hues: string[]) => {
 
 // ---------------------------
 
-const theme = createTheme(['#fafafa', '#0A0F14', '#6236ba'])
+const theme = createTheme('#6236ba')
 
 export type BaphoTheme = Partial<ThemeProps<typeof theme>>
 export default theme

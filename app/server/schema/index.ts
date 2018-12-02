@@ -3,7 +3,7 @@ import * as express from 'express'
 import { IResolvers } from 'graphql-tools'
 import * as LRU from 'lru-cache'
 
-import { setTags } from './mutations'
+import defaultTheme from '../../theme'
 import { fakeCrawl } from './queries'
 import typeDefs, { Context } from './types'
 
@@ -14,11 +14,18 @@ const resolvers: IResolvers<{}, Context> = {
   Date: require('graphql-iso-date').GraphQLDateTime,
 
   Query: {
+    theme: (_, __, { cache }) => ({
+      value: cache.get('theme') || JSON.stringify(defaultTheme)
+    }),
+
     fakeCrawl
   },
 
   Mutation: {
-    setTags
+    setTheme: (_, { theme }, { cache }) => {
+      cache.set('theme', theme)
+      return { value: theme }
+    }
   }
 }
 

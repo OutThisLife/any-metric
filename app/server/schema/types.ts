@@ -7,17 +7,16 @@ export default gql`
   scalar Date
 
   type Query {
+    theme: Theme
     fakeCrawl(ids: [String], offset: Int, limit: Int): [FakeResult]
   }
 
   type Mutation {
-    setTags(ids: [String]!, tags: [String]!): [FakeResult]
+    setTheme(theme: String!): Theme
   }
 
-  input Selector {
-    parent: String
-    name: String
-    el: String
+  type Theme {
+    value: String
   }
 
   type CrawlResult @cacheControl(maxAge: 10e5) {
@@ -76,7 +75,7 @@ export interface FakeResult {
   tags?: string[]
 }
 
-export interface Context<Cache = LRU.Cache<string, FakeResult[]>> {
+export interface Context<Cache = LRU.Cache<any, any>> {
   cache: Cache
 }
 

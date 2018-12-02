@@ -1,8 +1,6 @@
-import { SetTags } from '@/server/schema/mutations/setTags'
 import { FakeResult } from '@/server/schema/types'
 import gql from 'graphql-tag'
 import { graphql } from 'react-apollo'
-import { compose } from 'recompose'
 
 export const getFakeCrawl = () =>
   graphql<{}, { results: FakeResult[] }>(
@@ -37,34 +35,13 @@ export const getFakeCrawl = () =>
     }
   )
 
-export const getTags = () =>
-  compose(
-    graphql<{}, { setTags: SetTags }>(
-      gql`
-        mutation SetTags($ids: [String]!, $tags: [String]!) {
-          setTags(ids: $ids, tags: $tags) {
-            __typename
-            id
-            tags
-          }
-        }
-      `
-    ),
-    graphql<{}, { tags: Partial<FakeResult[]> }>(
-      gql`
-        query GetTags {
-          tags: fakeCrawl {
-            __typename
-            id
-            tags
-          }
-        }
-      `,
+export const getTheme = () =>
+  graphql(
+    gql`
       {
-        props: ({ data: { tags = [], ...data } }) => ({
-          data,
-          tags
-        })
+        theme {
+          value
+        }
       }
-    )
+    `
   )

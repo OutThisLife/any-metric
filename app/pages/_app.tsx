@@ -1,10 +1,9 @@
 import withData from '@/client/withData'
 import Particles from '@/components/Particles'
-import defaultTheme, { BaphoTheme } from '@/theme'
 import { ApolloClient, gql } from 'apollo-boost'
 import App, { AppProps, Container } from 'next/app'
 import { ApolloProvider, DataProps, graphql } from 'react-apollo'
-import { compose, defaultProps, withProps } from 'recompose'
+import { compose } from 'recompose'
 import { ThemeProvider } from 'styled-components'
 
 import GlobalStyles from './_app.styles'
@@ -27,30 +26,18 @@ export default withData(
   }
 )
 
-const DynamicTheme = compose<BaphoTheme, {}>(
-  defaultProps({
-    theme: defaultTheme
-  }),
+const DynamicTheme = compose<DataProps<{ theme: { value: string } }>, {}>(
   graphql(
     gql`
       {
-        theme @client
+        theme {
+          value
+        }
       }
     `
-  ),
-  withProps<BaphoTheme, BaphoTheme & DataProps<{ theme: string }>>(
-    ({ theme, data = {} }) => {
-      if ('browser' in process && localStorage.getItem('theme') !== null) {
-        theme = JSON.parse(localStorage.getItem('theme'))
-      } else if ('theme' in data && typeof data.theme === 'string') {
-        theme = JSON.parse(data.theme)
-      }
-
-      return { theme }
-    }
   )
-)(({ children, theme }) => (
-  <ThemeProvider theme={theme}>
+)(({ children, data: { theme } }) => (
+  <ThemeProvider theme={JSON.parse(theme.value)}>
     <Container>{children}</Container>
   </ThemeProvider>
 ))

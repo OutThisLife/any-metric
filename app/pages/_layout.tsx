@@ -1,32 +1,20 @@
-import Box from '@/components/Box'
 import Header from '@/components/Header'
 import { BaphoTheme } from '@/theme'
 import { AppProps } from 'next/app'
 import { MeasuredComponentProps, withContentRect } from 'react-measure'
+import { Box } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
 import { Main } from './_app.styles'
 
-export default compose<
-  BaphoTheme & LayoutProps & MeasuredComponentProps,
-  LayoutProps
->(
+export default compose<LayoutProps & BaphoTheme, LayoutProps>(
   withContentRect('bounds'),
   setDisplayName('layout')
 )(({ Component, measureRef, contentRect }) => (
-  <Main
-    display="grid"
-    gridTemplate="'head' 'main'"
-    gridTemplateRows="min-content 1fr"
-    alignItems="flex-start"
-    justifyContent="center"
-    width="100vw"
-    minHeight="100vh"
-    padding="var(--offset)"
-    paddingTop="calc(var(--offset) / 2)">
+  <Main>
     <Header />
 
-    <Box id="app" gridArea="main" paddingY="var(--offset)">
+    <Box as="main">
       <div
         ref={measureRef}
         style={{
@@ -41,4 +29,4 @@ export default compose<
   </Main>
 ))
 
-export type LayoutProps = Partial<AppProps>
+export type LayoutProps = Partial<AppProps> & Partial<MeasuredComponentProps>

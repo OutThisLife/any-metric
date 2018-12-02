@@ -1,5 +1,3 @@
-import { defaultTheme } from 'evergreen-ui'
-import globalHash from 'evergreen-ui/commonjs/avatar/src/utils/hash'
 import {
   between,
   desaturate,
@@ -13,7 +11,7 @@ import {
 import { ThemeProps } from 'styled-components'
 
 export const createTheme = (hues: string[]) => {
-  const __typename = 'ThemeSet'
+  const __typename = 'ThemeSet' // tslint:disable-line
 
   const colours = {
     __typename,
@@ -88,6 +86,7 @@ export const createTheme = (hues: string[]) => {
 
   return {
     __typename: 'Theme',
+    breakpoints: [1025, 1024, 768],
     colours,
     fonts,
     inputs,
@@ -97,27 +96,7 @@ export const createTheme = (hues: string[]) => {
 
 // ---------------------------
 
-export const autoColour = <
-  T extends {
-    color: string
-    backgroundColor: string
-  }
->(
-  s: string,
-  isSolid: boolean = false
-): T => {
-  const res: T = defaultTheme.getAvatarProps({
-    color: 'automatic',
-    isSolid,
-    hashValue: globalHash(s)
-  })
-
-  return res
-}
-
-// ---------------------------
-
 const theme = createTheme(['#fafafa', '#0A0F14', '#6236ba'])
 
-export type BaphoTheme = ThemeProps<typeof theme>
+export type BaphoTheme = Partial<ThemeProps<typeof theme>>
 export default theme

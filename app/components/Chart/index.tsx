@@ -1,10 +1,7 @@
-import Box, { BoxProps } from '@/components/Box'
 import { moneyFormat, numFormat } from '@/lib/utils'
 import { FakeResult } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import * as d3 from 'd3'
-import { Spinner } from 'evergreen-ui'
-import { rgba } from 'polished'
 import { Chart, ChartCanvas } from 'react-stockcharts'
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes'
 import {
@@ -23,6 +20,7 @@ import {
 } from 'react-stockcharts/lib/series'
 import { HoverTooltip } from 'react-stockcharts/lib/tooltip'
 import { createVerticalLinearGradient, last } from 'react-stockcharts/lib/utils'
+import { BoxProps, Flex } from 'rebass'
 import {
   branch,
   compose,
@@ -74,13 +72,12 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
   branch<ChartProps>(
     props => !('data' in props) || isNaN(props.width) || props.width <= 0,
     renderComponent(() => (
-      <Box
-        display="flex"
+      <Flex
         alignItems="center"
         justifyContent="center"
-        padding="var(--offset)">
-        <Spinner />
-      </Box>
+        css="padding: 'var(--offset)'">
+        Loading&hellip;
+      </Flex>
     ))
   ),
   setDisplayName('price')
@@ -95,7 +92,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
       clamp={true}
       type="hybrid"
       pointsPerPxThreshold={6}
-      margin={{ top: 0, right: 30, bottom: 30, left: 0 }}>
+      m={{ top: 0, right: 30, bottom: 30, left: 0 }}>
       <Chart id={2} yExtents={[d => d.price, MA.accessor()]} yPan={false}>
         <XAxis
           axisAt="bottom"
@@ -103,7 +100,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
           fontSize={10}
           fontFamily={theme.fonts.family.title}
           stroke={theme.colours.border}
-          tickStroke={theme.colours.muted}
+          tickStroke={theme.colours.base}
         />
 
         {isDesktop && (
@@ -154,7 +151,8 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
 
         <LineSeries
           yAccessor={d => d.price}
-          stroke={rgba(theme.colours.price.hl, 0.33)}
+          stroke={theme.colours.price.hl}
+          strokeOpacity={0.2}
           strokeWidth={1}
           interpolation={d3.curveMonotoneX}
           strokeDasharray="Dot"
@@ -202,9 +200,8 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
               const $row = document.getElementById(currentItem.id)
 
               if ($row) {
-                const $table = document.querySelector(
-                  '[data-evergreen-table-body]'
-                ).firstChild as HTMLElement
+                const $table = document.querySelector('table')
+                  .firstChild as HTMLElement
 
                 $row.classList.add('chart-link')
 
@@ -266,9 +263,9 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
           strokeWidth={0}
           interpolation={d3.curveMonotoneX}
           canvasGradient={createVerticalLinearGradient([
-            { stop: 0, color: rgba(theme.colours.border, 0) },
-            { stop: 0.5, color: rgba(theme.colours.border, 0.2) },
-            { stop: 1, color: rgba(theme.colours.border, 0.5) }
+            { stop: 0, color: theme.colours.border, opacity: 0 },
+            { stop: 0.5, color: theme.colours.border, opacity: 0.2 },
+            { stop: 1, color: theme.colours.border, opacity: 0.5 }
           ])}
         />
       </Chart>
@@ -277,7 +274,8 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
         <CrossHairCursor
           snapX={false}
           StrokeDasharray="ShortDashDot"
-          stroke={rgba(theme.colours.base, 0.1)}
+          stroke={theme.colours.base}
+          strokeOpacity={0.1}
         />
       )}
     </ChartCanvas>
@@ -292,7 +290,7 @@ const unlink = () => {
   }
 }
 
-interface ChartOutterProps extends BoxProps<HTMLDivElement> {
+interface ChartOutterProps extends BoxProps {
   data?: FakeResult[]
   isDesktop?: boolean
   width?: number

@@ -1,9 +1,9 @@
-import Box from '@/components/Box'
+import { Box } from 'rebass'
 import styled, { css } from 'styled-components'
 
 const Module = ({ className, ...props }) => (
-  <Box position="relative" className={className}>
-    <Box {...props} />
+  <Box as="div" css="position: relative" className={className}>
+    <Box as="div" {...props} />
   </Box>
 )
 
@@ -25,6 +25,12 @@ export default styled<any>(Module)`
         ${theme.colours.panel} 82%,
         ${theme.colours.panel}
       );
+    }
+
+    > div {
+      padding: var(--pad);
+      border-radius: 4px;
+      background: ${theme.colours.module};
     }
   `}
 `

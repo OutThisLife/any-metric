@@ -4,7 +4,7 @@ import defaultTheme, { BaphoTheme } from '@/theme'
 import { ApolloClient, gql } from 'apollo-boost'
 import App, { AppProps, Container } from 'next/app'
 import { ApolloProvider, DataProps, graphql } from 'react-apollo'
-import { compose, withProps } from 'recompose'
+import { compose, defaultProps, withProps } from 'recompose'
 import { ThemeProvider } from 'styled-components'
 
 import GlobalStyles from './_app.styles'
@@ -17,33 +17,46 @@ export default withData(
         <ApolloProvider client={this.props.client}>
           <Particles />
 
-          <Inner>
+          <DynamicTheme>
             <GlobalStyles key="global-styles" />
             <Layout {...this.props} />
-          </Inner>
+          </DynamicTheme>
         </ApolloProvider>
       )
     }
   }
 )
 
-const Inner = compose<BaphoTheme, {}>(
-  graphql(gql`
-    {
-      theme @client
-    }
-  `),
-  withProps<BaphoTheme, DataProps<{ theme: string }>>(({ data }) => {
-    let theme = defaultTheme
+const DynamicTheme = compose<BaphoTheme, {}>(
+  defaultProps({
+    theme: defaultTheme
+  }),
+  graphql(
+    gql`
+      {
+        theme @client
+      }
+    `
+  ),
+  withProps<BaphoTheme, BaphoTheme & DataProps<{ theme: string }>>(
+    ({ theme, data = {} }) => {
+      if ('theme' in data && typeof data.theme === 'string') {
+        console.log('from data')
+        theme = JSON.parse(data.theme)
 
-    if ('theme' in data && typeof data.theme === 'string') {
-      theme = JSON.parse(data.theme)
-    } else if ('browser' in process && localStorage.getItem('theme')) {
-      theme = JSON.parse(localStorage.getItem('theme'))
-    }
+        if ('browser' in process) {
+          localStorage.setItem('theme', JSON.stringify(theme))
+        }
+      } else if ('browser' in process && localStorage.getItem('theme')) {
+        console.log('from localStorage')
+        theme = JSON.parse(localStorage.getItem('theme'))
+      } else {
+        console.log('default theme')
+      }
 
-    return { theme }
-  })
+      return { theme }
+    }
+  )
 )(({ children, theme }) => (
   <ThemeProvider theme={theme}>
     <Container>{children}</Container>

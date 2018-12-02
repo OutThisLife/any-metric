@@ -6,7 +6,7 @@ export default styled<any>('div')`
   ${({ theme }: BaphoTheme) => css`
     --size: 10px;
 
-    display: block;
+    display: inline-block;
     position: relative;
     width: var(--size);
     height: var(--size);
@@ -52,7 +52,6 @@ export default styled<any>('div')`
           )
           1;
       }
-
       &:after {
         background: ${theme.inputs.border};
       }

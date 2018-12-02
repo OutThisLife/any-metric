@@ -3,26 +3,28 @@ import { BaphoTheme } from '@/theme'
 import { compose, defaultProps, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
-import { ColumnProps, Table } from '..'
-import Time from './style'
+import { Text } from '../../style'
+import Column, { ColumnProps } from '../Column'
 
 export default compose<ColumnProps & BaphoTheme, ColumnProps>(
-  withTheme,
+  setDisplayName('col-datetime'),
   defaultProps<ColumnProps>({
-    name: 'date',
-    flex: 'unset',
-    flexBasis: 100,
-    textAlign: 'center'
+    name: 'date'
   }),
-  setDisplayName('col-datetime')
+  withTheme
 )(({ theme, children, item = {}, ...props }) => (
-  <Time {...props}>
+  <Column {...props}>
     {!('id' in item) ? (
       children
     ) : (
-      <Table.Text color={theme.colours.muted}>
+      <Text
+        css={`
+          color: ${theme.colours.muted};
+          font-weight: 300;
+          font-size: 0.9rem;
+        `}>
         {dateFormat(item.date)}
-      </Table.Text>
+      </Text>
     )}
-  </Time>
+  </Column>
 ))

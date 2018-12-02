@@ -1,50 +1,60 @@
-import Box from '@/components/Box'
 import { moneyFormat, numFormat } from '@/lib/utils'
 import { FakeResult } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
+import { Box } from 'rebass'
 import { compose, defaultProps, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
-import { Cols, ColumnProps, Table } from '..'
+import { Text } from '../../style'
+import Column, { ColumnProps } from '../Column'
 
 export default compose<PriceProps & BaphoTheme, PriceProps>(
+  setDisplayName('col-price'),
   defaultProps<PriceProps>({
-    name: 'price',
-    flex: 'unset',
-    flexGrow: 0,
-    flexBasis: 80,
-    textAlign: 'right',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    lineHeight: 0,
-    padding: 0,
-    paddingRight: 15
+    name: 'price'
   }),
-  withTheme,
-  setDisplayName('col-price')
-)(({ theme, children, item = {}, ...props }) => (
-  <Cols {...props}>
+  withTheme
+)(({ theme, children, item = {} }) => (
+  <Column
+    pr={0}
+    css={`
+      line-height: 0;
+      text-align: right;
+    `}>
     {!('id' in item) ? (
       children
     ) : (
-      <Box display="inline-block" width="100%" lineHeight={1.2}>
-        <Table.Text
-          fontWeight={700}
+      <Box
+        css={`
+          font-size: 0.9rem;
+          line-height: 1.2;
+
+          > span {
+            display: block;
+            width: 100%;
+          }
+        `}>
+        <Text
+          fontWeight="700"
           color={
             parseInt(item.price, 10) % 3
               ? theme.colours.price.up
               : theme.colours.price.down
           }>
           {moneyFormat(parseFloat(item.price))}
-        </Table.Text>
+        </Text>
 
-        <Table.Text textAlign="right">
+        <Text
+          fontWeight="300"
+          mt={1}
+          css={`
+            font-size: 0.9em;
+          `}>
           {numFormat(parseFloat(item.shipping))}
-        </Table.Text>
+        </Text>
       </Box>
     )}
-  </Cols>
+  </Column>
 ))
 
 export interface PriceProps extends ColumnProps {

@@ -1,29 +1,21 @@
-import Box, { BoxProps } from '@/components/Box'
-import Heading from '@/components/Heading'
-import { BaphoTheme } from '@/theme'
+import Heading, { HeadingOutterProps } from '@/components/Heading'
+import { Box, BoxProps } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
-import { withTheme } from 'styled-components'
 
 import Module from './style'
 
-export default compose<ModuleProps & BaphoTheme, ModuleProps>(
-  withTheme,
-  setDisplayName('module')
-)(({ theme, children, title, cta, ...props }) => (
-  <>
-    {title && <Heading title={title} cta={cta} />}
+export default compose<ModuleProps, ModuleProps>(setDisplayName('module'))(
+  ({ children, title, cta, ...props }) => (
+    <>
+      {title && <Heading title={title} cta={cta} />}
 
-    <Module marginTop="1rem" {...props}>
-      <Box
-        padding="var(--pad)"
-        borderRadius={4}
-        background={theme.colours.module}>
-        {children}
-      </Box>
-    </Module>
-  </>
-))
+      <Module mt="1rem" {...props}>
+        <Box as="div">{children}</Box>
+      </Module>
+    </>
+  )
+)
 
-export interface ModuleProps extends BoxProps<HTMLDivElement> {
-  title?: string
+export interface ModuleProps extends BoxProps, HeadingOutterProps {
+  as?: any
 }

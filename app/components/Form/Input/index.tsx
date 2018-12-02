@@ -1,31 +1,31 @@
-import Box from '@/components/Box'
 import { BaphoTheme } from '@/theme'
-import { compose, defaultProps, mapProps, setDisplayName } from 'recompose'
+import { BoxProps } from 'rebass'
+import { compose, mapProps, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
-import { InputProps } from '..'
-import Input from './style'
+import InputContainer, { Input } from './style'
 
 export default compose<InputProps, InputProps>(
-  defaultProps<InputProps>({
-    type: 'text',
-    autoComplete: 'off',
-    paddingTop: 'calc(var(--pad) / 3.2)',
-    paddingRight: 'var(--pad)',
-    paddingBottom: 'calc(var(--pad) / 3.2)',
-    paddingLeft: 'var(--pad)',
-    borderRadius: 4
-  }),
   withTheme,
   mapProps<InputProps, InputProps & BaphoTheme>(
-    ({ theme, background = theme.inputs.bg, ...props }) => ({
-      background,
+    ({ theme, bg = theme.inputs.bg, ...props }) => ({
+      bg,
       ...props
     })
   ),
   setDisplayName('input')
 )(props => (
-  <Input>
-    <Box is="input" {...props} />
-  </Input>
+  <InputContainer>
+    <Input {...props} />
+  </InputContainer>
 ))
+
+export interface InputProps
+  extends BoxProps,
+    React.InputHTMLAttributes<HTMLInputElement> {
+  as?: any
+  width?: any
+  ref?: any
+}
+
+export { Input }

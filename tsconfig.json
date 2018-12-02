@@ -1,3 +1,4 @@
+/* tslint: disable*/
 {
   "compileOnSave": false,
   "compilerOptions": {
@@ -26,5 +27,11 @@
     ]
   },
   "include": ["app/**/*", "typings/*.d.ts"],
-  "exclude": ["node_modules/**", "**/*.spec", "app/out/**", "app/.next/**"]
+  "exclude": [
+    "node_modules/**",
+    "**/*.spec",
+    "app/out/**",
+    "app/.next/**",
+    "app/next.config.js"
+  ]
 }

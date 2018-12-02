@@ -1,8 +1,7 @@
-import { BoxProps } from '@/components//Box'
-import Form from '@/components/Form'
 import Module from '@/components/Module'
 import withSelections, { SelectionsProps } from '@/lib/withSelections'
 import { FakeResult } from '@/server/schema/types'
+import { BoxProps } from 'rebass'
 import {
   compose,
   onlyUpdateForKeys,
@@ -49,20 +48,16 @@ export default compose<
     }
   }),
   onlyUpdateForKeys(['data'])
-)(({ data = [], handleMouse }) => (
-  <Module
-    title="Category Filters"
-    cta={() => (
-      <Form.Button variant="basic | pill" marginLeft={20}>
-        New Filter
-      </Form.Button>
-    )}>
+)(({ data = [], handleMouse, ...props }) => (
+  <Module title="Category Filters" cta="New Filter">
     <Categories
-      is="ul"
-      margin={0}
-      padding={0}
-      listStyle="none"
-      onMouseDown={handleMouse}>
+      m={0}
+      p={0}
+      css={`
+        list-style: none;
+      `}
+      onMouseDown={handleMouse}
+      {...props}>
       {data.map(d => (
         <Category key={d.title} {...d} />
       ))}
@@ -74,8 +69,7 @@ export interface CategoriesProps {
   data: CategoryItem[]
 }
 
-export interface CategoriesOutterProps
-  extends BoxProps<HTMLUListElement>,
-    SelectionsProps {
+export interface CategoriesOutterProps extends BoxProps, SelectionsProps {
+  as?: any
   data?: FakeResult[]
 }

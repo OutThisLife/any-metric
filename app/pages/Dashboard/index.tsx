@@ -1,14 +1,15 @@
-import Box, { BoxProps } from '@/components/Box'
 import Categories from '@/components/Categories'
 import Chart from '@/components/Chart'
 import Table from '@/components/Table'
 import { getFakeCrawl } from '@/lib/queries'
 import { FakeResult } from '@/server/schema/types'
-import { orderBy } from 'lodash'
+import { omit, orderBy } from 'lodash'
 import Head from 'next/head'
 import { func, shape, string } from 'prop-types'
+import { Box, BoxProps, Flex } from 'rebass'
 import {
   compose,
+  mapProps,
   setDisplayName,
   StateHandler,
   StateHandlerMap,
@@ -76,6 +77,7 @@ export default compose<HomeProps, HomeOutterProps>(
     ({ results, filter: { action, value } }) =>
       isWorkerReady() && worker.postMessage([results, action, value])
   ),
+  mapProps(props => omit(props, ['sortBy', 'setFilter'])),
   setDisplayName('dashboard')
 )(({ sort, results, renderedData, updateRendered, width, height }) => {
   const isDesktop = (width || 1920) > 1025
@@ -85,14 +87,24 @@ export default compose<HomeProps, HomeOutterProps>(
   }
 
   return (
-    <Home is="section" display="grid" alignItems="flex-start" gridGap="inherit">
+    <Home
+      as="section"
+      css={`
+        display: grid;
+        align-items: flex-start;
+        grid-gap: inherit;
+      `}>
       <Head>
         <title key="title">
           {renderedData.length} results found :: ɮΔքɦօʍɛ✞ʀɨƈ
         </title>
       </Head>
 
-      <Box gridArea="table" alignSelf="inherit">
+      <Box
+        css={`
+          grid-area: table;
+          align-self: inherit;
+        `}>
         <Table
           isDesktop={isDesktop}
           data={orderBy(renderedData, sort.name, [sort.dir])}
@@ -124,28 +136,36 @@ export default compose<HomeProps, HomeOutterProps>(
         />
       </Box>
 
-      <Box
-        display="flex"
+      <Flex
         flexWrap="wrap"
         alignItems="flex-start"
-        gridArea="controls"
-        alignSelf="inherit">
+        css={`
+          grid-area: controls;
+          align-self: inherit;
+        `}>
         <Box
-          is="section"
-          width="100%"
-          paddingY="var(--pad)"
-          paddingX="calc(var(--pad) / 2)">
+          as="section"
+          css={`
+            width: 100%;
+            padding: var(--pad) calc(var(--pad) / 2);
+          `}>
           {results.length && (
             <Categories data={orderBy(results, 'date', 'asc')} />
           )}
         </Box>
 
         <Box
-          is="section"
-          zIndex={10}
-          alignSelf={isDesktop ? 'flex-end' : 'center'}
-          margin={isDesktop ? 0 : 'auto'}
-          marginTop={isDesktop ? 0 : 'var(--offset)'}>
+          as="section"
+          css={`
+            z-index: 10;
+            align-self: flex-end;
+            margin: 0;
+
+            @media (max-width: 768px) {
+              align-self: center;
+              margin: var(--offset) auto 0;
+            }
+          `}>
           {renderedData && (
             <Chart
               data={orderBy(renderedData, 'date', 'asc')}
@@ -154,7 +174,7 @@ export default compose<HomeProps, HomeOutterProps>(
             />
           )}
         </Box>
-      </Box>
+      </Flex>
     </Home>
   )
 })
@@ -165,7 +185,7 @@ type HomeProps = {
   HomeOutterProps &
   HomeStateHandlers
 
-interface HomeOutterProps extends BoxProps<HTMLDivElement> {
+interface HomeOutterProps extends BoxProps {
   width?: number
   height?: number
   children?: React.ReactNode

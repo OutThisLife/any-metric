@@ -1,22 +1,14 @@
-import { BoxProps } from '@/components/Box'
-import { BaphoTheme } from '@/theme'
-import { Text } from 'evergreen-ui'
-import { compose, defaultProps, mapProps, setDisplayName } from 'recompose'
-import { withTheme } from 'styled-components'
+import { Text, TextProps as BaseTextProps } from 'rebass'
+import { compose, defaultProps, setDisplayName } from 'recompose'
 
-export default compose<TextProps & BaphoTheme, TextProps>(
+export default compose<BaseTextProps, TextProps>(
   setDisplayName('text'),
-  defaultProps({
-    is: 'span',
-    display: 'inline-block'
-  }),
-  withTheme,
-  mapProps<TextProps, TextProps & BaphoTheme>(
-    ({ theme, color = theme.colours.muted, ...props }) => ({
-      color,
-      ...props
-    })
-  )
+  defaultProps<BaseTextProps>({
+    as: 'span',
+    css: `
+      display: 'inline-block'
+    `
+  })
 )(Text)
 
-export type TextProps = BoxProps<HTMLParagraphElement>
+export type TextProps = BaseTextProps & React.AllHTMLAttributes<HTMLElement>

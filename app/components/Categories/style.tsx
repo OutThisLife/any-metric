@@ -1,12 +1,9 @@
-import Box from '@/components/Box'
 import { BaphoTheme } from '@/theme'
-import { rgba } from 'polished'
+import { Box } from 'rebass'
 import styled, { css } from 'styled-components'
 
 export default styled<any>(Box)`
   ${({ theme }: BaphoTheme) => css`
-    --cols: 4;
-
     display: flex;
     align-items: stretch;
     justify-content: left;
@@ -43,6 +40,10 @@ export default styled<any>(Box)`
         padding: calc(var(--pad) / 5) calc(var(--pad) / 1.5);
       }
 
+      span {
+        vertical-align: middle;
+      }
+
       > a[href] {
         white-space: nowrap;
         text-transform: uppercase;
@@ -66,7 +67,6 @@ export default styled<any>(Box)`
       [data-checked] > a[href] {
         color: ${theme.colours.base};
         outline-color: ${theme.colours.focus};
-        background: ${rgba(theme.inputs.bg, 0.5)};
       }
 
       ul ul a[href] {

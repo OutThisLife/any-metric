@@ -2,15 +2,22 @@ import withSelections, { select, SelectionsProps } from '@/lib/withSelections'
 import * as d3 from 'd3'
 import { array } from 'prop-types'
 import { MeasuredComponentProps } from 'react-measure'
-import { compose, setDisplayName, withContext, withHandlers } from 'recompose'
+import {
+  compose,
+  getContext,
+  setDisplayName,
+  withContext,
+  withHandlers
+} from 'recompose'
 
-import Cols, { RenderColumns } from './Cols'
-import Table from './Elements'
+import * as Columns from './Columns'
+import * as Table from './style'
 
 let tm: d3.Timer | {} = {}
 
 export default compose<TableProps & TableOutterProps, TableOutterProps>(
   withSelections,
+  withContext({ columns: array }, ({ columns }) => ({ columns })),
   withHandlers<{}, TableProps>(() => ({
     handleScroll: () => ({ currentTarget }) => {
       const el = currentTarget.firstChild.firstChild as HTMLElement
@@ -23,19 +30,19 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
       tm = d3.timeout(() => (el.style.pointerEvents = 'auto'), 300)
     }
   })),
-  withContext({ columns: array }, ({ columns }) => ({ columns })),
   setDisplayName('table')
-)(({ data = [], isDesktop, height, handleMouse, handleScroll }) => (
-  <Table>
+)(({ data = [], isDesktop, height, handleMouse, handleScroll, ...props }) => (
+  <Table.Container as="table" {...props}>
     <Table.Head>
-      <Cols.Check
+      <Columns.Check
         disableSort
         checkboxProps={{
-          name: 'checked',
           value: 'all',
           onClick: ({ target }) =>
             [].slice
-              .call(document.getElementsByName(target.name))
+              .call(
+                document.getElementsByName((target as HTMLInputElement).name)
+              )
               .forEach(select)
         }}
       />
@@ -44,17 +51,18 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
     </Table.Head>
 
     <Table.Body
-      height={height * 0.9}
-      defaultHeight={50}
+      css={`
+        height: ${height};
+        overflow: auto;
+      `}
       onMouseDown={isDesktop ? handleMouse : () => null}
       onScroll={isDesktop ? handleScroll : () => null}>
       {data.map(d => (
-        <Table.Row key={d.id} id={d.id} height={52}>
-          <Cols.Check
+        <Table.Row key={d.id} id={d.id}>
+          <Columns.Check
             checkboxProps={{
-              pointerEvents: 'none',
-              name: 'checked',
-              value: d.id
+              value: d.id,
+              css: `pointer-events: none`
             }}
           />
 
@@ -62,7 +70,22 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
         </Table.Row>
       ))}
     </Table.Body>
-  </Table>
+  </Table.Container>
+))
+
+export const RenderColumns = compose<RenderColumnProps, RenderColumnProps>(
+  getContext({ columns: array }),
+  setDisplayName('render-columns')
+)(({ props, columns = [] }) => (
+  <>
+    {columns.map(c => {
+      const C =
+        Columns[c.key.slice(0, 1).toUpperCase() + c.key.slice(1)] ||
+        Columns.Base
+
+      return <C key={c.key} {...props(c)} />
+    })}
+  </>
 ))
 
 export interface TableProps
@@ -79,4 +102,9 @@ export interface TableOutterProps {
     label: string
     key: string
   }>
+}
+
+export interface RenderColumnProps {
+  columns?: TableOutterProps['columns']
+  props: (c: any) => { [key: string]: any }
 }

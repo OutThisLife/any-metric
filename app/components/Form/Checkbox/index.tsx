@@ -1,14 +1,15 @@
-import Box from '@/components/Box'
 import { compose, setDisplayName } from 'recompose'
 
-import { CheckboxProps } from '..'
+import { Input, InputProps } from '../Input'
 import Checkbox from './style'
 
 export default compose<CheckboxProps, CheckboxProps>(
   setDisplayName('checkbox')
 )(props => (
   <Checkbox>
-    <Box is="input" type="checkbox" {...props} />
+    <Input type="checkbox" {...props} />
     <div style={{ cursor: 'pointer' }} />
   </Checkbox>
 ))
+
+export type CheckboxProps = InputProps & React.HTMLAttributes<HTMLInputElement>

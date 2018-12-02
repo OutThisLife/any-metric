@@ -1,10 +1,8 @@
-import { extractStyles } from 'evergreen-ui'
 import Document, { Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
 
 export default class extends Document<{
-  styleTags?: Array<React.ReactElement<{}>>
-  css?: string
+  styleTags?: string
   hydrationScript?: any
 }> {
   public static async getInitialProps({ renderPage }) {
@@ -12,16 +10,13 @@ export default class extends Document<{
     const page = renderPage(App => props =>
       sheet.collectStyles(<App {...props} />)
     )
+
     const styleTags = sheet.getStyleElement()
 
-    const { css, hydrationScript } = extractStyles()
-
-    return { ...page, css, styleTags, hydrationScript }
+    return { ...page, styleTags }
   }
 
   public render() {
-    const { css, styleTags, hydrationScript } = this.props
-
     return (
       <html lang="en-US">
         <Head>
@@ -29,9 +24,7 @@ export default class extends Document<{
           <meta httpEquiv="X-UA-Compatible" content="IE=edge,chrome=1" />
           <meta name="robots" content="noindex" />
 
-          {styleTags}
-
-          <style key="evergreen" dangerouslySetInnerHTML={{ __html: css }} />
+          {this.props.styleTags}
 
           <link rel="shortcut icon" href="/static/favicon.ico" />
           <script src="//polyfill.io/v2/polyfill.min.js" />
@@ -39,7 +32,6 @@ export default class extends Document<{
 
         <body>
           <Main />
-          {hydrationScript}
           <NextScript />
         </body>
       </html>

@@ -8,13 +8,11 @@ const withBundleAnalyzer = require('@zeit/next-bundle-analyzer')
 const withPlugins = require('next-compose-plugins')
 const typescript = require('@zeit/next-typescript')
 const offline = require('next-offline')
-const withCSS = require('@zeit/next-css')
 const { PHASE_DEVELOPMENT_SERVER } = require('next/constants')
 
 module.exports = withPlugins(
   [
     withBundleAnalyzer,
-    withCSS,
     typescript,
     [
       offline,

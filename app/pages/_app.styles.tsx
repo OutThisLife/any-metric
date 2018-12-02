@@ -1,6 +1,6 @@
-import Box from '@/components/Box'
 import { BaphoTheme } from '@/theme'
 import { between, darken, rgba, tint } from 'polished'
+import { Box } from 'rebass'
 import styled, { createGlobalStyle, css } from 'styled-components'
 
 export default createGlobalStyle`
@@ -122,15 +122,27 @@ export default createGlobalStyle`
 export const Main = styled<any>(Box)`
   --offset: calc(var(--pad) * 3);
 
+  display: grid;
+  grid-template: 'head' 'main';
+  grid-template-rows: min-content 1fr;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100vw;
+  min-height: 100vh;
+  padding: var(--offset);
+  padding-top: calc(var(--offset) / 2);
+
   @media (min-width: 1025px) {
     height: 100vh;
     overflow: hidden;
   }
 
   ${({ theme }: BaphoTheme) => css`
-    #app {
+    > main {
+      grid-area: main;
       position: relative;
       width: 100%;
+      padding: var(--offset) 0;
       border: 1px solid transparent;
       border-radius: 10px;
       box-shadow: 0 17px 50px -5px ${rgba(theme.colours.panel, 0.7)},

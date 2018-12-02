@@ -2,11 +2,13 @@ import { InMemoryCache } from 'apollo-boost'
 import { withClientState } from 'apollo-link-state'
 
 const resolvers = {
+  defaults: {
+    theme: ''
+  },
   Mutation: {
-    setTheme: (_, vars, { cache }) => {
-      const theme = JSON.stringify(vars.theme)
+    setTheme: (_, { theme }, { cache }) => {
       cache.writeData({ data: { theme } })
-      return null
+      return theme
     }
   }
 }

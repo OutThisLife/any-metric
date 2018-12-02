@@ -1,50 +1,34 @@
-import { BoxProps } from '@/components/Box'
-import Form from '@/components/Form'
+import * as Form from '@/components/Form'
 import Text from '@/components/Text'
-import { BaphoTheme } from '@/theme'
+import { IoIosSearch } from 'react-icons/io'
+import { BoxProps } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
-import { withTheme } from 'styled-components'
 
 import Picker from './Picker'
 import Header from './style'
 
-export default compose<HeaderProps & BaphoTheme, HeaderProps>(
-  withTheme,
-  setDisplayName('header')
-)(({ theme }) => (
-  <Header
-    is="header"
-    gridArea="head"
-    display="flex"
-    alignItems="center"
-    justifyContent="space-between"
-    paddingX="var(--offset)"
-    paddingBottom="var(--pad)">
-    <Text
-      is="h1"
-      fontSize="1.1rem"
-      lineHeight={1}
-      color={theme.colours.base}
-      fontFamily={theme.fonts.family.title}
-      textTransform="uppercase"
-      fontWeight={100}
-      margin={0}>
-      ɮΔքɦօʍɛ✞ʀɨƈ
-    </Text>
+export default compose<HeaderProps, HeaderProps>(setDisplayName('header'))(
+  () => (
+    <Header as="header">
+      <Text as="h1" lineHeight={1} fontWeight="100" m={0}>
+        ɮΔքɦօʍɛ✞ʀɨƈ
+      </Text>
 
-    <Picker />
+      <Picker />
 
-    <Form groupFields>
-      <Form.Input
-        zIndex={1}
-        tabIndex={1}
-        placeholder="Enter product name &hellip;"
-        backgroundColor="transparent"
-      />
+      <Form.Container groupFields>
+        <Form.Input
+          tabIndex={1}
+          placeholder="Enter product name &hellip;"
+          bg="transparent"
+        />
 
-      <Form.Button zIndex={2} icon="plus" iconSize={32} />
-    </Form>
-  </Header>
-))
+        <Form.Button variant="icon">
+          <IoIosSearch size={32} />
+        </Form.Button>
+      </Form.Container>
+    </Header>
+  )
+)
 
-export type HeaderProps = BoxProps<HTMLDivElement>
+export type HeaderProps = BoxProps

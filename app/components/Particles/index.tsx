@@ -4,9 +4,9 @@ import { compose, setDisplayName, withPropsOnChange } from 'recompose'
 
 import defaultParams from './params'
 
-export default compose<ParticleProps, {}>(
+export default compose<ParticleProps & MeasuredComponentProps, {}>(
   withContentRect('bounds'),
-  withPropsOnChange<ParticleProps, ParticleProps>(
+  withPropsOnChange<ParticleProps, ParticleProps & MeasuredComponentProps>(
     ['contentRect'],
     ({ contentRect }) => {
       const params = defaultParams
@@ -44,6 +44,6 @@ export default compose<ParticleProps, {}>(
   </div>
 ))
 
-interface ParticleProps extends Partial<MeasuredComponentProps> {
+interface ParticleProps {
   params: Partial<IParticlesParams>
 }

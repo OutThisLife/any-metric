@@ -1,12 +1,9 @@
-import Box from '@/components/Box'
-import omit from 'lodash/omit'
+import { Flex } from 'rebass'
 import styled, { css } from 'styled-components'
 
 import { FormProps } from '.'
 
-const Item = props => <Box {...omit(props, ['groupFields'])} />
-
-export default styled<any>(Item)`
+export default styled<any>(Flex)`
   ${({ groupFields = false }: FormProps) =>
     groupFields &&
     css`

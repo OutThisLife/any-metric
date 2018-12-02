@@ -1,13 +1,12 @@
-import { BoxProps } from '@/components/Box'
 import Text from '@/components/Text'
 import { DataTableFilter } from '@/pages/Dashboard'
 import { BaphoTheme } from '@/theme'
 import { func } from 'prop-types'
+import { Box, BoxProps } from 'rebass'
 import { compose, getContext, setDisplayName, withHandlers } from 'recompose'
 import { withTheme } from 'styled-components'
 
 import { CategoriesProps } from '..'
-import Category from './style'
 
 export default compose<CategoryProps & CategoryHandlers, CategoryOutterProps>(
   setDisplayName('category'),
@@ -44,26 +43,40 @@ export default compose<CategoryProps & CategoryHandlers, CategoryOutterProps>(
     }
   }))
 )(({ theme, handleClick, title: groupTitle, total: maxItems, items = [] }) => (
-  <Category>
-    <Text is="a" href="javascript:;" display="flex" alignItems="center">
-      <Text fontSize="0.9rem" color={theme.colours.base}>
+  <Box
+    as="li"
+    css={`
+      position: relative;
+      outline: 1px solid transparent;
+      border: 1px solid ${theme.colours.border};
+      transition: outline-color ${theme.eases.base};
+      background: transparent;
+
+      &:hover {
+        z-index: 1;
+        outline-color: ${theme.colours.focus};
+      }
+
+      > a[href] {
+        display: flex;
+        align-items: center;
+
+        + span {
+          display: inline-block;
+        }
+      }
+    `}>
+    <Text as="a" href="javascript:;">
+      <Text fontSize={11} color={theme.colours.base}>
         {groupTitle}
       </Text>
 
-      <Text
-        is="span"
-        display="inline-block"
-        fontSize="0.9em"
-        lineHeight={1}
-        margin={0}
-        paddingX={5}
-        color={theme.colours.label}
-        style={{ verticalAlign: 'middle' }}>
+      <Text fontSize={11} lineHeight={1} color={theme.colours.label} pl={1}>
         ({maxItems})
       </Text>
     </Text>
 
-    <Category.Children>
+    <Box as="ul">
       {items.map(({ title, total }) => (
         <li key={title} className="row" data-tag={title}>
           <a href="javascript:;" onClick={handleClick}>
@@ -71,11 +84,11 @@ export default compose<CategoryProps & CategoryHandlers, CategoryOutterProps>(
           </a>
         </li>
       ))}
-    </Category.Children>
-  </Category>
+    </Box>
+  </Box>
 ))
 
-export type CategoryOutterProps = BoxProps<HTMLLIElement> &
+export type CategoryOutterProps = BoxProps &
   CategoriesProps['data'][keyof CategoriesProps['data']]
 
 export type CategoryProps = CategoryOutterProps &

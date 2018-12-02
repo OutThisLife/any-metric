@@ -1,9 +1,9 @@
 import { lighten } from 'polished'
 import styled, { css } from 'styled-components'
 
-import { Cols } from '..'
+import Column from '../Column'
 
-export default styled<any>(Cols)`
+export default styled<any>(Column)`
   ${({ theme }) => css`
     a[href] svg {
       width: 13px;
@@ -18,8 +18,10 @@ export default styled<any>(Cols)`
     }
 
     figure {
+      flex-basis: 35;
       width: 30px;
       height: 30px;
+      margin: 0;
       overflow: hidden;
       background: ${lighten(0.33, theme.colours.secondary)};
 

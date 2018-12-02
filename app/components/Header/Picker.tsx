@@ -5,7 +5,7 @@ import { graphql, MutateProps } from 'react-apollo'
 import { CirclePicker } from 'react-color'
 import { compose, setDisplayName } from 'recompose'
 
-let tm = d3.timeout(() => null)
+let tm: d3.Timer | {} = {}
 
 export default compose<MutateProps, {}>(
   setDisplayName('theme-picker'),
@@ -19,26 +19,19 @@ export default compose<MutateProps, {}>(
 )(({ mutate }) => (
   <CirclePicker
     circleSize={6}
+    circleSpacing={6}
     onChange={c => {
-      const theme = createTheme(['#fafafa', '#0A0F14', c.hex])
+      localStorage.removeItem('theme')
 
-      tm.stop()
+      if ('stop' in tm) {
+        tm.stop()
+      }
+
       tm = d3.timeout(
         () =>
           mutate({
-            variables: { theme },
-            refetchQueries: [
-              {
-                query: gql`
-                  {
-                    theme @client
-                  }
-                `
-              }
-            ],
-            update: () => {
-              localStorage.setItem('theme', JSON.stringify(theme))
-              window.dispatchEvent(new CustomEvent('resize'))
+            variables: {
+              theme: JSON.stringify(createTheme(['#fafafa', '#0A0F14', c.hex]))
             }
           }),
         15

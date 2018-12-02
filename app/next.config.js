@@ -73,7 +73,7 @@ module.exports = withPlugins(
     },
 
     exportPathMap: async () => ({
-      '/': { page: '/Home', query: {} }
+      '/': { page: '/Dashboard', query: {} }
     })
   }
 )

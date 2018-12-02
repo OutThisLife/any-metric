@@ -66,7 +66,6 @@ export default compose<CategoryProps & CategoryHandlers, CategoryOutterProps>(
         }
       }
     `}>
-    {console.log(theme.colours.secondary)}
     <Text as="a" href="javascript:;">
       <Text fontSize={11} color={theme.colours.base}>
         {groupTitle}

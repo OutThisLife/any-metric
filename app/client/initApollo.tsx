@@ -33,9 +33,9 @@ const createCache = (): InMemoryCache => {
   return cache
 }
 
-const create = (initialState = {}) => {
+const create = initialState => {
   const cache = createCache().restore(initialState)
-  const link = ApolloLink.from([errorLink(), stateLink(cache), httpLink()])
+  const link = ApolloLink.from([errorLink(), stateLink(), httpLink()])
 
   return new ApolloClient({
     link,

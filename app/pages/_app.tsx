@@ -18,7 +18,7 @@ export default withData(
           <Particles />
 
           <DynamicTheme>
-            <GlobalStyles key="global-styles" />
+            <GlobalStyles />
             <Layout {...this.props} />
           </DynamicTheme>
         </ApolloProvider>
@@ -40,18 +40,10 @@ const DynamicTheme = compose<BaphoTheme, {}>(
   ),
   withProps<BaphoTheme, BaphoTheme & DataProps<{ theme: string }>>(
     ({ theme, data = {} }) => {
-      if ('theme' in data && typeof data.theme === 'string') {
-        console.log('from data')
-        theme = JSON.parse(data.theme)
-
-        if ('browser' in process) {
-          localStorage.setItem('theme', JSON.stringify(theme))
-        }
-      } else if ('browser' in process && localStorage.getItem('theme')) {
-        console.log('from localStorage')
+      if ('browser' in process && localStorage.getItem('theme') !== null) {
         theme = JSON.parse(localStorage.getItem('theme'))
-      } else {
-        console.log('default theme')
+      } else if ('theme' in data && typeof data.theme === 'string') {
+        theme = JSON.parse(data.theme)
       }
 
       return { theme }

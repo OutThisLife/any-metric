@@ -11,7 +11,7 @@ export default compose<MutateProps, {}>(
   setDisplayName('theme-picker'),
   graphql(
     gql`
-      mutation setTheme($theme: JSON) {
+      mutation setTheme($theme: String!) {
         setTheme(theme: $theme) @client
       }
     `
@@ -21,8 +21,6 @@ export default compose<MutateProps, {}>(
     circleSize={6}
     circleSpacing={6}
     onChange={c => {
-      localStorage.removeItem('theme')
-
       if ('stop' in tm) {
         tm.stop()
       }

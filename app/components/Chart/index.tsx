@@ -2,6 +2,7 @@ import { moneyFormat, numFormat } from '@/lib/utils'
 import { FakeResult } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import * as d3 from 'd3'
+import { rgba } from 'polished'
 import { Chart, ChartCanvas } from 'react-stockcharts'
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes'
 import {
@@ -75,7 +76,9 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
       <Flex
         alignItems="center"
         justifyContent="center"
-        css="padding: 'var(--offset)'">
+        css={`
+          padding: var(--offset);
+        `}>
         Loading&hellip;
       </Flex>
     ))
@@ -92,7 +95,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
       clamp={true}
       type="hybrid"
       pointsPerPxThreshold={6}
-      m={{ top: 0, right: 30, bottom: 30, left: 0 }}>
+      margin={{ top: 0, right: 30, bottom: 30, left: 0 }}>
       <Chart id={2} yExtents={[d => d.price, MA.accessor()]} yPan={false}>
         <XAxis
           axisAt="bottom"
@@ -100,7 +103,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
           fontSize={10}
           fontFamily={theme.fonts.family.title}
           stroke={theme.colours.border}
-          tickStroke={theme.colours.base}
+          tickStroke={theme.colours.muted}
         />
 
         {isDesktop && (
@@ -151,8 +154,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
 
         <LineSeries
           yAccessor={d => d.price}
-          stroke={theme.colours.price.hl}
-          strokeOpacity={0.2}
+          stroke={rgba(theme.colours.price.hl, 0.33)}
           strokeWidth={1}
           interpolation={d3.curveMonotoneX}
           strokeDasharray="Dot"
@@ -200,8 +202,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
               const $row = document.getElementById(currentItem.id)
 
               if ($row) {
-                const $table = document.querySelector('table')
-                  .firstChild as HTMLElement
+                const $table = document.querySelector('table').parentElement
 
                 $row.classList.add('chart-link')
 
@@ -263,9 +264,9 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
           strokeWidth={0}
           interpolation={d3.curveMonotoneX}
           canvasGradient={createVerticalLinearGradient([
-            { stop: 0, color: theme.colours.border, opacity: 0 },
-            { stop: 0.5, color: theme.colours.border, opacity: 0.2 },
-            { stop: 1, color: theme.colours.border, opacity: 0.5 }
+            { stop: 0, color: rgba(theme.colours.border, 0) },
+            { stop: 0.5, color: rgba(theme.colours.border, 0.2) },
+            { stop: 1, color: rgba(theme.colours.border, 0.5) }
           ])}
         />
       </Chart>
@@ -274,8 +275,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
         <CrossHairCursor
           snapX={false}
           StrokeDasharray="ShortDashDot"
-          stroke={theme.colours.base}
-          strokeOpacity={0.1}
+          stroke={rgba(theme.colours.base, 0.1)}
         />
       )}
     </ChartCanvas>

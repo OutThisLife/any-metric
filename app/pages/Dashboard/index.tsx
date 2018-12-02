@@ -79,7 +79,7 @@ export default compose<HomeProps, HomeOutterProps>(
   ),
   mapProps(props => omit(props, ['sortBy', 'setFilter'])),
   setDisplayName('dashboard')
-)(({ sort, results, renderedData, updateRendered, width, height }) => {
+)(({ sort, results, renderedData, updateRendered, width }) => {
   const isDesktop = (width || 1920) > 1025
 
   if (isWorkerReady()) {
@@ -107,13 +107,6 @@ export default compose<HomeProps, HomeOutterProps>(
         <Table
           isDesktop={isDesktop}
           data={orderBy(renderedData, sort.name, [sort.dir])}
-          height={
-            isDesktop
-              ? height
-              : 'browser' in process
-              ? window.innerHeight / 2
-              : 400
-          }
           columns={[
             {
               label: 'Product',
@@ -158,7 +151,7 @@ export default compose<HomeProps, HomeOutterProps>(
           css={`
             z-index: 10;
             align-self: flex-end;
-            margin: 0;
+            margin: 0 0 0 auto;
 
             @media (max-width: 768px) {
               align-self: center;

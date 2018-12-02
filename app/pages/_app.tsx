@@ -1,9 +1,9 @@
 import withData from '@/client/withData'
 import Particles from '@/components/Particles'
-import { ApolloClient, gql } from 'apollo-boost'
+import { getTheme } from '@/lib/queries'
+import { ApolloClient } from 'apollo-boost'
 import App, { AppProps, Container } from 'next/app'
-import { ApolloProvider, DataProps, graphql } from 'react-apollo'
-import { compose } from 'recompose'
+import { ApolloProvider } from 'react-apollo'
 import { ThemeProvider } from 'styled-components'
 
 import GlobalStyles from './_app.styles'
@@ -26,17 +26,7 @@ export default withData(
   }
 )
 
-const DynamicTheme = compose<DataProps<{ theme: { value: string } }>, {}>(
-  graphql(
-    gql`
-      {
-        theme {
-          value
-        }
-      }
-    `
-  )
-)(({ children, data: { theme } }) => (
+const DynamicTheme = getTheme()(({ children, data: { theme } }) => (
   <ThemeProvider theme={JSON.parse(theme.value)}>
     <Container>{children}</Container>
   </ThemeProvider>

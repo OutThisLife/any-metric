@@ -2,6 +2,7 @@ import withSelections, { select, SelectionsProps } from '@/lib/withSelections'
 import * as d3 from 'd3'
 import { array } from 'prop-types'
 import { MeasuredComponentProps } from 'react-measure'
+import { Box } from 'rebass'
 import {
   compose,
   getContext,
@@ -31,46 +32,43 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
     }
   })),
   setDisplayName('table')
-)(({ data = [], isDesktop, height, handleMouse, handleScroll, ...props }) => (
-  <Table.Container as="table" {...props}>
-    <Table.Head>
-      <Columns.Check
-        disableSort
-        checkboxProps={{
-          value: 'all',
-          onClick: ({ target }) =>
-            [].slice
-              .call(
-                document.getElementsByName((target as HTMLInputElement).name)
-              )
-              .forEach(select)
-        }}
-      />
+)(({ data = [], isDesktop, handleMouse, handleScroll, ...props }) => (
+  <Box
+    css={`
+      max-height: calc(100vh - (var(--offset) * 4));
+      overflow: auto;
+    `}>
+    <Table.Container as="table" {...props}>
+      <Table.Head>
+        <Columns.Check
+          disableSort
+          checkboxProps={{
+            value: 'all',
+            onChange: ({ target }) =>
+              [].slice
+                .call(
+                  document.getElementsByName((target as HTMLInputElement).name)
+                )
+                .filter(t => t !== target)
+                .forEach(select)
+          }}
+        />
 
-      <RenderColumns props={c => ({ children: c.label })} />
-    </Table.Head>
+        <RenderColumns props={c => ({ children: c.label })} />
+      </Table.Head>
 
-    <Table.Body
-      css={`
-        height: ${height};
-        overflow: auto;
-      `}
-      onMouseDown={isDesktop ? handleMouse : () => null}
-      onScroll={isDesktop ? handleScroll : () => null}>
-      {data.map(d => (
-        <Table.Row key={d.id} id={d.id}>
-          <Columns.Check
-            checkboxProps={{
-              value: d.id,
-              css: `pointer-events: none`
-            }}
-          />
-
-          <RenderColumns props={() => ({ item: d })} />
-        </Table.Row>
-      ))}
-    </Table.Body>
-  </Table.Container>
+      <Table.Body
+        onMouseDown={isDesktop ? handleMouse : () => null}
+        onScroll={isDesktop ? handleScroll : () => null}>
+        {data.map(d => (
+          <Table.Row key={d.id} id={d.id}>
+            <Columns.Check checkboxProps={{ value: d.id }} />
+            <RenderColumns props={() => ({ item: d })} />
+          </Table.Row>
+        ))}
+      </Table.Body>
+    </Table.Container>
+  </Box>
 ))
 
 export const RenderColumns = compose<RenderColumnProps, RenderColumnProps>(
@@ -96,7 +94,6 @@ export interface TableProps
 
 export interface TableOutterProps {
   isDesktop?: boolean
-  height: number
   data: any[]
   columns: Array<{
     label: string

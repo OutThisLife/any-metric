@@ -9,7 +9,8 @@ import { Cell, HeaderCell } from '../style'
 export default compose<ColumnProps, ColumnProps>(
   setDisplayName('column'),
   defaultProps<ColumnProps>({
-    name: Math.random().toString()
+    name: Math.random().toString(),
+    disableSort: false
   }),
   getContext({
     isHeader: bool,
@@ -28,6 +29,8 @@ export default compose<ColumnProps, ColumnProps>(
   }) => {
     if (!isHeader) {
       return <Cell {...props}>{children}</Cell>
+    } else if (disableSort) {
+      return <HeaderCell {...props}>{children}</HeaderCell>
     }
 
     return (

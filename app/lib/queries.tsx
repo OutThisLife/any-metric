@@ -1,6 +1,6 @@
 import { FakeResult } from '@/server/schema/types'
 import gql from 'graphql-tag'
-import { graphql } from 'react-apollo'
+import { DataProps, graphql } from 'react-apollo'
 
 export const getFakeCrawl = () =>
   graphql<{}, { results: FakeResult[] }>(
@@ -36,7 +36,7 @@ export const getFakeCrawl = () =>
   )
 
 export const getTheme = () =>
-  graphql(
+  graphql<{}, {}, {}, DataProps<{ theme: { value: string } }>>(
     gql`
       {
         theme {

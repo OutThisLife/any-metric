@@ -92,7 +92,6 @@ export default compose<HomeProps, HomeOutterProps>(
       css={`
         display: grid;
         align-items: flex-start;
-        grid-gap: inherit;
       `}>
       <Head>
         <title key="title">

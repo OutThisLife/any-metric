@@ -16,10 +16,10 @@ export default compose<PriceProps & BaphoTheme, PriceProps>(
   withTheme
 )(({ theme, children, item = {} }) => (
   <Column
-    pr={0}
     css={`
       line-height: 0;
       text-align: right;
+      padding-right: var(--pad);
     `}>
     {!('id' in item) ? (
       children

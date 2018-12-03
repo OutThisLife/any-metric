@@ -1,6 +1,6 @@
+import { KeyValueCache } from 'apollo-server-core'
 import gql from 'graphql-tag'
 import { IFieldResolver } from 'graphql-tools'
-import * as LRU from 'lru-cache'
 
 export default gql`
   scalar JSON
@@ -75,8 +75,8 @@ export interface FakeResult {
   tags?: string[]
 }
 
-export interface Context<Cache = LRU.Cache<any, any>> {
-  cache: Cache
+export interface Context {
+  cache: KeyValueCache
 }
 
 export type Resolver = IFieldResolver<any, Context>

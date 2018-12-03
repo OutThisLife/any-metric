@@ -173,6 +173,18 @@ export const Main = styled<any>(Box)`
           );
         }
       }
+
+      .up {
+        color: ${theme.colours.price.up} !important;
+      }
+
+      .down {
+        color: ${theme.colours.price.down} !important;
+      }
+
+      .hl {
+        color: ${theme.colours.price.hl} !important;
+      }
     }
   `}
 `

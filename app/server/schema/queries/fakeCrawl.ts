@@ -1,14 +1,9 @@
 import * as faker from 'faker'
 
-import { FakeResult } from '../types'
+import { FakeResult, Resolver } from '../types'
 
-export default async (_, args = {}, { cache }): Promise<FakeResult[]> => {
-  if (!cache.has('data')) {
-    cache.set('data', await (genFakeResults(args) || []))
-  }
-
-  return cache.get('data')
-}
+export default (async (_, args = {}): Promise<FakeResult[]> =>
+  await (genFakeResults(args) || [])) as Resolver
 
 export const genFakeResults: (
   args: {

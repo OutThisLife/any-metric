@@ -1,4 +1,5 @@
-import { ApolloServer } from 'apollo-server-express'
+import { ApolloServer, Config } from 'apollo-server-express'
+import { RedisCache } from 'apollo-server-redis'
 import * as express from 'express'
 import { IResolvers } from 'graphql-tools'
 import * as LRU from 'lru-cache'
@@ -38,7 +39,7 @@ module.exports = ({
   cache: LRU.Cache<any, any>
   dev?: boolean
 }) => {
-  new ApolloServer({
+  const options: Config = {
     typeDefs,
     resolvers,
     context: { cache },
@@ -46,7 +47,32 @@ module.exports = ({
     playground: dev,
     tracing: dev,
     cacheControl: true
-  }).applyMiddleware({ app })
+  }
+
+  if (process.env.REDIS_URL) {
+    try {
+      const redis = new RedisCache({
+        url: process.env.REDIS_URL,
+        socket_keepalive: false,
+        retry_strategy({ attempt }) {
+          console.log('Redis Retry', attempt)
+
+          if (attempt >= 3) {
+            return undefined
+          }
+
+          return Math.min(attempt * 50, 2e4)
+        }
+      })
+
+      options.cache = redis as any
+    } catch (err) {
+      console.log('Could not start up redis')
+      console.error(err)
+    }
+  }
+
+  new ApolloServer(options).applyMiddleware({ app })
 
   return router
 }

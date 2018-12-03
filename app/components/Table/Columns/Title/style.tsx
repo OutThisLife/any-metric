@@ -5,6 +5,12 @@ import Column from '../Column'
 
 export default styled<any>(Column)`
   ${({ theme }) => css`
+    text-align: left;
+
+    > div {
+      padding: calc(var(--pad) / 4) 0;
+    }
+
     a[href] svg {
       width: 13px;
       margin: 0 0 0 5px;

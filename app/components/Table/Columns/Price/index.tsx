@@ -3,52 +3,31 @@ import { FakeResult } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import { Box } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
-import { withTheme } from 'styled-components'
 
 import { Text } from '../../style'
-import Column, { ColumnProps } from '../Column'
+import { ColumnProps } from '../Column'
+import Price from './style'
 
 export default compose<PriceProps & BaphoTheme, PriceProps>(
-  setDisplayName('col-price'),
-  withTheme
-)(({ theme, children, item = {} }) => (
-  <Column
-    name="price"
-    width={60}
-    css={`
-      line-height: 0;
-      text-align: right;
-      padding-right: var(--pad);
-    `}>
+  setDisplayName('col-price')
+)(({ children, item = {} }) => (
+  <Price name="price" width={60}>
     {!('id' in item) ? (
       children
     ) : (
-      <Box
-        css={`
-          font-size: 0.8rem;
-          line-height: 1.2;
-
-          > span {
-            display: block;
-            width: 100%;
-          }
-        `}>
+      <Box>
         <Text
-          fontWeight="500"
-          color={
-            parseInt(item.price, 10) % 3
-              ? theme.colours.price.up
-              : theme.colours.price.down
-          }>
+          className={parseInt(item.price, 10) % 2 ? 'up' : 'down'}
+          fontWeight="500">
           {moneyFormat(parseFloat(item.price))}
         </Text>
 
-        <Text fontWeight="300" color={theme.colours.muted} mt={1}>
+        <Text fontWeight="300" mt={1}>
           {numFormat(parseFloat(item.shipping))}
         </Text>
       </Box>
     )}
-  </Column>
+  </Price>
 ))
 
 export interface PriceProps extends ColumnProps {

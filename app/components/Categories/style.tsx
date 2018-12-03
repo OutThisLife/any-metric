@@ -56,11 +56,18 @@ export default styled<any>(Box)`
       }
 
       h5 {
+        display: inline-flex;
+        align-items: center;
         color: ${lighten(0.33, theme.colours.secondary)};
         text-transform: uppercase;
         white-space: nowrap;
         padding-bottom: calc(var(--pad) / 4);
         transition: inherit;
+
+        span {
+          opacity: 0.5;
+          font-size: 0.9em;
+        }
       }
 
       &:not([data-checked]) h5 {

@@ -1,24 +1,15 @@
-import { BaphoTheme } from '@/theme'
 import { BoxProps } from 'rebass'
-import { compose, mapProps, setDisplayName } from 'recompose'
-import { withTheme } from 'styled-components'
+import { compose, setDisplayName } from 'recompose'
 
 import InputContainer, { Input } from './style'
 
-export default compose<InputProps, InputProps>(
-  withTheme,
-  mapProps<InputProps, InputProps & BaphoTheme>(
-    ({ theme, bg = theme.inputs.bg, ...props }) => ({
-      bg,
-      ...props
-    })
-  ),
-  setDisplayName('input')
-)(props => (
-  <InputContainer>
-    <Input {...props} />
-  </InputContainer>
-))
+export default compose<InputProps, InputProps>(setDisplayName('input'))(
+  props => (
+    <InputContainer>
+      <Input {...props} />
+    </InputContainer>
+  )
+)
 
 export interface InputProps
   extends BoxProps,

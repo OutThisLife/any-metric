@@ -6,6 +6,7 @@ export default styled<any>(Heading)`
   align-items: center;
 
   > span + span:not([aria-label]) {
+    color: ${({ theme }) => theme.colours.muted};
     margin-left: 8px;
   }
 

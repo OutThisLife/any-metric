@@ -21,7 +21,7 @@ import {
 } from 'react-stockcharts/lib/series'
 import { HoverTooltip } from 'react-stockcharts/lib/tooltip'
 import { createVerticalLinearGradient, last } from 'react-stockcharts/lib/utils'
-import { BoxProps, Flex } from 'rebass'
+import { BoxProps } from 'rebass'
 import {
   branch,
   compose,
@@ -30,6 +30,8 @@ import {
   withProps
 } from 'recompose'
 import { withTheme } from 'styled-components'
+
+import Loader from './Loader'
 
 const MA = sma()
   .options({ windowSize: 10, sourcePath: 'price' })
@@ -72,16 +74,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
   withTheme,
   branch<ChartProps>(
     props => !('data' in props) || isNaN(props.width) || props.width <= 0,
-    renderComponent(() => (
-      <Flex
-        alignItems="center"
-        justifyContent="center"
-        css={`
-          padding: var(--offset);
-        `}>
-        Loading&hellip;
-      </Flex>
-    ))
+    renderComponent(() => <Loader>Loading &hellip;</Loader>)
   ),
   setDisplayName('price')
 )(({ theme, isDesktop, width, ...props }) => (
@@ -290,14 +283,14 @@ const unlink = () => {
   }
 }
 
-interface ChartOutterProps extends BoxProps {
+export interface ChartOutterProps extends BoxProps {
   data?: FakeResult[]
   isDesktop?: boolean
   width?: number
   height?: number
 }
 
-interface ChartProps extends ChartOutterProps {
+export interface ChartProps extends ChartOutterProps {
   width: number
   height: number
   ratio: number
@@ -313,3 +306,5 @@ interface ChartProps extends ChartOutterProps {
     volume?: number
   }>
 }
+
+export { Loader }

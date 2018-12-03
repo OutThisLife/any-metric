@@ -8,9 +8,10 @@ import styled, { css, withTheme } from 'styled-components'
 import BaseText, { TextProps } from '../Text'
 
 export const Container = styled<any>(Box)`
+  table-layout: fixed;
   position: relative;
   width: 100%;
-  table-layout: fixed;
+  height: 100%;
 
   ${({ theme }: BaphoTheme) => css`
     .head {
@@ -34,8 +35,14 @@ export const Container = styled<any>(Box)`
         }
 
         span {
-          position: relative;
           z-index: 2;
+          position: relative;
+        }
+
+        svg {
+          position: absolute;
+          top: 2px;
+          right: -10px;
         }
       }
     }
@@ -55,7 +62,7 @@ export const Container = styled<any>(Box)`
       outline-offset: -3px;
       outline: 1px solid transparent;
 
-      .cell {
+      td {
         position: relative;
       }
 
@@ -76,6 +83,13 @@ export const Container = styled<any>(Box)`
       &.chart-link {
         outline-color: ${theme.colours.price.hl};
       }
+    }
+
+    tfoot td {
+      opacity: 0.2;
+      z-index: 10;
+      position: sticky;
+      bottom: -2px;
     }
   `}
 `
@@ -104,6 +118,12 @@ export const Head = compose(
   withContext({ isHeader: bool }, () => ({ isHeader: true }))
 )(({ children }) => (
   <Box as="thead" className="head">
+    <Row>{children}</Row>
+  </Box>
+))
+
+export const Foot = compose(setDisplayName('table-tfoot'))(({ children }) => (
+  <Box as="tfoot" className="foot">
     <Row>{children}</Row>
   </Box>
 ))

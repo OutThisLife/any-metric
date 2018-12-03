@@ -2,7 +2,7 @@ import { FakeResult } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import { MdOpenInNew } from 'react-icons/md'
 import { Box, Flex } from 'rebass'
-import { compose, defaultProps, setDisplayName } from 'recompose'
+import { compose, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
 import { Text } from '../../style'
@@ -11,12 +11,10 @@ import Title from './style'
 
 export default compose<TitleProps & BaphoTheme, TitleProps>(
   setDisplayName('col-title'),
-  defaultProps<TitleProps>({
-    name: 'title'
-  }),
   withTheme
 )(({ theme, children, item = {} }) => (
   <Title
+    name="title"
     p={0}
     css={`
       width: 60%;

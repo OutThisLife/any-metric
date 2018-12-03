@@ -1,0 +1,69 @@
+import Text from '@/components/Text'
+import { BaphoTheme } from '@/theme'
+import { Box, BoxProps } from 'rebass'
+import { compose, setDisplayName } from 'recompose'
+import { withTheme } from 'styled-components'
+
+import { CategoriesProps } from '.'
+
+export default compose<CategoryProps, CategoryOutterProps>(
+  setDisplayName('category'),
+  withTheme
+)(({ theme, title: groupTitle, total: maxItems, items = [] }) => (
+  <Box as="li" className="row-parent" data-tag={groupTitle}>
+    <a
+      href="javascript:;"
+      className="row"
+      style={{
+        zIndex: 1,
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0
+      }}
+    />
+
+    <Text
+      as="h5"
+      m={0}
+      p={0}
+      fontSize={11}
+      fontWeight="400"
+      color={theme.colours.base}>
+      {groupTitle}
+
+      <Text
+        fontSize={11}
+        lineHeight={1}
+        color={theme.colours.label}
+        pl={1}
+        css={`
+          display: inline-block;
+        `}>
+        ({maxItems})
+      </Text>
+    </Text>
+
+    <Box as="ul">
+      {items.map(({ title, total }) => (
+        <li key={title} className="row" data-tag={title}>
+          <a href="javascript:;" style={{ zIndex: 2, position: 'relative' }}>
+            {title} ({total})
+          </a>
+        </li>
+      ))}
+    </Box>
+  </Box>
+))
+
+export type CategoryOutterProps = BoxProps &
+  CategoriesProps['data'][keyof CategoriesProps['data']]
+
+export type CategoryProps = CategoryOutterProps & BaphoTheme & CategoryItem
+
+export interface CategoryItem {
+  title: string
+  total: number
+  items?: CategoryItem[]
+}

@@ -24,21 +24,34 @@ export default styled<any>(Box)`
       justify-content: center;
       transition: ${theme.eases.base};
 
-      &:not(:hover) {
-        opacity: 0.4;
-      }
-
       > a {
         display: inline-block;
         line-height: 0;
         vertical-align: middle;
+
+        + * {
+          z-index: 100;
+          position: absolute !important;
+          top: 100%;
+          right: 0;
+
+          > div {
+            background: none !important;
+          }
+
+          .flexbox-fix {
+            display: none !important;
+          }
+        }
       }
 
-      .sketch-picker {
-        z-index: 100;
-        position: absolute;
-        top: 100%;
-        right: 0;
+      .circle-picker:not(:hover) {
+        opacity: 0.4;
+      }
+
+      .compact-picker span div[title] {
+        width: 10px !important;
+        height: 10px !important;
       }
     }
 

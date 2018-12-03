@@ -1,12 +1,15 @@
 import { FakeResult } from '@/server/schema/types'
-import { bool, func, shape } from 'prop-types'
+import { bool, func, object } from 'prop-types'
 import { FaCaretDown, FaCaretUp } from 'react-icons/fa'
 import { BoxProps } from 'rebass'
 import { compose, defaultProps, getContext, setDisplayName } from 'recompose'
 
 import { Cell, HeaderCell } from '../style'
 
-export default compose<ColumnProps, ColumnProps>(
+export default compose<
+  ColumnProps,
+  ColumnProps & React.AllHTMLAttributes<HTMLTableCellElement>
+>(
   setDisplayName('column'),
   defaultProps<ColumnProps>({
     name: Math.random().toString(),
@@ -14,7 +17,7 @@ export default compose<ColumnProps, ColumnProps>(
   }),
   getContext({
     isHeader: bool,
-    sort: shape({}),
+    sort: object,
     sortBy: func
   })
 )(
@@ -42,9 +45,9 @@ export default compose<ColumnProps, ColumnProps>(
         {sortKey === name && (
           <>
             {dir === 'desc' ? (
-              <FaCaretDown size={13} />
+              <FaCaretDown size={10} />
             ) : (
-              <FaCaretUp size={13} />
+              <FaCaretUp size={10} />
             )}
           </>
         )}

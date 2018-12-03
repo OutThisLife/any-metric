@@ -1,15 +1,14 @@
 import Categories from '@/components/Categories'
-import Chart from '@/components/Chart'
+import Chart, { Loader } from '@/components/Chart'
 import Table from '@/components/Table'
 import { getFakeCrawl } from '@/lib/queries'
 import { FakeResult } from '@/server/schema/types'
-import { omit, orderBy } from 'lodash'
+import { orderBy } from 'lodash'
 import Head from 'next/head'
-import { func, shape, string } from 'prop-types'
+import { func, object } from 'prop-types'
 import { Box, BoxProps, Flex } from 'rebass'
 import {
   compose,
-  mapProps,
   setDisplayName,
   StateHandler,
   StateHandlerMap,
@@ -22,6 +21,7 @@ import Home from './style'
 import worker, { isWorkerReady } from './worker'
 
 export default compose<HomeProps, HomeOutterProps>(
+  setDisplayName('dashboard'),
   getFakeCrawl(),
   withStateHandlers<HomeState, HomeStateHandlers, HomeProps>(
     ({ results = [] }) => ({
@@ -52,35 +52,23 @@ export default compose<HomeProps, HomeOutterProps>(
   ),
   withContext(
     {
-      sort: shape({}),
+      sort: object,
       sortBy: func,
-      filter: func,
-      update: func,
-      current: string
+      filter: func
     },
-    ({
+    ({ sort, sortBy, setFilter: filter }) => ({
       sort,
       sortBy,
-      updateRendered: update,
-      setFilter: filter,
-      filter: { value: current }
-    }) => ({
-      sort,
-      sortBy,
-      update,
-      filter,
-      current
+      filter
     })
   ),
   withPropsOnChange<any, HomeProps & HomeState>(
     ['filter'],
     ({ results, filter: { action, value } }) =>
       isWorkerReady() && worker.postMessage([results, action, value])
-  ),
-  mapProps(props => omit(props, ['sortBy', 'setFilter'])),
-  setDisplayName('dashboard')
+  )
 )(({ sort, results, renderedData, updateRendered, width }) => {
-  const isDesktop = (width || 1920) > 1025
+  const isDesktop = 'browser' in process && width > 1024
 
   if (isWorkerReady()) {
     worker.onmessage = ({ data }) => updateRendered(data)
@@ -139,7 +127,7 @@ export default compose<HomeProps, HomeOutterProps>(
           as="section"
           css={`
             width: 100%;
-            padding: var(--pad) calc(var(--pad) / 2);
+            padding: var(--pad) 0 var(--pad) var(--offset);
           `}>
           {results.length && (
             <Categories data={orderBy(results, 'date', 'asc')} />
@@ -158,12 +146,14 @@ export default compose<HomeProps, HomeOutterProps>(
               margin: var(--offset) auto 0;
             }
           `}>
-          {renderedData && (
+          {renderedData.length ? (
             <Chart
               data={orderBy(renderedData, 'date', 'asc')}
               isDesktop={isDesktop}
               width={isDesktop ? width / 2 - width / 15 : width / 1.5}
             />
+          ) : (
+            <Loader>Insufficient data</Loader>
           )}
         </Box>
       </Flex>
@@ -193,7 +183,7 @@ export interface HomeState {
 
   filter: {
     value?: string
-    action?: 'RESET' | 'TAG' | 'SEARCH'
+    action?: 'RESET' | 'TAG'
   }
 }
 

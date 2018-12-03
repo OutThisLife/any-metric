@@ -1,7 +1,12 @@
 import { withHandlers } from 'recompose'
 
-export default withHandlers<{}, SelectionsProps>(() => ({
-  handleMouse: () => ({ currentTarget: $parent, target, shiftKey, button }) => {
+export default withHandlers<SelectionsProps, SelectionsProps>(() => ({
+  handleMouse: ({ afterMouseDown = () => null }) => ({
+    currentTarget: $parent,
+    target,
+    shiftKey,
+    button
+  }) => {
     if (button || !(target instanceof HTMLElement)) {
       return
     }
@@ -21,13 +26,13 @@ export default withHandlers<{}, SelectionsProps>(() => ({
       }
     }
 
-    select(target)
+    select(target, afterMouseDown)
 
     const handleMouseMove: EventListener = ({ target: tgt }) => {
       $parent.classList.add('dragging')
 
       if (tgt instanceof HTMLElement) {
-        select(tgt)
+        select(tgt, afterMouseDown)
       }
     }
 
@@ -47,8 +52,11 @@ export default withHandlers<{}, SelectionsProps>(() => ({
   }
 }))
 
-export const select = (el: HTMLElement | HTMLInputElement) => {
-  const $parent = el.closest('.row')
+export const select = (
+  el: HTMLElement | HTMLInputElement,
+  cb: () => void = () => null
+) => {
+  const $parent = el.classList.contains('row') ? el : el.closest('.row')
 
   if (!($parent instanceof HTMLElement)) {
     return
@@ -68,14 +76,22 @@ export const select = (el: HTMLElement | HTMLInputElement) => {
   }
 
   $parent.classList.add('seen')
+  $parent.toggleAttribute('data-checked')
 
-  if ($parent.hasAttribute('data-checked')) {
-    $parent.removeAttribute('data-checked')
-  } else {
-    $parent.setAttribute('data-checked', null)
+  const $grandParent = $parent.closest('.row-parent')
+
+  if ($grandParent instanceof HTMLElement) {
+    if ($grandParent.querySelector('[data-checked]')) {
+      $grandParent.setAttribute('data-checked', 'true')
+    } else {
+      $grandParent.removeAttribute('data-checked')
+    }
   }
+
+  window.requestAnimationFrame(cb)
 }
 
 export interface SelectionsProps {
+  afterMouseDown?: () => void
   handleMouse?: React.MouseEventHandler<HTMLElement>
 }

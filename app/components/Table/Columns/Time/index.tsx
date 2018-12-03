@@ -1,6 +1,6 @@
 import { dateFormat } from '@/lib/utils'
 import { BaphoTheme } from '@/theme'
-import { compose, defaultProps, setDisplayName } from 'recompose'
+import { compose, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
 import { Text } from '../../style'
@@ -8,16 +8,18 @@ import Column, { ColumnProps } from '../Column'
 
 export default compose<ColumnProps & BaphoTheme, ColumnProps>(
   setDisplayName('col-datetime'),
-  defaultProps<ColumnProps>({
-    name: 'date'
-  }),
   withTheme
-)(({ theme, children, item = {}, ...props }) => (
-  <Column {...props}>
+)(({ theme, children, item = {} }) => (
+  <Column
+    name="date"
+    css={`
+      text-align: center;
+    `}>
     {!('id' in item) ? (
       children
     ) : (
       <Text
+        as="div"
         css={`
           color: ${theme.colours.muted};
           font-weight: 300;

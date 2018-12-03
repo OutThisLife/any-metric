@@ -2,7 +2,7 @@ import { moneyFormat, numFormat } from '@/lib/utils'
 import { FakeResult } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import { Box } from 'rebass'
-import { compose, defaultProps, setDisplayName } from 'recompose'
+import { compose, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
 import { Text } from '../../style'
@@ -10,12 +10,10 @@ import Column, { ColumnProps } from '../Column'
 
 export default compose<PriceProps & BaphoTheme, PriceProps>(
   setDisplayName('col-price'),
-  defaultProps<PriceProps>({
-    name: 'price'
-  }),
   withTheme
 )(({ theme, children, item = {} }) => (
   <Column
+    name="price"
     css={`
       line-height: 0;
       text-align: right;

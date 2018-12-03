@@ -3,7 +3,7 @@ import { isOld, pointFormat } from '@/lib/utils'
 import { FakeResult } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import { Flex } from 'rebass'
-import { compose, defaultProps, setDisplayName } from 'recompose'
+import { compose, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
 import { Text } from '../../style'
@@ -11,12 +11,10 @@ import Column, { ColumnProps } from '../Column'
 
 export default compose<StatusProps & BaphoTheme, StatusProps>(
   setDisplayName('col-status'),
-  defaultProps<StatusProps & StatusTextProps>({
-    name: 'bids'
-  }),
   withTheme
 )(({ theme, item = {}, children }) => (
   <Column
+    name="bids"
     css={`
       text-align: center;
     `}>

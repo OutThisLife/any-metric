@@ -16,7 +16,6 @@ export const worker: PodWorker =
     this.onmessage = e => {
       const data: FakeResult[] = e.data[0]
       const action: string = e.data[1]
-      const value: string = e.data[2]
 
       switch (action) {
         case 'RESET':
@@ -24,16 +23,25 @@ export const worker: PodWorker =
           break
 
         case 'TAG':
-          const tags = value.split(',')
+          const filtered = e.data[2]
+            .split(';')
+            .reduce((acc, tg) => {
+              const tags = tg.split(',')
+              const main = tags.shift()
 
-          this.postMessage(data.filter(d => d.tags.some(t => tags.includes(t))))
+              data
+                .filter(
+                  d =>
+                    d.tags.includes(main) &&
+                    (tags.length ? d.tags.some(t => tags.includes(t)) : true)
+                )
+                .map(d => acc.push(d))
 
-          break
+              return acc
+            }, [])
+            .filter((d, i, s) => s.indexOf(d) === i)
 
-        case 'SEARCH':
-          this.postMessage(
-            this.fuzzaldrin.filter(data, value, { key: 'title' })
-          )
+          this.postMessage(filtered)
 
           break
       }

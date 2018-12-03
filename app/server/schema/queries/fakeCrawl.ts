@@ -1,11 +1,14 @@
 import * as faker from 'faker'
 
-import { FakeResult, Resolver } from '../types'
+import { FakeResult } from '../types'
 
-faker.seed(100)
+export default async (_, args = {}, { cache }): Promise<FakeResult[]> => {
+  if (!cache.has('data')) {
+    cache.set('data', await (genFakeResults(args) || []))
+  }
 
-export default (async (_, args = {}): Promise<FakeResult[]> =>
-  (await genFakeResults(args)) || []) as Resolver
+  return cache.get('data')
+}
 
 export const genFakeResults: (
   args: {
@@ -14,6 +17,8 @@ export const genFakeResults: (
     limit?: number
   }
 ) => Promise<FakeResult[]> = async ({ ids = [], offset = 0, limit = 25 }) => {
+  faker.seed(100)
+
   const data = [...Array(255).keys()].map(i => ({
     id: faker.random.uuid(),
     slug: faker.lorem.slug(),

@@ -2,7 +2,7 @@ import { createTheme } from '@/theme'
 import * as d3 from 'd3'
 import gql from 'graphql-tag'
 import { graphql, MutateProps } from 'react-apollo'
-import { CirclePicker, ColorChangeHandler, SketchPicker } from 'react-color'
+import { CirclePicker, ColorChangeHandler } from 'react-color'
 import { compose, setDisplayName, withHandlers, withState } from 'recompose'
 
 let tm: d3.Timer | {} = {}
@@ -59,30 +59,17 @@ export default compose<PickerProps, {}>(
     }
   }))
 )(({ isOpen, open, onChange }) => (
-  <div className="picker">
+  <div
+    tabIndex={0}
+    className="picker"
+    onFocus={() => open(!isOpen)}
+    onBlur={() => open(false)}>
     <CirclePicker
       width="224px"
       onChange={onChange}
       circleSize={6}
       circleSpacing={6}
     />
-
-    <a
-      href="javascript:;"
-      tabIndex={1}
-      onClick={() => open(!isOpen)}
-      onBlur={() => open(false)}>
-      &hellip;
-    </a>
-
-    {isOpen && (
-      <SketchPicker
-        width="150px"
-        onChange={onChange}
-        disableAlpha
-        presetColors={[]}
-      />
-    )}
   </div>
 ))
 

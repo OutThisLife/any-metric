@@ -1,4 +1,5 @@
 import { BaphoTheme } from '@/theme'
+import { lighten, rgba } from 'polished'
 import { Box } from 'rebass'
 import styled, { css } from 'styled-components'
 
@@ -29,50 +30,60 @@ export default styled<any>(Box)`
 
     > li {
       display: inline-block;
+      position: relative;
       width: auto;
+      outline: 1px solid transparent;
+      padding: calc(var(--pad) / 2);
+      border: 1px solid ${theme.colours.border};
+      transition: ${theme.eases.base};
+      background: transparent;
 
-      @media (min-width: 768px) {
-        padding: 0 4px 4px;
-      }
-
-      a[href] {
-        font-weight: 300;
-        padding: calc(var(--pad) / 5) calc(var(--pad) / 1.5);
+      &:hover,
+      &[data-checked] {
+        z-index: 1;
+        outline-color: ${rgba(theme.colours.focus, 0.75)};
       }
 
       span {
         vertical-align: middle;
       }
 
-      > a[href] {
+      h5 {
         white-space: nowrap;
         text-transform: uppercase;
-        padding: calc(var(--pad) / 2);
         padding-bottom: calc(var(--pad) / 4);
       }
 
-      li > a[href] {
-        display: block;
-        font-size: 0.9em;
-        outline: 1px solid transparent;
-        outline-offset: -2px;
-        transition: none;
+      &[data-checked] h5 {
+        color: ${theme.colours.focus};
+      }
 
-        &:not(:hover) {
-          color: ${theme.colours.muted};
-          transition: ${theme.eases.base};
+      &:not(:hover):not([data-checked]) {
+        filter: grayscale(1) opacity(0.4);
+      }
+
+      li {
+        display: flex;
+        align-items: center;
+        position: relative;
+        color: ${theme.colours.muted};
+
+        a[href] {
+          display: inline-block;
+          width: 100%;
+          color: currentColor;
+          font-size: 0.85rem;
+          padding: 0 0 1px 4px;
+          transition: none;
+
+          &:not(:hover) {
+            transition: ${theme.eases.base};
+          }
         }
-      }
 
-      [data-checked] > a[href] {
-        color: ${theme.colours.base};
-        outline-color: ${theme.colours.focus};
-      }
-
-      ul ul a[href] {
-        text-indent: 0.7em;
-        padding-top: 0.3em;
-        padding-bottom: 0.3em;
+        &[data-checked] {
+          color: ${lighten(0.3, theme.colours.muted)};
+        }
       }
     }
   `}

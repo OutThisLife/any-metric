@@ -1,4 +1,5 @@
 import withSelections, { select, SelectionsProps } from '@/lib/withSelections'
+import { FakeResult } from '@/server/schema/types'
 import * as d3 from 'd3'
 import { array } from 'prop-types'
 import { MeasuredComponentProps } from 'react-measure'
@@ -12,6 +13,7 @@ import {
 } from 'recompose'
 
 import * as Columns from './Columns'
+import Pagination from './Pagination'
 import * as Table from './style'
 
 let tm: d3.Timer | {} = {}
@@ -35,7 +37,7 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
 )(({ data = [], isDesktop, handleMouse, handleScroll, ...props }) => (
   <Box
     css={`
-      max-height: calc(100vh - (var(--offset) * 4));
+      height: calc(100vh - (var(--offset) * 4));
       overflow: auto;
     `}>
     <Table.Container as="table" {...props}>
@@ -60,20 +62,28 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
       <Table.Body
         onMouseDown={isDesktop ? handleMouse : () => null}
         onScroll={isDesktop ? handleScroll : () => null}>
-        {data.map(d => (
-          <Table.Row key={d.id} id={d.id}>
+        {(data as FakeResult[]).map(d => (
+          <Table.Row key={d.date.valueOf()} id={d.id}>
             <Columns.Check checkboxProps={{ value: d.id }} />
             <RenderColumns props={() => ({ item: d })} />
           </Table.Row>
         ))}
+
+        <Table.Row>
+          <td style={{ height: '100%' }} />
+        </Table.Row>
       </Table.Body>
+
+      <Table.Foot>
+        <Pagination total={data.length} />
+      </Table.Foot>
     </Table.Container>
   </Box>
 ))
 
 export const RenderColumns = compose<RenderColumnProps, RenderColumnProps>(
-  getContext({ columns: array }),
-  setDisplayName('render-columns')
+  setDisplayName('render-columns'),
+  getContext({ columns: array })
 )(({ props, columns = [] }) => (
   <>
     {columns.map(c => {

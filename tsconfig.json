@@ -27,11 +27,5 @@
     ]
   },
   "include": ["app/**/*", "typings/*.d.ts"],
-  "exclude": [
-    "node_modules/**",
-    "**/*.spec",
-    "app/out/**",
-    "app/.next/**",
-    "app/next.config.js"
-  ]
+  "exclude": ["node_modules/**", "**/*.spec", "app/out/**", "app/.next/**"]
 }

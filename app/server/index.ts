@@ -36,6 +36,20 @@ nextApp.prepare().then(() => {
       })
     )
 
+    .use((req, _, resolve) => {
+      if (!('API_URL' in nextApp.nextConfig.publicRuntimeConfig)) {
+        Object.defineProperty(
+          nextApp.nextConfig.publicRuntimeConfig,
+          'API_URL',
+          {
+            value: `${req.protocol}://${req.headers.host}/graphql`
+          }
+        )
+      }
+
+      return resolve()
+    })
+
     .use((req, res, resolve) => {
       let staticUrl
 

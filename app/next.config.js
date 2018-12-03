@@ -41,8 +41,7 @@ module.exports = withPlugins(
   {
     useFileSystemPublicRoutes: false,
     publicRuntimeConfig: {
-      isDev: dev,
-      API_URL: `http://localhost:${process.env.PORT || 3000}/graphql`
+      isDev: dev
     },
     analyzeServer: ['server', 'both'].includes(process.env.BUNDLE_ANALYZE),
     analyzeBrowser: ['browser', 'both'].includes(process.env.BUNDLE_ANALYZE),

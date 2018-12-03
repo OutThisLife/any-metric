@@ -12,8 +12,9 @@ export default compose<ColumnProps & BaphoTheme, ColumnProps>(
 )(({ theme, children, item = {} }) => (
   <Column
     name="date"
+    width={75}
     css={`
-      text-align: center;
+      text-align: right;
     `}>
     {!('id' in item) ? (
       children

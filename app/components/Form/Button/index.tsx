@@ -14,11 +14,7 @@ export default compose<FormButtonProps, FormButtonProps>(
   <Button
     aria-label={/icon/gi.test(props.variant) ? 'icon-cta' : 'cta'}
     {...props}>
-    {/icon/gi.test(props.variant) ? (
-      children
-    ) : (
-      <span style={{ font: 'inherit', lineHeight: 'inherit' }}>{children}</span>
-    )}
+    {/icon/gi.test(props.variant) ? children : <span>{children}</span>}
   </Button>
 ))
 

@@ -5,23 +5,25 @@ import { compose, setDisplayName } from 'recompose'
 import Column, { ColumnProps } from '../Column'
 
 export default compose<CheckProps, CheckProps>(setDisplayName('col-checkbox'))(
-  ({ checkboxProps = {}, disableSort }) => (
+  ({ children, checkboxProps = {} }) => (
     <Column
-      disableSort={disableSort}
+      disableSort
       p={0}
       css={`
         width: calc(var(--offset));
         text-align: center;
       `}>
-      <Form.Checkbox
-        name="id"
-        css={`
-          tbody & {
-            pointer-events: none;
-          }
-        `}
-        {...checkboxProps}
-      />
+      {children || (
+        <Form.Checkbox
+          name="id"
+          css={`
+            tbody & {
+              pointer-events: none;
+            }
+          `}
+          {...checkboxProps}
+        />
+      )}
     </Column>
   )
 )

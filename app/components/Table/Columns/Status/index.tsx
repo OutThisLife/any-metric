@@ -15,6 +15,7 @@ export default compose<StatusProps & BaphoTheme, StatusProps>(
 )(({ theme, item = {}, children }) => (
   <Column
     name="bids"
+    width={70}
     css={`
       text-align: center;
     `}>

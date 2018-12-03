@@ -25,20 +25,23 @@ export default styled<any>(Column)`
       overflow: hidden;
       background: ${lighten(0.33, theme.colours.secondary)};
 
+      .row:not(:hover) & {
+        transition: ${theme.eases.base};
+      }
+
       .row:not(:hover):not([data-checked]) & {
         opacity: 0.65;
-        transition: ${theme.eases.base};
 
         img {
           filter: grayscale(1);
           mix-blend-mode: color-burn;
-          transition: ${theme.eases.base};
         }
       }
 
       img {
         object-fit: cover;
         transform: translateZ(0);
+        transition: inherit;
       }
     }
   `}

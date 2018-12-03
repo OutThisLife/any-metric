@@ -64,6 +64,7 @@ export const Container = styled<any>(Box)`
 
       td {
         position: relative;
+        color: ${theme.colours.label};
       }
 
       &:not(:hover) {

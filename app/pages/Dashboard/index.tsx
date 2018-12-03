@@ -141,9 +141,9 @@ export default compose<HomeProps, HomeOutterProps>(
             align-self: flex-end;
             margin: 0 0 0 auto;
 
-            @media (max-width: 768px) {
+            @media (max-width: 1025px) {
               align-self: center;
-              margin: var(--offset) auto 0;
+              margin: var(--offset) auto;
             }
           `}>
           {renderedData.length ? (

@@ -14,6 +14,7 @@ export default compose<PriceProps & BaphoTheme, PriceProps>(
 )(({ theme, children, item = {} }) => (
   <Column
     name="price"
+    width={60}
     css={`
       line-height: 0;
       text-align: right;

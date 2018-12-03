@@ -32,16 +32,23 @@ export default styled<any>(Box)`
       display: inline-block;
       position: relative;
       width: auto;
-      outline: 1px solid transparent;
       padding: calc(var(--pad) / 2);
       border: 1px solid ${theme.colours.border};
+      outline: 1px solid transparent;
+      outline-offset: -0.2em;
       transition: ${theme.eases.base};
       background: transparent;
 
-      &:hover,
+      &:hover {
+        outline-color: ${rgba(theme.colours.secondary, 0.25)};
+      }
+
       &[data-checked] {
-        z-index: 1;
-        outline-color: ${rgba(theme.colours.focus, 0.75)};
+        outline-color: ${theme.colours.secondary};
+      }
+
+      &:not(:hover):not([data-checked]) {
+        filter: grayscale(1) opacity(0.4);
       }
 
       span {
@@ -49,17 +56,15 @@ export default styled<any>(Box)`
       }
 
       h5 {
-        white-space: nowrap;
+        color: ${lighten(0.33, theme.colours.secondary)};
         text-transform: uppercase;
+        white-space: nowrap;
         padding-bottom: calc(var(--pad) / 4);
+        transition: inherit;
       }
 
-      &[data-checked] h5 {
-        color: ${theme.colours.focus};
-      }
-
-      &:not(:hover):not([data-checked]) {
-        filter: grayscale(1) opacity(0.4);
+      &:not([data-checked]) h5 {
+        opacity: 0.8;
       }
 
       li {
@@ -67,6 +72,7 @@ export default styled<any>(Box)`
         align-items: center;
         position: relative;
         color: ${theme.colours.muted};
+        transition: inherit;
 
         a[href] {
           display: inline-block;

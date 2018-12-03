@@ -6,15 +6,14 @@ import styled, { css } from 'styled-components'
 import { FormButtonProps } from '.'
 
 export default styled<any>(Button)`
-  display: inline-block;
-
   ${({ theme }: FormButtonProps & BaphoTheme) => css`
     --colour: ${theme.inputs.button};
     --bg: ${theme.inputs.button};
     --shadow: inset 0 0 0 var(--bg), 0 0 1px 1px var(--bg);
     --padding: 14px 15px;
+    display: inline-block;
 
-    position: static;
+    position: relative;
     width: fit-content;
     height: fit-content;
     vertical-align: middle;
@@ -75,6 +74,14 @@ export default styled<any>(Button)`
         margin: auto;
         transition: ${theme.eases.base};
       }
+    }
+
+    span,
+    svg {
+      display: inline-block;
+      font: inherit;
+      line-height: 0;
+      transform: translate(0, -0.15em);
     }
   `}
 `

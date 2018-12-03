@@ -17,7 +17,6 @@ export default compose<TitleProps & BaphoTheme, TitleProps>(
     name="title"
     p={0}
     css={`
-      width: 60%;
       text-align: left;
     `}>
     {!('id' in item) ? (
@@ -61,7 +60,7 @@ export default compose<TitleProps & BaphoTheme, TitleProps>(
             }}
           />
 
-          <Text as="a" href={item.slug} fontSize={12} fontWeight="500">
+          <Text as="a" href={item.slug} fontWeight="500">
             {item.title} <MdOpenInNew />
           </Text>
 

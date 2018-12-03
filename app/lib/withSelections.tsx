@@ -88,7 +88,9 @@ export const select = (
     }
   }
 
-  window.requestAnimationFrame(cb)
+  if (typeof cb === 'function') {
+    window.requestAnimationFrame(cb)
+  }
 }
 
 export interface SelectionsProps {

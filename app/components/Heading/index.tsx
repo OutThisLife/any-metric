@@ -24,7 +24,7 @@ export default compose<
   })),
   withTheme,
   setDisplayName('heading')
-)(({ theme, title, cta = '', ...props }) => (
+)(({ theme, title, cta, ...props }) => (
   <Heading {...props} css="display: flex; alignItems: center">
     {title.map((w, i) => (
       <Text
@@ -36,13 +36,13 @@ export default compose<
       </Text>
     ))}
 
-    {cta.length && <Button variant="basic | pill">{cta}</Button>}
+    {cta && <Button variant="basic | pill">{cta}</Button>}
   </Heading>
 ))
 
 export interface HeadingProps extends BaseHeadingProps {
   as?: any
-  cta?: string
+  cta?: string | JSX.Element
 }
 
 export interface HeadingOutterProps extends HeadingProps {

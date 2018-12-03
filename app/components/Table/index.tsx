@@ -1,4 +1,4 @@
-import withSelections, { select, SelectionsProps } from '@/lib/withSelections'
+import withSelections, { SelectionsProps } from '@/lib/withSelections'
 import { FakeResult } from '@/server/schema/types'
 import * as d3 from 'd3'
 import { array } from 'prop-types'
@@ -13,7 +13,6 @@ import {
 } from 'recompose'
 
 import * as Columns from './Columns'
-import Pagination from './Pagination'
 import * as Table from './style'
 
 let tm: d3.Timer | {} = {}
@@ -42,20 +41,7 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
     `}>
     <Table.Container as="table" {...props}>
       <Table.Head>
-        <Columns.Check
-          disableSort
-          checkboxProps={{
-            value: 'all',
-            onChange: ({ target }) =>
-              [].slice
-                .call(
-                  document.getElementsByName((target as HTMLInputElement).name)
-                )
-                .filter(t => t !== target)
-                .forEach(select)
-          }}
-        />
-
+        <Columns.Check>&nbsp;</Columns.Check>
         <RenderColumns props={c => ({ children: c.label })} />
       </Table.Head>
 
@@ -64,7 +50,7 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
         onScroll={isDesktop ? handleScroll : () => null}>
         {(data as FakeResult[]).map(d => (
           <Table.Row key={d.date.valueOf()} id={d.id}>
-            <Columns.Check checkboxProps={{ value: d.id }} />
+            <Columns.Check />
             <RenderColumns props={() => ({ item: d })} />
           </Table.Row>
         ))}
@@ -73,10 +59,6 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
           <td style={{ height: '100%' }} />
         </Table.Row>
       </Table.Body>
-
-      <Table.Foot>
-        <Pagination total={data.length} />
-      </Table.Foot>
     </Table.Container>
   </Box>
 ))

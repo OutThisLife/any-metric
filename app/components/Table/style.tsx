@@ -15,6 +15,29 @@ export const Container = styled<any>(Box)`
   ${({ theme }: BaphoTheme) => css`
     .head {
       user-select: none;
+
+      th {
+        z-index: 1;
+        position: sticky;
+        top: 2px;
+        background: ${theme.colours.panel};
+
+        &:before {
+          content: '';
+          display: block;
+          position: absolute;
+          top: -2px;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          background: inherit;
+        }
+
+        span {
+          position: relative;
+          z-index: 2;
+        }
+      }
     }
 
     @media (max-width: 1025px) {

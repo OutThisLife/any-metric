@@ -26,7 +26,7 @@ export default compose<PriceProps & BaphoTheme, PriceProps>(
     ) : (
       <Box
         css={`
-          font-size: 0.9rem;
+          font-size: 0.8rem;
           line-height: 1.2;
 
           > span {
@@ -35,7 +35,7 @@ export default compose<PriceProps & BaphoTheme, PriceProps>(
           }
         `}>
         <Text
-          fontWeight="700"
+          fontWeight="500"
           color={
             parseInt(item.price, 10) % 3
               ? theme.colours.price.up
@@ -44,12 +44,7 @@ export default compose<PriceProps & BaphoTheme, PriceProps>(
           {moneyFormat(parseFloat(item.price))}
         </Text>
 
-        <Text
-          fontWeight="300"
-          mt={1}
-          css={`
-            font-size: 0.9em;
-          `}>
+        <Text fontWeight="300" color={theme.colours.muted} mt={1}>
           {numFormat(parseFloat(item.shipping))}
         </Text>
       </Box>

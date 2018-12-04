@@ -1,6 +1,6 @@
 import * as Form from '@/components/Form'
 import Text from '@/components/Text'
-import { IoIosSearch } from 'react-icons/io'
+import { FaSearch } from 'react-icons/fa'
 import { BoxProps } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
@@ -14,21 +14,13 @@ export default compose<HeaderProps, HeaderProps>(setDisplayName('header'))(
         ɮΔքɦօʍɛ✞ʀɨƈ
       </Text>
 
-      <Picker />
-
-      <Form.Container groupFields>
-        <Form.Input
-          tabIndex={1}
-          placeholder="Enter product name &hellip;"
-          css={`
-            background: transparent;
-          `}
-        />
-
-        <Form.Button variant="icon">
-          <IoIosSearch size={32} />
-        </Form.Button>
+      <Form.Container>
+        <Form.Input tabIndex={1} placeholder="Search for a product">
+          <FaSearch />
+        </Form.Input>
       </Form.Container>
+
+      <Picker />
     </Header>
   )
 )

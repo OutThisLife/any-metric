@@ -7,7 +7,11 @@ export default withHandlers<SelectionsProps, SelectionsProps>(() => ({
     shiftKey,
     button
   }) => {
-    if (button || !(target instanceof HTMLElement)) {
+    if (
+      button ||
+      !(target instanceof HTMLElement) ||
+      /img/i.test(target.tagName)
+    ) {
       return
     }
 

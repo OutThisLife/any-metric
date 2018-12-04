@@ -3,6 +3,7 @@ import * as d3 from 'd3'
 import gql from 'graphql-tag'
 import { graphql, MutateProps } from 'react-apollo'
 import { CirclePicker, ColorChangeHandler } from 'react-color'
+import { Box, BoxProps } from 'rebass'
 import { compose, setDisplayName, withHandlers, withState } from 'recompose'
 
 let tm: d3.Timer | {} = {}
@@ -58,22 +59,24 @@ export default compose<PickerProps, {}>(
       )
     }
   }))
-)(({ isOpen, open, onChange }) => (
-  <div
+)(({ isOpen, open, onChange, ...props }) => (
+  <Box
+    as="div"
     tabIndex={0}
     className="picker"
     onFocus={() => open(!isOpen)}
-    onBlur={() => open(false)}>
+    onBlur={() => open(false)}
+    {...props}>
     <CirclePicker
       width="224px"
       onChange={onChange}
       circleSize={6}
       circleSpacing={6}
     />
-  </div>
+  </Box>
 ))
 
-export interface PickerProps {
+export interface PickerProps extends BoxProps {
   isOpen?: boolean
   open?: (b: boolean) => void
   onChange?: ColorChangeHandler

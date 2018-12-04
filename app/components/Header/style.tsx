@@ -1,14 +1,14 @@
 import { BaphoTheme } from '@/theme'
-import { Box } from 'rebass'
+import { Flex } from 'rebass'
 import styled, { css } from 'styled-components'
 
-export default styled<any>(Box)`
+export default styled<any>(Flex)`
   ${({ theme }: BaphoTheme) => css`
     grid-area: head;
-    display: flex;
+    position: relative;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 var(--offset) var(--pad);
+    padding: 0 var(--offset);
+    height: var(--offset);
 
     h1 {
       color: ${theme.colours.base};
@@ -17,12 +17,49 @@ export default styled<any>(Box)`
       text-transform: uppercase;
     }
 
+    form {
+      align-self: stretch;
+      height: 100%;
+      margin: auto;
+
+      > div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
+
+      input {
+        z-index: 1;
+        display: block;
+        width: 60vh;
+        height: 50%;
+      }
+    }
+
     .picker {
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: ${theme.eases.base};
+
+      @media (min-width: 768px) {
+        position: absolute;
+        top: calc(50% - 3px);
+        right: 0;
+      }
+
+      @media (max-width: 768px) {
+        display: none;
+      }
+
+      &:not(:hover) {
+        opacity: 0.4;
+      }
 
       > a {
         display: inline-block;
@@ -43,25 +80,6 @@ export default styled<any>(Box)`
             display: none !important;
           }
         }
-      }
-
-      .circle-picker:not(:hover) {
-        opacity: 0.4;
-      }
-
-      .compact-picker span div[title] {
-        width: 10px !important;
-        height: 10px !important;
-      }
-    }
-
-    form {
-      input {
-        z-index: 1;
-      }
-
-      button {
-        z-index: 2;
       }
     }
   `}

@@ -45,6 +45,7 @@ export default styled<any>(Column)`
       }
 
       img {
+        cursor: zoom-in;
         object-fit: cover;
         height: 100%;
         width: 100%;

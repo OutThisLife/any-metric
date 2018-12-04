@@ -11,21 +11,30 @@ export default styled<any>(Button)`
     --bg: ${theme.inputs.button};
     --shadow: inset 0 0 0 var(--bg), 0 0 1px 1px var(--bg);
     --padding: 14px 15px;
-    display: inline-block;
 
+    display: inline-block;
     position: relative;
     width: fit-content;
     height: fit-content;
     vertical-align: middle;
     color: var(--colour);
+    font-weight: 400;
+    font-size: 0.9rem;
+    line-height: 0;
+    letter-spacing: 0.04em;
     text-transform: lowercase;
     font-variant: small-caps;
     line-height: 0;
     padding: var(--padding, 0px);
     border: 0;
+    border-radius: 4px;
     box-shadow: var(--shadow);
     transition: ${theme.eases.base};
     background: var(--bg);
+
+    &:not(:hover) {
+      background: transparent;
+    }
 
     &:hover {
       --colour: ${theme.colours.base};
@@ -36,44 +45,11 @@ export default styled<any>(Button)`
 
     &:active {
       --colour: ${rgba(theme.colours.base, 0.5)};
+      --bg: ${darken(0.1, theme.inputs.button)};
     }
 
     &:focus {
       outline: none;
-    }
-
-    &[aria-label^='cta'] {
-      height: auto;
-      font-weight: 400;
-      font-size: 0.9rem;
-      letter-spacing: 0.04em;
-      line-height: 0;
-      border-radius: 4px;
-
-      &:not(:hover) {
-        background: transparent;
-      }
-
-      &:active {
-        --bg: ${darken(0.1, theme.inputs.button)};
-      }
-    }
-
-    &[aria-label^='icon'] {
-      --padding: 0;
-      --colour: ${theme.colours.base};
-
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: 100em;
-
-      svg {
-        width: 1rem;
-        height: auto;
-        max-width: none;
-        margin: auto;
-        transition: ${theme.eases.base};
-      }
     }
 
     span,
@@ -82,6 +58,14 @@ export default styled<any>(Button)`
       font: inherit;
       line-height: 0;
       transform: translate(0, -0.15em);
+    }
+
+    svg {
+      width: 1rem;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
   `}
 `

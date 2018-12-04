@@ -1,11 +1,9 @@
-import { FlexProps } from 'rebass'
+import { Flex, FlexProps } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
-
-import BaseForm from './style'
 
 export const Container = compose<FormProps, FormProps>(setDisplayName('form'))(
   ({ children, ...props }) => (
-    <BaseForm
+    <Flex
       as="form"
       action="javascript:;"
       method="post"
@@ -14,7 +12,7 @@ export const Container = compose<FormProps, FormProps>(setDisplayName('form'))(
       p={0}
       {...props}>
       {children}
-    </BaseForm>
+    </Flex>
   )
 )
 
@@ -22,7 +20,9 @@ export { default as Input } from './Input'
 export { default as Checkbox } from './Checkbox'
 export { default as Button } from './Button'
 
-export interface FormProps extends FlexProps {
+export interface FormProps
+  extends FlexProps,
+    React.HTMLAttributes<HTMLFormElement> {
   as?: any
   groupFields?: boolean
 }

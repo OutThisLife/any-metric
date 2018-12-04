@@ -1,7 +1,7 @@
 import { BaphoTheme } from '@/theme'
 import { between, darken, rgba, tint } from 'polished'
 import { Box } from 'rebass'
-import styled, { createGlobalStyle, css } from 'styled-components'
+import styled, { createGlobalStyle, css, keyframes } from 'styled-components'
 
 export default createGlobalStyle`
   ${({ theme }: BaphoTheme) => css`
@@ -47,6 +47,10 @@ export default createGlobalStyle`
       cursor: crosshair;
       font-family: ${theme.fonts.family.copy};
       box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+      }
     }
 
     h1,
@@ -87,14 +91,6 @@ export default createGlobalStyle`
       border: 0;
     }
 
-    input + button,
-    select + button {
-      margin-left: -3px !important;
-      border-left: 0px !important;
-      border-top-left-radius: 0 !important;
-      border-bottom-left-radius: 0 !important;
-    }
-
     a[href] {
       cursor: pointer;
       color: ${theme.colours.base};
@@ -130,7 +126,7 @@ export const Main = styled<any>(Box)`
   width: 100vw;
   min-height: 100vh;
   padding: var(--offset);
-  padding-top: calc(var(--offset) / 2);
+  padding-top: 0;
 
   @media (min-width: 1025px) {
     height: 100vh;
@@ -187,4 +183,14 @@ export const Main = styled<any>(Box)`
       }
     }
   `}
+`
+
+export const fadeIn = keyframes`
+0% { opacity: 0; }
+100% { opacity: 1; }
+`
+
+export const fadeOut = keyframes`
+0% { opacity: 0; }
+100% { opacity: 1; }
 `

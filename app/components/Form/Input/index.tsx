@@ -4,9 +4,10 @@ import { compose, setDisplayName } from 'recompose'
 import InputContainer, { Input } from './style'
 
 export default compose<InputProps, InputProps>(setDisplayName('input'))(
-  props => (
+  ({ children, ...props }) => (
     <InputContainer>
       <Input {...props} />
+      {children}
     </InputContainer>
   )
 )

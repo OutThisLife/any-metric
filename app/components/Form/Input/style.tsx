@@ -1,5 +1,5 @@
 import { BaphoTheme } from '@/theme'
-import { rgba } from 'polished'
+import { darken, rgba } from 'polished'
 import { Box } from 'rebass'
 import { compose, defaultProps } from 'recompose'
 import styled, { css } from 'styled-components'
@@ -8,33 +8,63 @@ import { InputProps } from '.'
 
 export default styled<any>('div')`
   ${({ theme }: BaphoTheme) => css`
+    --bg: ${rgba(theme.colours.panel, 0.5)};
+    --colour: ${rgba(theme.colours.muted, 0.7)};
+
     display: inline-block;
     position: relative;
     padding: calc(var(--pad) / 3.2) var(--pad);
     border-radius: 4px;
+
+    &:focus-within {
+      --bg: ${theme.colours.panel};
+      --colour: ${theme.colours.focus};
+
+      input {
+        box-shadow: 0 0 7px 4px
+            ${darken(0.2, rgba(theme.colours.secondary, 0.35))},
+          inset 0 0 0 1px ${theme.colours.secondary};
+      }
+    }
 
     input {
       z-index: 1;
       cursor: text;
       display: inline-block;
       position: relative;
-      color: ${theme.colours.base};
+      color: var(--colour);
       font-weight: 300;
       font-size: 1rem;
       letter-spacing: 0.01em;
+      padding: 0 var(--pad);
       border: 0;
+      border-radius: 4px;
+      box-shadow: 0 0 0 0px ${theme.colours.panel},
+        inset 0 0 0 1px ${theme.colours.panel};
+      transition: ${theme.eases.base};
+      background: var(--bg);
 
       &::-webkit-input-placeholder {
-        color: ${rgba(theme.colours.muted, 0.7)};
+        color: var(--colour);
+        transition: inherit;
       }
 
-      &:focus {
-        outline: none;
-
-        &::-webkit-input-placeholder {
-          color: ${rgba(theme.inputs.button, 0.75)};
-        }
+      &:not(:only-child) {
+        padding-left: 2.5em;
       }
+    }
+
+    svg {
+      z-index: 1;
+      pointer-events: none;
+      position: absolute;
+      top: 50%;
+      left: 1em;
+      width: 1em;
+      fill: var(--colour) !important;
+      stroke: var(--colour) !important;
+      transition: ${theme.eases.base};
+      transform: translate(0, -50%);
     }
   `}
 `

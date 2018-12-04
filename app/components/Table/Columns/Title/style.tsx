@@ -5,28 +5,24 @@ import Column from '../Column'
 
 export default styled<any>(Column)`
   ${({ theme }) => css`
-    width: 70%;
+    width: 66%;
     text-align: left;
-
-    > div {
-      padding: calc(var(--pad) / 4) 0;
-    }
 
     a[href] svg {
       width: 13px;
       margin: 0 0 0 5px;
       color: ${theme.colours.label};
       transition: ${theme.eases.base};
-    }
 
-    a[href][target]:not(:hover) + a svg {
-      opacity: 0;
-      transform: translate(8px, 0);
+      .row:not(:hover) &:last-of-type {
+        opacity: 0;
+        transform: translate(8px, 0);
+      }
     }
 
     figure {
       align-self: stretch;
-      flex: 0.282;
+      flex: 1.77;
       margin: 0;
       background: ${lighten(0.33, theme.colours.secondary)};
 
@@ -45,7 +41,6 @@ export default styled<any>(Column)`
       }
 
       img {
-        cursor: zoom-in;
         object-fit: cover;
         height: 100%;
         width: 100%;
@@ -54,7 +49,8 @@ export default styled<any>(Column)`
     }
 
     figure + div {
-      flex: 3;
+      flex: 8.23;
+      padding: var(--pad);
     }
   `}
 `

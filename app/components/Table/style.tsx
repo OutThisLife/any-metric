@@ -9,6 +9,7 @@ import BaseText, { TextProps } from '../Text'
 
 export const Container = styled<any>(Box as any)`
   table-layout: fixed;
+  border-collapse: collapse;
   position: relative;
   width: 100%;
   height: 100%;
@@ -67,6 +68,7 @@ export const Container = styled<any>(Box as any)`
         position: relative;
         vertical-align: middle;
         color: ${theme.colours.label};
+        border-bottom: 1px solid ${rgba(theme.colours.border, 0.5)};
       }
 
       &:not(:hover) {

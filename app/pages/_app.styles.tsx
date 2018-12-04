@@ -1,5 +1,5 @@
 import { BaphoTheme } from '@/theme'
-import { between, darken, rgba, tint } from 'polished'
+import { between, darken, rgba } from 'polished'
 import { Box } from 'rebass'
 import styled, { createGlobalStyle, css, keyframes } from 'styled-components'
 
@@ -97,9 +97,8 @@ export default createGlobalStyle`
       text-decoration: none;
       transition: ${theme.eases.base};
 
-      &:hover,
-      &:hover + a[href] {
-        color: ${tint(0.4, theme.colours.secondary)};
+      &:hover {
+        color: ${theme.colours.focus};
       }
     }
 
@@ -186,11 +185,19 @@ export const Main = styled<any>(Box)`
 `
 
 export const fadeIn = keyframes`
-0% { opacity: 0; }
-100% { opacity: 1; }
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 `
 
 export const fadeOut = keyframes`
-0% { opacity: 0; }
-100% { opacity: 1; }
+  100% { opacity: 0; }
+`
+
+export const animIn = keyframes`
+  0% { opacity: 0; transform: scale(0.98); }
+  100% { opacity: 1; transform: none }
+`
+
+export const animOut = keyframes`
+  100% { opacity: 0; transform: scale(0.98); }
 `

@@ -1,17 +1,8 @@
-import { fadeIn, fadeOut } from '@/pages/_app.styles'
+import { animIn, animOut, fadeIn, fadeOut } from '@/pages/_app.styles'
 import { BaphoTheme } from '@/theme'
 import { rgba } from 'polished'
 import { Flex } from 'rebass'
-import styled, { css, keyframes } from 'styled-components'
-
-const animIn = keyframes`
-  0% { opacity: 0; transform: scale(0.98); }
-  100% { opacity: 1; transform: none }
-`
-
-const animOut = keyframes`
-  100% { opacity: 0; transform: scale(0.98); }
-`
+import styled, { css } from 'styled-components'
 
 export default styled<any>(Flex)`
   ${({ theme }: BaphoTheme) => css`

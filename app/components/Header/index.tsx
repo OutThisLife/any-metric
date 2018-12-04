@@ -1,6 +1,6 @@
 import * as Form from '@/components/Form'
 import Text from '@/components/Text'
-import { FaSearch } from 'react-icons/fa'
+import { IoIosSearch } from 'react-icons/io'
 import { BoxProps } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
@@ -16,7 +16,7 @@ export default compose<HeaderProps, HeaderProps>(setDisplayName('header'))(
 
       <Form.Container>
         <Form.Input tabIndex={1} placeholder="Search for a product">
-          <FaSearch />
+          <IoIosSearch />
         </Form.Input>
       </Form.Container>
 

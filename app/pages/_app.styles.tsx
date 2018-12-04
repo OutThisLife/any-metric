@@ -12,7 +12,7 @@ export default createGlobalStyle`
 
     ::selection {
       color: ${theme.colours.base};
-      background: ${theme.colours.label};
+      background: ${theme.colours.secondary};
     }
 
     ::-webkit-scrollbar {

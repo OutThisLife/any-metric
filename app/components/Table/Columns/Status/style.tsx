@@ -10,12 +10,13 @@ export default styled<any>(Column)`
     div {
       flex-wrap: wrap;
       margin: 0 auto;
+      text-align: center;
 
       > span {
         display: block;
         width: 100%;
         color: ${theme.colours.label};
-        font-size: 0.9rem;
+        font-size: 0.8rem;
       }
     }
   `}

@@ -7,11 +7,16 @@ import styled, { css, withTheme } from 'styled-components'
 
 import BaseText, { TextProps } from '../Text'
 
-export const Container = styled<any>(Box)`
+export const Container = styled<any>(Box as any)`
   table-layout: fixed;
   position: relative;
   width: 100%;
   height: 100%;
+
+  tr,
+  td {
+    border: 0;
+  }
 
   ${({ theme }: BaphoTheme) => css`
     .head {
@@ -20,29 +25,17 @@ export const Container = styled<any>(Box)`
       th {
         z-index: 1;
         position: sticky;
-        top: 2px;
+        top: 0;
         background: ${theme.colours.panel};
 
-        &:before {
-          content: '';
-          display: block;
-          position: absolute;
-          top: -2px;
-          right: 0;
-          bottom: 0;
-          left: 0;
-          background: inherit;
-        }
-
         span {
-          z-index: 2;
-          position: relative;
+          display: inline-flex;
+          align-items: center;
+          text-align: inherit;
         }
 
         svg {
-          position: absolute;
-          top: 2px;
-          right: -10px;
+          width: 10px;
         }
       }
     }
@@ -57,6 +50,14 @@ export const Container = styled<any>(Box)`
       }
     }
 
+    @media (min-width: 768px) {
+      padding-right: calc(var(--pad) / 2);
+
+      tr > *:last-child {
+        padding-right: calc(var(--pad) / 2);
+      }
+    }
+
     tbody .row {
       user-select: none;
       outline-offset: -3px;
@@ -64,6 +65,7 @@ export const Container = styled<any>(Box)`
 
       td {
         position: relative;
+        vertical-align: middle;
         color: ${theme.colours.label};
       }
 
@@ -90,7 +92,7 @@ export const Container = styled<any>(Box)`
       opacity: 0.2;
       z-index: 10;
       position: sticky;
-      bottom: -2px;
+      bottom: 0;
     }
   `}
 `

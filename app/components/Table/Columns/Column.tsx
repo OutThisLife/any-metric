@@ -1,6 +1,6 @@
 import { FakeResult } from '@/server/schema/types'
 import { bool, func, object } from 'prop-types'
-import { FaCaretDown, FaCaretUp } from 'react-icons/fa'
+import { FaCaretDown, FaCaretUp, FaSort } from 'react-icons/fa'
 import { BoxProps } from 'rebass'
 import { compose, defaultProps, getContext, setDisplayName } from 'recompose'
 
@@ -38,18 +38,19 @@ export default compose<
 
     return (
       <HeaderCell
-        onClick={() => sortBy({ name, dir: dir === 'asc' ? 'desc' : 'asc' })}
+        onClick={() =>
+          sortBy({
+            name,
+            dir: sortKey === name ? (dir === 'asc' ? 'desc' : 'asc') : 'desc'
+          })
+        }
         {...props}>
         <span style={{ marginRight: 2 }}>{children}</span>
 
-        {sortKey === name && (
-          <>
-            {dir === 'desc' ? (
-              <FaCaretDown size={10} />
-            ) : (
-              <FaCaretUp size={10} />
-            )}
-          </>
+        {sortKey === name ? (
+          <>{dir === 'desc' ? <FaCaretDown /> : <FaCaretUp />}</>
+        ) : (
+          <FaSort opacity={0.5} />
         )}
       </HeaderCell>
     )

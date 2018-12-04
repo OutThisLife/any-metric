@@ -8,7 +8,7 @@ import Time from './style'
 export default compose<ColumnProps, ColumnProps>(
   setDisplayName('col-datetime')
 )(({ children, item = {} }) => (
-  <Time name="date" width={75}>
+  <Time name="date">
     {!('id' in item) ? children : <Text as="div">{dateFormat(item.date)}</Text>}
   </Time>
 ))

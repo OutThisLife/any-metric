@@ -9,7 +9,7 @@ import Status from './style'
 
 export default compose<StatusProps, StatusProps>(setDisplayName('col-status'))(
   ({ item = {}, children }) => (
-    <Status name="bids" width={70}>
+    <Status name="bids">
       {!('id' in item) ? (
         children
       ) : (

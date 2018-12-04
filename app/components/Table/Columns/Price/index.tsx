@@ -11,7 +11,7 @@ import Price from './style'
 export default compose<PriceProps & BaphoTheme, PriceProps>(
   setDisplayName('col-price')
 )(({ children, item = {} }) => (
-  <Price name="price" width={60}>
+  <Price name="price">
     {!('id' in item) ? (
       children
     ) : (

@@ -1,13 +1,13 @@
 import { FakeResult } from '@/server/schema/types'
-import { MdOpenInNew } from 'react-icons/md'
-import { Box } from 'rebass'
+import { MdLabelOutline, MdOpenInNew } from 'react-icons/md'
+import { Box, Flex } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
 import { Text } from '../../style'
 
 export default compose<FakeResult, FakeResult>(
   setDisplayName('col-title-copy')
-)(({ title, copy, slug }) => (
+)(({ title, copy, slug, tags = [] }) => (
   <Box
     pl={12}
     pr={12}
@@ -34,6 +34,16 @@ export default compose<FakeResult, FakeResult>(
     <Text as="a" href={slug} fontWeight="500">
       {title} <MdOpenInNew />
     </Text>
+
+    {tags.length && (
+      <Flex alignItems="center">
+        <MdLabelOutline />
+
+        <Text as="small" m={0}>
+          {tags.join(', ')}
+        </Text>
+      </Flex>
+    )}
 
     <Text
       as="p"

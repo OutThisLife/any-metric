@@ -39,7 +39,12 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
       height: calc(100vh - (var(--offset) * 4));
       overflow: auto;
     `}>
-    <Table.Container as="table" {...props}>
+    <Table.Container
+      as="table"
+      cellPadding="0"
+      cellSpacing="0"
+      cellBorder="0"
+      {...props}>
       <Table.Head>
         <Columns.Check>&nbsp;</Columns.Check>
         <RenderColumns props={c => ({ children: c.label })} />

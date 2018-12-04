@@ -12,7 +12,6 @@ export default styled<any>('div')`
     position: relative;
     padding: calc(var(--pad) / 3.2) var(--pad);
     border-radius: 4px;
-    background: ${({ bg }: any) => bg || theme.inputs.bg};
 
     input {
       z-index: 1;

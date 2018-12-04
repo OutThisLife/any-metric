@@ -20,7 +20,9 @@ export default compose<HeaderProps, HeaderProps>(setDisplayName('header'))(
         <Form.Input
           tabIndex={1}
           placeholder="Enter product name &hellip;"
-          bg="transparent"
+          css={`
+            background: transparent;
+          `}
         />
 
         <Form.Button variant="icon">

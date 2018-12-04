@@ -5,12 +5,12 @@ import Column from '../Column'
 
 export default styled<any>(Column)`
   ${({ theme }: BaphoTheme) => css`
-    text-align: right;
+    text-align: center;
 
     div {
       color: ${theme.colours.muted};
       font-weight: 300;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
     }
   `}
 `

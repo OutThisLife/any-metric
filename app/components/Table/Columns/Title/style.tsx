@@ -5,6 +5,7 @@ import Column from '../Column'
 
 export default styled<any>(Column)`
   ${({ theme }) => css`
+    width: 70%;
     text-align: left;
 
     > div {
@@ -24,11 +25,9 @@ export default styled<any>(Column)`
     }
 
     figure {
-      flex-basis: 35;
-      width: 30px;
-      height: 30px;
+      align-self: stretch;
+      flex: 0.282;
       margin: 0;
-      overflow: hidden;
       background: ${lighten(0.33, theme.colours.secondary)};
 
       .row:not(:hover) & {
@@ -41,14 +40,20 @@ export default styled<any>(Column)`
         img {
           filter: grayscale(1);
           mix-blend-mode: color-burn;
+          background: ${lighten(0.33, theme.colours.secondary)};
         }
       }
 
       img {
         object-fit: cover;
-        transform: translateZ(0);
+        height: 100%;
+        width: 100%;
         transition: inherit;
       }
+    }
+
+    figure + div {
+      flex: 3;
     }
   `}
 `

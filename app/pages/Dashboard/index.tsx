@@ -127,7 +127,7 @@ export default compose<HomeProps, HomeOutterProps>(
           as="section"
           css={`
             width: 100%;
-            padding: var(--pad) 0 var(--pad) var(--offset);
+            padding: 0 0 var(--pad) var(--pad);
           `}>
           {results.length && (
             <Categories data={orderBy(results, 'date', 'asc')} />

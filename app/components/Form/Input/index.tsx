@@ -9,7 +9,7 @@ export default compose<InputProps, InputProps>(setDisplayName('input'))(
   ({ icon, ...props }) => (
     <InputContainer>
       <Input {...props} />
-      {typeof icon === 'object' && createElement(icon)}
+      {icon && createElement(icon)}
     </InputContainer>
   )
 )

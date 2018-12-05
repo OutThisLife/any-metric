@@ -17,8 +17,8 @@ export default compose<PriceProps & BaphoTheme, PriceProps>(
     ) : (
       <Box as="span">
         <Text
-          className={parseInt(item.price, 10) % 2 ? 'up' : 'down'}
-          fontWeight="500">
+          fontWeight="700"
+          className={parseInt(item.price, 10) % 2 ? 'up' : 'down'}>
           {moneyFormat(parseFloat(item.price))}
         </Text>
 

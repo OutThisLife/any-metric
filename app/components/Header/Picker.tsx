@@ -82,15 +82,15 @@ export default compose<PickerProps & PickerState & BaphoTheme, {}>(
           setTheme(el.querySelector('textarea').value)
         }>
         <div className="controls">
-          <Form.Button type="submit" variant="icon | noBorder">
-            <IoIosSave />
-          </Form.Button>
-
           <Form.Button
             type="button"
             variant="icon | noBorder"
             onClick={() => toggle(false)}>
             <IoMdExit />
+          </Form.Button>
+
+          <Form.Button type="submit" variant="icon | noBorder">
+            <IoIosSave />
           </Form.Button>
         </div>
 

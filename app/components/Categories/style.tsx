@@ -67,7 +67,6 @@ export default styled<any>(Box)`
         display: inline-flex;
         align-items: center;
         color: ${lighten(0.33, theme.colours.secondary)};
-        text-transform: uppercase;
         white-space: nowrap;
         padding-bottom: calc(var(--pad) / 4);
 

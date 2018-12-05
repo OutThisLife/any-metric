@@ -39,7 +39,7 @@ export default styled<any>(Flex)`
       max-height: 90vh;
       text-align: left;
       margin: auto;
-      border-radius: 4px;
+      border-radius: 2px;
       transform: translate3d(0, 0, 0);
       animation: ${animIn} 0.2s ${theme.eases.easing} forwards;
 

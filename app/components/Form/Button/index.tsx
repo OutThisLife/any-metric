@@ -4,12 +4,12 @@ import { compose, defaultProps, setDisplayName } from 'recompose'
 import Button from './style'
 
 export default compose<FormButtonProps, FormButtonProps>(
+  setDisplayName('button'),
   defaultProps<FormButtonProps>({
     as: 'button',
     type: 'submit',
     variant: 'basic'
-  }),
-  setDisplayName('button')
+  })
 )(({ children, ...props }) => (
   <Button
     aria-label={/icon/gi.test(props.variant) ? 'icon-cta' : 'cta'}

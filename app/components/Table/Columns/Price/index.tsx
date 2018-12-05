@@ -25,6 +25,7 @@ export default compose<PriceProps, PriceProps>(setDisplayName('col-price'))(
             fontWeight="300"
             css={`
               color: ${({ theme }) => theme.colours.muted};
+              font-size: 0.9rem;
               line-height: 0;
             `}>
             {numFormat(parseFloat(item.shipping))}

@@ -8,8 +8,8 @@ import { compose, setDisplayName } from 'recompose'
 import { Main } from './_app.styles'
 
 export default compose<LayoutProps & BaphoTheme, LayoutProps>(
-  withContentRect('bounds'),
-  setDisplayName('layout')
+  setDisplayName('layout'),
+  withContentRect('bounds')
 )(({ Component, measureRef, contentRect }) => (
   <Main>
     <Header />

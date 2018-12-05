@@ -21,7 +21,7 @@ export default compose<CategoryProps, CategoryOutterProps>(
       }}
     />
 
-    <Text as="h5" m={0} p={0} fontWeight="400">
+    <Text as="h5" m={0} p={0}>
       {groupTitle}
 
       <Text lineHeight={1} pl={1}>

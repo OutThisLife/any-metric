@@ -77,9 +77,15 @@ export const Container = styled<any>(Box as any)`
         z-index: 1;
         position: sticky;
         top: 0;
-        font-size: initial;
+        text-transform: uppercase;
         padding-bottom: 1rem;
         background: ${theme.colours.panel};
+
+        span {
+          font-weight: 600;
+          font-size: 0.9rem;
+          letter-spacing: 1px;
+        }
 
         svg {
           width: 10px;
@@ -90,23 +96,38 @@ export const Container = styled<any>(Box as any)`
     tbody .row {
       user-select: none;
       outline-offset: -2px;
-      outline: 1px solid transparent;
+      background-color: rgba(0, 0, 0, 0);
 
       td {
         position: relative;
         vertical-align: middle;
         color: ${theme.colours.label};
         border-bottom: 1px solid ${rgba(theme.colours.border, 0.5)};
+
+        &:first-of-type ~ td:not(:last-of-type):before {
+          display: block;
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 0;
+          width: 1px;
+          height: 40%;
+          transform: translate(0, -50%);
+          transition: opacity ${theme.eases.base};
+          background: ${rgba(theme.colours.border, 0.5)};
+        }
       }
 
       &:not(:hover) {
-        transition: ${theme.eases.base};
-        transition-property: background, outline;
+        transition: background-color ${theme.eases.base};
+
+        td:before {
+          opacity: 0.5;
+        }
       }
 
       &:hover {
-        outline-color: ${rgba(theme.colours.border, 0.4)};
-        background: ${rgba(theme.colours.base, 0.01)};
+        background-color: ${rgba(theme.colours.base, 0.01)};
       }
 
       &[data-checked] {

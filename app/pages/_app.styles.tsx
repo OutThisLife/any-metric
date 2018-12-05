@@ -177,6 +177,13 @@ export const Main = styled<any>(Box)`
       .hl {
         color: ${theme.colours.price.hl} !important;
       }
+
+      h5 {
+        font-weight: 600;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
     }
   `}
 `

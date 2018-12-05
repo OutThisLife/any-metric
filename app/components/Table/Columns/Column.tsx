@@ -1,3 +1,4 @@
+import Text from '@/components/Text'
 import { FakeResult } from '@/server/schema/types'
 import { bool, func, object } from 'prop-types'
 import { FaCaretDown, FaCaretUp, FaSort } from 'react-icons/fa'
@@ -45,7 +46,9 @@ export default compose<
           })
         }
         {...props}>
-        <span style={{ marginRight: 2 }}>{children}</span>
+        <span style={{ marginRight: 2 }}>
+          <Text as="h5">{children}</Text>
+        </span>
 
         {sortKey === name ? (
           <>{dir === 'desc' ? <FaCaretDown /> : <FaCaretUp />}</>

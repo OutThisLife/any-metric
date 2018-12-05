@@ -6,6 +6,7 @@ import { compose, defaultProps, setDisplayName, withProps } from 'recompose'
 import Heading from './style'
 
 export default compose<HeadingProps & { title: string[] }, HeadingOutterProps>(
+  setDisplayName('heading'),
   defaultProps<HeadingProps>({
     as: 'h2',
     fontWeight: '300',
@@ -15,8 +16,7 @@ export default compose<HeadingProps & { title: string[] }, HeadingOutterProps>(
   }),
   withProps<{ title: string[] }, { title: string }>(({ title }) => ({
     title: title.split(' ').slice(0, 2)
-  })),
-  setDisplayName('heading')
+  }))
 )(({ title, cta, ...props }) => (
   <Heading
     {...props}

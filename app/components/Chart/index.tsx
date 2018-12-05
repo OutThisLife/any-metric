@@ -39,6 +39,7 @@ const MA = sma()
   .accessor(d => d.MA)
 
 export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
+  setDisplayName('price'),
   withProps<Partial<ChartProps>, ChartOutterProps>(({ data: initialData }) => {
     const calculatedData = MA(
       initialData.map(d => ({
@@ -75,8 +76,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
   branch<ChartProps>(
     props => !('data' in props) || isNaN(props.width) || props.width <= 0,
     renderComponent(() => <Loader>Loading &hellip;</Loader>)
-  ),
-  setDisplayName('price')
+  )
 )(({ theme, isDesktop, width, ...props }) => (
   <div onMouseLeave={() => d3.timeout(unlink, 700)}>
     <ChartCanvas

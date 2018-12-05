@@ -14,7 +14,7 @@ export default styled<any>('div')`
     display: inline-block;
     position: relative;
     padding: calc(var(--pad) / 3.2) var(--pad);
-    border-radius: 4px;
+    border-radius: 2px;
 
     &:focus-within {
       --bg: ${theme.colours.panel};
@@ -40,7 +40,7 @@ export default styled<any>('div')`
       letter-spacing: 0.01em;
       padding: 0 var(--pad);
       border: 0;
-      border-radius: 4px;
+      border-radius: 2px;
       box-shadow: 0 0 0 0px ${theme.colours.panel},
         inset 0 0 0 1px ${theme.colours.panel};
       transition: ${theme.eases.base};

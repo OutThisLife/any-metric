@@ -29,7 +29,7 @@ export default styled<any>(Module)`
 
     > div {
       padding: var(--pad);
-      border-radius: 4px;
+      border-radius: 2px;
       background: ${theme.colours.module};
     }
   `}

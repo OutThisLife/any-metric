@@ -5,12 +5,20 @@ export default styled<any>(Heading)`
   display: inline-flex;
   align-items: center;
 
-  > span + span:not([aria-label]) {
-    color: ${({ theme }) => theme.colours.muted};
-    margin-left: 8px;
+  > span {
+    font-size: inherit;
+
+    + span:before {
+      content: '-';
+      visibility: hidden;
+    }
+
+    &:nth-child(2n) {
+      color: ${({ theme }) => theme.colours.muted};
+    }
   }
 
   button {
-    margin-left: 2rem;
+    margin-left: 1.4em;
   }
 `

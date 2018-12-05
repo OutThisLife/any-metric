@@ -1,10 +1,10 @@
 import withData from '@/client/withData'
+import GetTheme from '@/client/withTheme'
 import Particles from '@/components/Particles'
-import { getTheme } from '@/lib/queries'
 import { ApolloClient } from 'apollo-boost'
 import App, { AppProps, Container } from 'next/app'
+import Head from 'next/head'
 import { ApolloProvider } from 'react-apollo'
-import { ThemeProvider } from 'styled-components'
 
 import GlobalStyles from './_app.styles'
 import Layout from './_layout'
@@ -14,23 +14,30 @@ export default withData(
     public render() {
       return (
         <ApolloProvider client={this.props.client}>
-          <Particles />
+          <Container>
+            <Particles />
 
-          <DynamicTheme>
-            <GlobalStyles />
-            <Layout {...this.props} />
-          </DynamicTheme>
+            <GetTheme>
+              {({ theme }) => (
+                <>
+                  <Head>
+                    <link
+                      key="google-fonts"
+                      rel="stylesheet"
+                      href={theme.fonts.src}
+                    />
+                  </Head>
+                  <GlobalStyles />
+                  <Layout {...this.props} />
+                </>
+              )}
+            </GetTheme>
+          </Container>
         </ApolloProvider>
       )
     }
   }
 )
-
-const DynamicTheme = getTheme()(({ children, data: { theme } }) => (
-  <ThemeProvider theme={JSON.parse(theme.value)}>
-    <Container>{children}</Container>
-  </ThemeProvider>
-))
 
 export interface MyAppProps extends AppProps {
   client: ApolloClient<{}>

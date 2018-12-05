@@ -9,7 +9,6 @@ export default compose<HeadingProps & { title: string[] }, HeadingOutterProps>(
   defaultProps<HeadingProps>({
     as: 'h2',
     fontWeight: '300',
-    fontSize: 24,
     lineHeight: 1.5,
     letterSpacing: -0.69,
     m: 0
@@ -19,9 +18,16 @@ export default compose<HeadingProps & { title: string[] }, HeadingOutterProps>(
   })),
   setDisplayName('heading')
 )(({ title, cta, ...props }) => (
-  <Heading {...props} css="display: flex; alignItems: center">
+  <Heading
+    {...props}
+    css={`
+      display: flex;
+      alignitems: center;
+      font-size: 1.8rem;
+      line-height: 2;
+    `}>
     {title.map(w => (
-      <Text key={w} fontWeight="100" fontSize={24}>
+      <Text key={w} fontWeight="100">
         {w}
       </Text>
     ))}

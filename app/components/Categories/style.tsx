@@ -36,8 +36,16 @@ export default styled<any>(Box)`
       border: 1px solid ${theme.colours.border};
       outline: 1px solid transparent;
       outline-offset: -0.2em;
-      transition: ${theme.eases.base};
       background: transparent;
+
+      &:not(:hover) {
+        transition: ${theme.eases.base};
+
+        li,
+        h5 {
+          transition: ${theme.eases.base};
+        }
+      }
 
       &:hover {
         outline-color: ${rgba(theme.colours.secondary, 0.25)};
@@ -62,7 +70,6 @@ export default styled<any>(Box)`
         text-transform: uppercase;
         white-space: nowrap;
         padding-bottom: calc(var(--pad) / 4);
-        transition: inherit;
 
         span {
           opacity: 0.5;
@@ -79,13 +86,11 @@ export default styled<any>(Box)`
         align-items: center;
         position: relative;
         color: ${theme.colours.muted};
-        transition: inherit;
 
         a[href] {
           display: inline-block;
           width: 100%;
           color: currentColor;
-          font-size: 0.85rem;
           padding: 0 0 1px 4px;
           transition: none;
 

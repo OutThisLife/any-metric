@@ -12,7 +12,7 @@ export default compose<
   getContext({ columns: array })
 )(({ columns = [], total }) => (
   <Base colSpan={columns.length + 1}>
-    <Text as="div" textAlign="center" fontWeight="300" fontSize={10}>
+    <Text as="div" textAlign="center" fontWeight="300">
       Found {total} results
     </Text>
   </Base>

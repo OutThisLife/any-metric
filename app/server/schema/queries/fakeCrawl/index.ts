@@ -1,6 +1,6 @@
 import * as faker from 'faker'
 
-import { FakeResult, Resolver } from '../types'
+import { FakeResult, Resolver } from '../../types'
 
 export default (async (_, args = {}): Promise<FakeResult[]> =>
   await (genFakeResults(args) || [])) as Resolver

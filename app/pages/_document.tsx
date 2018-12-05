@@ -7,13 +7,11 @@ export default class extends Document<{
 }> {
   public static async getInitialProps({ renderPage }) {
     const sheet = new ServerStyleSheet()
-    const page = renderPage(App => props =>
-      sheet.collectStyles(<App {...props} />)
-    )
 
-    const styleTags = sheet.getStyleElement()
-
-    return { ...page, styleTags }
+    return {
+      ...renderPage(App => props => sheet.collectStyles(<App {...props} />)),
+      styleTags: sheet.getStyleElement()
+    }
   }
 
   public render() {

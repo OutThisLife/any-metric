@@ -27,7 +27,9 @@ export default styled<any>('div')`
       }
     }
 
-    input {
+    input,
+    textarea,
+    select {
       z-index: 1;
       cursor: text;
       display: inline-block;
@@ -54,6 +56,10 @@ export default styled<any>('div')`
       }
     }
 
+    textarea {
+      padding: var(--pad);
+    }
+
     svg {
       z-index: 1;
       pointer-events: none;
@@ -73,6 +79,8 @@ export const Input = compose<InputProps, InputProps>(
   defaultProps({
     as: 'input',
     type: 'text',
+    autoCorrect: 'off',
+    spellCheck: 'false',
     autoComplete: 'off'
   })
 )(Box)

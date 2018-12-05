@@ -6,7 +6,6 @@ export default styled<any>(Box)`
   ${({ theme }: BaphoTheme) => css`
     display: inline-block;
     color: ${theme.colours.muted};
-    font-size: 0.833rem;
     line-height: 1;
 
     + label {

@@ -5,8 +5,6 @@ import Column from '../Column'
 
 export default styled<any>(Column)`
   ${({ theme }: BaphoTheme) => css`
-    text-align: center;
-
     div {
       flex-wrap: wrap;
       margin: 0 auto;
@@ -16,7 +14,6 @@ export default styled<any>(Column)`
         display: block;
         width: 100%;
         color: ${theme.colours.label};
-        font-size: 0.8rem;
       }
     }
   `}

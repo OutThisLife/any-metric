@@ -21,10 +21,10 @@ export default compose<CategoryProps, CategoryOutterProps>(
       }}
     />
 
-    <Text as="h5" m={0} p={0} fontSize={11} fontWeight="400">
+    <Text as="h5" m={0} p={0} fontWeight="400">
       {groupTitle}
 
-      <Text fontSize={11} lineHeight={1} pl={1}>
+      <Text lineHeight={1} pl={1}>
         ({maxItems})
       </Text>
     </Text>

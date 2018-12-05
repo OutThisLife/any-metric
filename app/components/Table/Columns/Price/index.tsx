@@ -15,7 +15,7 @@ export default compose<PriceProps & BaphoTheme, PriceProps>(
     {!('id' in item) ? (
       children
     ) : (
-      <Box>
+      <Box as="span">
         <Text
           className={parseInt(item.price, 10) % 2 ? 'up' : 'down'}
           fontWeight="500">

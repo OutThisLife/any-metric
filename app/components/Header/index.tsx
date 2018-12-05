@@ -1,5 +1,6 @@
 import * as Form from '@/components/Form'
 import Text from '@/components/Text'
+import { siteName } from '@/theme'
 import { IoIosSearch } from 'react-icons/io'
 import { BoxProps } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
@@ -11,13 +12,15 @@ export default compose<HeaderProps, HeaderProps>(setDisplayName('header'))(
   () => (
     <Header as="header">
       <Text as="h1" lineHeight={1} fontWeight="100" m={0}>
-        ɮΔքɦօʍɛ✞ʀɨƈ
+        ${siteName}
       </Text>
 
       <Form.Container>
-        <Form.Input tabIndex={1} placeholder="Search for a product">
-          <IoIosSearch />
-        </Form.Input>
+        <Form.Input
+          tabIndex={1}
+          placeholder="Search for a product"
+          icon={IoIosSearch}
+        />
       </Form.Container>
 
       <Picker />

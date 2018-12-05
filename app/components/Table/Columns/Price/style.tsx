@@ -5,21 +5,14 @@ import Column from '../Column'
 
 export default styled<any>(Column)`
   ${({ theme }: BaphoTheme) => css`
-    line-height: 0;
-    text-align: right;
+    span {
+      display: block;
+      width: 100%;
+    }
 
-    div {
-      font-size: 0.8rem;
-      line-height: 1.2;
-
-      > span {
-        display: block;
-        width: 100%;
-
-        &:last-child {
-          color: ${theme.colours.muted};
-        }
-      }
+    span span:last-child {
+      color: ${theme.colours.muted};
+      line-height: 0;
     }
   `}
 `

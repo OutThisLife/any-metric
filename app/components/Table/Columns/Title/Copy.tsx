@@ -20,7 +20,8 @@ export default compose<FakeResult, FakeResult>(
       as="a"
       href={slug}
       css={`
-        font-weight: 300;
+        font-weight: 600;
+        font-size: 1.3rem;
         line-height: 1;
       `}>
       {title} <MdOpenInNew />

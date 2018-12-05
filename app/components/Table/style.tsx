@@ -19,6 +19,59 @@ export const Container = styled<any>(Box as any)`
     border: 0;
   }
 
+  tr {
+    td > span,
+    th > span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      > span {
+        display: block;
+      }
+    }
+
+    td > span {
+      flex-wrap: wrap;
+
+      > span {
+        width: 100%;
+      }
+    }
+
+    th > span {
+      flex-wrap: nowrap;
+    }
+
+    > *:first-of-type > span {
+      justify-content: left;
+      text-align: left;
+    }
+
+    > *:last-of-type > span {
+      justify-content: right;
+      text-align: right;
+    }
+  }
+
+  @media (max-width: 1025px) {
+    thead {
+      display: none;
+    }
+
+    tr {
+      min-width: 1024px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    padding-right: calc(var(--pad) / 2);
+
+    tr > *:last-child {
+      padding-right: calc(var(--pad) / 2);
+    }
+  }
+
   ${({ theme }: BaphoTheme) => css`
     .head {
       user-select: none;
@@ -27,13 +80,9 @@ export const Container = styled<any>(Box as any)`
         z-index: 1;
         position: sticky;
         top: 0;
+        font-size: initial;
+        padding-bottom: 1rem;
         background: ${theme.colours.panel};
-
-        span {
-          display: inline-flex;
-          align-items: center;
-          text-align: inherit;
-        }
 
         svg {
           width: 10px;
@@ -41,27 +90,9 @@ export const Container = styled<any>(Box as any)`
       }
     }
 
-    @media (max-width: 1025px) {
-      .head {
-        display: none;
-      }
-
-      .row {
-        min-width: 1024px;
-      }
-    }
-
-    @media (min-width: 768px) {
-      padding-right: calc(var(--pad) / 2);
-
-      tr > *:last-child {
-        padding-right: calc(var(--pad) / 2);
-      }
-    }
-
     tbody .row {
       user-select: none;
-      outline-offset: -3px;
+      outline-offset: -2px;
       outline: 1px solid transparent;
 
       td {
@@ -142,8 +173,11 @@ export const HeaderCell = compose<
 )(({ theme, children, ...props }) => (
   <Box as="th" {...props}>
     <Text
-      css="display: flex; alignItems: center; width: 100%"
-      fontSize={10}
+      css={`
+        display: flex;
+        alignitems: center;
+        width: 100%;
+      `}
       fontWeight="300"
       color={theme.colours.label}>
       {children}

@@ -46,7 +46,6 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
       cellBorder="0"
       {...props}>
       <Table.Head>
-        <Columns.Check>&nbsp;</Columns.Check>
         <RenderColumns props={c => ({ children: c.label })} />
       </Table.Head>
 
@@ -55,7 +54,6 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
         onScroll={isDesktop ? handleScroll : () => null}>
         {(data as FakeResult[]).map(d => (
           <Table.Row key={d.date.valueOf()} id={d.id}>
-            <Columns.Check />
             <RenderColumns props={() => ({ item: d })} />
           </Table.Row>
         ))}

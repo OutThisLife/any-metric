@@ -5,8 +5,7 @@ import Column from '../Column'
 
 export default styled<any>(Column)`
   ${({ theme }) => css`
-    width: 66%;
-    text-align: left;
+    width: calc(100% / 1.7);
 
     a[href] svg {
       width: 13px;

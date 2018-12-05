@@ -37,7 +37,6 @@ export default styled<any>(Box)`
     &:last-child {
       @media (min-width: 1025px) {
         padding-right: var(--offset);
-        margin-left: auto;
       }
 
       @media (max-width: 1025px) {

@@ -3,6 +3,7 @@ import Chart, { Loader } from '@/components/Chart'
 import Table from '@/components/Table'
 import { getFakeCrawl } from '@/lib/queries'
 import { FakeResult } from '@/server/schema/types'
+import { siteName } from '@/theme'
 import { orderBy } from 'lodash'
 import Head from 'next/head'
 import { func, object } from 'prop-types'
@@ -83,7 +84,7 @@ export default compose<HomeProps, HomeOutterProps>(
       `}>
       <Head>
         <title key="title">
-          {renderedData.length} results found :: ɮΔքɦօʍɛ✞ʀɨƈ
+          {renderedData.length} results found :: ${siteName}
         </title>
       </Head>
 

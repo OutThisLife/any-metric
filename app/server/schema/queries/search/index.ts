@@ -1,5 +1,5 @@
-import { Resolver, Result } from '../types'
-import crawl from './crawl'
+import { Resolver, Result } from '../../types'
+import crawl from '../crawl'
 
 export default (async (_, { q }: { q: string }): Promise<Result> =>
   crawl(

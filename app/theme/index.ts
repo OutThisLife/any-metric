@@ -1,14 +1,10 @@
-import {
-  between,
-  desaturate,
-  invert,
-  lighten,
-  rgba,
-  shade,
-  timingFunctions,
-  tint
-} from 'polished'
+import { desaturate, invert, lighten, rgba, shade, tint } from 'polished'
 import { ThemeProps } from 'styled-components'
+
+export const siteName = 'ɮΔքɦօʍɛ✞ʀɨƈ'
+
+export const between = (min = 1, max = 2, vmin = 400, vmax = 2000) =>
+  `calc(${min}px + (${max} - ${min}) * (100vw - ${vmin}px) / ${vmax - vmin})`
 
 export const createTheme = (secondary: string) => {
   const colours = {
@@ -52,13 +48,16 @@ export const createTheme = (secondary: string) => {
   }
 
   const fonts = {
-    size: between('10px', '12px', '320px', '1600px'),
+    size: between(10, 13),
+    list: ['Rubik'],
 
-    family: {
-      title: '"SF UI Display", sans-serif',
-      get copy() {
-        return `\"SF UI Text\", ${this.title}`
-      }
+    get src() {
+      const url = 'https://fonts.googleapis.com/css?family'
+      return `${url}=${this.list.join('|').replace(/\s+/g, '+')}`
+    },
+
+    get family() {
+      return this.list.join(',')
     }
   }
 
@@ -69,7 +68,7 @@ export const createTheme = (secondary: string) => {
   }
 
   const eases = {
-    easing: timingFunctions('easeInSine'),
+    easing: 'cubic-bezier(0.165, 0.84, 0.44, 1)',
 
     get base() {
       return `0.15s ${this.easing}`
@@ -77,7 +76,6 @@ export const createTheme = (secondary: string) => {
   }
 
   return {
-    breakpoints: [1025, 1024, 768],
     colours,
     fonts,
     inputs,
@@ -88,6 +86,5 @@ export const createTheme = (secondary: string) => {
 // ---------------------------
 
 const theme = createTheme('#6236ba')
-
 export type BaphoTheme = Partial<ThemeProps<typeof theme>>
 export default theme

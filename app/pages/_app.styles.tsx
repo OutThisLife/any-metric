@@ -43,16 +43,6 @@ export default createGlobalStyle`
       padding: 0;
     }
 
-    * {
-      cursor: crosshair;
-      font-family: ${theme.fonts.family.copy};
-      box-sizing: border-box;
-
-      &:focus {
-        outline: none;
-      }
-    }
-
     h1,
     h2,
     h3,
@@ -61,7 +51,7 @@ export default createGlobalStyle`
     h6,
     input[type],
     button[type] {
-      font-family: ${theme.fonts.family.title};
+      font-family: ${theme.fonts.family};
     }
 
     html {
@@ -75,6 +65,19 @@ export default createGlobalStyle`
 
     body {
       background: #000;
+    }
+
+    body * {
+      cursor: crosshair;
+      font-size: 1rem;
+      font-family: ${theme.fonts.family}, -apple-system, BlinkMacSystemFont,
+        'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+        'Helvetica Neue', sans-serif;
+      box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+      }
     }
 
     img,
@@ -104,12 +107,6 @@ export default createGlobalStyle`
 
     .dragging a[href] {
       pointer-events: none !important;
-    }
-
-    [data-id='tooltip'] {
-      font-size: 11px;
-      padding: 2px 8px;
-      transition: none;
     }
   `}
 `

@@ -94,7 +94,6 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
           axisAt="bottom"
           orient="bottom"
           fontSize={10}
-          fontFamily={theme.fonts.family.title}
           stroke={theme.colours.border}
           tickStroke={theme.colours.muted}
         />
@@ -105,7 +104,6 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
             snapX={false}
             at="bottom"
             orient="bottom"
-            fontFamily={theme.fonts.family.title}
             fill={theme.colours.border}
             fillText={theme.colours.base}
             displayFormat={d => `Volume: ${numFormat(d)}`}
@@ -116,7 +114,6 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
           axisAt="right"
           orient="right"
           fontSize={10}
-          fontFamily={theme.fonts.family.title}
           stroke={theme.colours.border}
           tickStroke={theme.colours.base}
           displayFormat={moneyFormat}
@@ -127,7 +124,6 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
             fontSize={10}
             at="right"
             orient="right"
-            fontFamily={theme.fonts.family.title}
             fill={theme.colours.border}
             fillText={theme.colours.base}
             displayFormat={moneyFormat}
@@ -166,7 +162,6 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
             fontSize={11}
             bgOpacity={0}
             fontFill={theme.colours.base}
-            fontFamily={theme.fonts.family.title}
             fill="transparent"
             stroke="transparent"
             tooltipContent={({ currentItem }: { currentItem: FakeResult }) =>

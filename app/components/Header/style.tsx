@@ -1,4 +1,5 @@
 import { BaphoTheme } from '@/theme'
+import { invert } from 'polished'
 import { Flex } from 'rebass'
 import styled, { css } from 'styled-components'
 
@@ -10,14 +11,13 @@ export default styled<any>(Flex)`
     padding: 0 var(--offset);
     height: var(--offset);
 
-    h1 {
+    > h1 {
       color: ${theme.colours.base};
-      font-size: 1.1rem;
-      font-family: ${theme.fonts.family.title};
+      font-size: initial;
       text-transform: uppercase;
     }
 
-    form {
+    > form {
       align-self: stretch;
       height: 100%;
       margin: auto;
@@ -37,48 +37,9 @@ export default styled<any>(Flex)`
         display: block;
         width: 60vh;
         height: 50%;
-      }
-    }
 
-    .picker {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: ${theme.eases.base};
-
-      @media (min-width: 768px) {
-        position: absolute;
-        top: calc(50% - 3px);
-        right: 0;
-      }
-
-      @media (max-width: 768px) {
-        display: none;
-      }
-
-      &:not(:hover) {
-        opacity: 0.4;
-      }
-
-      > a {
-        display: inline-block;
-        line-height: 0;
-        vertical-align: middle;
-
-        + * {
-          z-index: 100;
-          position: absolute !important;
-          top: 100%;
-          right: 0;
-
-          > div {
-            background: none !important;
-          }
-
-          .flexbox-fix {
-            display: none !important;
-          }
+        &::selection {
+          background: ${invert(theme.colours.focus)};
         }
       }
     }

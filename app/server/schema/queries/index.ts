@@ -1,3 +1,2 @@
-export { default as crawl } from './crawl'
+export { default as theme } from './theme'
 export { default as fakeCrawl } from './fakeCrawl'
-export { default as search } from './search'

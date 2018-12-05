@@ -11,7 +11,6 @@ export default compose<CheckProps, CheckProps>(setDisplayName('col-checkbox'))(
       p={0}
       css={`
         width: calc(var(--offset));
-        text-align: center;
       `}>
       {children || (
         <Form.Checkbox

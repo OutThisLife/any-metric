@@ -1,6 +1,7 @@
 import { FakeResult } from '@/server/schema/types'
+import { BaphoTheme } from '@/theme'
 import gql from 'graphql-tag'
-import { DataProps, graphql } from 'react-apollo'
+import { ChildProps, DataProps, graphql } from 'react-apollo'
 
 export const getFakeCrawl = () =>
   graphql<{}, { results: FakeResult[] }>(
@@ -36,12 +37,20 @@ export const getFakeCrawl = () =>
   )
 
 export const getTheme = () =>
-  graphql<{}, {}, {}, DataProps<{ theme: { value: string } }>>(
+  graphql<
+    {},
+    { theme: { value: string } },
+    DataProps<{ theme: { value: string } }>,
+    ChildProps<BaphoTheme>
+  >(
     gql`
       {
         theme {
           value
         }
       }
-    `
+    `,
+    {
+      props: ({ data: { theme } }) => ({ theme: JSON.parse(theme.value) })
+    }
   )

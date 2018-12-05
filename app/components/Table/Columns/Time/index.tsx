@@ -9,6 +9,6 @@ export default compose<ColumnProps, ColumnProps>(
   setDisplayName('col-datetime')
 )(({ children, item = {} }) => (
   <Time name="date">
-    {!('id' in item) ? children : <Text as="div">{dateFormat(item.date)}</Text>}
+    {!('id' in item) ? children : <Text>{dateFormat(item.date)}</Text>}
   </Time>
 ))

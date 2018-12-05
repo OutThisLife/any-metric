@@ -2,6 +2,7 @@ import withPortal, { PortalProps, PortalState } from '@/lib/withPortal'
 import { Box } from 'rebass'
 import { compose, defaultProps, setDisplayName, withHandlers } from 'recompose'
 
+import { DropdownProps } from '../Dropdown'
 import Popover from './style'
 
 export default compose<PopoverProps & PortalState, PopoverProps & PortalProps>(
@@ -61,22 +62,14 @@ export default compose<PopoverProps & PortalState, PopoverProps & PortalProps>(
       return true
     }
   })
-)(({ id, children, direction }) => (
-  <Popover as="div" id={id}>
-    <Box
-      css={`
-        ${direction === 'top' && 'transform-origin: center bottom'};
-        ${direction === 'right' && 'transform-origin: left center'};
-        ${direction === 'bottom' && 'transform-origin: center top'};
-        ${direction === 'left' && 'transform-origin: right center'};
-      `}>
-      {children}
-    </Box>
+)(({ children, id, direction }) => (
+  <Popover as="div" id={id} direction={direction}>
+    <Box>{children}</Box>
   </Popover>
 ))
 
 export interface PopoverProps {
   id: string
-  direction: 'top' | 'right' | 'bottom' | 'left'
+  direction: DropdownProps['direction']
   handleMouse?: React.MouseEventHandler<HTMLElement>
 }

@@ -1,44 +1,77 @@
 import Dropdown from '@/components/Dropdown'
-import { IoMdMenu } from 'react-icons/io'
+import { getTags } from '@/lib/queries'
+import { CategoryItem } from '@/lib/utils'
+import { BaphoTheme } from '@/theme'
+import { IoMdCheckbox, IoMdMenu } from 'react-icons/io'
+import { MdCheckBoxOutlineBlank } from 'react-icons/md'
 import { Box } from 'rebass'
-import { compose, setDisplayName } from 'recompose'
+import { compose, setDisplayName, withHandlers } from 'recompose'
 
 import { Text } from '../../style'
-import Column, { ColumnProps } from '../Column'
+import { ColumnProps } from '../Column'
+import Menu from './style'
 
-export default compose<MenuProps, MenuProps>(setDisplayName('col-menu'))(
-  ({ children, item = {} }) => (
-    <Column width={35} disableSort>
-      {!('id' in item) ? (
-        children
-      ) : (
-        <Box as="span">
-          <Text
-            css={`
-              color: ${({ theme }) => theme.colours.muted};
+export default compose<MenuState & MenuProps & BaphoTheme, MenuProps>(
+  setDisplayName('col-menu'),
+  getTags(),
+  withHandlers<MenuProps, MenuState>(() => ({
+    onBlur: () => e => {
+      const $a = e.currentTarget.querySelector('.menu-true')
 
-              tr:not(:hover) & svg[size='35'] {
-                opacity: 0.5;
-              }
-            `}>
-            <Dropdown direction="left">
-              {({ isOpen, toggle }) => (
-                <a
-                  tabIndex={0}
-                  href="javascript:;"
-                  onClick={() => toggle(!isOpen)}
-                  onBlur={() => toggle(false)}>
-                  <IoMdMenu size={35} />
-                </a>
-              )}
-            </Dropdown>
-          </Text>
-        </Box>
-      )}
-    </Column>
-  )
-)
+      if ($a instanceof HTMLElement) {
+        $a.click()
+      }
+    }
+  }))
+)(({ children, onBlur, item = {}, tags = [] }) => (
+  <Menu tabIndex={0} width={35} disableSort onMouseLeave={onBlur}>
+    {!('id' in item) ? (
+      children
+    ) : (
+      <Box
+        as="span"
+        css={`
+          position: relative;
+        `}>
+        <Dropdown
+          direction="left"
+          menu={tags.map(({ title, items }) => ({
+            title,
+            items: items.map(t => (
+              <a href="javascript:;">
+                <i>
+                  {item.tags[0] === title && item.tags.includes(t.title) ? (
+                    <IoMdCheckbox />
+                  ) : (
+                    <MdCheckBoxOutlineBlank />
+                  )}
+                </i>
 
-interface MenuProps extends ColumnProps {
+                <Text>{t.title}</Text>
+              </a>
+            ))
+          }))}>
+          {({ isOpen, toggle }) => (
+            <Text
+              as="a"
+              href="javascript:;"
+              className={`menu-${isOpen}`}
+              onMouseEnter={() => toggle(!isOpen)}
+              onClick={() => toggle(!isOpen)}>
+              <IoMdMenu size={35} />
+            </Text>
+          )}
+        </Dropdown>
+      </Box>
+    )}
+  </Menu>
+))
+
+interface MenuState {
+  tags?: CategoryItem[]
+  onBlur?: React.MouseEventHandler<HTMLElement>
+}
+
+export interface MenuProps extends ColumnProps {
   menu?: any[]
 }

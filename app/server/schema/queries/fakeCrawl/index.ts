@@ -28,6 +28,8 @@ export const genFakeResults: (
     tags: faker.random.arrayElement([
       ['DataMan 8050', 'Important'],
       ['Keyence CV', 'Broken'],
+      ['Keyence CV', 'Something'],
+      ['Cognex Cables', 'Important'],
       ['Cognex Cables', 'Important', 'Lead']
     ])
   }))

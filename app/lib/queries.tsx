@@ -3,7 +3,9 @@ import { BaphoTheme } from '@/theme'
 import gql from 'graphql-tag'
 import { ChildProps, DataProps, graphql } from 'react-apollo'
 
-export const getFakeCrawl = () =>
+import { parseTags } from './utils'
+
+export const getFakeCrawl = (options = {}) =>
   graphql<{}, { results: FakeResult[] }>(
     gql`
       query GetFakeResult($offset: Int, $limit: Int) {
@@ -23,6 +25,7 @@ export const getFakeCrawl = () =>
       }
     `,
     {
+      ...options,
       options: {
         variables: {
           offset: 0,
@@ -32,6 +35,30 @@ export const getFakeCrawl = () =>
       props: ({ data: { results = [], ...data } }) => ({
         data,
         results
+      })
+    }
+  )
+
+export const getTags = (options = {}) =>
+  graphql<{}, { results: FakeResult[] }>(
+    gql`
+      query GetFakeResult($offset: Int, $limit: Int) {
+        results: fakeCrawl(offset: $offset, limit: $limit) {
+          tags
+        }
+      }
+    `,
+    {
+      ...options,
+      options: {
+        variables: {
+          offset: 0,
+          limit: 25
+        }
+      },
+      props: ({ data: { results = [], ...data } }) => ({
+        data,
+        tags: parseTags(results)
       })
     }
   )

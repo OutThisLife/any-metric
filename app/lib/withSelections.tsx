@@ -4,7 +4,6 @@ export default withHandlers<SelectionsProps, SelectionsProps>(() => ({
   handleMouse: ({ afterMouseDown = () => null }) => ({
     currentTarget: $parent,
     target,
-    shiftKey,
     button
   }) => {
     if (
@@ -13,21 +12,6 @@ export default withHandlers<SelectionsProps, SelectionsProps>(() => ({
       /img/i.test(target.tagName)
     ) {
       return
-    }
-
-    const $rows = [].slice.call($parent.getElementsByClassName('row'))
-    const $first = $parent.querySelector('[data-checked]')
-
-    const firstIdx = $rows.indexOf($first)
-    const idx = $rows.indexOf(target.offsetParent)
-
-    if (shiftKey && $first && firstIdx !== idx) {
-      const c = firstIdx < idx ? idx : firstIdx
-      let n = firstIdx < idx ? firstIdx + 1 : idx
-
-      while (n !== c) {
-        select($rows[n++])
-      }
     }
 
     select(target, afterMouseDown)
@@ -60,35 +44,28 @@ export const select = (
   el: HTMLElement | HTMLInputElement,
   cb: () => void = () => null
 ) => {
-  const $parent = el.classList.contains('row') ? el : el.closest('.row')
+  const $row = el.classList.contains('row') ? el : el.closest('.row')
 
-  if (!($parent instanceof HTMLElement)) {
+  if (!($row instanceof HTMLElement || $row.classList.contains('seen'))) {
     return
   }
 
-  if (el instanceof HTMLInputElement) {
-    $parent.classList.remove('seen')
-    el.checked = !el.checked
-  } else if ($parent.classList.contains('seen')) {
-    return
-  } else {
-    const $input = $parent.querySelector('[type="checkbox"]')
+  $row.classList.add('seen')
+  $row.toggleAttribute('data-checked')
 
-    if ($input instanceof HTMLInputElement) {
-      $input.checked = !$input.checked
-    }
-  }
+  const isChecked = $row.hasAttribute('data-checked')
+  const isParent = $row.classList.contains('parent')
 
-  $parent.classList.add('seen')
-  $parent.toggleAttribute('data-checked')
+  const toggle = (e: HTMLElement) =>
+    e.toggleAttribute('data-checked', isChecked)
 
-  const $grandParent = $parent.closest('.row-parent')
+  if (isParent && !isChecked) {
+    ;[].slice.call($row.getElementsByClassName('row')).forEach(toggle)
+  } else if (!isParent) {
+    const $parent = $row.closest('.row.parent')
 
-  if ($grandParent instanceof HTMLElement) {
-    if ($grandParent.querySelector('[data-checked]')) {
-      $grandParent.setAttribute('data-checked', 'true')
-    } else {
-      $grandParent.removeAttribute('data-checked')
+    if ($parent instanceof HTMLElement && isChecked) {
+      toggle($parent)
     }
   }
 

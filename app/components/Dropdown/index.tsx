@@ -7,82 +7,35 @@ import Dropdown from './style'
 export default compose<DropdownState & DropdownProps, DropdownProps>(
   setDisplayName('dropdown'),
   defaultProps({
-    direction: 'left'
+    direction: 'left',
+    menu: [],
+    onClick: () => null
   }),
   withState('isOpen', 'toggle', false)
-)(({ children, isOpen, toggle, direction, ...props }) => (
-  <Dropdown {...props}>
+)(({ children, isOpen, toggle, menu, onClick, ...props }) => (
+  <>
     {children({ isOpen, toggle })}
 
     {isOpen && (
-      <Box
-        as="div"
-        className="dropdown"
-        css={`
-          ${direction === 'top' &&
-            `
-            left: 50%;
-            bottom: 100%;
-            padding-bottom: 1em;
-            transform: translate(-50%, 0);
-          `};
-
-          ${direction === 'right' &&
-            `
-            top: 0;
-            left: 100%;
-            padding-left: 1em;
-          `};
-
-          ${direction === 'bottom' &&
-            `
-            top: 100%;
-            left: 50%;
-            padding-top: 1em;
-            transform: translate(-50%, 0);
-          `};
-
-          ${direction === 'left' &&
-            `
-            top: 0;
-            right: 100%;
-            padding-right: 1em;
-          `};
-        `}>
+      <Dropdown as="div" className="dropdown" {...props}>
         <Box as="div">
-          {[...Array(2)].map(() => (
-            <Box as="ul">
+          {menu.map(({ title, items = [] }) => (
+            <Box as="ul" key={title}>
               <li>
                 <Text as="h5" m={0}>
-                  Group Name
+                  {[title]}
                 </Text>
               </li>
 
-              <li>
-                <a href="javascript:;">Item 1</a>
-              </li>
-
-              <li>
-                <a href="javascript:;">Item 2</a>
-              </li>
-
-              <li>
-                <a href="javascript:;">Item 3</a>
-              </li>
-
-              <li>
-                <a href="javascript:;">Item 4</a>
-              </li>
-
-              <li>
-                <a href="javascript:;">Item 5</a>
-              </li>
+              {items.map((item, i) => (
+                <li key={`${title}-${i}`}>{item}</li>
+              ))}
             </Box>
           ))}
         </Box>
-      </Box>
+      </Dropdown>
     )}
-  </Dropdown>
+  </>
 ))
 
 interface DropdownState {
@@ -91,6 +44,11 @@ interface DropdownState {
 }
 
 export interface DropdownProps {
-  direction: 'top' | 'right' | 'bottom' | 'left'
   children: (props: DropdownState) => JSX.Element
+  direction: 'top' | 'right' | 'bottom' | 'left'
+  onClick?: (a?: {}) => void
+  menu: Array<{
+    title: string
+    items: JSX.Element[]
+  }>
 }

@@ -1,4 +1,3 @@
-import withSelections, { SelectionsProps } from '@/lib/withSelections'
 import { FakeResult } from '@/server/schema/types'
 import * as d3 from 'd3'
 import { array } from 'prop-types'
@@ -18,7 +17,6 @@ import * as Table from './style'
 let tm: d3.Timer | {} = {}
 
 export default compose<TableProps & TableOutterProps, TableOutterProps>(
-  withSelections,
   withContext({ columns: array }, ({ columns }) => ({ columns })),
   withHandlers<{}, TableProps>(() => ({
     handleScroll: () => ({ currentTarget }) => {
@@ -33,7 +31,7 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
     }
   })),
   setDisplayName('table')
-)(({ data = [], isDesktop, handleMouse, handleScroll, ...props }) => (
+)(({ data = [], handleScroll, ...props }) => (
   <Box
     css={`
       height: calc(100vh - (var(--offset) * 4));
@@ -49,9 +47,7 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
         <RenderColumns props={c => ({ children: c.label })} />
       </Table.Head>
 
-      <Table.Body
-        onMouseDown={isDesktop ? handleMouse : () => null}
-        onScroll={isDesktop ? handleScroll : () => null}>
+      <Table.Body onScroll={handleScroll}>
         {(data as FakeResult[]).map(d => (
           <Table.Row key={d.date.valueOf()} id={d.id}>
             <RenderColumns props={() => ({ item: d })} />
@@ -81,14 +77,11 @@ export const RenderColumns = compose<RenderColumnProps, RenderColumnProps>(
   </>
 ))
 
-export interface TableProps
-  extends SelectionsProps,
-    Partial<MeasuredComponentProps> {
+export interface TableProps extends Partial<MeasuredComponentProps> {
   handleScroll?: React.UIEventHandler<HTMLElement>
 }
 
 export interface TableOutterProps {
-  isDesktop?: boolean
   data: any[]
   columns: Array<{
     label: string

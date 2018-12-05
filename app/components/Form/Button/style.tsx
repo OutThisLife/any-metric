@@ -24,6 +24,7 @@ export default styled<any>(Button)`
         --shadow: none;
       `}
 
+    cursor: pointer;
     display: inline-block;
     position: relative;
     width: fit-content;

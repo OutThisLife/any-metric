@@ -95,6 +95,7 @@ export const Container = styled<any>(Box as any)`
 
     tbody .row {
       user-select: none;
+      outline: 1px solid transparent;
       outline-offset: -2px;
       background-color: rgba(0, 0, 0, 0);
 

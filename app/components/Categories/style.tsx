@@ -29,6 +29,7 @@ export default styled<any>(Box)`
     }
 
     > li {
+      cursor: pointer;
       display: inline-block;
       position: relative;
       width: auto;

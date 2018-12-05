@@ -68,7 +68,6 @@ export default createGlobalStyle`
     }
 
     body * {
-      cursor: crosshair;
       font-size: 1rem;
       font-family: ${theme.fonts.family}, -apple-system, BlinkMacSystemFont,
         'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',

@@ -1,4 +1,5 @@
 import Text from '@/components/Text'
+import { CategoryItem } from '@/lib/utils'
 import { Box, BoxProps } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
@@ -7,20 +8,7 @@ import { CategoriesProps } from '.'
 export default compose<CategoryProps, CategoryOutterProps>(
   setDisplayName('category')
 )(({ title: groupTitle, total: maxItems, items = [] }) => (
-  <Box as="li" className="row-parent" data-tag={groupTitle}>
-    <a
-      href="javascript:;"
-      className="row"
-      style={{
-        zIndex: 1,
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0
-      }}
-    />
-
+  <Box as="li" className="row parent" data-tag={groupTitle}>
     <Text as="h5" m={0} p={0}>
       {groupTitle}
 
@@ -42,12 +30,6 @@ export default compose<CategoryProps, CategoryOutterProps>(
 ))
 
 export type CategoryOutterProps = BoxProps &
-  CategoriesProps['data'][keyof CategoriesProps['data']]
+  CategoriesProps['tags'][keyof CategoriesProps['tags']]
 
 export type CategoryProps = CategoryOutterProps & CategoryItem
-
-export interface CategoryItem {
-  title: string
-  total: number
-  items?: CategoryItem[]
-}

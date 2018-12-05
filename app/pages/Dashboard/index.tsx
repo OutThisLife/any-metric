@@ -94,7 +94,6 @@ export default compose<HomeProps, HomeOutterProps>(
           align-self: inherit;
         `}>
         <Table
-          isDesktop={isDesktop}
           data={orderBy(renderedData, sort.name, [sort.dir])}
           columns={[
             {

@@ -1,8 +1,10 @@
 import Module from '@/components/Module'
+import { getTags } from '@/lib/queries'
+import { CategoryItem } from '@/lib/utils'
 import withSelections, { SelectionsProps } from '@/lib/withSelections'
 import { DataTableFilter } from '@/pages/Dashboard'
 import { FakeResult } from '@/server/schema/types'
-import { omit, orderBy } from 'lodash'
+import { omit } from 'lodash'
 import { func } from 'prop-types'
 import { BoxProps } from 'rebass'
 import {
@@ -14,9 +16,8 @@ import {
   withProps
 } from 'recompose'
 
-import Category, { CategoryItem } from './Category'
+import Category from './Category'
 import Categories from './style'
-import { afterMouseDown, parseData } from './utils'
 
 export default compose<
   CategoriesProps & CategoriesOutterProps,
@@ -24,14 +25,44 @@ export default compose<
 >(
   setDisplayName('categories'),
   getContext({ filter: func }),
-  withProps<CategoriesProps, CategoriesOutterProps>(({ filter, data }) => ({
-    data: parseData(data),
-    afterMouseDown: afterMouseDown(filter)
+  getTags(),
+  withProps<CategoriesProps, CategoriesOutterProps>(({ filter }) => ({
+    afterMouseDown: () => {
+      const $checked = document.querySelectorAll(
+        '#filters [data-tag][data-checked]'
+      )
+
+      if (!$checked.length) {
+        return filter({
+          value: '',
+          action: 'RESET'
+        })
+      }
+
+      filter({
+        action: 'TAG',
+        value: [].slice
+          .call($checked)
+          .reduce((acc, el: HTMLElement) => {
+            const $ul = el.offsetParent
+
+            if ($ul instanceof HTMLLIElement) {
+              const { tag } = $ul.dataset
+              acc.push([tag, el.dataset.tag])
+            } else {
+              acc.push([el.dataset.tag])
+            }
+
+            return acc
+          }, [])
+          .join(';')
+      })
+    }
   })),
   withSelections,
   onlyUpdateForKeys(['data']),
   mapProps(props => omit(props, ['filter', 'afterMouseDown']))
-)(({ data = [], handleMouse, ...props }) => (
+)(({ tags = [], handleMouse, ...props }) => (
   <Module title="Category Filters" cta="New Filter">
     <Categories
       id="filters"
@@ -42,15 +73,15 @@ export default compose<
         list-style: none;
       `}
       {...props}>
-      {orderBy(data, 'title').map(({ items, ...d }) => (
-        <Category key={d.title} items={orderBy(items, 'title')} {...d} />
+      {tags.map(d => (
+        <Category key={d.title} {...d} />
       ))}
     </Categories>
   </Module>
 ))
 
 export interface CategoriesProps {
-  data?: CategoryItem[]
+  tags?: CategoryItem[]
   afterMouseDown?: () => void
 }
 

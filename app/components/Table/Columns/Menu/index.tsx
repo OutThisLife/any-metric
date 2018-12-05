@@ -39,13 +39,16 @@ export default compose<MenuState & MenuProps & BaphoTheme, MenuProps>(
             title,
             items: items.map(t => (
               <a href="javascript:;">
-                <i>
-                  {item.tags[0] === title && item.tags.includes(t.title) ? (
-                    <IoMdCheckbox />
-                  ) : (
-                    <MdCheckBoxOutlineBlank />
-                  )}
-                </i>
+                {item.tags[0] === title && item.tags.includes(t.title) ? (
+                  <IoMdCheckbox size={12} />
+                ) : (
+                  <MdCheckBoxOutlineBlank
+                    size={12}
+                    style={{
+                      transform: 'translate(0, -0.1em)'
+                    }}
+                  />
+                )}
 
                 <Text>{t.title}</Text>
               </a>

@@ -108,12 +108,14 @@ export default styled<any>(Box)`
         }
       }
 
-      i {
-        flex: 0.44;
-      }
+      svg {
+        flex: 0.3;
+        vertical-align: middle;
 
-      span {
-        flex: 2;
+        + span {
+          flex: 2;
+          padding-left: 0.3em;
+        }
       }
     }
 

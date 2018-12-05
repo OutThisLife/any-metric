@@ -12,7 +12,13 @@ export default compose<FakeResult, FakeResult>(
   <Box>
     {tags.length && (
       <Box>
-        <Tag>{tags[0]}</Tag>
+        <Tag
+          css={`
+            font-weight: 600;
+            text-transform: uppercase;
+          `}>
+          {tags[0]}
+        </Tag>
       </Box>
     )}
 

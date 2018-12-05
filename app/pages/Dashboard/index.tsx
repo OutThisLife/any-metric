@@ -112,6 +112,10 @@ export default compose<HomeProps, HomeOutterProps>(
             {
               label: 'Price',
               key: 'price'
+            },
+            {
+              label: '',
+              key: 'menu'
             }
           ]}
         />

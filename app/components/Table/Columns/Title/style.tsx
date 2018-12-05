@@ -7,15 +7,21 @@ export default styled<any>(Column)`
   ${({ theme }) => css`
     width: calc(100% / 1.7);
 
-    a[href] svg {
-      width: 13px;
-      margin: 0 0 0 5px;
-      color: ${theme.colours.label};
-      transition: ${theme.eases.base};
+    a[href] {
+      svg {
+        width: 13px;
+        margin: 0 0 0 5px;
+        color: ${theme.colours.label};
+        transition: inherit;
 
-      .row:not(:hover) &:last-of-type {
-        opacity: 0;
-        transform: translate(8px, 0);
+        .row:not(:hover) &:last-of-type {
+          opacity: 0;
+          transform: translate(8px, 0);
+        }
+      }
+
+      &:hover svg {
+        fill: ${theme.colours.focus} !important;
       }
     }
 

@@ -1,7 +1,13 @@
-import { compose, setDisplayName } from 'recompose'
+import { BoxProps } from 'rebass'
+import { compose, defaultProps, setDisplayName } from 'recompose'
 
 import Tag from './style'
 
-export default compose(setDisplayName('tag'))(({ children }) => (
-  <Tag as="label">{children}</Tag>
-))
+export default compose<TagProps, TagProps>(
+  setDisplayName('tag'),
+  defaultProps({
+    as: 'label'
+  })
+)(Tag)
+
+export type TagProps = BoxProps & any

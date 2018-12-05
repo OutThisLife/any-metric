@@ -31,25 +31,22 @@ export const Container = styled<any>(Box as any)`
       }
     }
 
-    td > span {
-      flex-wrap: wrap;
-
-      > span {
-        width: 100%;
-      }
-    }
-
     th > span {
       flex-wrap: nowrap;
     }
 
+    td > span {
+      flex-wrap: wrap;
+      flex-direction: column;
+    }
+
     > *:first-of-type > span {
-      justify-content: left;
+      justify-content: flex-start;
       text-align: left;
     }
 
     > *:last-of-type > span {
-      justify-content: right;
+      justify-content: flex-end;
       text-align: right;
     }
   }

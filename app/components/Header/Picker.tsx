@@ -4,7 +4,7 @@ import { BaphoTheme, createTheme } from '@/theme'
 import gql from 'graphql-tag'
 import { graphql, MutateProps } from 'react-apollo'
 import { CirclePicker, ColorChangeHandler } from 'react-color'
-import { IoIosSave, IoMdExit, IoMdThermometer } from 'react-icons/io'
+import { IoMdCheckmark, IoMdClose, IoMdThermometer } from 'react-icons/io'
 import { BoxProps } from 'rebass'
 import { compose, setDisplayName, withHandlers, withState } from 'recompose'
 
@@ -86,11 +86,11 @@ export default compose<PickerProps & PickerState & BaphoTheme, {}>(
             type="button"
             variant="icon | noBorder"
             onClick={() => toggle(false)}>
-            <IoMdExit />
+            <IoMdClose />
           </Form.Button>
 
           <Form.Button type="submit" variant="icon | noBorder">
-            <IoIosSave />
+            <IoMdCheckmark />
           </Form.Button>
         </div>
 

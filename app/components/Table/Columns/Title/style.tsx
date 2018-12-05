@@ -23,9 +23,10 @@ export default styled<any>(Column)`
       align-self: stretch;
       flex: 1.77;
       margin: 0;
-      background: ${lighten(0.33, theme.colours.secondary)};
+      background: ${lighten(0.35, theme.colours.secondary)};
 
       .row:not(:hover) & {
+        filter: grayscale(0.4);
         transition: ${theme.eases.base};
       }
 
@@ -35,7 +36,6 @@ export default styled<any>(Column)`
         img {
           filter: grayscale(1);
           mix-blend-mode: color-burn;
-          background: ${lighten(0.33, theme.colours.secondary)};
         }
       }
 

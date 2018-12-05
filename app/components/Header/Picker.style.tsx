@@ -51,7 +51,7 @@ export default styled(Box)`
         display: block;
         width: 100%;
         height: 100%;
-        color: ${rgba(theme.colours.focus, 0.75)};
+        color: ${theme.colours.muted};
         font-size: 1.5rem;
         line-height: 1.5;
         font-family: monospace;

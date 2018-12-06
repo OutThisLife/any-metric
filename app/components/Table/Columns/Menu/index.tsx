@@ -2,13 +2,13 @@ import Dropdown from '@/components/Dropdown'
 import { getTags } from '@/lib/queries'
 import { CategoryItem } from '@/lib/utils'
 import { BaphoTheme } from '@/theme'
-import { IoMdCheckbox, IoMdMenu } from 'react-icons/io'
-import { MdCheckBoxOutlineBlank } from 'react-icons/md'
+import { IoMdMenu } from 'react-icons/io'
 import { Box } from 'rebass'
 import { compose, setDisplayName, withHandlers } from 'recompose'
 
 import { Text } from '../../style'
 import { ColumnProps } from '../Column'
+import Item from './Item'
 import Menu from './style'
 
 export default compose<MenuState & MenuProps & BaphoTheme, MenuProps>(
@@ -38,20 +38,12 @@ export default compose<MenuState & MenuProps & BaphoTheme, MenuProps>(
           menu={tags.map(({ title, items }) => ({
             title,
             items: items.map(t => (
-              <a href="javascript:;">
-                {item.tags[0] === title && item.tags.includes(t.title) ? (
-                  <IoMdCheckbox size={12} />
-                ) : (
-                  <MdCheckBoxOutlineBlank
-                    size={12}
-                    style={{
-                      transform: 'translate(0, -0.1em)'
-                    }}
-                  />
-                )}
-
-                <Text>{t.title}</Text>
-              </a>
+              <Item
+                title={t.title}
+                isChecked={
+                  item.tags[0] === title && item.tags.includes(t.title)
+                }
+              />
             ))
           }))}>
           {({ isOpen, toggle }) => (

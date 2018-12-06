@@ -34,7 +34,7 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
 )(({ data = [], handleScroll, ...props }) => (
   <Box
     css={`
-      height: calc(100vh - (var(--offset) * 4));
+      height: calc(100vh - (var(--offset) * 2.5));
       overflow: auto;
     `}>
     <Table.Container

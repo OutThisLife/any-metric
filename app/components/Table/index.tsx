@@ -17,6 +17,7 @@ import * as Table from './style'
 let tm: d3.Timer | {} = {}
 
 export default compose<TableProps & TableOutterProps, TableOutterProps>(
+  setDisplayName('table'),
   withContext({ columns: array }, ({ columns }) => ({ columns })),
   withHandlers<{}, TableProps>(() => ({
     handleScroll: () => ({ currentTarget }) => {
@@ -29,8 +30,7 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
 
       tm = d3.timeout(() => (el.style.pointerEvents = 'auto'), 300)
     }
-  })),
-  setDisplayName('table')
+  }))
 )(({ data = [], handleScroll, ...props }) => (
   <Box
     css={`

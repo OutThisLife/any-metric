@@ -22,7 +22,7 @@ export default compose<ParticleProps & MeasuredComponentProps, {}>(
     }
   ),
   setDisplayName('particles')
-)(({ measureRef, params }) => (
+)(({ measureRef, params, contentRect: { bounds: { width, height } } }) => (
   <div
     ref={measureRef}
     style={{
@@ -37,6 +37,8 @@ export default compose<ParticleProps & MeasuredComponentProps, {}>(
     }}>
     <Particles
       params={params}
+      width={width + 'px'}
+      height={height + 'px'}
       style={{
         opacity: 0.2
       }}

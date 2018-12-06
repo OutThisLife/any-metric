@@ -200,7 +200,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
                   .tween('scrollTop', () => {
                     const i = d3.interpolateNumber(
                       $table.scrollTop,
-                      $row.offsetTop
+                      $row.offsetTop - $table.clientHeight / 2
                     )
 
                     return t => ($table.scrollTop = i(t))

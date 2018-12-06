@@ -1,7 +1,7 @@
 import { desaturate, invert, lighten, rgba, shade, tint } from 'polished'
 import { ThemeProps } from 'styled-components'
 
-export const siteName = 'ɮΔքɦօʍɛ✞ʀɨƈ'
+export const siteName = '$ɮΔքɦօʍɛ✞ʀɨƈ'
 
 export const between = (min = 1, max = 2, vmin = 400, vmax = 2000) =>
   `calc(${min}px + (${max} - ${min}) * (100vw - ${vmin}px) / ${vmax - vmin})`
@@ -71,7 +71,7 @@ export const createTheme = (secondary: string) => {
     easing: 'cubic-bezier(0.165, 0.84, 0.44, 1)',
 
     get base() {
-      return `0.15s ${this.easing}`
+      return `0.234s ${this.easing}`
     }
   }
 

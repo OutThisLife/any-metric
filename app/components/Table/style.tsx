@@ -75,11 +75,20 @@ export const Container = styled<any>(Box as any)`
 
       th {
         z-index: 1;
+        cursor: s-resize;
         position: sticky;
         top: 0;
         text-transform: uppercase;
         padding-bottom: 1rem;
         background: ${theme.colours.panel};
+
+        &[data-sorted='true'] {
+          color: ${theme.colours.secondary};
+
+          span {
+            color: inherit;
+          }
+        }
 
         span {
           font-weight: 600;
@@ -91,6 +100,10 @@ export const Container = styled<any>(Box as any)`
           width: 10px;
         }
       }
+
+      h5 {
+        margin: 0;
+      }
     }
 
     tbody .row {
@@ -98,8 +111,10 @@ export const Container = styled<any>(Box as any)`
       outline: 1px solid transparent;
       outline-offset: -2px;
       background-color: rgba(0, 0, 0, 0);
+      transition: ${theme.eases.base};
 
       td {
+        cursor: cell;
         position: relative;
         vertical-align: middle;
         color: ${theme.colours.label};
@@ -119,15 +134,12 @@ export const Container = styled<any>(Box as any)`
         }
       }
 
-      &:not(:hover) {
-        transition: background-color ${theme.eases.base};
-
-        td:before {
-          opacity: 0.5;
-        }
+      &:not(:hover) td:before {
+        opacity: 0.5;
       }
 
       &:hover {
+        transition: none;
         background-color: ${rgba(theme.colours.base, 0.01)};
       }
 

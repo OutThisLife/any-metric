@@ -5,7 +5,7 @@ import Column from '../Column'
 
 export default styled<any>(Column)`
   ${({ theme }: BaphoTheme) => css`
-    > span {
+    tbody & > span {
       color: ${theme.colours.muted};
       font-weight: 300;
     }

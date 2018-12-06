@@ -84,7 +84,7 @@ export default compose<HomeProps, HomeOutterProps>(
       `}>
       <Head>
         <title key="title">
-          {renderedData.length} results found :: ${siteName}
+          {renderedData.length} results found :: {siteName}
         </title>
       </Head>
 

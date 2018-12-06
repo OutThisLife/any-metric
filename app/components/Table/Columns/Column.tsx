@@ -37,12 +37,15 @@ export default compose<
       return <HeaderCell {...props}>{children}</HeaderCell>
     }
 
+    const isSorted = sortKey === name
+
     return (
       <HeaderCell
+        data-sorted={isSorted}
         onClick={() =>
           sortBy({
             name,
-            dir: sortKey === name ? (dir === 'asc' ? 'desc' : 'asc') : 'desc'
+            dir: isSorted ? (dir === 'asc' ? 'desc' : 'asc') : 'desc'
           })
         }
         {...props}>
@@ -50,7 +53,7 @@ export default compose<
           <Text as="h5">{children}</Text>
         </span>
 
-        {sortKey === name ? (
+        {isSorted ? (
           <>{dir === 'desc' ? <FaCaretDown /> : <FaCaretUp />}</>
         ) : (
           <FaSort opacity={0.5} />

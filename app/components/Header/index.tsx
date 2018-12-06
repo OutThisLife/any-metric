@@ -12,7 +12,7 @@ export default compose<HeaderProps, HeaderProps>(setDisplayName('header'))(
   () => (
     <Header as="header">
       <Text as="h1" lineHeight={1} fontWeight="100" m={0}>
-        ${siteName}
+        {siteName}
       </Text>
 
       <Form.Container>

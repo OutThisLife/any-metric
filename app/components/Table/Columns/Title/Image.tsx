@@ -10,7 +10,11 @@ export default compose<FakeResult, FakeResult>(setDisplayName('col-title-img'))(
       direction="right"
       render={() => <img src={image} alt={title} />}>
       {({ toggle }) => (
-        <Box as="figure">
+        <Box
+          as="figure"
+          css={`
+            cursor: zoom-in;
+          `}>
           <img
             src={image}
             alt={title}

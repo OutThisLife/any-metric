@@ -133,7 +133,7 @@ export const Main = styled<any>(Box)`
       grid-area: main;
       position: relative;
       width: 100%;
-      padding: var(--offset) 0;
+      padding: calc(var(--pad)) 0;
       border: 1px solid transparent;
       border-radius: 10px;
       box-shadow: 0 17px 50px -5px ${rgba(theme.colours.panel, 0.7)},

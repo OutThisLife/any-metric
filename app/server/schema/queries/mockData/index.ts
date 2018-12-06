@@ -1,17 +1,17 @@
 import * as faker from 'faker'
 
-import { FakeResult, Resolver } from '../../types'
+import { MockResult, Resolver } from '../../types'
 
-export default (async (_, args = {}): Promise<FakeResult[]> =>
-  await (genFakeResults(args) || [])) as Resolver
+export default (async (_, args = {}): Promise<MockResult[]> =>
+  await (create(args) || [])) as Resolver
 
-export const genFakeResults: (
+const create: (
   args: {
     ids?: string[]
     offset?: number
     limit?: number
   }
-) => Promise<FakeResult[]> = async ({ ids = [], offset = 0, limit = 25 }) => {
+) => Promise<MockResult[]> = async ({ ids = [], offset = 0, limit = 25 }) => {
   faker.seed(100)
 
   const data = [...Array(255).keys()].map(i => ({

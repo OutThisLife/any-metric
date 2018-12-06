@@ -1,12 +1,12 @@
 import Tag from '@/components/Tag'
-import { FakeResult } from '@/server/schema/types'
+import { MockResult } from '@/server/schema/types'
 import { MdOpenInNew } from 'react-icons/md'
 import { Box } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
 import { Text } from '../../style'
 
-export default compose<FakeResult, FakeResult>(
+export default compose<MockResult, MockResult>(
   setDisplayName('col-title-copy')
 )(({ title, slug, tags = [] }) => (
   <Box>

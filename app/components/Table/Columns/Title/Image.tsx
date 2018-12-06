@@ -1,9 +1,9 @@
 import Popover from '@/components/Popover'
-import { FakeResult } from '@/server/schema/types'
+import { MockResult } from '@/server/schema/types'
 import { Box } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
-export default compose<FakeResult, FakeResult>(setDisplayName('col-title-img'))(
+export default compose<MockResult, MockResult>(setDisplayName('col-title-img'))(
   ({ id, title, image }) => (
     <Popover
       id={`popover-${id}`}

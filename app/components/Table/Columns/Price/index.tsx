@@ -1,5 +1,5 @@
 import { moneyFormat, numFormat } from '@/lib/utils'
-import { FakeResult } from '@/server/schema/types'
+import { MockResult } from '@/server/schema/types'
 import { Box } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
@@ -37,5 +37,5 @@ export default compose<PriceProps, PriceProps>(setDisplayName('col-price'))(
 )
 
 export interface PriceProps extends ColumnProps {
-  item?: FakeResult
+  item?: MockResult
 }

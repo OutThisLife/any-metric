@@ -1,8 +1,8 @@
 import Categories from '@/components/Categories'
 import Chart, { Loader } from '@/components/Chart'
 import Table from '@/components/Table'
-import { getFakeCrawl } from '@/lib/queries'
-import { FakeResult } from '@/server/schema/types'
+import { getmockData } from '@/lib/queries'
+import { MockResult } from '@/server/schema/types'
 import { siteName } from '@/theme'
 import { orderBy } from 'lodash'
 import Head from 'next/head'
@@ -23,7 +23,7 @@ import worker, { isWorkerReady } from './worker'
 
 export default compose<HomeProps, HomeOutterProps>(
   setDisplayName('dashboard'),
-  getFakeCrawl(),
+  getmockData(),
   withStateHandlers<HomeState, HomeStateHandlers, HomeProps>(
     ({ results = [] }) => ({
       renderedData: results,
@@ -43,7 +43,7 @@ export default compose<HomeProps, HomeOutterProps>(
       }) => ({ filter: { value, action } }),
 
       updateRendered: (_, { results }) => (
-        renderedData: FakeResult[] = results
+        renderedData: MockResult[] = results
       ) => ({
         renderedData
       }),
@@ -178,7 +178,7 @@ interface HomeOutterProps extends BoxProps {
 }
 
 export interface HomeState {
-  renderedData: FakeResult[]
+  renderedData: MockResult[]
 
   sort: {
     name?: string

@@ -1,5 +1,5 @@
 import { spawn } from '@/lib/utils'
-import { FakeResult } from '@/server/schema/types'
+import { MockResult } from '@/server/schema/types'
 import fz from 'fuzzaldrin-plus'
 
 export const worker: PodWorker =
@@ -14,7 +14,7 @@ export const worker: PodWorker =
     )
 
     this.onmessage = e => {
-      const data: FakeResult[] = e.data[0]
+      const data: MockResult[] = e.data[0]
       const action: string = e.data[1]
 
       switch (action) {

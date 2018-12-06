@@ -1,10 +1,14 @@
 {
-	"name": "nextjs-starter",
-	"description": "",
-	"scripts": {},
-	"env": {
-    "CMS": { "required": true },
-    "SERVER": ""
-	},
-	"buildbacks": [{ "url": "https://github.com/heroku/heroku-buildpack-nodejs#v83" }]
+  "name": "nextjs-starter",
+  "description": "",
+  "scripts": {},
+  "env": {
+    "REDIS_URL": "",
+    "EBAY_APP_ID": "",
+    "EBAY_DEV_ID": "",
+    "EBAY_CERT_ID": ""
+  },
+  "buildbacks": [
+    { "url": "https://github.com/heroku/heroku-buildpack-nodejs#v83" }
+  ]
 }

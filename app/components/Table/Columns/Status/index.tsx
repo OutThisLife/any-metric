@@ -1,5 +1,5 @@
 import { isOld, pointFormat } from '@/lib/utils'
-import { FakeResult } from '@/server/schema/types'
+import { MockResult } from '@/server/schema/types'
 import { Flex } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
@@ -30,5 +30,5 @@ export default compose<StatusProps, StatusProps>(setDisplayName('col-status'))(
 )
 
 export interface StatusProps extends ColumnProps {
-  item?: FakeResult
+  item?: MockResult
 }

@@ -11,10 +11,10 @@ import typeDefs, { Context } from './types'
 const router = express.Router()
 
 const resolvers: IResolvers<{}, Context> = {
-  JSON: require('graphql-type-json'),
-  Date: require('graphql-iso-date').GraphQLDateTime,
   Query,
-  Mutation
+  Mutation,
+  JSON: require('graphql-type-json'),
+  Date: require('graphql-iso-date').GraphQLDateTime
 }
 
 module.exports = ({

@@ -8,7 +8,11 @@ export default gql`
 
   type Query {
     theme: Theme
-    fakeCrawl(ids: [String], offset: Int, limit: Int): [FakeResult]
+
+    ebay(keywords: String!): EbayResult
+    google(keywords: String!): CrawlResult
+
+    mockData(ids: [String], offset: Int, limit: Int): [MockResult]
   }
 
   type Mutation {
@@ -28,10 +32,9 @@ export default gql`
     hostname: String
     meta: JSON
     data: JSON
-    tags: [String]
   }
 
-  type FakeResult @cacheControl(maxAge: 10e5) {
+  type MockResult @cacheControl(maxAge: 10e5) {
     id: ID!
     slug: String
     image: String
@@ -44,9 +47,34 @@ export default gql`
     date: Date
     tags: [String]
   }
+
+  type EbayResult {
+    total: String
+    items: [EbayItem]
+  }
+
+  type EbayItem @cacheControl(maxAge: 10e5) {
+    id: ID!
+    title: String
+    globalId: String
+    primaryCategory: JSON
+    viewItemURL: String
+    paymentMethod: String
+    autoPay: Boolean
+    postalCode: String
+    location: String
+    country: String
+    shippingInfo: JSON
+    sellingStatus: JSON
+    listingInfo: JSON
+    returnsAccepted: Boolean
+    condition: JSON
+    isMultiVariationListing: Boolean
+    topRatedListing: Boolean
+  }
 `
 
-export interface Result {
+export interface CrawlResult {
   __typename?: string
   id: string
   err?: string
@@ -60,7 +88,7 @@ export interface Result {
   tags?: string[]
 }
 
-export interface FakeResult {
+export interface MockResult {
   __typename?: string
   id: string
   slug?: string
@@ -73,6 +101,33 @@ export interface FakeResult {
   copy?: string
   date?: Date
   tags?: string[]
+}
+
+export interface EbayResult {
+  __typename?: string
+  total: number
+  items: EbayItem[]
+}
+
+export interface EbayItem {
+  id: string
+  itemId?: string
+  title?: string
+  globalId?: string
+  primaryCategory?: JSON
+  viewItemURL?: string
+  paymentMethod?: string
+  autoPay?: boolean
+  postalCode?: string
+  location?: string
+  country?: string
+  shippingInfo?: JSON
+  sellingStatus?: JSON
+  listingInfo?: JSON
+  returnsAccepted?: boolean
+  condition?: JSON
+  isMultiVariationListing?: boolean
+  topRatedListing?: boolean
 }
 
 export interface Context {

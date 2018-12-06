@@ -1,7 +1,7 @@
-import { FakeResult } from '@/server/schema/types'
+import { MockResult } from '@/server/schema/types'
 import { orderBy } from 'lodash'
 
-export const parseTags = (data: FakeResult[]): CategoryItem[] => {
+export const parseTags = (data: MockResult[]): CategoryItem[] => {
   data = data.filter(d => d.tags.length)
 
   const calculated = data

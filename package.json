@@ -17,6 +17,7 @@
     "build:universal": "yarn build:app && tsc -p ./tsconfig.server.json",
     "fix": "tslint app/**/*.tsx --fix",
     "dev": "cross-env NODE_ENV=development nodemon ./app/server/index.ts",
+    "dev:ebay": "ts-node-dev --respawn -P tsconfig.server.json --transpileOnly ./app/server/api/ebay.ts",
     "build": "cross-env NODE_ENV=production yarn build:universal",
     "start": "cross-env NODE_ENV=production yarn start:universal",
     "postinstall": "[ $NODE_ENV = production ] && yarn build || exit 0"

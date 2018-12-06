@@ -1,3 +1,5 @@
+import 'isomorphic-unfetch'
+
 import * as compression from 'compression'
 import * as express from 'express'
 import { RequestHandlerParams } from 'express-serve-static-core'

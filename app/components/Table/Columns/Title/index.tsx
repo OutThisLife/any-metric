@@ -1,4 +1,4 @@
-import { FakeResult } from '@/server/schema/types'
+import { MockResult } from '@/server/schema/types'
 import { Flex } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
@@ -23,5 +23,5 @@ export default compose<TitleProps, TitleProps>(setDisplayName('col-title'))(
 )
 
 interface TitleProps extends ColumnProps {
-  item?: FakeResult
+  item?: MockResult
 }

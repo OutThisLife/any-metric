@@ -3,7 +3,7 @@ import { getTags } from '@/lib/queries'
 import { CategoryItem } from '@/lib/utils'
 import withSelections, { SelectionsProps } from '@/lib/withSelections'
 import { DataTableFilter } from '@/pages/Dashboard'
-import { FakeResult } from '@/server/schema/types'
+import { MockResult } from '@/server/schema/types'
 import { omit } from 'lodash'
 import { func } from 'prop-types'
 import { BoxProps } from 'rebass'
@@ -88,5 +88,5 @@ export interface CategoriesProps {
 export interface CategoriesOutterProps extends BoxProps, SelectionsProps {
   as?: any
   filter?: DataTableFilter
-  data?: FakeResult[]
+  data?: MockResult[]
 }

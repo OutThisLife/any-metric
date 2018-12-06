@@ -1,4 +1,4 @@
-import { FakeResult } from '@/server/schema/types'
+import { MockResult } from '@/server/schema/types'
 import * as d3 from 'd3'
 import { array } from 'prop-types'
 import { MeasuredComponentProps } from 'react-measure'
@@ -48,7 +48,7 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
       </Table.Head>
 
       <Table.Body onScroll={handleScroll}>
-        {(data as FakeResult[]).map(d => (
+        {(data as MockResult[]).map(d => (
           <Table.Row key={d.date.valueOf()} id={d.id}>
             <RenderColumns props={() => ({ item: d })} />
           </Table.Row>

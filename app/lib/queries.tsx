@@ -1,15 +1,15 @@
-import { FakeResult } from '@/server/schema/types'
+import { MockResult } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import gql from 'graphql-tag'
 import { ChildProps, DataProps, graphql } from 'react-apollo'
 
 import { parseTags } from './utils'
 
-export const getFakeCrawl = (options = {}) =>
-  graphql<{}, { results: FakeResult[] }>(
+export const getmockData = (options = {}) =>
+  graphql<{}, { results: MockResult[] }>(
     gql`
-      query GetFakeResult($offset: Int, $limit: Int) {
-        results: fakeCrawl(offset: $offset, limit: $limit) {
+      query GetMockResult($offset: Int, $limit: Int) {
+        results: mockData(offset: $offset, limit: $limit) {
           id
           slug
           image
@@ -40,10 +40,10 @@ export const getFakeCrawl = (options = {}) =>
   )
 
 export const getTags = (options = {}) =>
-  graphql<{}, { results: FakeResult[] }>(
+  graphql<{}, { results: MockResult[] }>(
     gql`
-      query GetFakeResult($offset: Int, $limit: Int) {
-        results: fakeCrawl(offset: $offset, limit: $limit) {
+      query GetMockResult($offset: Int, $limit: Int) {
+        results: mockData(offset: $offset, limit: $limit) {
           tags
         }
       }

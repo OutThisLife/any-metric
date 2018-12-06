@@ -1,5 +1,5 @@
 import { moneyFormat, numFormat } from '@/lib/utils'
-import { FakeResult } from '@/server/schema/types'
+import { MockResult } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import * as d3 from 'd3'
 import { rgba } from 'polished'
@@ -164,7 +164,7 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
             fontFill={theme.colours.base}
             fill="transparent"
             stroke="transparent"
-            tooltipContent={({ currentItem }: { currentItem: FakeResult }) =>
+            tooltipContent={({ currentItem }: { currentItem: MockResult }) =>
               currentItem.price && {
                 x: currentItem.title,
                 y: [
@@ -279,7 +279,7 @@ const unlink = () => {
 }
 
 export interface ChartOutterProps extends BoxProps {
-  data?: FakeResult[]
+  data?: MockResult[]
   isDesktop?: boolean
   width?: number
   height?: number

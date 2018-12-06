@@ -13,4 +13,4 @@ export const theme: Resolver = async (_, __, { cache }) => {
 
 export { default as ebay } from './ebay'
 export { default as mockData } from './mockData'
-export { google } from './web'
+export { google, crawl } from './web'

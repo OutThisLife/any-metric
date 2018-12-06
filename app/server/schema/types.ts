@@ -10,6 +10,7 @@ export default gql`
     theme: Theme
 
     ebay(keywords: String!): EbayResult
+    crawl(url: String!, parent: String!, selectors: [Selector]!): CrawlResult
     google(keywords: String!): CrawlResult
 
     mockData(ids: [String], offset: Int, limit: Int): [MockResult]
@@ -21,6 +22,11 @@ export default gql`
 
   type Theme {
     value: String
+  }
+
+  input Selector {
+    key: String!
+    selector: String!
   }
 
   type CrawlResult @cacheControl(maxAge: 10e5) {

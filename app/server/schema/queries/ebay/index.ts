@@ -1,4 +1,4 @@
-import { getCommerce } from '../../..//api'
+import { getCommerce } from '../../../api'
 import { EbayItem, EbayResult, Resolver } from '../../types'
 
 export default (async (_, args = {}): Promise<EbayResult> => {
@@ -28,3 +28,4 @@ export default (async (_, args = {}): Promise<EbayResult> => {
     })
   }
 }) as Resolver
+``

@@ -8,6 +8,10 @@ export default styled<any>(Column)`
 
   label {
     font-size: 0.85rem;
+
+    + label {
+      margin: 0 0 0 4px;
+    }
   }
 
   @media (max-width: 768px) {

@@ -101,6 +101,7 @@ export interface MockResult {
   image?: string
   title?: string
   price?: string
+  close?: string
   shipping?: string
   quantity?: string
   bids?: string

@@ -100,7 +100,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
               width: 80
             },
             {
-              label: 'Product',
+              label: 'Name',
               key: 'title',
               width: '1fr'
             },

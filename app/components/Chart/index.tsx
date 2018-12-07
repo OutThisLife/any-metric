@@ -4,7 +4,7 @@ import { BaphoTheme } from '@/theme'
 import * as d3 from 'd3'
 import { rgba } from 'polished'
 import { MeasuredComponentProps, withContentRect } from 'react-measure'
-import { Chart, ChartCanvas } from 'react-stockcharts'
+import { Chart } from 'react-stockcharts'
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes'
 import {
   CrossHairCursor,
@@ -12,7 +12,6 @@ import {
   MouseCoordinateY
 } from 'react-stockcharts/lib/coordinates'
 import { sma } from 'react-stockcharts/lib/indicator'
-import { ClickCallback } from 'react-stockcharts/lib/interactive'
 import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
 import {
   AreaSeries,
@@ -20,7 +19,6 @@ import {
   ScatterSeries,
   TriangleMarker
 } from 'react-stockcharts/lib/series'
-import { HoverTooltip } from 'react-stockcharts/lib/tooltip'
 import { createVerticalLinearGradient, last } from 'react-stockcharts/lib/utils'
 import { BoxProps } from 'rebass'
 import {
@@ -32,6 +30,9 @@ import {
 import { withTheme } from 'styled-components'
 
 import Loader from './Loader'
+import MetaData from './MetaData'
+import ChartCanvas from './style'
+import Tooltip from './Tooltip'
 
 const MA = sma()
   .options({ windowSize: 10, sourcePath: 'price' })
@@ -50,7 +51,7 @@ export default compose<ChartState & BaphoTheme, ChartProps>(
       initialData.map(d => ({
         ...d,
         date: new Date(d.date),
-        price: parseFloat(d.price),
+        close: parseFloat(d.price),
         volume: initialData
           .filter(({ slug }) => slug === d.slug)
           .reduce((acc, { quantity }) => (acc += parseInt(quantity, 10)), 0)
@@ -88,14 +89,16 @@ export default compose<ChartState & BaphoTheme, ChartProps>(
         seriesName="Price"
         clamp={true}
         type="hybrid"
-        margin={{ top: 0, right: 0, bottom: 30, left: 30 }}>
-        <Chart id={1} yExtents={[d => d.price, MA.accessor()]} yPan={false}>
+        margin={{ top: 30, right: 0, bottom: 30, left: 30 }}>
+        <Chart id={1} yExtents={[d => d.close, MA.accessor()]} yPan={false}>
+          <MetaData />
+
           <XAxis
             axisAt="bottom"
             orient="bottom"
             fontSize={10}
             stroke={theme.colours.border}
-            tickStroke={theme.colours.muted}
+            tickStroke={theme.colours.label}
           />
 
           {isDesktop && (
@@ -123,7 +126,7 @@ export default compose<ChartState & BaphoTheme, ChartProps>(
             <MouseCoordinateY
               fontSize={10}
               at="right"
-              orient="right"
+              orient="left"
               fill={theme.colours.border}
               fillText={theme.colours.base}
               displayFormat={moneyFormat}
@@ -131,7 +134,7 @@ export default compose<ChartState & BaphoTheme, ChartProps>(
           )}
 
           <ScatterSeries
-            yAccessor={d => d.price}
+            yAccessor={d => d.close}
             marker={TriangleMarker}
             markerProps={{
               width: 8,
@@ -142,7 +145,7 @@ export default compose<ChartState & BaphoTheme, ChartProps>(
           />
 
           <LineSeries
-            yAccessor={d => d.price}
+            yAccessor={d => d.close}
             stroke={rgba(theme.colours.price.hl, 0.33)}
             strokeWidth={1}
             interpolation={d3.curveMonotoneX}
@@ -156,59 +159,7 @@ export default compose<ChartState & BaphoTheme, ChartProps>(
             interpolation={d3.curveMonotoneX}
           />
 
-          {isDesktop && (
-            <HoverTooltip
-              yAccessor={d => d.price}
-              fontSize={11}
-              bgOpacity={0}
-              fontFill={theme.colours.base}
-              fill="transparent"
-              stroke="transparent"
-              tooltipContent={({ currentItem }: { currentItem: MockResult }) =>
-                currentItem.price && {
-                  x: currentItem.title,
-                  y: [
-                    {
-                      label: 'Price',
-                      value: moneyFormat(parseFloat(currentItem.price))
-                    },
-                    {
-                      label: 'Qty',
-                      value: numFormat(parseInt(currentItem.quantity, 10))
-                    }
-                  ]
-                }
-              }
-            />
-          )}
-
-          {isDesktop && (
-            <ClickCallback
-              onMouseMove={({ currentItem }) => {
-                unlink()
-
-                const $row = document.getElementById(currentItem.id)
-
-                if ($row) {
-                  const $table = document.querySelector('table').parentElement
-
-                  $row.classList.add('chart-link')
-
-                  d3.transition()
-                    .duration(90)
-                    .ease(d3.easeCubic)
-                    .tween('scrollTop', () => {
-                      const i = d3.interpolateNumber(
-                        $table.scrollTop,
-                        $row.offsetTop - $row.clientHeight
-                      )
-
-                      return t => ($table.scrollTop = i(t))
-                    })
-                }
-              }}
-            />
-          )}
+          {isDesktop && <Tooltip />}
         </Chart>
 
         <Chart
@@ -271,7 +222,7 @@ export default compose<ChartState & BaphoTheme, ChartProps>(
   </div>
 ))
 
-const unlink = () => {
+export const unlink = () => {
   const $cur = document.querySelector('.chart-link')
 
   if ($cur) {

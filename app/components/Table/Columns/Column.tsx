@@ -41,6 +41,7 @@ export default compose<
 
     return (
       <HeaderCell
+        aria-label={name}
         data-sorted={isSorted}
         onClick={() =>
           sortBy({

@@ -30,6 +30,10 @@ export const Container = styled<any>(Box as any)`
 
       @media (max-width: 1025px) {
         padding: 0 calc(var(--pad) * 2);
+
+        @media (max-width: 768px) {
+          padding: 0 var(--pad);
+        }
       }
 
       > * {
@@ -38,13 +42,15 @@ export const Container = styled<any>(Box as any)`
         align-items: center;
         color: ${theme.colours.label};
 
-        &:first-child {
-          justify-content: flex-start;
-        }
+        @media (min-width: 768px) {
+          &:first-child {
+            justify-content: flex-start;
+          }
 
-        &:last-child {
-          justify-content: flex-end;
-          text-align: right;
+          &:last-child {
+            justify-content: flex-end;
+            text-align: right;
+          }
         }
       }
     }
@@ -70,6 +76,12 @@ export const Container = styled<any>(Box as any)`
 
           h5 {
             color: inherit;
+          }
+        }
+
+        @media (max-width: 768px) {
+          &:not([aria-label]) {
+            display: none;
           }
         }
 

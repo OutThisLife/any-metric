@@ -1,7 +1,17 @@
 import { MockResult } from '@/server/schema/types'
 import { orderBy } from 'lodash'
 
-export const parseTags = (data: MockResult[]): CategoryItem[] => {
+export const parseTags = (data: MockResult[]): CategoryItem[] =>
+  data
+    .reduce((acc, d) => acc.push(...d.tags) && acc, [])
+    .filter((t, i, s) => s.indexOf(t) === i)
+    .sort()
+    .map(title => ({
+      title,
+      total: data.filter(d => d.tags.includes(title)).length
+    }))
+
+export const groupTags = (data: MockResult[]): CategoryItem[] => {
   data = data.filter(d => d.tags.length)
 
   const calculated = data

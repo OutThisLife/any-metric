@@ -3,6 +3,7 @@ import { MockResult } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import * as d3 from 'd3'
 import { rgba } from 'polished'
+import { MeasuredComponentProps, withContentRect } from 'react-measure'
 import { Chart, ChartCanvas } from 'react-stockcharts'
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes'
 import {
@@ -23,11 +24,10 @@ import { HoverTooltip } from 'react-stockcharts/lib/tooltip'
 import { createVerticalLinearGradient, last } from 'react-stockcharts/lib/utils'
 import { BoxProps } from 'rebass'
 import {
-  branch,
   compose,
-  renderComponent,
   setDisplayName,
-  withProps
+  withProps,
+  withPropsOnChange
 } from 'recompose'
 import { withTheme } from 'styled-components'
 
@@ -38,9 +38,14 @@ const MA = sma()
   .merge((d, c) => ({ ...d, MA: c }))
   .accessor(d => d.MA)
 
-export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
+export default compose<ChartState & BaphoTheme, ChartProps>(
   setDisplayName('price'),
-  withProps<Partial<ChartProps>, ChartOutterProps>(({ data: initialData }) => {
+  withContentRect('bounds'),
+  withPropsOnChange(['contentRect'], () => ({
+    isDesktop: 'browser' in process && window.innerWidth >= 1025
+  })),
+  withTheme,
+  withProps<Partial<ChartState>, ChartProps>(({ data: initialData }) => {
     const calculatedData = MA(
       initialData.map(d => ({
         ...d,
@@ -71,202 +76,198 @@ export default compose<ChartProps & BaphoTheme, ChartOutterProps>(
       xAccessor,
       xExtents
     }
-  }),
-  withTheme,
-  branch<ChartProps>(
-    props => !('data' in props) || isNaN(props.width) || props.width <= 0,
-    renderComponent(() => <Loader>Loading &hellip;</Loader>)
-  )
-)(({ theme, isDesktop, width, ...props }) => (
-  <div onMouseLeave={() => d3.timeout(unlink, 700)}>
-    <ChartCanvas
-      {...props}
-      ratio={1}
-      width={width}
-      height={width * 0.456}
-      seriesName="Price"
-      clamp={true}
-      type="hybrid"
-      pointsPerPxThreshold={6}
-      margin={{ top: 0, right: 30, bottom: 30, left: 0 }}>
-      <Chart id={2} yExtents={[d => d.price, MA.accessor()]} yPan={false}>
-        <XAxis
-          axisAt="bottom"
-          orient="bottom"
-          fontSize={10}
-          stroke={theme.colours.border}
-          tickStroke={theme.colours.muted}
-        />
-
-        {isDesktop && (
-          <MouseCoordinateX
-            fontSize={10}
-            snapX={false}
-            at="bottom"
+  })
+)(({ theme, measureRef, isDesktop, contentRect, ...props }) => (
+  <div ref={measureRef} onMouseLeave={() => d3.timeout(unlink, 700)}>
+    {!isNaN(contentRect.bounds.width) && (
+      <ChartCanvas
+        {...props}
+        ratio={1}
+        width={contentRect.bounds.width}
+        height={contentRect.bounds.width * 0.7}
+        seriesName="Price"
+        clamp={true}
+        type="hybrid"
+        margin={{ top: 0, right: 0, bottom: 30, left: 30 }}>
+        <Chart id={1} yExtents={[d => d.price, MA.accessor()]} yPan={false}>
+          <XAxis
+            axisAt="bottom"
             orient="bottom"
-            fill={theme.colours.border}
-            fillText={theme.colours.base}
-            displayFormat={d => `Volume: ${numFormat(d)}`}
-          />
-        )}
-
-        <YAxis
-          axisAt="right"
-          orient="right"
-          fontSize={10}
-          stroke={theme.colours.border}
-          tickStroke={theme.colours.base}
-          displayFormat={moneyFormat}
-        />
-
-        {isDesktop && (
-          <MouseCoordinateY
             fontSize={10}
-            at="right"
-            orient="right"
-            fill={theme.colours.border}
-            fillText={theme.colours.base}
+            stroke={theme.colours.border}
+            tickStroke={theme.colours.muted}
+          />
+
+          {isDesktop && (
+            <MouseCoordinateX
+              fontSize={10}
+              snapX={false}
+              at="bottom"
+              orient="bottom"
+              fill={theme.colours.border}
+              fillText={theme.colours.base}
+              displayFormat={d => `Volume: ${numFormat(d)}`}
+            />
+          )}
+
+          <YAxis
+            axisAt="left"
+            orient="left"
+            fontSize={10}
+            stroke={theme.colours.border}
+            tickStroke={theme.colours.muted}
             displayFormat={moneyFormat}
           />
-        )}
 
-        <ScatterSeries
-          yAccessor={d => d.price}
-          marker={TriangleMarker}
-          markerProps={{
-            width: 8,
-            r: 2.5,
-            fill: theme.colours.price.hl,
-            stroke: 'transparent'
-          }}
-        />
+          {isDesktop && (
+            <MouseCoordinateY
+              fontSize={10}
+              at="right"
+              orient="right"
+              fill={theme.colours.border}
+              fillText={theme.colours.base}
+              displayFormat={moneyFormat}
+            />
+          )}
 
-        <LineSeries
-          yAccessor={d => d.price}
-          stroke={rgba(theme.colours.price.hl, 0.33)}
-          strokeWidth={1}
-          interpolation={d3.curveMonotoneX}
-          strokeDasharray="Dot"
-        />
-
-        <LineSeries
-          yAccessor={MA.accessor()}
-          stroke={theme.colours.secondary}
-          strokeWidth={2}
-          interpolation={d3.curveMonotoneX}
-        />
-
-        {isDesktop && (
-          <HoverTooltip
+          <ScatterSeries
             yAccessor={d => d.price}
-            fontSize={11}
-            bgOpacity={0}
-            fontFill={theme.colours.base}
-            fill="transparent"
-            stroke="transparent"
-            tooltipContent={({ currentItem }: { currentItem: MockResult }) =>
-              currentItem.price && {
-                x: currentItem.title,
-                y: [
-                  {
-                    label: 'Price',
-                    value: moneyFormat(parseFloat(currentItem.price))
-                  },
-                  {
-                    label: 'Qty',
-                    value: numFormat(parseInt(currentItem.quantity, 10))
-                  }
-                ]
-              }
-            }
-          />
-        )}
-
-        {isDesktop && (
-          <ClickCallback
-            onMouseMove={({ currentItem }) => {
-              unlink()
-
-              const $row = document.getElementById(currentItem.id)
-
-              if ($row) {
-                const $table = document.querySelector('table').parentElement
-
-                $row.classList.add('chart-link')
-
-                d3.transition()
-                  .duration(90)
-                  .ease(d3.easeCubic)
-                  .tween('scrollTop', () => {
-                    const i = d3.interpolateNumber(
-                      $table.scrollTop,
-                      $row.offsetTop - $row.clientHeight
-                    )
-
-                    return t => ($table.scrollTop = i(t))
-                  })
-              }
+            marker={TriangleMarker}
+            markerProps={{
+              width: 8,
+              r: 2.5,
+              fill: theme.colours.price.hl,
+              stroke: 'transparent'
             }}
           />
+
+          <LineSeries
+            yAccessor={d => d.price}
+            stroke={rgba(theme.colours.price.hl, 0.33)}
+            strokeWidth={1}
+            interpolation={d3.curveMonotoneX}
+            strokeDasharray="Dot"
+          />
+
+          <LineSeries
+            yAccessor={MA.accessor()}
+            stroke={theme.colours.secondary}
+            strokeWidth={2}
+            interpolation={d3.curveMonotoneX}
+          />
+
+          {isDesktop && (
+            <HoverTooltip
+              yAccessor={d => d.price}
+              fontSize={11}
+              bgOpacity={0}
+              fontFill={theme.colours.base}
+              fill="transparent"
+              stroke="transparent"
+              tooltipContent={({ currentItem }: { currentItem: MockResult }) =>
+                currentItem.price && {
+                  x: currentItem.title,
+                  y: [
+                    {
+                      label: 'Price',
+                      value: moneyFormat(parseFloat(currentItem.price))
+                    },
+                    {
+                      label: 'Qty',
+                      value: numFormat(parseInt(currentItem.quantity, 10))
+                    }
+                  ]
+                }
+              }
+            />
+          )}
+
+          {isDesktop && (
+            <ClickCallback
+              onMouseMove={({ currentItem }) => {
+                unlink()
+
+                const $row = document.getElementById(currentItem.id)
+
+                if ($row) {
+                  const $table = document.querySelector('table').parentElement
+
+                  $row.classList.add('chart-link')
+
+                  d3.transition()
+                    .duration(90)
+                    .ease(d3.easeCubic)
+                    .tween('scrollTop', () => {
+                      const i = d3.interpolateNumber(
+                        $table.scrollTop,
+                        $row.offsetTop - $row.clientHeight
+                      )
+
+                      return t => ($table.scrollTop = i(t))
+                    })
+                }
+              }}
+            />
+          )}
+        </Chart>
+
+        <Chart
+          id={2}
+          height={75}
+          yPan={false}
+          yAccessor={d => d.volume()}
+          yExtents={d => d.volume}
+          origin={(_, h) => [0, h - 75]}>
+          <defs>
+            <linearGradient
+              id="BarSeriesGradient"
+              x1="0"
+              y1="100%"
+              x2="0"
+              y2="0%">
+              <stop
+                offset="0%"
+                stopColor={theme.colours.border}
+                stopOpacity={0}
+              />
+
+              <stop
+                offset="50%"
+                stopColor={theme.colours.border}
+                stopOpacity={0.2}
+              />
+
+              <stop
+                offset="100%"
+                stopColor={theme.colours.border}
+                stopOpacity={0.5}
+              />
+            </linearGradient>
+          </defs>
+
+          <AreaSeries
+            yAccessor={d => d.volume}
+            fill="url(#BarSeriesGradient)"
+            stroke="transparent"
+            strokeWidth={0}
+            interpolation={d3.curveMonotoneX}
+            canvasGradient={createVerticalLinearGradient([
+              { stop: 0, color: rgba(theme.colours.border, 0) },
+              { stop: 0.5, color: rgba(theme.colours.border, 0.2) },
+              { stop: 1, color: rgba(theme.colours.border, 0.5) }
+            ])}
+          />
+        </Chart>
+
+        {isDesktop && (
+          <CrossHairCursor
+            snapX={false}
+            StrokeDasharray="ShortDashDot"
+            stroke={rgba(theme.colours.base, 0.1)}
+          />
         )}
-      </Chart>
-
-      <Chart
-        id={1}
-        height={75}
-        yPan={false}
-        yAccessor={d => d.volume()}
-        yExtents={d => d.volume}
-        origin={(_, h) => [0, h - 75]}>
-        <defs>
-          <linearGradient
-            id="BarSeriesGradient"
-            x1="0"
-            y1="100%"
-            x2="0"
-            y2="0%">
-            <stop
-              offset="0%"
-              stopColor={theme.colours.border}
-              stopOpacity={0}
-            />
-
-            <stop
-              offset="50%"
-              stopColor={theme.colours.border}
-              stopOpacity={0.2}
-            />
-
-            <stop
-              offset="100%"
-              stopColor={theme.colours.border}
-              stopOpacity={0.5}
-            />
-          </linearGradient>
-        </defs>
-
-        <AreaSeries
-          yAccessor={d => d.volume}
-          fill="url(#BarSeriesGradient)"
-          stroke="transparent"
-          strokeWidth={0}
-          interpolation={d3.curveMonotoneX}
-          canvasGradient={createVerticalLinearGradient([
-            { stop: 0, color: rgba(theme.colours.border, 0) },
-            { stop: 0.5, color: rgba(theme.colours.border, 0.2) },
-            { stop: 1, color: rgba(theme.colours.border, 0.5) }
-          ])}
-        />
-      </Chart>
-
-      {isDesktop && (
-        <CrossHairCursor
-          snapX={false}
-          StrokeDasharray="ShortDashDot"
-          stroke={rgba(theme.colours.base, 0.1)}
-        />
-      )}
-    </ChartCanvas>
+      </ChartCanvas>
+    )}
   </div>
 ))
 
@@ -278,16 +279,14 @@ const unlink = () => {
   }
 }
 
-export interface ChartOutterProps extends BoxProps {
+export interface ChartProps extends BoxProps {
   data?: MockResult[]
   isDesktop?: boolean
-  width?: number
-  height?: number
 }
 
-export interface ChartProps extends ChartOutterProps {
-  width: number
-  height: number
+export interface ChartState
+  extends ChartProps,
+    Partial<MeasuredComponentProps> {
   ratio: number
   data: any[]
   xScale: any[]

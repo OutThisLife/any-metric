@@ -1,15 +1,16 @@
 import { BaphoTheme } from '@/theme'
-import { invert } from 'polished'
 import { Flex } from 'rebass'
 import styled, { css } from 'styled-components'
 
 export default styled<any>(Flex)`
   ${({ theme }: BaphoTheme) => css`
     grid-area: head;
-    position: relative;
+    display: grid;
+    grid-template-columns: var(--mainGrid);
+    grid-column-gap: var(--pad);
     align-items: center;
-    padding: 0 var(--offset);
-    height: var(--offset);
+    position: relative;
+    padding: var(--pad) 0;
 
     > h1 {
       color: ${theme.colours.base};
@@ -19,29 +20,6 @@ export default styled<any>(Flex)`
 
     > form {
       align-self: stretch;
-      height: 100%;
-      margin: auto;
-
-      > div {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        height: 100%;
-        padding: 0;
-        margin: 0;
-      }
-
-      input {
-        z-index: 1;
-        display: block;
-        width: 60vh;
-        height: 50%;
-
-        &::selection {
-          background: ${invert(theme.colours.focus)};
-        }
-      }
     }
   `}
 `

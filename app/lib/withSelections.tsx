@@ -1,44 +1,45 @@
 import { withHandlers } from 'recompose'
 
-export default withHandlers<SelectionsProps, SelectionsProps>(() => ({
-  handleMouse: ({ afterMouseDown = () => null }) => ({
-    currentTarget: $parent,
-    target,
-    button
-  }) => {
-    if (
-      button ||
-      !(target instanceof HTMLElement) ||
-      /img/i.test(target.tagName)
-    ) {
-      return
-    }
-
-    select(target, afterMouseDown)
-
-    const handleMouseMove: EventListener = ({ target: tgt }) => {
-      $parent.classList.add('dragging')
-
-      if (tgt instanceof HTMLElement) {
-        select(tgt, afterMouseDown)
+export default () =>
+  withHandlers<SelectionsProps, SelectionsProps>(() => ({
+    handleMouse: ({ afterMouseDown = () => null }) => ({
+      currentTarget: $parent,
+      target,
+      button
+    }) => {
+      if (
+        button ||
+        !(target instanceof HTMLElement) ||
+        /img/i.test(target.tagName)
+      ) {
+        return
       }
+
+      select(target, afterMouseDown)
+
+      const handleMouseMove: EventListener = ({ target: tgt }) => {
+        $parent.classList.add('dragging')
+
+        if (tgt instanceof HTMLElement) {
+          select(tgt, afterMouseDown)
+        }
+      }
+
+      $parent.addEventListener('mousemove', handleMouseMove)
+      $parent.addEventListener(
+        'mouseup',
+        () => {
+          ;[].slice
+            .call(document.getElementsByClassName('seen'))
+            .forEach(el => el.classList.remove('seen'))
+
+          $parent.classList.remove('dragging')
+          $parent.removeEventListener('mousemove', handleMouseMove)
+        },
+        { once: true }
+      )
     }
-
-    $parent.addEventListener('mousemove', handleMouseMove)
-    $parent.addEventListener(
-      'mouseup',
-      () => {
-        ;[].slice
-          .call(document.getElementsByClassName('seen'))
-          .forEach(el => el.classList.remove('seen'))
-
-        $parent.classList.remove('dragging')
-        $parent.removeEventListener('mousemove', handleMouseMove)
-      },
-      { once: true }
-    )
-  }
-}))
+  }))
 
 export const select = (
   el: HTMLElement | HTMLInputElement,
@@ -46,7 +47,10 @@ export const select = (
 ) => {
   const $row = el.classList.contains('row') ? el : el.closest('.row')
 
-  if (!($row instanceof HTMLElement || $row.classList.contains('seen'))) {
+  if (
+    !$row ||
+    !($row instanceof HTMLElement || $row.classList.contains('seen'))
+  ) {
     return
   }
 

@@ -26,7 +26,7 @@ export default styled<any>(Flex)`
       display: inline-block;
       overflow: hidden;
       margin: auto;
-      border-radius: 2px;
+      border-radius: var(--radius);
       animation: ${animIn} 0.2s ${theme.eases.easing} forwards;
       box-shadow: 0 3px 5px 0 ${rgba(theme.colours.panel, 0.5)};
 

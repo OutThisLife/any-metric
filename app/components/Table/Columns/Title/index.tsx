@@ -1,10 +1,10 @@
+import Text from '@/components/Text'
 import { MockResult } from '@/server/schema/types'
-import { Flex } from 'rebass'
+import { MdOpenInNew } from 'react-icons/md'
+import { Box } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
 import { ColumnProps } from '../Column'
-import Copy from './Copy'
-import Image from './Image'
 import Title from './style'
 
 export default compose<TitleProps, TitleProps>(setDisplayName('col-title'))(
@@ -13,10 +13,15 @@ export default compose<TitleProps, TitleProps>(setDisplayName('col-title'))(
       {!('id' in item) ? (
         children
       ) : (
-        <Flex alignItems="center">
-          <Image {...item} />
-          <Copy {...item} />
-        </Flex>
+        <Box>
+          <Text
+            as="a"
+            href={`//twitter.com/${item.slug}`}
+            target="_blank"
+            rel="noopener">
+            {item.title} <MdOpenInNew />
+          </Text>
+        </Box>
       )}
     </Title>
   )

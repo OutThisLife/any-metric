@@ -16,10 +16,10 @@ import * as Table from './style'
 
 let tm: d3.Timer | {} = {}
 
-export default compose<TableProps & TableOutterProps, TableOutterProps>(
+export default compose<TableState & TableProps, TableProps>(
   setDisplayName('table'),
   withContext({ columns: array }, ({ columns }) => ({ columns })),
-  withHandlers<{}, TableProps>(() => ({
+  withHandlers<{}, TableState>(() => ({
     handleScroll: () => ({ currentTarget }) => {
       const el = currentTarget.firstChild.firstChild as HTMLElement
       el.style.pointerEvents = 'none'
@@ -31,32 +31,48 @@ export default compose<TableProps & TableOutterProps, TableOutterProps>(
       tm = d3.timeout(() => (el.style.pointerEvents = 'auto'), 300)
     }
   }))
-)(({ data = [], handleScroll, ...props }) => (
+)(({ columns, data, handleScroll, ...props }) => (
   <Box
     css={`
-      height: calc(100vh - (var(--offset) * 2.5));
       overflow: auto;
+
+      @media (min-width: 1025px) {
+        height: calc(100vh - (var(--offset) * 2.25));
+      }
+
+      @media (max-width: 768px) {
+        max-width: 100%;
+        overflow: auto;
+      }
     `}>
     <Table.Container
       as="table"
-      cellPadding="0"
-      cellSpacing="0"
-      cellBorder="0"
+      css={`
+        tr {
+          display: grid;
+          grid-template-columns: ${columns
+            .map(c => (typeof c.width === 'number' ? `${c.width}px` : c.width))
+            .join(' ')};
+        }
+      `}
       {...props}>
       <Table.Head>
         <RenderColumns props={c => ({ children: c.label })} />
       </Table.Head>
 
       <Table.Body onScroll={handleScroll}>
-        {(data as MockResult[]).map(d => (
+        {data.map(d => (
           <Table.Row key={d.date.valueOf()} id={d.id}>
             <RenderColumns props={() => ({ item: d })} />
           </Table.Row>
         ))}
 
-        <Table.Row>
-          <td style={{ height: '100%' }} />
-        </Table.Row>
+        <tr>
+          <td
+            colSpan={columns.length}
+            style={{ height: 'calc(var(--offset) * 1.5)' }}
+          />
+        </tr>
       </Table.Body>
     </Table.Container>
   </Box>
@@ -77,19 +93,20 @@ export const RenderColumns = compose<RenderColumnProps, RenderColumnProps>(
   </>
 ))
 
-export interface TableProps extends Partial<MeasuredComponentProps> {
+export interface TableState extends Partial<MeasuredComponentProps> {
   handleScroll?: React.UIEventHandler<HTMLElement>
 }
 
-export interface TableOutterProps {
-  data: any[]
+export interface TableProps {
+  data: MockResult[]
   columns: Array<{
     label: string
     key: string
+    width: number | string
   }>
 }
 
 export interface RenderColumnProps {
-  columns?: TableOutterProps['columns']
+  columns?: TableProps['columns']
   props: (c: any) => { [key: string]: any }
 }

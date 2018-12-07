@@ -57,7 +57,7 @@ export default styled<any>(Box)`
 
     > div {
       padding: 1px;
-      border-radius: 2px;
+      border-radius: var(--radius);
       box-shadow: 0 3px 5px 0 ${rgba(theme.colours.panel, 0.5)};
       background: ${theme.colours.secondary};
 

@@ -15,7 +15,6 @@ export const Container = compose<FormProps, FormProps>(
 ))
 
 export { default as Input } from './Input'
-export { default as Checkbox } from './Checkbox'
 export { default as Button } from './Button'
 
 export interface FormProps

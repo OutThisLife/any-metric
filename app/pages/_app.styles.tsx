@@ -1,5 +1,5 @@
 import { BaphoTheme } from '@/theme'
-import { between, darken, rgba } from 'polished'
+import { between, darken, rgba, shade } from 'polished'
 import { Box } from 'rebass'
 import styled, { createGlobalStyle, css, keyframes } from 'styled-components'
 
@@ -8,6 +8,12 @@ export default createGlobalStyle`
     :root {
       --cellSize: calc(100vw / 40);
       --pad: ${between('8px', '16px')};
+
+      --mainGrid: 20vw minmax(70vw, 1fr);
+
+      @media (max-width: 1025px) {
+        --mainGrid: max-content 1fr;
+      }
     }
 
     ::selection {
@@ -64,7 +70,7 @@ export default createGlobalStyle`
     }
 
     body {
-      background: #000;
+      background: ${shade(0.9, darken(0.1, theme.colours.secondary))};
     }
 
     body * {
@@ -103,15 +109,12 @@ export default createGlobalStyle`
         color: ${theme.colours.focus};
       }
     }
-
-    .dragging a[href] {
-      pointer-events: none !important;
-    }
   `}
 `
 
 export const Main = styled<any>(Box)`
   --offset: calc(var(--pad) * 3);
+  --radius: 2px;
 
   display: grid;
   grid-template: 'head' 'main';
@@ -133,9 +136,8 @@ export const Main = styled<any>(Box)`
       grid-area: main;
       position: relative;
       width: 100%;
-      padding: calc(var(--pad)) 0;
       border: 1px solid transparent;
-      border-radius: 10px;
+      border-radius: calc(var(--radius) * 5);
       box-shadow: 0 17px 50px -5px ${rgba(theme.colours.panel, 0.7)},
         0 17px 150px -10px ${rgba(theme.colours.panel, 0.7)};
       background: ${theme.colours.panel};
@@ -143,9 +145,8 @@ export const Main = styled<any>(Box)`
       @media (min-width: 1025px) {
         height: 100%;
         overflow: hidden;
-      }
+        padding: calc(var(--pad)) 0;
 
-      @media (min-width: 1025px) {
         &:after {
           z-index: 9;
           pointer-events: none;
@@ -163,6 +164,10 @@ export const Main = styled<any>(Box)`
             ${theme.colours.panel}
           );
         }
+      }
+
+      @media (max-width: 1025px) {
+        width: calc(90vw - var(--offset));
       }
 
       .up {

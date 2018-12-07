@@ -23,7 +23,7 @@ export default compose<MenuState & MenuProps & BaphoTheme, MenuProps>(
       }
     }
   }))
-)(({ children, onBlur, item = {}, tags = [] }) => (
+)(({ children, onBlur, item = {}, initialTags: tags = [] }) => (
   <Menu tabIndex={0} width={35} disableSort onMouseLeave={onBlur}>
     {!('id' in item) ? (
       children
@@ -63,7 +63,7 @@ export default compose<MenuState & MenuProps & BaphoTheme, MenuProps>(
 ))
 
 interface MenuState {
-  tags?: CategoryItem[]
+  initialTags?: CategoryItem[]
   onBlur?: React.MouseEventHandler<HTMLElement>
 }
 

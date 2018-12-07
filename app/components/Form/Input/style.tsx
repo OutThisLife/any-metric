@@ -1,5 +1,5 @@
 import { BaphoTheme } from '@/theme'
-import { darken, rgba } from 'polished'
+import { darken, rgba, tint } from 'polished'
 import { Box } from 'rebass'
 import { compose, defaultProps } from 'recompose'
 import styled, { css } from 'styled-components'
@@ -8,16 +8,14 @@ import { InputProps } from '.'
 
 export default styled<any>('div')`
   ${({ theme }: BaphoTheme) => css`
-    --bg: ${rgba(theme.colours.panel, 0.5)};
     --colour: ${rgba(theme.colours.muted, 0.7)};
 
-    display: inline-block;
+    display: block;
     position: relative;
-    padding: calc(var(--pad) / 3.2) var(--pad);
-    border-radius: 2px;
+    width: 100%;
+    border-radius: var(--radius);
 
     &:focus-within {
-      --bg: ${theme.colours.panel};
       --colour: ${theme.colours.focus};
 
       input {
@@ -32,19 +30,19 @@ export default styled<any>('div')`
     select {
       z-index: 1;
       cursor: text;
-      display: inline-block;
+      display: block;
+      width: 100%;
       position: relative;
       color: var(--colour);
       font-weight: 300;
       font-size: 1rem;
       letter-spacing: 0.01em;
-      padding: 0 var(--pad);
+      padding: 1rem var(--pad);
       border: 0;
-      border-radius: 2px;
-      box-shadow: 0 0 0 0px ${theme.colours.panel},
-        inset 0 0 0 1px ${theme.colours.panel};
+      border-radius: var(--radius);
+      box-shadow: inset 0 0 0 1px ${tint(0.05, theme.colours.panel)};
       transition: ${theme.eases.base};
-      background: var(--bg);
+      background: ${theme.colours.panel};
 
       &::-webkit-input-placeholder {
         color: var(--colour);

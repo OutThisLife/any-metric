@@ -7,8 +7,8 @@ import { FormButtonProps } from '.'
 
 export default styled<any>(Button)`
   ${({ variant, theme }: FormButtonProps & BaphoTheme) => css`
-    --colour: ${theme.inputs.button};
-    --bg: ${theme.inputs.button};
+    --colour: ${theme.colours.focus};
+    --bg: ${theme.colours.focus};
     --shadow: inset 0 0 0 var(--bg), 0 0 1px 1px var(--bg);
     --padding: 14px 15px;
 
@@ -40,7 +40,7 @@ export default styled<any>(Button)`
     line-height: 0;
     padding: var(--padding, 0px);
     border: 0;
-    border-radius: 2px;
+    border-radius: var(--radius);
     box-shadow: var(--shadow);
     transition: ${theme.eases.base};
     background: var(--bg);
@@ -54,14 +54,14 @@ export default styled<any>(Button)`
 
     &:hover {
       --colour: ${theme.colours.base};
-      --bg: ${lighten(0.05, theme.inputs.button)};
+      --bg: ${lighten(0.05, theme.colours.focus)};
 
       box-shadow: inset 0 0 0 0 rgba(0, 0, 0, 0);
     }
 
     &:active {
       --colour: ${rgba(theme.colours.base, 0.5)};
-      --bg: ${darken(0.1, theme.inputs.button)};
+      --bg: ${darken(0.1, theme.colours.focus)};
     }
 
     &:focus {

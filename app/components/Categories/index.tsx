@@ -1,92 +1,90 @@
+import * as Form from '@/components/Form'
 import Module from '@/components/Module'
 import { getTags } from '@/lib/queries'
 import { CategoryItem } from '@/lib/utils'
 import withSelections, { SelectionsProps } from '@/lib/withSelections'
-import { DataTableFilter } from '@/pages/Dashboard'
-import { MockResult } from '@/server/schema/types'
-import { omit } from 'lodash'
-import { func } from 'prop-types'
+import { orderBy } from 'lodash'
+import { MdAddCircleOutline, MdClear } from 'react-icons/md'
 import { BoxProps } from 'rebass'
 import {
   compose,
-  getContext,
-  mapProps,
-  onlyUpdateForKeys,
   setDisplayName,
-  withProps
+  shallowEqual,
+  StateHandler,
+  StateHandlerMap,
+  withStateHandlers
 } from 'recompose'
 
-import Category from './Category'
+import Item from './Item'
 import Categories from './style'
 
 export default compose<
-  CategoriesProps & CategoriesOutterProps,
-  CategoriesOutterProps
+  CategoriesHandlers & CategoriesState & CategoriesProps,
+  CategoriesProps
 >(
   setDisplayName('categories'),
-  getContext({ filter: func }),
   getTags(),
-  withProps<CategoriesProps, CategoriesOutterProps>(({ filter }) => ({
-    afterMouseDown: () => {
-      const $checked = document.querySelectorAll(
-        '#filters [data-tag][data-checked]'
-      )
+  withStateHandlers<CategoriesState, CategoriesHandlers, CategoriesProps>(
+    ({ initialTags: tags = [] }) => ({ tags }),
+    {
+      addTag: ({ tags }) => (tag: CategoryItem) => {
+        if (!tags.find(t => shallowEqual(t, tag))) {
+          tags.push(tag)
+        }
 
-      if (!$checked.length) {
-        return filter({
-          value: '',
-          action: 'RESET'
-        })
+        return { tags }
+      },
+
+      delTag: ({ tags }) => (tag: CategoryItem) => {
+        tags.splice(tags.findIndex(t => t === tag), 1)
+        return { tags }
       }
-
-      filter({
-        action: 'TAG',
-        value: [].slice
-          .call($checked)
-          .reduce((acc, el: HTMLElement) => {
-            const $ul = el.offsetParent
-
-            if ($ul instanceof HTMLLIElement) {
-              const { tag } = $ul.dataset
-              acc.push([tag, el.dataset.tag])
-            } else {
-              acc.push([el.dataset.tag])
-            }
-
-            return acc
-          }, [])
-          .join(';')
-      })
     }
-  })),
-  withSelections,
-  onlyUpdateForKeys(['data']),
-  mapProps(props => omit(props, ['filter', 'afterMouseDown']))
-)(({ tags = [], handleMouse, ...props }) => (
-  <Module title="Category Filters" cta="New Filter">
-    <Categories
-      id="filters"
-      onMouseDown={handleMouse}
-      m={0}
-      p={0}
-      css={`
-        list-style: none;
-      `}
-      {...props}>
-      {tags.map(d => (
-        <Category key={d.title} {...d} />
+  ),
+  withSelections()
+)(({ tags, addTag, delTag, handleMouse, ...props }) => (
+  <Module>
+    <Categories id="filters" m={0} p={0} onMouseDown={handleMouse} {...props}>
+      <Form.Container
+        onSubmit={e => {
+          const el = e.currentTarget.querySelector('input')
+
+          addTag({
+            title: el.value,
+            total: 0
+          })
+
+          el.value = ''
+          el.blur()
+        }}>
+        <Form.Input
+          required
+          placeholder="Add new tag"
+          icon={MdAddCircleOutline}
+        />
+      </Form.Container>
+
+      {orderBy(tags, 'total', 'desc').map(t => (
+        <Item key={t.title} {...t}>
+          <i className="delete" onClick={() => delTag(t)}>
+            <MdClear size={10} />
+          </i>
+        </Item>
       ))}
     </Categories>
   </Module>
 ))
 
-export interface CategoriesProps {
+export interface CategoriesState {
   tags?: CategoryItem[]
-  afterMouseDown?: () => void
 }
 
-export interface CategoriesOutterProps extends BoxProps, SelectionsProps {
+export interface CategoriesProps extends BoxProps, SelectionsProps {
   as?: any
-  filter?: DataTableFilter
-  data?: MockResult[]
+  initialTags?: CategoryItem[]
+}
+
+interface CategoriesHandlers extends StateHandlerMap<CategoriesState> {
+  addTag: StateHandler<CategoriesState>
+  delTag: StateHandler<CategoriesState>
 }

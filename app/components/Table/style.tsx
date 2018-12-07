@@ -3,140 +3,95 @@ import { rgba } from 'polished'
 import { bool } from 'prop-types'
 import { Box, BoxProps } from 'rebass'
 import { compose, setDisplayName, withContext } from 'recompose'
-import styled, { css, withTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import BaseText, { TextProps } from '../Text'
 
 export const Container = styled<any>(Box as any)`
-  table-layout: fixed;
-  border-collapse: collapse;
-  position: relative;
+  user-select: none;
+  display: block;
   width: 100%;
   height: 100%;
 
+  thead,
+  tbody,
+  tfoot,
+  th,
   tr,
   td {
-    border: 0;
-  }
-
-  tr {
-    td > span,
-    th > span {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      > span {
-        display: block;
-      }
-    }
-
-    th > span {
-      flex-wrap: nowrap;
-    }
-
-    td > span {
-      flex-wrap: wrap;
-      flex-direction: column;
-    }
-
-    > *:first-of-type > span {
-      justify-content: flex-start;
-      text-align: left;
-    }
-
-    > *:last-of-type > span {
-      justify-content: flex-end;
-      text-align: right;
-    }
-  }
-
-  @media (max-width: 1025px) {
-    thead {
-      display: none;
-    }
-
-    tr {
-      min-width: 1024px;
-    }
-  }
-
-  @media (min-width: 768px) {
-    padding-right: calc(var(--pad) / 2);
-
-    tr > *:last-child {
-      padding-right: calc(var(--pad) / 2);
-    }
+    display: block;
   }
 
   ${({ theme }: BaphoTheme) => css`
+    tr {
+      align-items: stretch;
+      padding: 0 calc(var(--pad) - 10px);
+      border-bottom: 1px solid ${rgba(theme.colours.border, 0.5)};
+
+      @media (max-width: 1025px) {
+        padding: 0 calc(var(--pad) * 2);
+      }
+
+      > * {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: ${theme.colours.label};
+
+        &:first-child {
+          justify-content: flex-start;
+        }
+
+        &:last-child {
+          justify-content: flex-end;
+          text-align: right;
+        }
+      }
+    }
+
     .head {
-      user-select: none;
+      z-index: 1;
+      position: sticky;
+      top: 0;
+      background: ${rgba(theme.colours.panel, 0.95)};
 
       th {
-        z-index: 1;
         cursor: s-resize;
-        position: sticky;
-        top: 0;
+        color: ${theme.colours.label};
         text-transform: uppercase;
         padding-bottom: 1rem;
-        background: ${theme.colours.panel};
+
+        @media (max-width: 1025px) {
+          padding-top: 1rem;
+        }
 
         &[data-sorted='true'] {
           color: ${theme.colours.secondary};
 
-          span {
+          h5 {
             color: inherit;
           }
         }
 
-        span {
+        h5 {
           font-weight: 600;
           font-size: 0.9rem;
           letter-spacing: 1px;
+          margin: 0;
         }
 
         svg {
           width: 10px;
         }
       }
-
-      h5 {
-        margin: 0;
-      }
     }
 
-    tbody .row {
+    tbody tr {
       user-select: none;
       outline: 1px solid transparent;
       outline-offset: -2px;
       background-color: rgba(0, 0, 0, 0);
       transition: ${theme.eases.base};
-
-      td {
-        cursor: cell;
-        position: relative;
-        vertical-align: middle;
-        color: ${theme.colours.label};
-        border-bottom: 1px solid ${rgba(theme.colours.border, 0.5)};
-
-        &:first-of-type ~ td:not(:last-of-type):before {
-          display: block;
-          content: '';
-          position: absolute;
-          top: 50%;
-          left: 0;
-          width: 1px;
-          height: 40%;
-          transform: translate(0, -50%);
-          transition: opacity ${theme.eases.base};
-          background: ${rgba(theme.colours.border, 0.5)};
-        }
-      }
-
-      &:not(:hover) td:before {
-        opacity: 0.5;
-      }
 
       &:hover {
         transition: none;
@@ -150,13 +105,6 @@ export const Container = styled<any>(Box as any)`
       &.chart-link {
         outline-color: ${theme.colours.price.hl};
       }
-    }
-
-    tfoot td {
-      opacity: 0.2;
-      z-index: 10;
-      position: sticky;
-      bottom: 0;
     }
   `}
 `
@@ -198,23 +146,7 @@ export const Foot = compose(setDisplayName('table-tfoot'))(({ children }) => (
 export const HeaderCell = compose<
   Cell<HTMLTableHeaderCellElement> & BaphoTheme,
   Cell<HTMLTableHeaderCellElement>
->(
-  setDisplayName('table-th'),
-  withTheme
-)(({ theme, children, ...props }) => (
-  <Box as="th" {...props}>
-    <Text
-      css={`
-        display: flex;
-        alignitems: center;
-        width: 100%;
-      `}
-      fontWeight="300"
-      color={theme.colours.label}>
-      {children}
-    </Text>
-  </Box>
-))
+>(setDisplayName('table-th'))(props => <Box as="th" {...props} />)
 
 export const Text = compose<Cell<HTMLParagraphElement>, TextProps>(
   setDisplayName('table-text')

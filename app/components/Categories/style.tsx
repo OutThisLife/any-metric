@@ -1,107 +1,86 @@
 import { BaphoTheme } from '@/theme'
-import { lighten, rgba } from 'polished'
+import { rgba } from 'polished'
 import { Box } from 'rebass'
 import styled, { css } from 'styled-components'
 
 export default styled<any>(Box)`
   ${({ theme }: BaphoTheme) => css`
-    display: flex;
-    align-items: stretch;
-    justify-content: left;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
     list-style: none;
     margin: 0;
     padding: 0;
 
-    @media (max-width: 768px) {
-      flex-wrap: nowrap;
-      white-space: nowrap;
-      justify-content: space-between;
-      overflow: auto;
-      padding-bottom: var(--pad);
+    @media (max-width: 1025px) and (min-width: 768px) {
+      grid-template-columns: repeat(auto-fit, minmax(max-content, 50px));
+      justify-content: center;
     }
 
-    ul,
-    li {
-      display: block;
-      list-style: none;
-      margin: 0;
-      padding: 0;
+    > form {
+      grid-column: 1 / -1;
+      margin: 0 0 calc(var(--pad) / 2);
     }
 
-    > li {
+    > a[href] {
       cursor: pointer;
-      display: inline-block;
+      display: grid;
+      grid-template-columns: minmax(max-content, 30px) 1fr;
+      grid-column-gap: 0.7rem;
+      align-items: center;
       position: relative;
-      width: auto;
       padding: calc(var(--pad) / 2);
-      border: 1px solid ${theme.colours.border};
       outline: 1px solid transparent;
       outline-offset: -0.2em;
-      background: transparent;
+      justify-content: space-between;
+      transition: ${theme.eases.base};
 
-      &:not(:hover) {
-        transition: ${theme.eases.base};
-
-        li,
-        h5 {
-          transition: ${theme.eases.base};
-        }
+      @media (max-width: 1025px) and (min-width: 768px) {
+        grid-template-columns: auto 1fr;
+        justify-content: center;
       }
 
-      &:hover {
+      &:hover:not([data-checked]) {
+        color: ${theme.colours.base};
         outline-color: ${rgba(theme.colours.secondary, 0.25)};
+        transition: none;
       }
 
       &[data-checked] {
-        outline-color: ${theme.colours.secondary};
+        color: ${theme.colours.base};
       }
 
-      &:not(:hover):not([data-checked]) {
-        filter: grayscale(1) opacity(0.4);
+      span,
+      label {
+        font-size: 0.85rem;
       }
 
-      span {
-        vertical-align: middle;
+      label {
+        display: inline-block;
+        line-height: 1;
+        padding: 2px 4px;
+        text-align: center;
+        border: 1px solid transparent;
+        border-radius: var(--radius);
       }
 
-      h5 {
-        display: inline-flex;
-        align-items: center;
-        color: ${lighten(0.33, theme.colours.secondary)};
-        white-space: nowrap;
-        padding-bottom: calc(var(--pad) / 4);
-
-        span {
-          opacity: 0.5;
-          font-size: 0.9em;
-        }
-      }
-
-      &:not([data-checked]) h5 {
-        opacity: 0.8;
-      }
-
-      li {
+      .delete {
+        z-index: 2;
         display: flex;
         align-items: center;
-        position: relative;
-        color: ${theme.colours.muted};
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0 calc(var(--pad) / 2);
 
-        a[href] {
-          display: inline-block;
-          width: 100%;
-          color: currentColor;
-          padding: 0 0 1px 4px;
-          transition: none;
-
-          &:not(:hover) {
-            transition: ${theme.eases.base};
-          }
+        svg {
+          fill: ${theme.colours.base} !important;
         }
+      }
 
-        &[data-checked] {
-          color: ${lighten(0.3, theme.colours.muted)};
-        }
+      &:not(:hover) .delete,
+      &[data-checked] .delete {
+        display: none;
       }
     }
   `}

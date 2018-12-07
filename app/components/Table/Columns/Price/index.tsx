@@ -1,6 +1,6 @@
-import { moneyFormat, numFormat } from '@/lib/utils'
+import { numFormat } from '@/lib/utils'
 import { MockResult } from '@/server/schema/types'
-import { Box } from 'rebass'
+import { Flex } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
 import { Text } from '../../style'
@@ -13,24 +13,15 @@ export default compose<PriceProps, PriceProps>(setDisplayName('col-price'))(
       {!('id' in item) ? (
         children
       ) : (
-        <Box as="span">
+        <Flex alignItems="center" flexWrap="wrap">
           <Text
-            fontWeight="700"
+            as="div"
             className={parseInt(item.price, 10) % 2 ? 'up' : 'down'}>
-            {moneyFormat(parseFloat(item.price))}
+            {numFormat(parseFloat(item.price))}
           </Text>
 
-          <Text
-            mt={1}
-            fontWeight="300"
-            css={`
-              color: ${({ theme }) => theme.colours.muted};
-              font-size: 0.9rem;
-              line-height: 0;
-            `}>
-            {numFormat(parseFloat(item.shipping))}
-          </Text>
-        </Box>
+          <Text as="div">S: {numFormat(parseFloat(item.shipping))}</Text>
+        </Flex>
       )}
     </Price>
   )

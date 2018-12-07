@@ -2,7 +2,7 @@ import Text from '@/components/Text'
 import { MockResult } from '@/server/schema/types'
 import { bool, func, object } from 'prop-types'
 import { FaCaretDown, FaCaretUp, FaSort } from 'react-icons/fa'
-import { BoxProps } from 'rebass'
+import { BoxProps, Flex } from 'rebass'
 import { compose, defaultProps, getContext, setDisplayName } from 'recompose'
 
 import { Cell, HeaderCell } from '../style'
@@ -49,15 +49,17 @@ export default compose<
           })
         }
         {...props}>
-        <span style={{ marginRight: 2 }}>
-          <Text as="h5">{children}</Text>
-        </span>
+        <Flex alignItems="center" justifyContent="inherit">
+          <span style={{ marginRight: 2 }}>
+            <Text as="h5">{children}</Text>
+          </span>
 
-        {isSorted ? (
-          <>{dir === 'desc' ? <FaCaretDown /> : <FaCaretUp />}</>
-        ) : (
-          <FaSort opacity={0.5} />
-        )}
+          {isSorted ? (
+            <>{dir === 'desc' ? <FaCaretDown /> : <FaCaretUp />}</>
+          ) : (
+            <FaSort opacity={0.5} />
+          )}
+        </Flex>
       </HeaderCell>
     )
   }

@@ -43,7 +43,7 @@ export default compose<DropdownState & DropdownProps, DropdownProps>(
 
     {isOpen && (
       <Dropdown ref={onRef} as="div" className="dropdown" {...props}>
-        <Box as="div">
+        <Box>
           {menu.map(({ title, items = [] }) => (
             <Box as="ul" key={title}>
               <li>

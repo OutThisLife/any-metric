@@ -13,7 +13,7 @@ export default compose<ParticleProps & MeasuredComponentProps, {}>(
 
       const b = contentRect.bounds.width > 1025
 
-      params.particles.color.value = '#FFF'
+      params.particles.color.value = '#fafafa'
       params.particles.line_linked.color = params.particles.color.value
       params.interactivity.events.onhover.enable = b
       params.particles.move.enable = b

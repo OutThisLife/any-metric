@@ -26,6 +26,17 @@ export default class extends Document<{
 
           <link rel="shortcut icon" href="/static/favicon.ico" />
           <script src="//polyfill.io/v2/polyfill.min.js" />
+
+          <script
+            src="https://www.googletagmanager.com/gtag/js?id=UA-10405648-19"
+            async
+          />
+
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-10405648-19');`
+            }}
+          />
         </Head>
 
         <body>

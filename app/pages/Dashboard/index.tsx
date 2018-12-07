@@ -21,10 +21,10 @@ import {
 import Home from './style'
 import worker, { isWorkerReady } from './worker'
 
-export default compose<HomeProps, HomeOutterProps>(
+export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
   setDisplayName('dashboard'),
   getmockData(),
-  withStateHandlers<HomeState, HomeStateHandlers, HomeProps>(
+  withStateHandlers<HomeState, HomeStateHandlers, HomeState>(
     ({ results = [] }) => ({
       renderedData: results,
       sort: {
@@ -63,25 +63,18 @@ export default compose<HomeProps, HomeOutterProps>(
       filter
     })
   ),
-  withPropsOnChange<any, HomeProps & HomeState>(
+  withPropsOnChange<any, HomeState & HomeState>(
     ['filter'],
     ({ results, filter: { action, value } }) =>
       isWorkerReady() && worker.postMessage([results, action, value])
   )
-)(({ sort, results, renderedData, updateRendered, width }) => {
-  const isDesktop = 'browser' in process && width > 1024
-
+)(({ sort, results, renderedData, updateRendered }) => {
   if (isWorkerReady()) {
     worker.onmessage = ({ data }) => updateRendered(data)
   }
 
   return (
-    <Home
-      as="section"
-      css={`
-        display: grid;
-        align-items: flex-start;
-      `}>
+    <Home as="section">
       <Head>
         <title key="title">
           {renderedData.length} results found :: {siteName}
@@ -97,24 +90,34 @@ export default compose<HomeProps, HomeOutterProps>(
           data={orderBy(renderedData, sort.name, [sort.dir])}
           columns={[
             {
-              label: 'Product',
-              key: 'title'
-            },
-            {
-              label: 'Date',
-              key: 'time'
-            },
-            {
-              label: 'Status',
-              key: 'status'
-            },
-            {
               label: 'Price',
-              key: 'price'
+              key: 'price',
+              width: 70
             },
             {
               label: '',
-              key: 'menu'
+              key: 'image',
+              width: 80
+            },
+            {
+              label: 'Product',
+              key: 'title',
+              width: '1fr'
+            },
+            {
+              label: '',
+              key: 'tags',
+              width: '1fr'
+            },
+            {
+              label: 'Date',
+              key: 'time',
+              width: 80
+            },
+            {
+              label: 'State',
+              key: 'status',
+              width: 80
             }
           ]}
         />
@@ -125,37 +128,35 @@ export default compose<HomeProps, HomeOutterProps>(
         alignItems="flex-start"
         css={`
           grid-area: controls;
-          align-self: inherit;
+
+          @media (min-width: 1025px) {
+            height: 100%;
+            padding: 0 0 0 var(--pad);
+          }
         `}>
         <Box
           as="section"
           css={`
             width: 100%;
-            padding: 0 0 var(--pad) var(--pad);
           `}>
-          {results.length && (
-            <Categories data={orderBy(results, 'date', 'asc')} />
-          )}
+          {results.length && <Categories />}
         </Box>
 
         <Box
           as="section"
           css={`
-            z-index: 10;
-            align-self: flex-end;
-            margin: 0 0 0 auto;
+            @media (min-width: 1025px) {
+              align-self: flex-end;
+              width: 100%;
+              margin: var(--pad) auto 0;
+            }
 
             @media (max-width: 1025px) {
-              align-self: center;
-              margin: var(--offset) auto;
+              display: none;
             }
           `}>
           {renderedData.length ? (
-            <Chart
-              data={orderBy(renderedData, 'date', 'asc')}
-              isDesktop={isDesktop}
-              width={isDesktop ? width / 2 - width / 15 : width / 1.5}
-            />
+            <Chart data={orderBy(renderedData, 'date', 'asc')} />
           ) : (
             <Loader>Insufficient data</Loader>
           )}
@@ -165,19 +166,14 @@ export default compose<HomeProps, HomeOutterProps>(
   )
 })
 
-type HomeProps = {
-  results: HomeState['renderedData']
-} & HomeState &
-  HomeOutterProps &
-  HomeStateHandlers
-
-interface HomeOutterProps extends BoxProps {
+interface HomeProps extends BoxProps {
   width?: number
   height?: number
   children?: React.ReactNode
 }
 
 export interface HomeState {
+  results?: MockResult[]
   renderedData: MockResult[]
 
   sort: {
@@ -193,6 +189,7 @@ export interface HomeState {
 
 interface HomeStateHandlers extends StateHandlerMap<HomeState> {
   setFilter: StateHandler<HomeState>
+  updateRendered: StateHandler<HomeState>
 }
 
 export type DataTableFilter = (a: HomeState['filter']) => void

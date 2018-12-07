@@ -1,6 +1,6 @@
-import { isOld, pointFormat } from '@/lib/utils'
+import { isOld } from '@/lib/utils'
 import { MockResult } from '@/server/schema/types'
-import { Flex } from 'rebass'
+import { Box } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
 import { Text } from '../../style'
@@ -13,17 +13,13 @@ export default compose<StatusProps, StatusProps>(setDisplayName('col-status'))(
       {!('id' in item) ? (
         children
       ) : (
-        <Flex>
+        <Box>
           {isOld(item.date, 32) ? (
             <Text>Sold</Text>
           ) : (
-            <>
-              <Text className="hl">{pointFormat(parseInt(item.bids, 10))}</Text>
-
-              <Text mt={-1}>bids</Text>
-            </>
+            <Text className="hl">1d 9h</Text>
           )}
-        </Flex>
+        </Box>
       )}
     </Status>
   )

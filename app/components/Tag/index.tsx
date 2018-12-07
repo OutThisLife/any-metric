@@ -1,13 +1,28 @@
+import withTagColour, { TagColour } from '@/lib/withTagColour'
+import { BaphoTheme } from '@/theme'
 import { BoxProps } from 'rebass'
-import { compose, defaultProps, setDisplayName } from 'recompose'
+import { compose, setDisplayName } from 'recompose'
 
 import Tag from './style'
 
-export default compose<TagProps, TagProps>(
+export default compose<TagState & TagProps, TagProps>(
   setDisplayName('tag'),
-  defaultProps({
-    as: 'label'
-  })
-)(Tag)
+  withTagColour()
+)(({ title, tagColours: { bg, colour, border } }) => (
+  <Tag
+    as="label"
+    style={{
+      color: colour,
+      borderColor: border,
+      background: bg
+    }}>
+    {title}
+  </Tag>
+))
 
-export type TagProps = BoxProps & any
+type TagState = BaphoTheme & TagColour
+
+export interface TagProps extends BoxProps {
+  as?: any
+  title: string
+}

@@ -4,9 +4,11 @@ import styled from 'styled-components'
 export default styled<any>(Heading)`
   display: inline-flex;
   align-items: center;
+  padding: var(--pad) 0;
 
   > span {
-    font-size: inherit;
+    font-size: 1.8rem;
+    line-height: 2;
 
     + span:before {
       content: '-';
@@ -18,7 +20,7 @@ export default styled<any>(Heading)`
     }
   }
 
-  button {
+  button:last-child:not(:only-child) {
     margin-left: 1.4em;
   }
 `

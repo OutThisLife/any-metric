@@ -1,19 +1,14 @@
-import { BaphoTheme } from '@/theme'
 import { Box } from 'rebass'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 export default styled<any>(Box)`
-  ${({ theme }: BaphoTheme) => css`
-    display: inline-block;
-    color: ${theme.colours.muted};
-    line-height: 1;
+  display: inline-block;
+  line-height: 1;
+  padding: 2px 4px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
 
-    + label {
-      margin-left: 0.2em;
-
-      &:before {
-        content: ', ';
-      }
-    }
-  `}
+  + label {
+    margin-left: 0.2em;
+  }
 `

@@ -2,8 +2,8 @@ import { Box } from 'rebass'
 import styled, { css } from 'styled-components'
 
 const Module = ({ className, ...props }) => (
-  <Box as="div" css="position: relative" className={className}>
-    <Box as="div" {...props} />
+  <Box css="position: relative" className={className}>
+    <Box {...props} />
   </Box>
 )
 
@@ -29,7 +29,7 @@ export default styled<any>(Module)`
 
     > div {
       padding: var(--pad);
-      border-radius: 2px;
+      border-radius: var(--radius);
       background: ${theme.colours.module};
     }
   `}

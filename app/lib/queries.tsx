@@ -58,7 +58,7 @@ export const getTags = (options = {}) =>
       },
       props: ({ data: { results = [], ...data } }) => ({
         data,
-        tags: parseTags(results)
+        initialTags: parseTags(results)
       })
     }
   )

@@ -49,7 +49,7 @@ export const createTheme = (secondary: string) => {
 
   const fonts = {
     size: between(10, 13),
-    list: ['Rubik'],
+    list: ['Lato'],
 
     get src() {
       const url = 'https://fonts.googleapis.com/css?family'
@@ -59,12 +59,6 @@ export const createTheme = (secondary: string) => {
     get family() {
       return this.list.join(',')
     }
-  }
-
-  const inputs = {
-    bg: colours.panel,
-    border: colours.border,
-    button: invert(colours.secondary)
   }
 
   const eases = {
@@ -78,7 +72,6 @@ export const createTheme = (secondary: string) => {
   return {
     colours,
     fonts,
-    inputs,
     eases
   }
 }

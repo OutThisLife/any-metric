@@ -4,23 +4,33 @@ import styled, { css } from 'styled-components'
 
 export default styled(Box)`
   ${({ theme }) => css`
+    z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: fixed;
+    top: 50%;
+    right: calc(var(--pad) * 2);
+    transform: translate(50%, -50%);
     transition: ${theme.eases.base};
+
+    @media (max-width: 1025px) {
+      display: none;
+    }
 
     > .circle-picker {
       display: flex;
       align-items: center;
-      position: absolute;
-      right: 0;
+      flex-direction: column;
 
       &:not(:hover) .circle-picker {
         opacity: 0.4;
       }
 
-      @media (max-width: 768px) {
-        display: none;
+      > div {
+        flex-direction: inherit;
+        width: auto !important;
+        margin-bottom: 1em;
       }
 
       > a svg {

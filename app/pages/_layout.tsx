@@ -11,7 +11,6 @@ export default compose<LayoutProps & BaphoTheme, LayoutProps>(
   lifecycle({
     componentDidMount() {
       document.addEventListener('keydown', e => {
-        console.log(e.which)
         if (e.which !== 9) {
           return
         }

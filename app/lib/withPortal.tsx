@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { BoxProps } from 'rebass'
 import {
   compose,
+  defaultProps,
   onlyUpdateForKeys,
   setDisplayName,
   shouldUpdate,
@@ -18,16 +19,19 @@ export default <T extends { [key: string]: any }>({
 } = {}) => (Component: React.ComponentType<any>) =>
   compose<PortalProps & PortalState, PortalProps & BoxProps>(
     setDisplayName('modal'),
+    defaultProps({
+      isShown: false
+    }),
     withStateHandlers<
       PortalState,
       StateHandlerMap<PortalState> & {
         toggle: StateHandler<PortalState>
       }
-    >(({ isShown: isOpen = false }: PortalState) => ({ isOpen }), {
+    >(({ isShown }: PortalState) => ({ isOpen: isShown }), {
       toggle: () => isOpen => ({ isOpen })
     }),
     shouldUpdate<PortalProps & PortalState>((p, np) => {
-      if (!('browser' in process && 'id' in p) || +p.isOpen & +np.isOpen) {
+      if (!(('browser' in process && 'id' in p) || p.isOpen === np.isOpen)) {
         return false
       }
 
@@ -38,7 +42,7 @@ export default <T extends { [key: string]: any }>({
 
         el.lastElementChild.addEventListener(
           'animationend',
-          () => p.toggle(false),
+          () => np.toggle(false),
           {
             once: true
           }

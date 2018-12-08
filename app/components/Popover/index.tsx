@@ -8,6 +8,7 @@ import Popover from './style'
 export default compose<PopoverProps & PortalState, PopoverProps & PortalProps>(
   setDisplayName('popover'),
   defaultProps({
+    id: 'popover',
     direction: 'bottom'
   }),
   withHandlers<PopoverProps, Partial<PopoverProps>>(() => ({

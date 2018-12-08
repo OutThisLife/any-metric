@@ -20,8 +20,8 @@ export default compose<ChartProps, ChartProps>(
     style={{ position: 'relative' }}>
     {!isNaN(contentRect.bounds.width) && (
       <Modal
-        isShown={'browser' in process && /chart/.test(location.search)}
         id="price-chart"
+        isShown={'browser' in process && /chart/.test(location.search)}
         render={() => {
           const width = innerWidth * 0.66
 

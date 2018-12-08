@@ -71,18 +71,18 @@ export default createGlobalStyle`
 
     body {
       background: ${shade(0.9, darken(0.1, theme.colours.secondary))};
+
+      * {
+        font-size: 1rem;
+        font-family: ${theme.fonts.family}, -apple-system, BlinkMacSystemFont,
+          'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+          'Helvetica Neue', sans-serif;
+        box-sizing: border-box;
+      }
     }
 
-    body * {
-      font-size: 1rem;
-      font-family: ${theme.fonts.family}, -apple-system, BlinkMacSystemFont,
-        'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
-        'Helvetica Neue', sans-serif;
-      box-sizing: border-box;
-
-      &:focus {
-        outline: none;
-      }
+    :focus {
+      outline: none;
     }
 
     img,
@@ -173,18 +173,23 @@ export const Main = styled<any>(Box)`
           );
         }
       }
+
       @media (max-width: 1025px) {
         width: calc(90vw - var(--offset));
       }
+
       .up {
         color: ${theme.colours.price.up} !important;
       }
+
       .down {
         color: ${theme.colours.price.down} !important;
       }
+
       .hl {
         color: ${theme.colours.price.hl} !important;
       }
+
       h5 {
         font-weight: 600;
         font-size: 0.9rem;

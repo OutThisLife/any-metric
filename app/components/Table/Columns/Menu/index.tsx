@@ -50,6 +50,7 @@ export default compose<MenuState & MenuProps & BaphoTheme, MenuProps>(
             <Text
               as="a"
               href="javascript:;"
+              tabIndex={-1}
               className={`menu-${isOpen}`}
               onMouseEnter={() => toggle(!isOpen)}
               onClick={() => toggle(!isOpen)}>

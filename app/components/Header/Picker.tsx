@@ -25,6 +25,16 @@ export default compose<PickerProps & PickerState & BaphoTheme, {}>(
     `
   ),
   withHandlers<PickerProps, PickerState>(() => ({
+    onRef: () => ref => {
+      if (!(ref || ref instanceof HTMLElement)) {
+        return
+      }
+
+      ;[].slice
+        .call(ref.querySelectorAll('[tabindex]'))
+        .forEach((el: HTMLElement) => el.setAttribute('tabindex', '-1'))
+    },
+
     setTheme: ({ mutate }) => value => {
       try {
         const theme = (() => {
@@ -61,9 +71,9 @@ export default compose<PickerProps & PickerState & BaphoTheme, {}>(
       }
     }
   }))
-)(({ isOpen, toggle, theme: currentTheme, setTheme }) => (
+)(({ onRef, isOpen, toggle, theme: currentTheme, setTheme }) => (
   <Picker as="div">
-    <div className="circle-picker">
+    <div ref={onRef} className="circle-picker">
       <CirclePicker
         width="224px"
         circleSize={6}
@@ -71,7 +81,7 @@ export default compose<PickerProps & PickerState & BaphoTheme, {}>(
         onSwatchHover={({ hex }: any) => setTheme(createTheme(hex))}
       />
 
-      <a href="javascript:;" onClick={() => toggle(!isOpen)}>
+      <a href="javascript:;" tabIndex={-1} onClick={() => toggle(!isOpen)}>
         <IoMdThermometer />
       </a>
     </div>
@@ -116,4 +126,5 @@ export interface PickerState {
 
 export interface PickerProps extends MutateProps, BoxProps {
   onChange?: ColorChangeHandler
+  onRef?: (ref: any) => void
 }

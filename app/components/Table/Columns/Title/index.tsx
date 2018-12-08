@@ -18,6 +18,7 @@ export default compose<TitleProps, TitleProps>(setDisplayName('col-title'))(
             as="a"
             href={`//twitter.com/${item.slug}`}
             target="_blank"
+            tabIndex={-1}
             rel="noopener">
             {item.title} <MdOpenInNew />
           </Text>

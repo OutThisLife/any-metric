@@ -59,7 +59,7 @@ export default <T extends { [key: string]: any }>({
       {'browser' in process &&
         props.isOpen &&
         createPortal(
-          <Component {...props}>{createElement(render, {})}</Component>,
+          <Component {...props}>{createElement(render, props)}</Component>,
           document.body
         )}
     </>
@@ -67,13 +67,13 @@ export default <T extends { [key: string]: any }>({
 
 export interface PortalState {
   isOpen?: boolean
-  isShown?: boolean
   toggle?: (b: boolean) => void
   [key: string]: any
 }
 
 export interface PortalProps {
   id: string
+  isShown?: boolean
   children?: (a: PortalState) => React.ReactNode
-  render?: React.SFC
+  render?: React.SFC<PortalState>
 }

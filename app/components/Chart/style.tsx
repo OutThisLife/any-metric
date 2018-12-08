@@ -1,6 +1,6 @@
-import styled from 'styled-components'
-
 import { ChartCanvas } from 'react-stockcharts'
+import { Box } from 'rebass'
+import styled, { css } from 'styled-components'
 
 export default styled<any>(ChartCanvas)`
   z-index: 10;
@@ -15,3 +15,11 @@ export default styled<any>(ChartCanvas)`
     }
   }
 ` as any
+
+export const ZoomedChart = styled<any>(Box)`
+  ${({ theme }) => css`
+    padding: calc(var(--pad) * 2);
+    border: 1px solid ${theme.colours.module};
+    background: ${theme.colours.panel};
+  `}
+`

@@ -1,5 +1,4 @@
 import { BaphoTheme } from '@/theme'
-import { rgba } from 'polished'
 import { Box } from 'rebass'
 import styled, { css } from 'styled-components'
 
@@ -24,31 +23,20 @@ export default styled<any>(Box)`
     > li a[href] {
       cursor: pointer;
       display: grid;
-      grid-template-columns: minmax(max-content, 30px) 1fr;
-      grid-column-gap: 0.7rem;
+      grid-template-columns: 25px calc(100% - 25px);
+      grid-column-gap: 0.5em;
       align-items: center;
-      position: relative;
-      padding: 0 calc(var(--pad) / 2);
-      outline: 1px solid transparent;
-      outline-offset: -0.2em;
       justify-content: space-between;
+      position: relative;
+      padding: calc(var(--pad) / 2);
+      outline: 1px solid transparent;
+      outline-offset: -2px;
       transition: ${theme.eases.base};
       transition-delay: ${theme.eases.delay};
 
       @media (max-width: 1025px) and (min-width: 768px) {
         grid-template-columns: auto 1fr;
         justify-content: center;
-      }
-
-      &:hover {
-        color: ${theme.colours.base};
-        outline-color: ${rgba(theme.colours.secondary, 0.25)};
-        transition: none;
-      }
-
-      &[data-checked] {
-        color: ${theme.colours.base};
-        outline-color: ${rgba(theme.colours.secondary, 0.25)};
       }
 
       > label {
@@ -62,10 +50,10 @@ export default styled<any>(Box)`
       }
 
       > span {
-        display: inline-flex;
+        display: flex;
+        flex-wrap: nowrap;
         align-items: center;
         justify-content: space-between;
-        padding: calc(var(--pad) / 2) 0;
 
         > span {
           font-size: 0.85rem;
@@ -75,19 +63,23 @@ export default styled<any>(Box)`
         }
 
         i {
-          display: inherit;
-          align-items: inherit;
+          display: block;
           align-self: stretch;
-          padding: 0 2px;
+          padding: 0 0.5em;
+
+          &:not(:hover) {
+            opacity: 0.25;
+          }
 
           svg {
+            max-width: none;
             fill: ${theme.colours.base} !important;
           }
         }
+      }
 
-        &:not(:hover) i {
-          display: none;
-        }
+      &:not(:hover) > span i {
+        visibility: hidden;
       }
     }
   `}

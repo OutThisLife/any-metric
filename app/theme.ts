@@ -49,7 +49,7 @@ export const createTheme = (secondary: string) => {
 
   const fonts = {
     size: between(10, 13),
-    list: ['Lato'],
+    list: ['Roboto'],
 
     get src() {
       const url = 'https://fonts.googleapis.com/css?family'

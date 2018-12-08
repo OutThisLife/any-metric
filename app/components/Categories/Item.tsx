@@ -1,15 +1,14 @@
 import Text from '@/components/Text'
 import { CategoryItem } from '@/lib/utils'
 import withTagColour, { TagColour } from '@/lib/withTagColour'
+import { lighten, rgba } from 'polished'
 import { MdClear } from 'react-icons/md'
 import { compose, setDisplayName } from 'recompose'
-
-import { CategoriesHandlers } from '.'
 
 export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
   setDisplayName('category-item'),
   withTagColour()
-)(({ tagColours, title, total, delTag }) => (
+)(({ tagColours, title, total, handleDelete }) => (
   <Text
     as="li"
     key={title}
@@ -19,6 +18,12 @@ export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
       a[href] {
         color: ${tagColours.colour};
 
+        &:hover {
+          color: ${tagColours.colour};
+          outline-color: ${rgba(tagColours.border, 0.5)};
+          transition: none;
+        }
+
         label {
           color: ${tagColours.colour};
           background: ${tagColours.bg};
@@ -26,18 +31,19 @@ export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
       }
 
       &[data-checked] a[href] {
+        color: ${lighten(0.5, tagColours.colour)};
         background: ${tagColours.bg};
 
         label {
-          color: ${({ theme }) => theme.colours.base} !important;
+          color: ${tagColours.colour};
         }
       }
     `}>
-    <a href="javascript:;">
+    <a href="javascript:;" tabIndex={-1}>
       <label>{total}</label>
       <span>
         <span>{title}</span>
-        <i className="delete" onClick={() => delTag(title)}>
+        <i className="delete" onClick={handleDelete}>
           <MdClear size={10} />
         </i>
       </span>
@@ -46,5 +52,5 @@ export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
 ))
 
 export interface CategoryItemProps extends CategoryItem {
-  delTag: CategoriesHandlers['delTag']
+  handleDelete: (a: any) => void
 }

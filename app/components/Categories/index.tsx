@@ -5,7 +5,7 @@ import { CategoryItem } from '@/lib/utils'
 import withSelections, { SelectionsProps } from '@/lib/withSelections'
 import { orderBy } from 'lodash'
 import { omit } from 'lodash'
-import { MdAddCircleOutline, MdClear } from 'react-icons/md'
+import { MdAddCircleOutline } from 'react-icons/md'
 import { BoxProps } from 'rebass'
 import {
   compose,
@@ -62,13 +62,14 @@ export default compose<
         }}>
         <Form.Input
           required
+          tabIndex={-1}
           placeholder="Add new tag"
           icon={MdAddCircleOutline}
         />
       </Form.Container>
 
       {orderBy(tags, 'total', 'desc').map(t => (
-        <Item key={t.title} delTag={delTag} {...t} />
+        <Item key={t.title} handleDelete={() => delTag(t)} {...t} />
       ))}
     </Categories>
   </Module>

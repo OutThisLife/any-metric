@@ -15,6 +15,7 @@ export default styled<any>(Flex)`
     bottom: 0;
 
     > a {
+      cursor: zoom-out;
       z-index: 1;
       pointer-events: auto;
       position: absolute;

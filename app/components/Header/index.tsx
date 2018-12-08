@@ -17,7 +17,8 @@ export default compose<HeaderProps, HeaderProps>(setDisplayName('header'))(
 
       <Form.Container>
         <Form.Input
-          tabIndex={1}
+          required
+          tabIndex={-1}
           placeholder="Add a product"
           icon={IoIosSearch}
         />

@@ -15,7 +15,7 @@ export default withData(
       return (
         <ApolloProvider client={this.props.client}>
           <Container>
-            <Particles />
+            {/* <Particles /> */}
 
             <GetTheme>
               {({ theme }) => (

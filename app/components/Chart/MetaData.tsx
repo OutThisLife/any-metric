@@ -24,42 +24,41 @@ export default compose<BaphoTheme, {}>(
     displayTexts={{
       d: 'Date: ',
       c: ' P:',
-      v: ' V:'
+      v: ' V:',
+      na: ' N/A '
     }}
-    children={(p, _, d) =>
-      typeof d.close !== 'undefined' && (
-        <g
-          className={`react-stockcharts-tooltip-hover ${p.className}`}
-          transform={`translate(${d.x}, ${d.y})`}
-          onClick={p.onClick}>
-          <ToolTipText
-            x={0}
-            y={0}
-            fontFamily={p.fontFamily}
-            fontSize={p.fontSize}>
-            <ToolTipTSpanLabel fill={p.labelFill} key="label" x={0} dy={0}>
-              {p.displayTexts.d}
-            </ToolTipTSpanLabel>
-            <tspan key="value" fill={p.textFill}>
-              {d.displayDate}
-            </tspan>
+    children={(p, _, d) => (
+      <g
+        className={`react-stockcharts-tooltip-hover ${p.className}`}
+        transform={`translate(${d.x}, ${d.y})`}
+        onClick={p.onClick}>
+        <ToolTipText
+          x={0}
+          y={0}
+          fontFamily={p.fontFamily}
+          fontSize={p.fontSize}>
+          <ToolTipTSpanLabel fill={p.labelFill} key="label" x={0} dy={0}>
+            {p.displayTexts.d}
+          </ToolTipTSpanLabel>
+          <tspan key="value" fill={p.textFill}>
+            {d.displayDate}
+          </tspan>
 
-            <ToolTipTSpanLabel fill={p.labelFill} key="label_C">
-              {p.displayTexts.c}
-            </ToolTipTSpanLabel>
-            <tspan key="value_C" fill={p.textFill}>
-              {d.close}
-            </tspan>
+          <ToolTipTSpanLabel fill={p.labelFill} key="label_C">
+            {p.displayTexts.c}
+          </ToolTipTSpanLabel>
+          <tspan key="value_C" fill={p.textFill}>
+            {d.close}
+          </tspan>
 
-            <ToolTipTSpanLabel fill={p.labelFill} key="label_Vol">
-              {p.displayTexts.v}
-            </ToolTipTSpanLabel>
-            <tspan key="value_Vol" fill={p.textFill}>
-              {d.volume}
-            </tspan>
-          </ToolTipText>
-        </g>
-      )
-    }
+          <ToolTipTSpanLabel fill={p.labelFill} key="label_Vol">
+            {p.displayTexts.v}
+          </ToolTipTSpanLabel>
+          <tspan key="value_Vol" fill={p.textFill}>
+            {d.volume}
+          </tspan>
+        </ToolTipText>
+      </g>
+    )}
   />
 ))

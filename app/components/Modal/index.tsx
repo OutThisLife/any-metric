@@ -10,7 +10,7 @@ export default compose<PortalState, PortalProps>(
   withPortal()
 )(({ toggle, children }) => (
   <Modal as="div" id="modal" alignItems="center" justifyContent="center">
-    <a href="javascript:;" onClick={() => toggle(false)} />
+    <a href="javascript:;" tabIndex={-1} onClick={() => toggle(false)} />
     <Box>{children}</Box>
   </Modal>
 ))

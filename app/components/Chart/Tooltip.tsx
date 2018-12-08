@@ -4,19 +4,22 @@ import { BaphoTheme } from '@/theme'
 import * as d3 from 'd3'
 import { ClickCallback } from 'react-stockcharts/lib/interactive'
 import { HoverTooltip } from 'react-stockcharts/lib/tooltip'
-import { compose, setDisplayName } from 'recompose'
+import { compose, defaultProps, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
 import { unlink } from '.'
 
-export default compose<BaphoTheme, {}>(
+export default compose<TooltipProps & BaphoTheme, TooltipProps>(
   setDisplayName('chart-toolip'),
+  defaultProps({
+    fontSize: 11
+  }),
   withTheme
-)(({ theme }) => (
+)(({ theme, fontSize }) => (
   <>
     <HoverTooltip
       yAccessor={d => d.close}
-      fontSize={11}
+      fontSize={fontSize}
       bgOpacity={0}
       fontFill={theme.colours.base}
       fill="transparent"
@@ -40,9 +43,14 @@ export default compose<BaphoTheme, {}>(
 
     <ClickCallback
       onMouseMove={({ currentItem }) => {
+        if (document.getElementById('modal')) {
+          return
+        }
+
         unlink()
 
         const $row = document.getElementById(currentItem.id)
+        const $td = $row.firstChild as HTMLElement
 
         if ($row) {
           const $table = document.querySelector('table').parentElement
@@ -55,7 +63,7 @@ export default compose<BaphoTheme, {}>(
             .tween('scrollTop', () => {
               const i = d3.interpolateNumber(
                 $table.scrollTop,
-                $row.offsetTop - $row.clientHeight
+                $td.offsetTop - $td.clientHeight
               )
 
               return t => ($table.scrollTop = i(t))
@@ -65,3 +73,7 @@ export default compose<BaphoTheme, {}>(
     />
   </>
 ))
+
+interface TooltipProps {
+  fontSize?: number
+}

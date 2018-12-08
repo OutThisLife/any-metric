@@ -43,7 +43,7 @@ export default compose<TooltipProps & BaphoTheme, TooltipProps>(
 
     <ClickCallback
       onMouseMove={({ currentItem }) => {
-        if (document.getElementById('modal')) {
+        if (document.getElementById('price-chart-modal')) {
           return
         }
 

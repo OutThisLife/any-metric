@@ -48,16 +48,9 @@ export default compose<TableState & TableProps, TableProps>(
     <Table.Container
       as="table"
       css={`
-        tr {
-          display: grid;
-          grid-template-columns: ${columns
-            .map(c => (typeof c.width === 'number' ? `${c.width}px` : c.width))
-            .join(' ')};
-
-          @media (max-width: 768px) {
-            grid-template-columns: 50px 50px 1fr 10% 10% 13vw;
-          }
-        }
+        grid-template-columns: ${columns
+          .map(c => (typeof c.width === 'number' ? `${c.width}px` : c.width))
+          .join(' ')};
       `}
       {...props}>
       <Table.Head>

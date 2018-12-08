@@ -63,6 +63,7 @@ export const createTheme = (secondary: string) => {
 
   const eases = {
     easing: 'cubic-bezier(0.165, 0.84, 0.44, 1)',
+    delay: '0.125s',
 
     get base() {
       return `0.234s ${this.easing}`

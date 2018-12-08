@@ -21,25 +21,26 @@ export default styled<any>(Box)`
       margin: 0 0 calc(var(--pad) / 2);
     }
 
-    > a[href] {
+    > li a[href] {
       cursor: pointer;
       display: grid;
       grid-template-columns: minmax(max-content, 30px) 1fr;
       grid-column-gap: 0.7rem;
       align-items: center;
       position: relative;
-      padding: calc(var(--pad) / 2);
+      padding: 0 calc(var(--pad) / 2);
       outline: 1px solid transparent;
       outline-offset: -0.2em;
       justify-content: space-between;
       transition: ${theme.eases.base};
+      transition-delay: ${theme.eases.delay};
 
       @media (max-width: 1025px) and (min-width: 768px) {
         grid-template-columns: auto 1fr;
         justify-content: center;
       }
 
-      &:hover:not([data-checked]) {
+      &:hover {
         color: ${theme.colours.base};
         outline-color: ${rgba(theme.colours.secondary, 0.25)};
         transition: none;
@@ -47,40 +48,46 @@ export default styled<any>(Box)`
 
       &[data-checked] {
         color: ${theme.colours.base};
+        outline-color: ${rgba(theme.colours.secondary, 0.25)};
       }
 
-      span,
-      label {
-        font-size: 0.85rem;
-      }
-
-      label {
+      > label {
         display: inline-block;
         line-height: 1;
         padding: 2px 4px;
+        font-size: 0.85rem;
         text-align: center;
         border: 1px solid transparent;
         border-radius: var(--radius);
       }
 
-      .delete {
-        z-index: 2;
-        display: flex;
+      > span {
+        display: inline-flex;
         align-items: center;
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        padding: 0 calc(var(--pad) / 2);
+        justify-content: space-between;
+        padding: calc(var(--pad) / 2) 0;
 
-        svg {
-          fill: ${theme.colours.base} !important;
+        > span {
+          font-size: 0.85rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
-      }
 
-      &:not(:hover) .delete,
-      &[data-checked] .delete {
-        display: none;
+        i {
+          display: inherit;
+          align-items: inherit;
+          align-self: stretch;
+          padding: 0 2px;
+
+          svg {
+            fill: ${theme.colours.base} !important;
+          }
+        }
+
+        &:not(:hover) i {
+          display: none;
+        }
       }
     }
   `}

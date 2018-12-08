@@ -8,113 +8,101 @@ import styled, { css } from 'styled-components'
 import BaseText, { TextProps } from '../Text'
 
 export const Container = styled<any>(Box as any)`
-  user-select: none;
-  display: block;
-  width: 100%;
-  height: 100%;
-
-  thead,
-  tbody,
-  tfoot,
-  th,
-  tr,
-  td {
-    display: block;
-  }
-
   ${({ theme }: BaphoTheme) => css`
+    --border: ${rgba(theme.colours.border, 0.33)};
+
+    user-select: none;
+    display: grid;
+    align-items: stretch;
+    align-content: center;
+    justify-content: center;
+    border-left: 1px solid var(--border);
+
+    thead,
+    tbody,
+    tfoot,
     tr {
-      align-items: stretch;
-      padding: 0 calc(var(--pad) - 10px);
-      border-bottom: 1px solid ${rgba(theme.colours.border, 0.5)};
+      display: contents;
+    }
 
-      @media (max-width: 1025px) {
-        padding: 0 calc(var(--pad) * 2);
+    td,
+    th {
+      display: block;
+      color: ${theme.colours.label};
+    }
 
-        @media (max-width: 768px) {
-          padding: 0 var(--pad);
-        }
+    th,
+    td {
+      padding-left: var(--pad);
+      padding-right: var(--pad);
+
+      &:first-of-type {
+        justify-content: flex-start;
       }
 
-      > * {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: ${theme.colours.label};
-
-        @media (min-width: 768px) {
-          &:first-child {
-            justify-content: flex-start;
-          }
-
-          &:last-child {
-            justify-content: flex-end;
-            text-align: right;
-          }
-        }
+      &:last-of-type {
+        justify-content: flex-end;
       }
     }
 
-    .head {
+    thead th {
+      cursor: s-resize;
       z-index: 1;
+      justify-content: center;
       position: sticky;
       top: 0;
+      width: 100%;
+      padding-bottom: var(--pad);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
       background: ${rgba(theme.colours.panel, 0.95)};
 
-      th {
-        cursor: s-resize;
-        color: ${theme.colours.label};
-        text-transform: uppercase;
-        padding-bottom: 1rem;
-
-        @media (max-width: 1025px) {
-          padding-top: 1rem;
-        }
-
-        &[data-sorted='true'] {
-          color: ${theme.colours.secondary};
-
-          h5 {
-            color: inherit;
-          }
-        }
-
-        @media (max-width: 768px) {
-          &:not([aria-label]) {
-            display: none;
-          }
-        }
+      &[data-sorted='true'] {
+        color: ${theme.colours.secondary};
 
         h5 {
-          font-weight: 600;
-          font-size: 0.9rem;
-          letter-spacing: 1px;
-          margin: 0;
+          color: inherit;
         }
+      }
 
-        svg {
-          width: 10px;
-        }
+      h5 {
+        font-weight: 600;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        margin: 0;
+      }
+
+      svg {
+        width: 10px;
       }
     }
 
     tbody tr {
-      user-select: none;
-      outline: 1px solid transparent;
-      outline-offset: -2px;
-      background-color: rgba(0, 0, 0, 0);
-      transition: ${theme.eases.base};
+      td {
+        cursor: cell;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        outline: 1px solid transparent;
+        outline-offset: -1px;
+        background-color: rgba(0, 0, 0, 0);
+        border-bottom: 1px solid var(--border);
+        transition: ${theme.eases.base};
+        transition-delay: ${theme.eases.delay};
 
-      &:hover {
+        &:hover {
+          outline-color: ${theme.colours.border};
+          transition: none;
+        }
+      }
+
+      &.hover td {
         transition: none;
         background-color: ${rgba(theme.colours.base, 0.01)};
       }
 
-      &[data-checked] {
-        outline-color: ${theme.colours.focus};
-      }
-
-      &.chart-link {
+      &.chart-link td {
         outline-color: ${theme.colours.price.hl};
       }
     }
@@ -130,7 +118,13 @@ export const Row = compose<
   Cell<HTMLTableRowElement>,
   Cell<HTMLTableRowElement>
 >(setDisplayName('table-tr'))(props => (
-  <Box as="tr" className="row" {...props} />
+  <Box
+    as="tr"
+    className="row"
+    onMouseEnter={e => e.currentTarget.classList.add('hover')}
+    onMouseLeave={e => e.currentTarget.classList.remove('hover')}
+    {...props}
+  />
 ))
 
 export const Cell = compose<

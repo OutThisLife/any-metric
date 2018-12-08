@@ -92,7 +92,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
             {
               label: 'Price',
               key: 'price',
-              width: 70
+              width: 'min-content'
             },
             {
               label: '',
@@ -102,22 +102,22 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
             {
               label: 'Name',
               key: 'title',
-              width: '1fr'
-            },
-            {
-              label: '',
-              key: 'tags',
-              width: '1fr'
+              width: '2fr'
             },
             {
               label: 'Date',
               key: 'time',
-              width: 80
+              width: '0.33fr'
             },
             {
               label: 'State',
               key: 'status',
-              width: 80
+              width: '0.33fr'
+            },
+            {
+              label: '',
+              key: 'tags',
+              width: 'max-content'
             }
           ]}
         />

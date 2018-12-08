@@ -5,31 +5,19 @@ import Column from '../Column'
 
 export default styled<any>(Column)`
   ${({ theme }: BaphoTheme) => css`
-    grid-row: 1;
-    padding-left: var(--pad);
-
-    @media (max-width: 768px) {
-      grid-column: 2 / 5;
-
-      tbody tr & {
-        grid-column-start: 3;
-      }
-    }
+    padding: 0 !important;
+    justify-content: flex-start !important;
 
     > div {
-      justify-content: flex-start;
       width: 100%;
+      margin-right: auto;
     }
 
     a[href] {
+      display: block;
+      width: 100%;
       font-weight: 600;
-
-      @media (min-width: 768px) {
-        display: block;
-        width: 100%;
-        padding: calc(var(--pad) / 2) 0;
-        padding-right: var(--pad);
-      }
+      padding: calc(var(--pad) / 2) var(--pad);
 
       svg {
         width: 13px;

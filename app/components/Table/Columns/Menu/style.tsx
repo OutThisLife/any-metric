@@ -5,8 +5,6 @@ import Column from '../Column'
 
 export default styled<any>(Column)`
   ${({ theme }: BaphoTheme) => css`
-    grid-row: 1;
-
     a[href][class*='menu-'] {
       color: ${theme.colours.muted};
 

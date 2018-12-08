@@ -109,6 +109,14 @@ export default createGlobalStyle`
         color: ${theme.colours.focus};
       }
     }
+
+    .row {
+      user-select: none;
+
+      .dragging & * {
+        pointer-events: none !important;
+      }
+    }
   `}
 `
 
@@ -165,23 +173,18 @@ export const Main = styled<any>(Box)`
           );
         }
       }
-
       @media (max-width: 1025px) {
         width: calc(90vw - var(--offset));
       }
-
       .up {
         color: ${theme.colours.price.up} !important;
       }
-
       .down {
         color: ${theme.colours.price.down} !important;
       }
-
       .hl {
         color: ${theme.colours.price.hl} !important;
       }
-
       h5 {
         font-weight: 600;
         font-size: 0.9rem;

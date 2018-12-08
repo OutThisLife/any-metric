@@ -5,11 +5,7 @@ import Column from '../Column'
 
 export default styled<any>(Column)`
   ${({ theme }) => css`
-    grid-row: 1;
-
-    @media (max-width: 768px) {
-      grid-column: 2;
-    }
+    padding: 0 !important;
 
     figure {
       position: relative;

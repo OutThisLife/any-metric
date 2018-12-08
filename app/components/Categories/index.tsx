@@ -4,10 +4,12 @@ import { getTags } from '@/lib/queries'
 import { CategoryItem } from '@/lib/utils'
 import withSelections, { SelectionsProps } from '@/lib/withSelections'
 import { orderBy } from 'lodash'
+import { omit } from 'lodash'
 import { MdAddCircleOutline, MdClear } from 'react-icons/md'
 import { BoxProps } from 'rebass'
 import {
   compose,
+  mapProps,
   setDisplayName,
   shallowEqual,
   StateHandler,
@@ -41,7 +43,8 @@ export default compose<
       }
     }
   ),
-  withSelections()
+  withSelections(),
+  mapProps(props => omit(props, ['data']))
 )(({ tags, addTag, delTag, handleMouse, ...props }) => (
   <Module>
     <Categories id="filters" m={0} p={0} onMouseDown={handleMouse} {...props}>
@@ -65,11 +68,7 @@ export default compose<
       </Form.Container>
 
       {orderBy(tags, 'total', 'desc').map(t => (
-        <Item key={t.title} {...t}>
-          <i className="delete" onClick={() => delTag(t)}>
-            <MdClear size={10} />
-          </i>
-        </Item>
+        <Item key={t.title} delTag={delTag} {...t} />
       ))}
     </Categories>
   </Module>
@@ -84,7 +83,7 @@ export interface CategoriesProps extends BoxProps, SelectionsProps {
   initialTags?: CategoryItem[]
 }
 
-interface CategoriesHandlers extends StateHandlerMap<CategoriesState> {
+export interface CategoriesHandlers extends StateHandlerMap<CategoriesState> {
   addTag: StateHandler<CategoriesState>
   delTag: StateHandler<CategoriesState>
 }

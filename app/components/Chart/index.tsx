@@ -17,7 +17,7 @@ export default compose<ChartProps, ChartProps>(
   <div
     ref={measureRef}
     onMouseLeave={() => d3.timeout(unlink, 700)}
-    style={{ position: 'relative' }}>
+    style={{ position: 'relative', width: '100%' }}>
     {!isNaN(contentRect.bounds.width) && (
       <Modal
         id="price-chart-modal"

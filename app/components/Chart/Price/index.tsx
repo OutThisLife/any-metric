@@ -95,7 +95,7 @@ export default compose<ChartState & BaphoTheme, ChartCVProps>(
     tickStyle: { fontSize, gridWidth, gridHeight, ...tickStyle },
     ...props
   }) => (
-    <ChartCanvas {...props} seriesName="Price" clamp={true} type="hybrid">
+    <ChartCanvas seriesName="Price" clamp={true} type="hybrid" {...props}>
       <Chart id={1} yExtents={[d => d.close, MA.accessor()]} yPan={false}>
         <MetaData />
 

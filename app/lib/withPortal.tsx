@@ -4,7 +4,6 @@ import { BoxProps } from 'rebass'
 import {
   compose,
   defaultProps,
-  onlyUpdateForKeys,
   setDisplayName,
   shouldUpdate,
   StateHandler,
@@ -54,8 +53,7 @@ export default <T extends { [key: string]: any }>({
       }
 
       return true
-    }),
-    onlyUpdateForKeys(['isOpen'])
+    })
   )(({ children, render, ...props }) => (
     <>
       {children(props)}

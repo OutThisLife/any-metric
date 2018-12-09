@@ -1,6 +1,5 @@
 export { default as Base } from './Column'
 export { default as Image } from './Image'
-export { default as Menu } from './Menu'
 export { default as Price } from './Price'
 export { default as Status } from './Status'
 export { default as Tags } from './Tags'

@@ -31,6 +31,11 @@ export default styled<any>(Box)`
         bottom: 100%;
         padding-bottom: 1em;
         transform: translate(-50%, 0);
+
+        > div:before {
+          bottom: 5px;
+          left: calc(50% - 10px);
+        }
       `};
 
     ${dir === 'right' &&
@@ -38,6 +43,10 @@ export default styled<any>(Box)`
         top: 0;
         left: 100%;
         padding-left: 1em;
+
+        > div:before {
+          left: 5px;
+        }
       `};
 
     ${dir === 'bottom' &&
@@ -46,6 +55,11 @@ export default styled<any>(Box)`
         left: 50%;
         padding-top: 1em;
         transform: translate(-50%, 0);
+
+        > div:before {
+          top: 5px;
+          left: calc(50% - 10px);
+        }
       `};
 
     ${dir === 'left' &&
@@ -53,6 +67,10 @@ export default styled<any>(Box)`
         top: 0;
         right: 100%;
         padding-right: 1em;
+
+        > div:before {
+          right: 5px;
+        }
       `};
 
     > div {
@@ -110,6 +128,7 @@ export default styled<any>(Box)`
 
       svg {
         flex: 0.3;
+        max-width: none;
         vertical-align: middle;
 
         + span {

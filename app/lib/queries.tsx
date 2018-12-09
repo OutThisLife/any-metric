@@ -5,7 +5,7 @@ import { ChildProps, DataProps, graphql } from 'react-apollo'
 
 import { parseTags } from './utils'
 
-export const getmockData = (options = {}) =>
+export const getmockData = () =>
   graphql<{}, { results: MockResult[] }>(
     gql`
       query GetMockResult($offset: Int, $limit: Int) {
@@ -25,7 +25,6 @@ export const getmockData = (options = {}) =>
       }
     `,
     {
-      ...options,
       options: {
         variables: {
           offset: 0,
@@ -39,7 +38,7 @@ export const getmockData = (options = {}) =>
     }
   )
 
-export const getTags = (options = {}) =>
+export const getTags = (fn = parseTags) =>
   graphql<{}, { results: MockResult[] }>(
     gql`
       query GetMockResult($offset: Int, $limit: Int) {
@@ -49,7 +48,6 @@ export const getTags = (options = {}) =>
       }
     `,
     {
-      ...options,
       options: {
         variables: {
           offset: 0,
@@ -58,7 +56,7 @@ export const getTags = (options = {}) =>
       },
       props: ({ data: { results = [], ...data } }) => ({
         data,
-        initialTags: parseTags(results)
+        initialTags: fn(results)
       })
     }
   )

@@ -1,42 +1,18 @@
 import Text from '@/components/Text'
 import { Box } from 'rebass'
-import {
-  compose,
-  defaultProps,
-  setDisplayName,
-  withHandlers,
-  withState
-} from 'recompose'
+import { compose, defaultProps, setDisplayName, withState } from 'recompose'
 
 import Dropdown from './style'
 
 export default compose<DropdownState & DropdownProps, DropdownProps>(
   setDisplayName('dropdown'),
   defaultProps({
+    isShown: false,
     direction: 'left',
     menu: [],
     onClick: () => null
   }),
-  withState('isOpen', 'toggle', false),
-  withHandlers<DropdownProps, DropdownState>(() => ({
-    onRef: () => ref => {
-      if (!ref) {
-        return
-      }
-
-      const el = ref.closest('.dropdown')
-
-      if (el instanceof HTMLElement) {
-        const { top, left } = el.getBoundingClientRect()
-
-        el.style.position = 'fixed'
-        el.style.top = `${top}px`
-        el.style.right = 'auto'
-        el.style.bottom = 'auto'
-        el.style.left = `${left}px`
-      }
-    }
-  }))
+  withState('isOpen', 'toggle', ({ isShown }) => isShown)
 )(({ onRef, children, isOpen, toggle, menu, onClick, ...props }) => (
   <>
     {children({ isOpen, toggle })}
@@ -70,6 +46,7 @@ interface DropdownState {
 }
 
 export interface DropdownProps {
+  isShown?: boolean
   children: (props: DropdownState) => JSX.Element
   direction: 'top' | 'right' | 'bottom' | 'left'
   onClick?: (a?: {}) => void

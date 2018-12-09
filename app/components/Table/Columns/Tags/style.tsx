@@ -1,13 +1,22 @@
-import styled from 'styled-components'
+import { BaphoTheme } from '@/theme'
+import styled, { css } from 'styled-components'
 
 import Column from '../Column'
 
 export default styled<any>(Column)`
-  label {
-    font-size: 0.85rem;
+  ${({ theme }: BaphoTheme) => css`
+    position: relative;
 
-    + label {
-      margin: 0 0 0 4px;
+    label {
+      font-size: 0.85rem;
     }
-  }
+
+    a[href][class*='menu-'] {
+      color: ${theme.colours.label};
+
+      &.menu-true {
+        color: ${theme.colours.secondary};
+      }
+    }
+  `}
 `

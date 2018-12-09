@@ -8,11 +8,14 @@ import { Text } from '../../style'
 export default compose<MenuItemState & MenuItemProps, MenuItemProps>(
   setDisplayName('col-menu-item'),
   withState('isChecked', 'toggle', ({ isChecked = false }) => isChecked)
-)(({ title, isChecked, toggle }) => (
+)(({ title, isChecked, toggle, onToggle }) => (
   <Box
     as="a"
     href="javascript:;"
-    onClick={() => toggle(!isChecked)}
+    onClick={e => {
+      e.persist()
+      toggle(!isChecked, () => onToggle(e, !isChecked))
+    }}
     css={`
       svg {
         transform: translate(0, -1px);
@@ -29,10 +32,11 @@ export default compose<MenuItemState & MenuItemProps, MenuItemProps>(
 ))
 
 interface MenuItemState {
-  toggle?: (b: boolean) => void
+  toggle?: (b: boolean, cb?: any) => void
 }
 
 export interface MenuItemProps {
+  onToggle?: (e: React.SyntheticEvent, b: boolean) => void
   isChecked?: boolean
   title: string
 }

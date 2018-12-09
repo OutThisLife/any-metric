@@ -11,6 +11,7 @@ export default compose<TagState & TagProps, TagProps>(
 )(({ title, tagColours: { bg, colour, border } }) => (
   <Tag
     as="label"
+    aria-label={title}
     style={{
       color: colour,
       borderColor: border,

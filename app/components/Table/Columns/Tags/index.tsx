@@ -40,7 +40,26 @@ export default compose<TagState & TagProps & TagHandlers, TagProps>(
       }
     }
   ),
-  withHandlers<{}, TagState>(() => ({
+  withHandlers<TagHandlers, TagState>(() => ({
+    handleToggle: ({ addTag, delTag }) => (e, tag, isChecked) => {
+      if (isChecked) {
+        return addTag(tag)
+      }
+
+      const $td = (e.target as HTMLElement).closest('td')
+
+      if (!($td instanceof HTMLElement)) {
+        return delTag(tag)
+      }
+
+      ;[].slice
+        .call($td.querySelectorAll(`[aria-label="${tag}"]`))
+        .forEach(el => {
+          el.addEventListener('animationend', () => delTag(tag), { once: true })
+          el.classList.add('anim-out')
+        })
+    },
+
     handleBlur: () => ({ currentTarget: el, relatedTarget: target }) => {
       const $a = el.querySelector('.menu-true')
 
@@ -52,12 +71,11 @@ export default compose<TagState & TagProps & TagHandlers, TagProps>(
 )(
   ({
     children,
+    handleToggle,
     handleBlur,
     item = {},
     initialTags = [],
-    tags,
-    addTag,
-    delTag
+    tags
   }) => (
     <Tags name="tags" p={0} disableSort tabIndex={1} onBlur={handleBlur}>
       {!('id' in item) ? (
@@ -82,26 +100,7 @@ export default compose<TagState & TagProps & TagHandlers, TagProps>(
                     <Item
                       title={t}
                       isChecked={tags.includes(t)}
-                      onToggle={(e, b) => {
-                        if (b) {
-                          return addTag(t)
-                        }
-
-                        const $td = (e.target as HTMLElement).closest('td')
-
-                        if ($td instanceof HTMLElement) {
-                          const $tag = $td.querySelector(`[aria-label="${t}"]`)
-
-                          if ($tag) {
-                            $tag.classList.add('anim-out')
-                            $tag.addEventListener('animationend', () =>
-                              delTag(t)
-                            )
-                          } else {
-                            delTag(t)
-                          }
-                        }
-                      }}
+                      onToggle={(e, isChecked) => handleToggle(e, t, isChecked)}
                     />
                   ))
                 }
@@ -143,6 +142,7 @@ export default compose<TagState & TagProps & TagHandlers, TagProps>(
 interface TagState {
   tags?: MockResult['tags']
   handleBlur?: React.FocusEventHandler<HTMLElement>
+  handleToggle?: (e: React.SyntheticEvent, t: string, b: boolean) => void
 }
 
 interface TagProps extends ColumnProps {

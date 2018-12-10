@@ -1,3 +1,4 @@
+import { timingFunctions } from 'polished'
 import { Box } from 'rebass'
 import styled, { keyframes } from 'styled-components'
 
@@ -5,21 +6,19 @@ const animIn = keyframes`
 from {
   opacity: 0;
   width: 0;
-  height: 0;
   margin: 0;
   padding: 0;
-  transform: scale(0.98);
+  border: 0;
 }
 `
 
 const animOut = keyframes`
 to {
-  width: 0;
-  height: 0;
   opacity: 0;
+  width: 0;
   margin: 0;
   padding: 0;
-  transform: scale(0.98);
+  border: 0;
 }
 `
 
@@ -32,7 +31,7 @@ export default styled<any>(Box)`
   border-radius: var(--radius);
   white-space: nowrap;
   overflow: hidden;
-  animation: ${animIn} ${({ theme }) => theme.eases.base} forwards;
+  animation: ${animIn} 0.2s ${timingFunctions('easeOutQuad')} forwards;
 
   &.anim-out {
     animation-name: ${animOut};

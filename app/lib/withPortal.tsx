@@ -76,8 +76,6 @@ export const positionToMouse = (
     return
   }
 
-  console.log($parent, el)
-
   const draw = () => {
     let { x, y } = (window as any).mouse
     const { clientWidth: w, clientHeight: h } = el

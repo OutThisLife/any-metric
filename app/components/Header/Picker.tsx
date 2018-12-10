@@ -49,18 +49,13 @@ export default compose<PickerProps & PickerState & BaphoTheme, {}>(
           variables: { theme },
           optimisticResponse: {
             __typename: 'Mutation',
-            setTheme: {
-              __typename: 'Theme',
-              value: theme
-            }
+            setTheme: theme
           },
           update: (proxy, { data: { setTheme } }) =>
             proxy.writeQuery({
               query: gql`
                 {
-                  theme {
-                    value
-                  }
+                  theme
                 }
               `,
               data: { theme: setTheme }

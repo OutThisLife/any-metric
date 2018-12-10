@@ -1,4 +1,4 @@
-import { MockResult } from '@/server/schema/types'
+import { Product } from '@/server/schema/types'
 import * as d3 from 'd3'
 import { array } from 'prop-types'
 import { MeasuredComponentProps } from 'react-measure'
@@ -72,7 +72,7 @@ export default compose<TableState & TableProps, TableProps>(
 
       <Table.Body onScroll={handleScroll}>
         {data.map(d => (
-          <Table.Row key={d.date.valueOf()} id={d.id}>
+          <Table.Row key={d.createdAt.valueOf()} id={d._id}>
             <RenderColumns props={() => ({ item: d })} />
           </Table.Row>
         ))}
@@ -109,7 +109,7 @@ export interface TableState extends Partial<MeasuredComponentProps> {
 }
 
 export interface TableProps {
-  data: MockResult[]
+  data: Product[]
   columns: Array<{
     label: string
     key: string

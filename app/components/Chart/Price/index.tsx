@@ -44,11 +44,11 @@ export default compose<ChartState & BaphoTheme, ChartCVProps>(
       const calculatedData = MA(
         initialData.map(d => ({
           ...d,
-          date: new Date(d.date),
-          close: parseFloat(d.price),
+          date: new Date(d.createdAt),
+          close: d.price,
           volume: initialData
             .filter(({ slug }) => slug === d.slug)
-            .reduce((acc, { quantity }) => (acc += parseInt(quantity, 10)), 0)
+            .reduce((acc, { qty }) => (acc += qty), 0)
         }))
       )
 

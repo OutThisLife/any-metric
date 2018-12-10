@@ -1,36 +1,37 @@
-import { MockResult } from '@/server/schema/types'
+import { Product } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import gql from 'graphql-tag'
 import { ChildProps, DataProps, graphql } from 'react-apollo'
 
 import { parseTags } from './utils'
 
-export const getmockData = () =>
-  graphql<{}, { results: MockResult[] }>(
+export const getProducts = () =>
+  graphql<{}, { results: Product[] }>(
     gql`
-      query GetMockResult($offset: Int, $limit: Int) {
-        results: mockData(offset: $offset, limit: $limit) {
-          id
+      query GetProduct($query: Pagination!) {
+        results: products(query: $query) {
+          _id
+          createdAt
           slug
           image
           title
+          tags
           price
           shipping
-          quantity
+          qty
           bids
-          copy
-          date
-          tags
         }
       }
     `,
     {
-      options: {
+      options: ({ pagination }: any) => ({
         variables: {
-          offset: 0,
-          limit: 25
+          query: pagination || {
+            offset: 0,
+            limit: 25
+          }
         }
-      },
+      }),
       props: ({ data: { results = [], ...data } }) => ({
         data,
         results
@@ -39,21 +40,23 @@ export const getmockData = () =>
   )
 
 export const getTags = (fn = parseTags) =>
-  graphql<{}, { results: MockResult[] }>(
+  graphql<{}, { results: Product[] }>(
     gql`
-      query GetMockResult($offset: Int, $limit: Int) {
-        results: mockData(offset: $offset, limit: $limit) {
+      query GetProduct($query: Pagination!) {
+        results: products(query: $query) {
           tags
         }
       }
     `,
     {
-      options: {
+      options: ({ pagination }: any) => ({
         variables: {
-          offset: 0,
-          limit: 25
+          query: pagination || {
+            offset: 0,
+            limit: 25
+          }
         }
-      },
+      }),
       props: ({ data: { results = [], ...data } }) => ({
         data,
         initialTags: fn(results)
@@ -64,18 +67,16 @@ export const getTags = (fn = parseTags) =>
 export const getTheme = () =>
   graphql<
     {},
-    { theme: { value: string } },
-    DataProps<{ theme: { value: string } }>,
+    { theme: string },
+    DataProps<{ theme: string }>,
     ChildProps<BaphoTheme>
   >(
     gql`
       {
-        theme {
-          value
-        }
+        theme
       }
     `,
     {
-      props: ({ data: { theme } }) => ({ theme: JSON.parse(theme.value) })
+      props: ({ data: { theme } }) => ({ theme: JSON.parse(theme) })
     }
   )

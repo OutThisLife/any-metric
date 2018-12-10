@@ -1,5 +1,5 @@
 import Text from '@/components/Text'
-import { MockResult } from '@/server/schema/types'
+import { Product } from '@/server/schema/types'
 import { bool, func, object } from 'prop-types'
 import { FaCaretDown, FaCaretUp, FaSort } from 'react-icons/fa'
 import { BoxProps, Flex } from 'rebass'
@@ -72,7 +72,7 @@ export interface ColumnProps extends BoxProps {
   isHeader?: boolean
   disableSort?: boolean
   name?: string
-  item?: MockResult
+  item?: Product
   sort?: {
     dir: string
     name: string

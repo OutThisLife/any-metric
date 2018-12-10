@@ -1,5 +1,5 @@
 import { moneyFormat, numFormat } from '@/lib/utils'
-import { MockResult } from '@/server/schema/types'
+import { Product } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import * as d3 from 'd3'
 import { ClickCallback } from 'react-stockcharts/lib/interactive'
@@ -24,17 +24,21 @@ export default compose<TooltipProps & BaphoTheme, TooltipProps>(
       fontFill={theme.colours.base}
       fill="transparent"
       stroke="transparent"
-      tooltipContent={({ currentItem }: { currentItem: MockResult }) =>
+      tooltipContent={({
+        currentItem
+      }: {
+        currentItem: Product & { close?: number }
+      }) =>
         currentItem.close && {
           x: currentItem.title,
           y: [
             {
               label: 'Price',
-              value: moneyFormat(parseFloat(currentItem.close))
+              value: moneyFormat(currentItem.close)
             },
             {
               label: 'Qty',
-              value: numFormat(parseInt(currentItem.quantity, 10))
+              value: numFormat(currentItem.qty)
             }
           ]
         }

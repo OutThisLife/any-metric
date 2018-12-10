@@ -73,7 +73,7 @@ export const positionToMouse = (
     tm.stop()
   }
 
-  if (!($parent instanceof HTMLElement || el instanceof HTMLElement)) {
+  if (!($parent instanceof HTMLElement && el instanceof HTMLElement)) {
     return
   }
 
@@ -109,6 +109,7 @@ export const positionToMouse = (
     $parent.style.bottom = 'auto'
 
     $parent.style.top = `${Math.min(window.innerHeight - h, Math.max(o, y))}px`
+
     $parent.style.left = `${Math.min(window.innerWidth - w, Math.max(o, x))}px`
   }
 

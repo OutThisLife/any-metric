@@ -1,6 +1,6 @@
 import Popover from '@/components/Popover'
 import { positionToMouse } from '@/lib/withPortal'
-import { MockResult } from '@/server/schema/types'
+import { Product } from '@/server/schema/types'
 import { Box } from 'rebass'
 import { compose, setDisplayName, withHandlers } from 'recompose'
 
@@ -10,17 +10,17 @@ import Image from './style'
 export default compose<ImageProps, ImageProps>(
   setDisplayName('col-image'),
   withHandlers<ImageProps, ImageProps>(() => ({
-    onRef: ({ item: { id } }) => ref =>
+    onRef: ({ item: { _id } }) => ref =>
       ref instanceof HTMLElement &&
-      positionToMouse(document.getElementById(`popover-${id}`), ref, 'right')
+      positionToMouse(document.getElementById(`popover-${_id}`), ref, 'right')
   }))
 )(({ onRef, children, item = {} }) => (
   <Image name="image" disableSort>
-    {!('id' in item) ? (
+    {!('_id' in item) ? (
       children
     ) : (
       <Popover
-        id={`popover-${item.id}`}
+        id={`popover-${item._id}`}
         direction="right"
         render={() => <img ref={onRef} src={item.image} alt={item.title} />}>
         {({ toggle }) => (
@@ -45,6 +45,6 @@ export default compose<ImageProps, ImageProps>(
 ))
 
 interface ImageProps extends ColumnProps {
-  item?: MockResult
+  item?: Product
   onRef?: (ref?: HTMLElement) => void
 }

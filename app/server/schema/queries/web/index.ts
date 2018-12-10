@@ -64,7 +64,7 @@ const c = async (
         }, Promise.resolve({}))
       }
 
-      resolve({ id, hostname, url, title, meta, data })
+      resolve({ _id: id, hostname, url, title, meta, data })
     })
   )
 }

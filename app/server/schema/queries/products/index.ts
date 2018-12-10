@@ -1,8 +1,8 @@
 import * as faker from 'faker'
 
-import { MockResult, Resolver } from '../../types'
+import { Product, Resolver } from '../../types'
 
-export default (async (_, args = {}): Promise<MockResult[]> =>
+export default (async (_, args = {}): Promise<Product[]> =>
   await (create(args) || [])) as Resolver
 
 const create: (
@@ -11,20 +11,19 @@ const create: (
     offset?: number
     limit?: number
   }
-) => Promise<MockResult[]> = async ({ ids = [], offset = 0, limit = 25 }) => {
+) => Promise<Product[]> = async ({ ids = [], offset = 0, limit = 25 }) => {
   faker.seed(100)
 
   const data = [...Array(255).keys()].map(i => ({
-    id: faker.random.uuid(),
+    _id: faker.random.uuid(),
+    createdAt: i < 10 ? faker.date.recent(1) : faker.date.past(1),
     slug: faker.lorem.slug(),
     title: faker.commerce.productName(),
     image: faker.internet.avatar(),
-    price: faker.commerce.price(),
-    shipping: faker.commerce.price(0, 100),
-    bids: faker.random.number({ min: 1, max: 50 }).toString(),
-    quantity: faker.random.number({ min: 1, max: 20 }).toString(),
-    copy: faker.lorem.paragraph(),
-    date: i < 10 ? faker.date.recent(1) : faker.date.past(1),
+    price: parseFloat(faker.commerce.price()),
+    shipping: parseFloat(faker.commerce.price(0, 100)),
+    bids: faker.random.number({ min: 1, max: 50 }),
+    qty: faker.random.number({ min: 1, max: 20 }),
     tags: faker.random.arrayElement([
       ['DataMan 8050', 'Important'],
       ['Keyence CV', 'Broken'],
@@ -35,7 +34,7 @@ const create: (
   }))
 
   if (ids.length) {
-    return data.filter(({ id }) => ids.includes(id))
+    return data.filter(({ _id }) => ids.includes(_id))
   }
 
   return data.slice(offset, limit)

@@ -1,5 +1,5 @@
 import { isOld } from '@/lib/utils'
-import { MockResult } from '@/server/schema/types'
+import { Product } from '@/server/schema/types'
 import { Box } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
@@ -10,11 +10,11 @@ import Status from './style'
 export default compose<StatusProps, StatusProps>(setDisplayName('col-status'))(
   ({ item = {}, children }) => (
     <Status name="bids">
-      {!('id' in item) ? (
+      {!('_id' in item) ? (
         children
       ) : (
         <Box>
-          {isOld(item.date, 32) ? (
+          {isOld(item.createdAt, 32) ? (
             <Text>Sold</Text>
           ) : (
             <Text className="hl">1d 9h</Text>
@@ -26,5 +26,5 @@ export default compose<StatusProps, StatusProps>(setDisplayName('col-status'))(
 )
 
 export interface StatusProps extends ColumnProps {
-  item?: MockResult
+  item?: Product
 }

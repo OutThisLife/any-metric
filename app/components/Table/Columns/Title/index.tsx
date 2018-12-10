@@ -1,5 +1,5 @@
 import Text from '@/components/Text'
-import { MockResult } from '@/server/schema/types'
+import { Product } from '@/server/schema/types'
 import { MdOpenInNew } from 'react-icons/md'
 import { Box } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
@@ -10,7 +10,7 @@ import Title from './style'
 export default compose<TitleProps, TitleProps>(setDisplayName('col-title'))(
   ({ children, item = {} }) => (
     <Title name="title" p={0}>
-      {!('id' in item) ? (
+      {!('_id' in item) ? (
         children
       ) : (
         <Box>
@@ -29,5 +29,5 @@ export default compose<TitleProps, TitleProps>(setDisplayName('col-title'))(
 )
 
 interface TitleProps extends ColumnProps {
-  item?: MockResult
+  item?: Product
 }

@@ -21,11 +21,10 @@ export default (async (_, args = {}): Promise<EbayResult> => {
         }
       }
 
-      item.id = item.itemId
+      item._id = item.itemId
       delete item.itemId
 
       return item
     })
   }
 }) as Resolver
-``

@@ -1,7 +1,10 @@
 import { Resolver } from '../types'
 
-
-export const setTheme: Resolver = async (_, { theme }, { cache }) => {
+export const setTheme: Resolver = async (
+  _,
+  { theme }: { theme: string },
+  { cache }
+) => {
   await cache.set('theme', theme)
-  return { value: theme }
+  return theme
 }

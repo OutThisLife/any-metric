@@ -7,30 +7,22 @@ export default gql`
   scalar Date
 
   type Query {
-    theme: Theme
+    theme: String
+    products(query: Pagination!): [Product]
 
     ebay(keywords: String!): EbayResult
-    crawl(url: String!, parent: String!, selectors: [Selector]!): CrawlResult
     google(keywords: String!): CrawlResult
-
-    mockData(ids: [String], offset: Int, limit: Int): [MockResult]
+    crawl(query: CrawlInput!): CrawlResult
   }
 
   type Mutation {
-    setTheme(theme: String!): Theme
-  }
-
-  type Theme {
-    value: String
-  }
-
-  input Selector {
-    key: String!
-    selector: String!
+    setTheme(theme: String!): String
+    addProduct(input: KeywordInput!): Boolean
+    removeProduct(input: ProductInput!): Boolean
   }
 
   type CrawlResult @cacheControl(maxAge: 10e5) {
-    id: ID!
+    _id: ID!
     title: String
     img: String
     date: Date
@@ -40,27 +32,26 @@ export default gql`
     data: JSON
   }
 
-  type MockResult @cacheControl(maxAge: 10e5) {
-    id: ID!
+  type Product @cacheControl(maxAge: 10e5) {
+    _id: ID!
+    createdAt: Date
     slug: String
     image: String
     title: String
-    price: String
-    shipping: String
-    quantity: String
-    bids: String
-    copy: String
-    date: Date
+    price: Int
+    shipping: Int
+    qty: Int
+    bids: Int
     tags: [String]
   }
 
-  type EbayResult {
+  type EbayResult @cacheControl(maxAge: 10e5) {
     total: String
     items: [EbayItem]
   }
 
   type EbayItem @cacheControl(maxAge: 10e5) {
-    id: ID!
+    _id: ID!
     title: String
     globalId: String
     primaryCategory: JSON
@@ -78,35 +69,56 @@ export default gql`
     isMultiVariationListing: Boolean
     topRatedListing: Boolean
   }
+
+  input Selector {
+    key: String!
+    selector: String!
+  }
+
+  input KeywordInput {
+    keywords: String!
+  }
+
+  input ProductInput {
+    id: ID!
+  }
+
+  input CrawlInput {
+    url: String!
+    parent: String!
+    selectors: [Selector]!
+  }
+
+  input Pagination {
+    offset: Int
+    limit: Int
+  }
 `
+
+export interface Product {
+  __typename?: string
+  _id: string
+  createdAt: Date
+  slug?: string
+  image?: string
+  title?: string
+  tags?: string[]
+  price?: number
+  shipping?: number
+  qty?: number
+  bids?: number
+}
 
 export interface CrawlResult {
   __typename?: string
-  id: string
+  _id: string
   err?: string
   title?: string
   img?: string
   url?: string
-  date?: Date
   hostname?: string
-  meta?: any
-  data?: any
-  tags?: string[]
-}
-
-export interface MockResult {
-  __typename?: string
-  id: string
-  slug?: string
-  image?: string
-  title?: string
-  price?: string
-  close?: string
-  shipping?: string
-  quantity?: string
-  bids?: string
-  copy?: string
-  date?: Date
+  meta?: JSON
+  data?: JSON
   tags?: string[]
 }
 
@@ -117,7 +129,8 @@ export interface EbayResult {
 }
 
 export interface EbayItem {
-  id: string
+  __typename?: string
+  _id: string
   itemId?: string
   title?: string
   globalId?: string

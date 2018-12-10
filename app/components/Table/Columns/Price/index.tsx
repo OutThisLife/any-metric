@@ -1,5 +1,5 @@
 import { numFormat } from '@/lib/utils'
-import { MockResult } from '@/server/schema/types'
+import { Product } from '@/server/schema/types'
 import { compose, setDisplayName } from 'recompose'
 
 import { Text } from '../../style'
@@ -9,17 +9,15 @@ import Price from './style'
 export default compose<PriceProps, PriceProps>(setDisplayName('col-price'))(
   ({ children, item = {} }) => (
     <Price name="price">
-      {!('id' in item) ? (
+      {!('_id' in item) ? (
         children
       ) : (
         <>
-          <Text
-            as="div"
-            className={parseInt(item.price, 10) % 2 ? 'up' : 'down'}>
-            {numFormat(parseFloat(item.price))}
+          <Text as="div" className={item.price % 2 ? 'up' : 'down'}>
+            {numFormat(item.price)}
           </Text>
 
-          <Text as="div">S: {numFormat(parseFloat(item.shipping))}</Text>
+          <Text as="div">S: {numFormat(item.shipping)}</Text>
         </>
       )}
     </Price>
@@ -27,5 +25,5 @@ export default compose<PriceProps, PriceProps>(setDisplayName('col-price'))(
 )
 
 export interface PriceProps extends ColumnProps {
-  item?: MockResult
+  item?: Product
 }

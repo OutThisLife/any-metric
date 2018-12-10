@@ -2,7 +2,7 @@ import Dropdown from '@/components/Dropdown'
 import Tag from '@/components/Tag'
 import { getTags } from '@/lib/queries'
 import { CategoryItem } from '@/lib/utils'
-import { MockResult } from '@/server/schema/types'
+import { Product } from '@/server/schema/types'
 import { FaEmptySet } from 'react-icons/fa'
 import { MdLabelOutline } from 'react-icons/md'
 import { Box, Flex } from 'rebass'
@@ -78,7 +78,7 @@ export default compose<TagState & TagProps & TagHandlers, TagProps>(
     tags
   }) => (
     <Tags name="tags" p={0} disableSort tabIndex={1} onBlur={handleBlur}>
-      {!('id' in item) ? (
+      {!('_id' in item) ? (
         children
       ) : (
         <Flex
@@ -140,13 +140,13 @@ export default compose<TagState & TagProps & TagHandlers, TagProps>(
 )
 
 interface TagState {
-  tags?: MockResult['tags']
+  tags?: Product['tags']
   handleBlur?: React.FocusEventHandler<HTMLElement>
   handleToggle?: (e: React.SyntheticEvent, t: string, b: boolean) => void
 }
 
 interface TagProps extends ColumnProps {
-  item?: MockResult
+  item?: Product
   initialTags?: CategoryItem[]
 }
 

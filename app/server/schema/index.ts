@@ -3,6 +3,7 @@ import { RedisCache } from 'apollo-server-redis'
 import * as express from 'express'
 import { IResolvers } from 'graphql-tools'
 import * as LRU from 'lru-cache'
+import * as mongoose from 'mongoose'
 
 import * as Mutation from './mutations'
 import * as Query from './queries'
@@ -56,6 +57,23 @@ module.exports = ({
     } catch (err) {
       console.log('Could not start up redis')
       console.error(err)
+      process.exit(1)
+    }
+  }
+
+  if (process.env.MONGO_URL) {
+    try {
+      ;(mongoose as any).Promise = global.Promise
+      mongoose.connect(
+        process.env.MONGO_URL,
+        {
+          useNewUrlParser: true
+        }
+      )
+    } catch (err) {
+      console.log('Could not start up redis')
+      console.error(err)
+      process.exit(1)
     }
   }
 

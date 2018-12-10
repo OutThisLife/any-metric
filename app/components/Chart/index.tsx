@@ -1,5 +1,5 @@
 import Modal from '@/components/Modal'
-import { MockResult } from '@/server/schema/types'
+import { Product } from '@/server/schema/types'
 import * as d3 from 'd3'
 import { MdFullscreen } from 'react-icons/md'
 import { MeasuredComponentProps, withContentRect } from 'react-measure'
@@ -87,7 +87,7 @@ export interface ChartProps extends Partial<MeasuredComponentProps> {
 }
 
 export interface ChartCVProps {
-  data: MockResult[]
+  data: Product[]
   ratio?: number
   width: number
   height: number

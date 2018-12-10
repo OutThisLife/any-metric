@@ -1,8 +1,8 @@
 import Categories from '@/components/Categories'
 import Chart, { Loader } from '@/components/Chart'
 import Table from '@/components/Table'
-import { getmockData } from '@/lib/queries'
-import { MockResult } from '@/server/schema/types'
+import { getProducts } from '@/lib/queries'
+import { Product } from '@/server/schema/types'
 import { siteName } from '@/theme'
 import { orderBy } from 'lodash'
 import Head from 'next/head'
@@ -23,7 +23,7 @@ import worker, { isWorkerReady } from './worker'
 
 export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
   setDisplayName('dashboard'),
-  getmockData(),
+  getProducts(),
   withStateHandlers<HomeState, HomeStateHandlers, HomeState>(
     ({ results = [] }) => ({
       renderedData: results,
@@ -43,7 +43,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
       }) => ({ filter: { value, action } }),
 
       updateRendered: (_, { results }) => (
-        renderedData: MockResult[] = results
+        renderedData: Product[] = results
       ) => ({
         renderedData
       }),
@@ -173,8 +173,8 @@ interface HomeProps extends BoxProps {
 }
 
 export interface HomeState {
-  results?: MockResult[]
-  renderedData: MockResult[]
+  results?: Product[]
+  renderedData: Product[]
 
   sort: {
     name?: string

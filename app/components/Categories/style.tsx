@@ -28,7 +28,7 @@ export default styled<any>(Box)`
       align-items: center;
       justify-content: space-between;
       position: relative;
-      padding: calc(var(--pad) / 2);
+      padding: calc(var(--pad) / 4) calc(var(--pad) / 2);
       outline: 1px solid transparent;
       outline-offset: -2px;
       transition: ${theme.eases.base};

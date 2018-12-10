@@ -5,6 +5,7 @@ import {
   compose,
   defaultProps,
   setDisplayName,
+  shouldUpdate,
   withHandlers,
   withState
 } from 'recompose'
@@ -20,6 +21,24 @@ export default compose<DropdownState & DropdownProps, DropdownProps>(
     onClick: () => null
   }),
   withState('isOpen', 'toggle', ({ isShown }) => isShown),
+  shouldUpdate<DropdownProps & DropdownState>((p, np) => {
+    if (!('browser' in process || p.isOpen === np.isOpen)) {
+      return false
+    }
+
+    const el = document.querySelector('.dropdown')
+
+    if (+p.isOpen ^ +np.isOpen && el instanceof HTMLElement) {
+      el.classList.add('anim-out')
+      el.addEventListener('animationend', () => np.toggle(false), {
+        once: true
+      })
+
+      return false
+    }
+
+    return true
+  }),
   withHandlers<DropdownState & DropdownProps, DropdownState>(({ toggle }) => {
     const closeHandle = ({ keyCode }) => keyCode === 27 && toggle(false)
 

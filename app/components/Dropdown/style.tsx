@@ -1,21 +1,10 @@
+import { animIn, animOut } from '@/pages/_app.styles'
 import { BaphoTheme } from '@/theme'
 import { darken, lighten, rgba } from 'polished'
 import { Box } from 'rebass'
 import styled, { css } from 'styled-components'
 
 import { DropdownProps } from '.'
-
-export const reverse = (dir: DropdownProps['direction']) => {
-  if (dir === 'top') {
-    return 'bottom'
-  } else if (dir === 'right') {
-    return 'left'
-  } else if (dir === 'bottom') {
-    return 'top'
-  }
-
-  return 'right'
-}
 
 export default styled<any>(Box)`
   ${({ direction: dir, theme }: BaphoTheme & Partial<DropdownProps>) => css`
@@ -24,36 +13,16 @@ export default styled<any>(Box)`
     position: absolute;
     width: auto;
     white-space: nowrap;
+    animation: ${animIn} 0.15s ${theme.eases.easing} forwards;
 
-    ${dir === 'top' &&
-      css`
-        left: 50%;
-        bottom: 100%;
-        padding-bottom: 1em;
-        transform: translate(-50%, 0);
-      `};
+    ${dir === 'top' && 'transform-origin: center bottom'};
+    ${dir === 'right' && 'transform-origin: left center'};
+    ${dir === 'bottom' && 'transform-origin: center top'};
+    ${dir === 'left' && 'transform-origin: right center'};
 
-    ${dir === 'right' &&
-      css`
-        top: 0;
-        left: 100%;
-        padding-left: 1em;
-      `};
-
-    ${dir === 'bottom' &&
-      css`
-        top: 100%;
-        left: 50%;
-        padding-top: 1em;
-        transform: translate(-50%, 0);
-      `};
-
-    ${dir === 'left' &&
-      css`
-        top: 0;
-        right: 100%;
-        padding-right: 1em;
-      `};
+    &.anim-out {
+      animation-name: ${animOut};
+    }
 
     > div {
       padding: 1px;

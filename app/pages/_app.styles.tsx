@@ -201,19 +201,19 @@ export const Main = styled<any>(Box)`
 `
 
 export const fadeIn = keyframes`
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  from { opacity: 0; }
+  to { opacity: 1; }
 `
 
 export const fadeOut = keyframes`
-  100% { opacity: 0; }
+  to { opacity: 0; }
 `
 
 export const animIn = keyframes`
-  0% { opacity: 0; transform: scale(0.98); }
-  100% { opacity: 1; transform: none }
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: none }
 `
 
 export const animOut = keyframes`
-  100% { opacity: 0; transform: scale(0.98); }
+  to { opacity: 0; transform: scale(0.98); }
 `

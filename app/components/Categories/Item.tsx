@@ -8,12 +8,12 @@ import { compose, setDisplayName } from 'recompose'
 export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
   setDisplayName('category-item'),
   withTagColour()
-)(({ tagColours, title, total, handleDelete }) => (
+)(({ tagColours, title: t, total, handleDelete }) => (
   <Text
     as="li"
-    key={title}
+    key={t}
     className="row"
-    data-tag={title}
+    data-tag={t}
     css={`
       a[href] {
         color: ${tagColours.colour};
@@ -42,14 +42,8 @@ export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
     <a href="javascript:;" tabIndex={-1}>
       <label>{total}</label>
       <span>
-        <span>{title}</span>
-        <i
-          className="delete"
-          onClick={() =>
-            window.confirm(
-              'Are you sure you want to delete this tag? All references will be removed.'
-            ) && handleDelete()
-          }>
+        <span>{t}</span>
+        <i className="delete" onClick={() => handleDelete(t)}>
           <MdClear size={10} />
         </i>
       </span>
@@ -58,5 +52,5 @@ export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
 ))
 
 export interface CategoryItemProps extends CategoryItem {
-  handleDelete: () => void
+  handleDelete: (t: string) => void
 }

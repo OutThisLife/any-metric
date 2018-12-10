@@ -20,6 +20,18 @@ export default compose<TableState & TableProps, TableProps>(
   setDisplayName('table'),
   withContext({ columns: array }, ({ columns }) => ({ columns })),
   withHandlers<{}, TableState>(() => ({
+    handleContextMenu: () => e => {
+      e.preventDefault()
+
+      const $row = (e.target as HTMLElement).closest('tr')
+
+      if ($row instanceof HTMLTableRowElement) {
+        const $a: HTMLLinkElement = $row.querySelector('[class*="menu-"]')
+        $a.closest('td').focus()
+        $a.click()
+      }
+    },
+
     handleScroll: () => ({ currentTarget }) => {
       const el = currentTarget.firstChild.firstChild as HTMLElement
       el.style.pointerEvents = 'none'
@@ -31,7 +43,7 @@ export default compose<TableState & TableProps, TableProps>(
       tm = d3.timeout(() => (el.style.pointerEvents = 'auto'), 300)
     }
   }))
-)(({ columns, data, handleScroll, ...props }) => (
+)(({ columns, data, handleContextMenu, handleScroll, ...props }) => (
   <Box
     css={`
       overflow: auto;
@@ -52,6 +64,7 @@ export default compose<TableState & TableProps, TableProps>(
           .map(c => (typeof c.width === 'number' ? `${c.width}px` : c.width))
           .join(' ')};
       `}
+      onContextMenu={handleContextMenu}
       {...props}>
       <Table.Head>
         <RenderColumns props={c => ({ children: c.label })} />
@@ -92,6 +105,7 @@ export const RenderColumns = compose<RenderColumnProps, RenderColumnProps>(
 
 export interface TableState extends Partial<MeasuredComponentProps> {
   handleScroll?: React.UIEventHandler<HTMLElement>
+  handleContextMenu?: React.UIEventHandler<HTMLElement>
 }
 
 export interface TableProps {

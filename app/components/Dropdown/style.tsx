@@ -1,5 +1,5 @@
 import { BaphoTheme } from '@/theme'
-import { darken, lighten, rgba, triangle } from 'polished'
+import { darken, lighten, rgba } from 'polished'
 import { Box } from 'rebass'
 import styled, { css } from 'styled-components'
 
@@ -31,11 +31,6 @@ export default styled<any>(Box)`
         bottom: 100%;
         padding-bottom: 1em;
         transform: translate(-50%, 0);
-
-        > div:before {
-          bottom: 5px;
-          left: calc(50% - 10px);
-        }
       `};
 
     ${dir === 'right' &&
@@ -43,10 +38,6 @@ export default styled<any>(Box)`
         top: 0;
         left: 100%;
         padding-left: 1em;
-
-        > div:before {
-          left: 5px;
-        }
       `};
 
     ${dir === 'bottom' &&
@@ -55,11 +46,6 @@ export default styled<any>(Box)`
         left: 50%;
         padding-top: 1em;
         transform: translate(-50%, 0);
-
-        > div:before {
-          top: 5px;
-          left: calc(50% - 10px);
-        }
       `};
 
     ${dir === 'left' &&
@@ -67,10 +53,6 @@ export default styled<any>(Box)`
         top: 0;
         right: 100%;
         padding-right: 1em;
-
-        > div:before {
-          right: 5px;
-        }
       `};
 
     > div {
@@ -78,18 +60,6 @@ export default styled<any>(Box)`
       border-radius: var(--radius);
       box-shadow: 0 3px 5px 0 ${rgba(theme.colours.panel, 0.5)};
       background: ${theme.colours.secondary};
-
-      &:before {
-        content: '';
-        position: absolute;
-
-        ${triangle({
-          pointingDirection: reverse(dir),
-          width: 8,
-          height: 8,
-          foregroundColor: theme.colours.secondary
-        })}
-      }
     }
 
     ul,
@@ -98,6 +68,15 @@ export default styled<any>(Box)`
       margin: 0;
       padding: 0;
       text-align: left;
+    }
+
+    ul {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+
+      li:first-child {
+        grid-column: 1 / -1;
+      }
     }
 
     li h5 {

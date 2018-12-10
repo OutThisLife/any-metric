@@ -23,6 +23,14 @@ export default compose<LayoutProps & BaphoTheme, LayoutProps>(
           .find((el: HTMLElement) => el !== $active)
           .focus()
       })
+
+      document.addEventListener('mousemove', ({ clientX: x, clientY: y }) =>
+        Object.defineProperty(window, 'mouse', {
+          enumerable: true,
+          writable: true,
+          value: { x, y }
+        })
+      )
     }
   })
 )(({ Component }) => (

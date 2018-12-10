@@ -40,20 +40,11 @@ export default compose<TagState & TagProps & TagHandlers, TagProps>(
       }
     }
   ),
-  withHandlers(() => ({
-    openMenu: () => e => {
-      e.preventDefault()
-      const $a = e.currentTarget.querySelector('.menu-false')
+  withHandlers<{}, TagState>(() => ({
+    handleBlur: () => ({ currentTarget: el, relatedTarget: target }) => {
+      const $a = el.querySelector('.menu-true')
 
-      if ($a instanceof HTMLElement) {
-        $a.click()
-      }
-    },
-
-    closeMenu: () => e => {
-      const $a = e.currentTarget.querySelector('.menu-true')
-
-      if ($a instanceof HTMLElement) {
+      if (!el.contains(target as HTMLElement) && $a instanceof HTMLElement) {
         $a.click()
       }
     }
@@ -61,15 +52,14 @@ export default compose<TagState & TagProps & TagHandlers, TagProps>(
 )(
   ({
     children,
+    handleBlur,
     item = {},
     initialTags = [],
     tags,
-    openMenu,
-    closeMenu,
     addTag,
     delTag
   }) => (
-    <Tags name="tags" p={0} disableSort>
+    <Tags name="tags" p={0} disableSort tabIndex={1} onBlur={handleBlur}>
       {!('id' in item) ? (
         children
       ) : (
@@ -78,8 +68,7 @@ export default compose<TagState & TagProps & TagHandlers, TagProps>(
           css={`
             display: grid;
             grid-template-columns: 25px 170px;
-          `}
-          onContextMenu={openMenu}>
+          `}>
           <Box
             css={`
               position: relative;
@@ -123,7 +112,6 @@ export default compose<TagState & TagProps & TagHandlers, TagProps>(
                   href="javascript:;"
                   tabIndex={-1}
                   className={`menu-${isOpen}`}
-                  onMouseEnter={() => toggle(!isOpen)}
                   onClick={() => toggle(!isOpen)}>
                   <MdLabelOutline size={12} />
                 </Text>
@@ -153,7 +141,8 @@ export default compose<TagState & TagProps & TagHandlers, TagProps>(
 )
 
 interface TagState {
-  tags: MockResult['tags']
+  tags?: MockResult['tags']
+  handleBlur?: React.FocusEventHandler<HTMLElement>
 }
 
 interface TagProps extends ColumnProps {

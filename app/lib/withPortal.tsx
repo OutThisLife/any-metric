@@ -1,3 +1,4 @@
+import * as d3 from 'd3'
 import { createElement } from 'react'
 import { createPortal } from 'react-dom'
 import { BoxProps } from 'rebass'
@@ -11,11 +12,7 @@ import {
   withStateHandlers
 } from 'recompose'
 
-export default <T extends { [key: string]: any }>({
-  onUpdate = () => null
-}: {
-  onUpdate?: (a?: T | PortalState, b?: T | PortalState) => boolean
-} = {}) => (Component: React.ComponentType<any>) =>
+export default () => (Component: React.ComponentType<any>) =>
   compose<PortalProps & PortalState, PortalProps & BoxProps>(
     setDisplayName('modal'),
     defaultProps({
@@ -48,8 +45,6 @@ export default <T extends { [key: string]: any }>({
         )
 
         return false
-      } else {
-        onUpdate(p, np)
       }
 
       return true
@@ -67,6 +62,75 @@ export default <T extends { [key: string]: any }>({
     </>
   ))
 
+let tm: Partial<d3.Timer> = {}
+export const positionToMouse = (
+  $parent: HTMLElement,
+  el = $parent,
+  direction: Direction
+) => {
+  if ('stop' in tm) {
+    tm.stop()
+  }
+
+  if (!($parent instanceof HTMLElement || el instanceof HTMLElement)) {
+    return
+  }
+
+  console.log($parent, el)
+
+  const draw = () => {
+    let { x, y } = (window as any).mouse
+    const { clientWidth: w, clientHeight: h } = el
+    const o = 5
+
+    switch (direction) {
+      case 'top':
+        y -= o
+        break
+
+      case 'right':
+        x += o * 2
+        y -= h / 2 + o
+        break
+
+      case 'bottom':
+        y += o
+        break
+
+      case 'left':
+        x -= o * 2
+        y -= h / 2 + o
+        break
+    }
+
+    $parent.style.zIndex = '9999'
+    $parent.style.position = 'fixed'
+
+    $parent.style.right = 'auto'
+    $parent.style.bottom = 'auto'
+
+    $parent.style.top = `${Math.min(window.innerHeight - h, Math.max(o, y))}px`
+    $parent.style.left = `${Math.min(window.innerWidth - w, Math.max(o, x))}px`
+  }
+
+  if (
+    window.getComputedStyle($parent).getPropertyValue('position') === 'fixed'
+  ) {
+    tm = d3.timer(() => {
+      if (
+        !($parent instanceof HTMLElement) ||
+        $parent.classList.contains('anim-out')
+      ) {
+        return tm.stop()
+      }
+
+      draw()
+    })
+  } else {
+    draw()
+  }
+}
+
 export interface PortalState {
   isOpen?: boolean
   toggle?: (b: boolean) => void
@@ -79,3 +143,5 @@ export interface PortalProps {
   children?: (a: PortalState) => React.ReactNode
   render?: React.SFC<PortalState>
 }
+
+export type Direction = 'top' | 'right' | 'bottom' | 'left'

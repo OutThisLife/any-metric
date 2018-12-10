@@ -16,11 +16,8 @@ const animOut = keyframes`
 
 export default styled<any>(Flex)`
   ${({ direction: dir, theme }: BaphoTheme & Partial<PopoverProps>) => css`
-    z-index: 999;
     pointer-events: none;
     position: fixed;
-    top: 0;
-    left: 0;
 
     > div {
       display: inline-block;

@@ -43,7 +43,13 @@ export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
       <label>{total}</label>
       <span>
         <span>{title}</span>
-        <i className="delete" onClick={handleDelete}>
+        <i
+          className="delete"
+          onClick={() =>
+            window.confirm(
+              'Are you sure you want to delete this tag? All references will be removed.'
+            ) && handleDelete()
+          }>
           <MdClear size={10} />
         </i>
       </span>
@@ -52,5 +58,5 @@ export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
 ))
 
 export interface CategoryItemProps extends CategoryItem {
-  handleDelete: (a: any) => void
+  handleDelete: () => void
 }

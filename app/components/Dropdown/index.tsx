@@ -20,11 +20,21 @@ export default compose<DropdownState & DropdownProps, DropdownProps>(
     onClick: () => null
   }),
   withState('isOpen', 'toggle', ({ isShown }) => isShown),
-  withHandlers<DropdownProps, DropdownState>(() => ({
-    onRef: ({ direction }) => ref =>
-      ref instanceof HTMLElement &&
-      positionToMouse(ref.closest('.dropdown') as HTMLElement, ref, direction)
-  }))
+  withHandlers<DropdownState & DropdownProps, DropdownState>(({ toggle }) => {
+    const closeHandle = ({ keyCode }) => keyCode === 27 && toggle(false)
+
+    return {
+      onRef: ({ direction }) => ref => {
+        if (!ref) {
+          document.removeEventListener('keydown', closeHandle)
+          return
+        }
+
+        document.addEventListener('keydown', closeHandle)
+        positionToMouse(ref.closest('.dropdown') as HTMLElement, ref, direction)
+      }
+    }
+  })
 )(({ onRef, children, isOpen, toggle, menu, onClick, ...props }) => (
   <>
     {children({ isOpen, toggle })}

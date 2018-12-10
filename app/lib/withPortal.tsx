@@ -12,6 +12,8 @@ import {
   withStateHandlers
 } from 'recompose'
 
+let tm: Partial<d3.Timer> = {}
+
 export default () => (Component: React.ComponentType<any>) =>
   compose<PortalProps & PortalState, PortalProps & BoxProps>(
     setDisplayName('modal'),
@@ -62,7 +64,6 @@ export default () => (Component: React.ComponentType<any>) =>
     </>
   ))
 
-let tm: Partial<d3.Timer> = {}
 export const positionToMouse = (
   $parent: HTMLElement,
   el = $parent,

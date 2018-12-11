@@ -1,12 +1,14 @@
+import { Tag } from '@/server/schema/types'
+import { BaphoTheme } from '@/theme'
 import { darken, lighten, mix, tint } from 'polished'
 import { compose, mapProps, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
 export default () =>
-  compose<TagColour & WithTagProps, WithTagProps>(
+  compose<TagColour & Tag, Tag>(
     setDisplayName('with-tag-colour'),
     withTheme,
-    mapProps<TagColour, WithTagProps>(
+    mapProps<TagColour, Tag & TagColour>(
       ({ theme, title = 'filler', ...props }) => ({
         title,
         tagColours: getTagColours(title, theme.colours.secondary),
@@ -41,13 +43,8 @@ export const getColourHash = (str: string): string => {
   return `#${rgb.map(s => s.slice(0, 2)).join('')}`
 }
 
-export interface TagColour {
+export interface TagColour extends BaphoTheme {
   tagColours: ColourHash
-}
-
-interface WithTagProps {
-  title: string
-  [key: string]: any
 }
 
 interface ColourHash {

@@ -25,5 +25,5 @@ type TagState = BaphoTheme & TagColour
 
 export interface TagProps extends BoxProps {
   as?: any
-  title: string
+  title?: string
 }

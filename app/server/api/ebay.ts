@@ -5,13 +5,13 @@ const fetch = require('isomorphic-unfetch')
 const { EBAY_APP_ID } = process.env
 
 export const getCommerce = async (
-  body: Body,
+  body: Response,
   operation: Operations = 'findItemsByKeywords'
 ): Promise<Response> => {
   try {
     const url = (() => {
       if (/^find|items$/i.test(operation)) {
-        return 'https://svcs.sandbox.ebay.com/services/search/FindingService/v1'
+        return `https://svcs.ebay.com/services/search/FindingService/v1`
       }
     })()
 
@@ -21,8 +21,7 @@ export const getCommerce = async (
       headers: {
         'X-EBAY-SOA-OPERATION-NAME': operation,
         'X-EBAY-SOA-SECURITY-APPNAME': EBAY_APP_ID,
-        'X-EBAY-SOA-REQUEST-DATA-FORMAT': 'JSON',
-        'X-EBAY-SOA-GLOBAL-ID': 'EBAY-US'
+        'X-EBAY-SOA-REQUEST-DATA-FORMAT': 'JSON'
       }
     })
 
@@ -37,12 +36,9 @@ export const getCommerce = async (
     console.log('')
     console.error('Ebay API error:')
     console.trace(err)
+    console.table(err)
     console.log('')
   }
-}
-
-interface Body {
-  [key: string]: string
 }
 
 type Operations = 'findItemsByKeywords' | 'findCompletedItems'

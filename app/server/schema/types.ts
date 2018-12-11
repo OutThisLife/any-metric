@@ -8,14 +8,12 @@ export default gql`
   scalar Date
 
   type Query {
-    theme: String
-
-    products(query: Pagination): [Product]
-    tags: [Tag]
-
+    crawl(query: CrawlInput!): CrawlResult
     ebay(keywords: String!): EbayResult
     google(keywords: String!): CrawlResult
-    crawl(query: CrawlInput!): CrawlResult
+    products(query: Pagination): [Product]
+    tags: [Tag]
+    theme: String
   }
 
   type Mutation {
@@ -30,57 +28,65 @@ export default gql`
 
   type CrawlResult @cacheControl(maxAge: 10e5) {
     _id: ID!
-    title: String
-    img: String
-    date: Date
-    url: String
-    hostname: String
-    meta: JSON
     data: JSON
+    date: Date
+    hostname: String
+    img: String
+    meta: JSON
+    title: String
+    url: String
   }
 
   type Product @cacheControl(maxAge: 10e5) {
     _id: ID!
-    createdAt: Date
-    slug: String
-    image: String
-    title: String
-    price: Int
-    shipping: Int
-    qty: Int
     bids: Int
+    createdAt: Date
+    image: String
+    price: Int
+    qty: Int
+    shipping: Int
+    slug: String
     tags: [Tag]
+    title: String
   }
 
   type EbayResult @cacheControl(maxAge: 10e5) {
-    total: String
     items: [EbayItem]
+    total: String
   }
 
   type EbayItem @cacheControl(maxAge: 10e5) {
     _id: ID!
-    title: String
-    globalId: String
-    primaryCategory: JSON
-    viewItemURL: String
-    paymentMethod: String
+    attribute: JSON
     autoPay: Boolean
-    postalCode: String
-    location: String
-    country: String
-    shippingInfo: JSON
-    sellingStatus: JSON
-    listingInfo: JSON
-    returnsAccepted: Boolean
     condition: JSON
+    country: String
+    galleryInfoContainer: JSON
+    galleryURL: String
+    globalId: String
     isMultiVariationListing: Boolean
+    listingInfo: JSON
+    location: String
+    paymentMethod: JSON
+    pictureURLSuperSize: String
+    postalCode: String
+    primaryCategory: JSON
+    returnsAccepted: Boolean
+    sellerInfo: JSON
+    sellingStatus: JSON
+    shippingInfo: JSON
+    subtitle: String
+    timestamp: Date
+    title: String
     topRatedListing: Boolean
+    unitPrice: JSON
+    viewItemURL: String
   }
 
   type Tag @cacheControl(maxAge: 10e5) {
     _id: ID!
-    title: String
     slug: String
+    title: String
     total: Int
   }
 
@@ -94,19 +100,18 @@ export default gql`
   }
 
   input ProductInput {
-    title: String
-    title: String
-    price: Int
-    shipping: Int
-    qty: Int
     bids: Int
+    price: Int
+    qty: Int
+    shipping: Int
     tags: [TagInput]
+    title: String
   }
 
   input CrawlInput {
-    url: String!
     parent: String!
     selectors: [SelectorInput]!
+    url: String!
   }
 
   input ObjectID {
@@ -120,65 +125,72 @@ export default gql`
 `
 
 export interface Product {
-  _id: string
   __typename?: string
-  createdAt: Date
-  title?: string
-  slug?: string
-  image?: string
-  tags?: Tag[]
-  price?: number
-  shipping?: number
-  qty?: number
+  _id: string
   bids?: number
+  createdAt: Date
+  image?: string
+  price?: number
+  qty?: number
+  shipping?: number
+  slug?: string
+  tags?: Tag[]
+  title?: string
 }
 
 export interface CrawlResult {
-  _id: string
   __typename?: string
-  err?: string
-  title?: string
-  img?: string
-  url?: string
-  hostname?: string
-  meta?: any
+  _id: string
   data?: any
+  err?: string
+  hostname?: string
+  img?: string
+  meta?: any
   tags?: string[]
+  title?: string
+  url?: string
 }
 
 export interface EbayResult {
   __typename?: string
-  total: number
   items: EbayItem[]
+  total: number
 }
 
 export interface EbayItem {
-  _id: string
   __typename?: string
-  itemId?: string
-  title?: string
-  globalId?: string
-  primaryCategory?: JSON
-  viewItemURL?: string
-  paymentMethod?: string
+  _id: string
+  attribute?: JSON
   autoPay?: boolean
-  postalCode?: string
-  location?: string
-  country?: string
-  shippingInfo?: JSON
-  sellingStatus?: JSON
-  listingInfo?: JSON
-  returnsAccepted?: boolean
   condition?: JSON
+  country?: string
+  galleryInfoContainer?: JSON
+  galleryURL?: string
+  globalId?: string
   isMultiVariationListing?: boolean
+  itemId?: string
+  listingInfo?: JSON
+  location?: string
+  paymentMethod?: string
+  pictureURLSuperSize?: string
+  postalCode?: string
+  primaryCategory?: JSON
+  returnsAccepted?: boolean
+  sellerInfo?: JSON
+  sellingStatus?: JSON
+  shippingInfo?: JSON
+  subtitle?: string
+  timestamp?: Date
+  title?: string
   topRatedListing?: boolean
+  viewItemURL?: string
 }
 
 export interface Tag {
-  _id: string
   __typename?: string
-  title?: string
+  _id: string
   slug?: string
+  title?: string
   total?: number
 }
 

@@ -1,4 +1,5 @@
 import Dropdown from '@/components/Dropdown'
+import Tag from '@/components/Tag'
 import { getTags, TagHandlers, TagState } from '@/lib/queries'
 import { Product } from '@/server/schema/types'
 import { FaEmptySet } from 'react-icons/fa'
@@ -9,12 +10,12 @@ import { compose, setDisplayName, withHandlers } from 'recompose'
 import { Text } from '../../style'
 import { ColumnProps } from '../Column'
 import Item from './Item'
-import Tag from './style'
+import Tags from './style'
 
-export default compose<TagLabelProps & TagLabelHandlers, TagLabelProps>(
+export default compose<TagsProps & TagsHandlers, TagsProps>(
   setDisplayName('col-menu'),
   getTags(),
-  withHandlers<TagHandlers, TagLabelHandlers>(() => ({
+  withHandlers<TagHandlers, TagsHandlers>(() => ({
     handleToggle: ({ addTag, delTag }) => (e, tag, isChecked) => {
       if (isChecked) {
         return addTag(tag)
@@ -94,7 +95,7 @@ export default compose<TagLabelProps & TagLabelHandlers, TagLabelProps>(
             padding: var(--pad) 0;
           `}>
           {tags.length ? (
-            tags.map(t => <Tag key={t} title={t} />)
+            tags.map(t => <Tag key={t._id} {...t} />)
           ) : (
             <FaEmptySet style={{ opacity: 0.5 }} />
           )}
@@ -104,11 +105,11 @@ export default compose<TagLabelProps & TagLabelHandlers, TagLabelProps>(
   </Tags>
 ))
 
-interface TagLabelHandlers {
+interface TagsHandlers {
   handleBlur?: React.FocusEventHandler<HTMLElement>
   handleToggle?: (e: React.SyntheticEvent, t: string, b: boolean) => void
 }
 
-interface TagLabelProps extends ColumnProps, TagState {
+interface TagsProps extends ColumnProps, TagState {
   item?: Product
 }

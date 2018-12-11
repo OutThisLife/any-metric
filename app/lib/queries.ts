@@ -10,62 +10,65 @@ import {
   withStateHandlers
 } from 'recompose'
 
+export const GET_PRODUCTS = gql`
+  query GetProduct($query: Pagination!) {
+    results: products(query: $query) {
+      _id
+      bids
+      createdAt
+      image
+      price
+      qty
+      shipping
+      slug
+      tags {
+        _id
+        slug
+        title
+        total
+      }
+      title
+    }
+  }
+`
+
 export const getProducts = () =>
-  graphql<{}, { results: Product[] }>(
-    gql`
-      query GetProduct($query: Pagination!) {
-        results: products(query: $query) {
-          _id
-          createdAt
-          slug
-          image
-          title
-          tags
-          price
-          shipping
-          qty
-          bids
+  graphql<{}, { results: Product[] }>(GET_PRODUCTS, {
+    options: ({ pagination }: any) => ({
+      variables: {
+        query: pagination || {
+          offset: 0,
+          limit: 25
         }
       }
-    `,
-    {
-      options: ({ pagination }: any) => ({
-        variables: {
-          query: pagination || {
-            offset: 0,
-            limit: 25
-          }
-        }
-      }),
-      props: ({ data: { results = [], ...data } }) => ({
-        data,
-        results
-      })
-    }
-  )
+    }),
+    props: ({ data: { results = [], ...data } }) => ({
+      data,
+      results
+    })
+  })
 
 // ------------------------------------------------
 
+export const GET_TAGS = gql`
+  {
+    tags {
+      _id
+      slug
+      title
+      total
+    }
+  }
+`
+
 export const getTags = () =>
   compose<TagState & TagHandlers, {}>(
-    graphql<{}, { tags: Tag[] }>(
-      gql`
-        {
-          tags {
-            _id
-            title
-            slug
-            total
-          }
-        }
-      `,
-      {
-        props: ({ data: { tags = [], ...data } }) => ({
-          data,
-          initialTags: tags
-        })
-      }
-    ),
+    graphql<{}, { tags: Tag[] }>(GET_TAGS, {
+      props: ({ data: { tags = [], ...data } }) => ({
+        data,
+        initialTags: tags
+      })
+    }),
     withStateHandlers<TagState, TagHandlers>(
       ({ initialTags = [] }: { initialTags: Tag[] }) => ({ tags: initialTags }),
       {
@@ -103,19 +106,55 @@ export interface TagHandlers extends StateHandlerMap<TagState> {
 
 // ------------------------------------------------
 
+export const GET_THEME = gql`
+  {
+    theme
+  }
+`
+
 export const getTheme = () =>
   graphql<
     {},
     { theme: string },
     DataProps<{ theme: string }>,
     ChildProps<BaphoTheme>
-  >(
-    gql`
-      {
-        theme
+  >(GET_THEME, {
+    props: ({ data: { theme } }) => ({ theme: JSON.parse(theme) })
+  })
+
+// ------------------------------------------------
+
+export const SEARCH_EBAY = gql`
+  query GetEbay($keywords: String!) {
+    ebay(keywords: $keywords) {
+      total
+      items {
+        _id
+        attribute
+        autoPay
+        condition
+        country
+        galleryInfoContainer
+        galleryURL
+        globalId
+        isMultiVariationListing
+        listingInfo
+        location
+        paymentMethod
+        pictureURLSuperSize
+        postalCode
+        primaryCategory
+        returnsAccepted
+        sellerInfo
+        sellingStatus
+        shippingInfo
+        subtitle
+        timestamp
+        title
+        topRatedListing
+        unitPrice
+        viewItemURL
       }
-    `,
-    {
-      props: ({ data: { theme } }) => ({ theme: JSON.parse(theme) })
     }
-  )
+  }
+`

@@ -5,9 +5,9 @@ import deleteTag from './deleteTag'
 import setTheme from './setTheme'
 
 export default {
-  setTheme,
-  createTag,
-  deleteTag,
   createProduct,
-  deleteProduct
+  createTag,
+  deleteProduct,
+  deleteTag,
+  setTheme
 }

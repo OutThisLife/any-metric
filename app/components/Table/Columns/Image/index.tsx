@@ -1,6 +1,7 @@
 import Popover from '@/components/Popover'
 import { positionToMouse } from '@/lib/withPortal'
 import { Product } from '@/server/schema/types'
+import { IoMdImage } from 'react-icons/io'
 import { Box } from 'rebass'
 import { compose, setDisplayName, withHandlers } from 'recompose'
 
@@ -18,7 +19,7 @@ export default compose<ImageProps, ImageProps>(
   <Image name="image" disableSort>
     {!('_id' in item) ? (
       children
-    ) : (
+    ) : item.image.length ? (
       <Popover
         id={`popover-${item._id}`}
         direction="right"
@@ -40,6 +41,8 @@ export default compose<ImageProps, ImageProps>(
           </Box>
         )}
       </Popover>
+    ) : (
+      <IoMdImage />
     )}
   </Image>
 ))

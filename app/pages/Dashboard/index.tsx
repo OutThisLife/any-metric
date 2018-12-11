@@ -25,8 +25,8 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
   setDisplayName('dashboard'),
   getProducts(),
   withStateHandlers<HomeState, HomeStateHandlers, HomeState>(
-    ({ results = [] }) => ({
-      renderedData: results,
+    ({ products = [] }) => ({
+      renderedData: products,
       sort: {
         name: 'date',
         dir: 'desc'
@@ -42,8 +42,8 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
         action = filter.action
       }) => ({ filter: { value, action } }),
 
-      updateRendered: (_, { results }) => (
-        renderedData: Product[] = results
+      updateRendered: (_, { products }) => (
+        renderedData: Product[] = products
       ) => ({
         renderedData
       }),
@@ -65,10 +65,10 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
   ),
   withPropsOnChange<any, HomeState & HomeState>(
     ['filter'],
-    ({ results, filter: { action, value } }) =>
-      isWorkerReady() && worker.postMessage([results, action, value])
+    ({ products, filter: { action, value } }) =>
+      isWorkerReady() && worker.postMessage([products, action, value])
   )
-)(({ sort, results, renderedData, updateRendered }) => {
+)(({ sort, products, renderedData, updateRendered }) => {
   if (isWorkerReady()) {
     worker.onmessage = ({ data }) => updateRendered(data)
   }
@@ -139,7 +139,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           css={`
             width: 100%;
           `}>
-          {results.length && <Categories />}
+          {products.length && <Categories />}
         </Box>
 
         <Box
@@ -173,7 +173,7 @@ interface HomeProps extends BoxProps {
 }
 
 export interface HomeState {
-  results?: Product[]
+  products?: Product[]
   renderedData: Product[]
 
   sort: {

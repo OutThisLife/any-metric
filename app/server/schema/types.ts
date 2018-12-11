@@ -6,12 +6,13 @@ import { Connection } from 'mongoose'
 export default gql`
   scalar JSON
   scalar Date
+  union T = Product | Tag
 
   type Query {
     crawl(query: CrawlInput!): CrawlResult
-    ebay(keywords: String!): EbayResult
+    ebay(keywords: String!, paginationInput: Pagination): EbayResult
     google(keywords: String!): CrawlResult
-    products(query: Pagination): [Product]
+    products(paginationInput: Pagination): [Product]
     tags: [Tag]
     theme: String
   }
@@ -20,10 +21,52 @@ export default gql`
     setTheme(theme: String!): String
 
     createTag(input: TagInput): Tag
-    deleteTag(input: ObjectID!): Boolean
-
     createProduct(input: ProductInput): Product
-    deleteProduct(input: ObjectID!): Boolean
+
+    remove(objectId: ID!, collectionName: String!): MongoResult
+    modify(objectId: ID!, collectionName: String!, input: JSON): T
+  }
+
+  type MongoResult {
+    ok: Int
+    n: Int
+  }
+
+  type Product @cacheControl(maxAge: 10e5) {
+    bids: Int
+    image: String
+    price: Int
+    qty: Int
+    shipping: Int
+    slug: String
+    tags: [Tag]
+    title: String
+    url: String
+  }
+
+  type Tag @cacheControl(maxAge: 10e5) {
+    isQuery: Boolean
+    slug: String
+    title: String
+    total: Int
+  }
+
+  extend type Product {
+    _id: ID!
+    createdAt: Date
+    deletedAt: Date
+    isDeleted: Boolean
+    restoredAt: Date
+    updatedAt: Date
+  }
+
+  extend type Tag {
+    _id: ID!
+    createdAt: Date
+    deletedAt: Date
+    isDeleted: Boolean
+    restoredAt: Date
+    updatedAt: Date
   }
 
   type CrawlResult @cacheControl(maxAge: 10e5) {
@@ -35,19 +78,6 @@ export default gql`
     meta: JSON
     title: String
     url: String
-  }
-
-  type Product @cacheControl(maxAge: 10e5) {
-    _id: ID!
-    bids: Int
-    createdAt: Date
-    image: String
-    price: Int
-    qty: Int
-    shipping: Int
-    slug: String
-    tags: [Tag]
-    title: String
   }
 
   type EbayResult @cacheControl(maxAge: 10e5) {
@@ -65,12 +95,14 @@ export default gql`
     galleryURL: String
     globalId: String
     isMultiVariationListing: Boolean
+    itemId: String
     listingInfo: JSON
     location: String
     paymentMethod: JSON
     pictureURLSuperSize: String
     postalCode: String
     primaryCategory: JSON
+    productId: String
     returnsAccepted: Boolean
     sellerInfo: JSON
     sellingStatus: JSON
@@ -83,29 +115,22 @@ export default gql`
     viewItemURL: String
   }
 
-  type Tag @cacheControl(maxAge: 10e5) {
-    _id: ID!
-    slug: String
-    title: String
-    total: Int
-  }
-
   input SelectorInput {
     key: String!
     selector: String!
   }
 
   input TagInput {
-    tag: String!
+    title: String
+    total: Int
+    isQuery: Boolean
   }
 
   input ProductInput {
-    bids: Int
-    price: Int
-    qty: Int
-    shipping: Int
-    tags: [TagInput]
     title: String
+    url: String
+    tags: [ID]
+    bids: Int
   }
 
   input CrawlInput {
@@ -114,39 +139,53 @@ export default gql`
     url: String!
   }
 
-  input ObjectID {
-    id: ID!
-  }
-
   input Pagination {
-    offset: Int
-    limit: Int
+    pageNumber: Int
+    entriesPerPage: Int
   }
 `
 
-export interface Product {
-  __typename?: string
-  _id: string
+export interface Product extends MongoEntry {
   bids?: number
-  createdAt: Date
   image?: string
   price?: number
   qty?: number
   shipping?: number
   slug?: string
-  tags?: Tag[]
+  tags?: Array<Tag['_id']> | Tag[]
   title?: string
+  url?: string
+}
+
+export interface Tag extends MongoEntry {
+  isQuery?: boolean
+  slug?: string
+  title?: string
+  total?: number
+}
+
+export interface Context {
+  cache: KeyValueCache
+  mongo?: Connection
+}
+
+interface MongoEntry {
+  __typename?: string
+  _id: string
+  createdAt?: Date
+  deletedAt?: Date
+  isDeleted?: boolean
+  updatedAt?: Date
 }
 
 export interface CrawlResult {
   __typename?: string
   _id: string
-  data?: any
-  err?: string
+  data?: JSON | any
+  date?: Date
   hostname?: string
   img?: string
-  meta?: any
-  tags?: string[]
+  meta?: JSON | any
   title?: string
   url?: string
 }
@@ -160,43 +199,31 @@ export interface EbayResult {
 export interface EbayItem {
   __typename?: string
   _id: string
-  attribute?: JSON
+  attribute?: any
   autoPay?: boolean
-  condition?: JSON
+  condition?: any
   country?: string
-  galleryInfoContainer?: JSON
+  galleryInfoContainer?: any
   galleryURL?: string
   globalId?: string
   isMultiVariationListing?: boolean
   itemId?: string
-  listingInfo?: JSON
+  listingInfo?: any
   location?: string
   paymentMethod?: string
   pictureURLSuperSize?: string
   postalCode?: string
-  primaryCategory?: JSON
+  primaryCategory?: any
+  productId?: string
   returnsAccepted?: boolean
-  sellerInfo?: JSON
-  sellingStatus?: JSON
-  shippingInfo?: JSON
+  sellerInfo?: any
+  sellingStatus?: any
+  shippingInfo?: any
   subtitle?: string
   timestamp?: Date
   title?: string
   topRatedListing?: boolean
   viewItemURL?: string
-}
-
-export interface Tag {
-  __typename?: string
-  _id: string
-  slug?: string
-  title?: string
-  total?: number
-}
-
-export interface Context {
-  cache: KeyValueCache
-  mongo?: Connection
 }
 
 export type Resolver = IFieldResolver<any, Context>

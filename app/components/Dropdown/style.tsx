@@ -75,12 +75,11 @@ export default styled<any>(Box)`
       }
 
       svg {
-        flex: 0.3;
         max-width: none;
         vertical-align: middle;
 
         + span {
-          flex: 2;
+          flex: 1;
           padding-left: 0.3em;
         }
       }

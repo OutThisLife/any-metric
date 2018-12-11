@@ -76,13 +76,6 @@ export default compose<TableState & TableProps, TableProps>(
             <RenderColumns props={() => ({ item: d })} />
           </Table.Row>
         ))}
-
-        <tr>
-          <td
-            colSpan={columns.length}
-            style={{ height: 'calc(var(--offset) * 1.5)' }}
-          />
-        </tr>
       </Table.Body>
     </Table.Container>
   </Box>

@@ -1,24 +1,23 @@
-import { Resolver } from '../types'
+import { Product, Resolver } from '../types'
 
-export default (async (_, { input = { title: '' } }, { mongo }) => {
+export default (async (
+  _,
+  { input }: { input: Product },
+  { mongo }
+): Promise<Product> => {
   const col = await mongo.collection('products')
-
-  const values = Object.assign(input, {
+  const { insertedId } = await col.insertOne({
+    bids: 0,
     createdAt: new Date(),
     image: '',
-    tags: [],
+    isQuery: false,
     price: 0,
-    shipping: 0,
     qty: 0,
-    bids: 0
+    shipping: 0,
+    tags: [],
+    url: '',
+    ...input
   })
 
-  const cur = await col.findOne({ title: input.title })
-
-  if (cur && '_id' in cur) {
-    return cur
-  }
-
-  const res = await col.insertOne(values)
-  return res.ops[0]
+  return col.findOne<Product>({ _id: insertedId })
 }) as Resolver

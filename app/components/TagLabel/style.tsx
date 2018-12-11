@@ -30,6 +30,7 @@ export default styled<any>(Box)`
   border: 1px solid transparent;
   border-radius: var(--radius);
   white-space: nowrap;
+  text-transform: capitalize;
   overflow: hidden;
   animation: ${animIn} 0.2s ${timingFunctions('easeOutQuad')} forwards;
 

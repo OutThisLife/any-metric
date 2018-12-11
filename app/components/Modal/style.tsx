@@ -29,7 +29,7 @@ export default styled<any>(Flex)`
     }
 
     &.anim-out > a {
-      animation: ${fadeOut} ${theme.eases.base} forwards;
+      animation-name: ${fadeOut};
     }
 
     > div {

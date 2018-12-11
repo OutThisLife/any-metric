@@ -1,13 +1,23 @@
+import { ObjectID } from 'bson'
+import * as mongoose from 'mongoose'
+
 import createProduct from './createProduct'
 import createTag from './createTag'
-import deleteProduct from './deleteProduct'
-import deleteTag from './deleteTag'
+import modify from './modify'
+import remove from './remove'
 import setTheme from './setTheme'
+
+export const convertId = (id: string) => ({
+  _id: new mongoose.mongo.ObjectID(id)
+})
+
+export const convertIds = (ids: string[]): ObjectID[] =>
+  ids.map(t => new mongoose.mongo.ObjectID(t))
 
 export default {
   createProduct,
   createTag,
-  deleteProduct,
-  deleteTag,
+  modify,
+  remove,
   setTheme
 }

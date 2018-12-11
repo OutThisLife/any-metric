@@ -15,7 +15,8 @@ export default styled<any>('div')`
     width: 100%;
     border-radius: var(--radius);
 
-    &:focus-within {
+    &:focus-within,
+    &.focused {
       --colour: ${theme.colours.focus};
 
       input {

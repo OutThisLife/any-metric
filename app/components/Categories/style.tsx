@@ -17,7 +17,11 @@ export default styled<any>(Box)`
 
     > form {
       grid-column: 1 / -1;
-      margin: 0 0 calc(var(--pad) / 2);
+      margin: calc(var(--pad) / 2) 0;
+
+      &:first-child {
+        margin-top: 0;
+      }
     }
 
     > li a[href] {
@@ -44,6 +48,7 @@ export default styled<any>(Box)`
         line-height: 1;
         padding: 2px 4px;
         font-size: 0.85rem;
+        text-transform: capitalize;
         text-align: center;
         border: 1px solid transparent;
         border-radius: var(--radius);

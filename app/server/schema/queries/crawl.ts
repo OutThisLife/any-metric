@@ -1,4 +1,4 @@
-import * as md5 from 'md5'
+import * as mongoose from 'mongoose'
 import { parse } from 'url'
 
 import { getPage } from '../../api'
@@ -37,7 +37,6 @@ const c = async (
 
   return new Promise<CrawlResult>(resolve =>
     page.run(async () => {
-      const id = md5(`${url}${JSON.stringify(selectors)}`)
       const { hostname } = parse(url)
 
       const title = await page.title()
@@ -64,7 +63,14 @@ const c = async (
         }, Promise.resolve({}))
       }
 
-      resolve({ _id: id, hostname, url, title, meta, data })
+      resolve({
+        _id: new mongoose.mongo.ObjectID(url).toHexString(),
+        hostname,
+        url,
+        title,
+        meta,
+        data
+      })
     })
   )
 }

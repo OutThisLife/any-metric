@@ -8,13 +8,11 @@ export default () =>
   compose<TagColour & Tag, Tag>(
     setDisplayName('with-tag-colour'),
     withTheme,
-    mapProps<TagColour, Tag & TagColour>(
-      ({ theme, title = 'filler', ...props }) => ({
-        title,
-        tagColours: getTagColours(title, theme.colours.secondary),
-        ...props
-      })
-    )
+    mapProps<TagColour, Tag & TagColour>(({ theme, title, ...props }) => ({
+      title,
+      tagColours: getTagColours(title, theme.colours.secondary),
+      ...props
+    }))
   )
 
 export const getTagColours = (str: string, secondary: string): ColourHash => {

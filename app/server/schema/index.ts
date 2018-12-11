@@ -1,6 +1,4 @@
-import { KeyValueCache } from 'apollo-server-core'
 import { ApolloServer, Config } from 'apollo-server-express'
-import { RedisCache } from 'apollo-server-redis'
 import * as express from 'express'
 import * as mongoose from 'mongoose'
 
@@ -13,15 +11,7 @@ mongoose.Types.ObjectId.prototype.valueOf = function() {
   return this.toString()
 }
 
-module.exports = ({
-  app,
-  cache,
-  dev = false
-}: {
-  app: express.Express
-  cache: KeyValueCache
-  dev?: boolean
-}) => {
+module.exports = ({ app, cache, dev = false }) => {
   const options: Config & { context: Context } = {
     typeDefs,
     resolvers,
@@ -33,15 +23,6 @@ module.exports = ({
   }
 
   try {
-    if (process.env.REDIS_URL) {
-      const redis = new RedisCache({
-        url: process.env.REDIS_URL,
-        socket_keepalive: false
-      })
-
-      options.cache = redis as RedisCache['client']
-    }
-
     if (process.env.MONGO_URL) {
       ;(async () => {
         const db = await mongoose.connect(
@@ -58,9 +39,9 @@ module.exports = ({
   } catch (err) {
     console.error(err)
     process.exit(1)
-  } finally {
-    new ApolloServer(options).applyMiddleware({ app })
   }
+
+  new ApolloServer(options).applyMiddleware({ app })
 
   return router
 }

@@ -1,3 +1,4 @@
+import { Tag } from '@/server/schema/types'
 import { IoMdCheckmark } from 'react-icons/io'
 import { MdCheckBoxOutlineBlank } from 'react-icons/md'
 import { Box } from 'rebass'
@@ -35,8 +36,7 @@ interface MenuItemState {
   toggle?: (b: boolean, cb?: any) => void
 }
 
-export interface MenuItemProps {
+export interface MenuItemProps extends Tag {
   onToggle?: (e: React.SyntheticEvent, b: boolean) => void
   isChecked?: boolean
-  title: string
 }

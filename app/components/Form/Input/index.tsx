@@ -6,8 +6,8 @@ import { compose, setDisplayName } from 'recompose'
 import InputContainer, { Input } from './style'
 
 export default compose<InputProps, InputProps>(setDisplayName('input'))(
-  ({ icon, ...props }) => (
-    <InputContainer>
+  ({ icon, isFocused = false, ...props }) => (
+    <InputContainer className={isFocused ? 'focused' : ''}>
       <Input {...props} />
       {icon && createElement(icon)}
     </InputContainer>
@@ -21,6 +21,7 @@ export interface InputProps
   width?: any
   ref?: any
   icon?: IconType
+  isFocused?: boolean
 }
 
 export { Input }

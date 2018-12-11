@@ -26,7 +26,6 @@ export default (async (_, args = {}): Promise<EbayResult> => {
       }
 
       item._id = item.itemId
-      delete item.itemId
 
       return item
     })

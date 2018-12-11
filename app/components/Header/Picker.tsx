@@ -1,7 +1,6 @@
 import * as Form from '@/components/Form'
-import { getTheme } from '@/lib/queries'
+import { GET_THEME, getTheme, SET_THEME } from '@/lib/queries'
 import { BaphoTheme, createTheme } from '@/theme'
-import gql from 'graphql-tag'
 import { graphql, MutateProps } from 'react-apollo'
 import { CirclePicker, ColorChangeHandler } from 'react-color'
 import { IoMdCheckmark, IoMdClose, IoMdThermometer } from 'react-icons/io'
@@ -14,36 +13,13 @@ export default compose<PickerProps & PickerState & BaphoTheme, {}>(
   setDisplayName('theme-picker'),
   withState('isOpen', 'toggle', false),
   getTheme(),
-  graphql(
-    gql`
-      mutation setTheme($theme: String!) {
-        setTheme(theme: $theme) {
-          __typename
-          value
-        }
-      }
-    `
-  ),
+  graphql(SET_THEME),
   withHandlers<PickerProps, PickerState>(() => ({
-    onRef: () => ref => {
-      if (!(ref || ref instanceof HTMLElement)) {
-        return
-      }
-
-      ;[].slice
-        .call(ref.querySelectorAll('[tabindex]'))
-        .forEach((el: HTMLElement) => el.setAttribute('tabindex', '-1'))
-    },
-
     setTheme: ({ mutate }) => value => {
       try {
-        const theme = (() => {
-          if (typeof value === 'string') {
-            return JSON.stringify(JSON.parse(value))
-          }
-
-          return JSON.stringify(value)
-        })()
+        const theme = JSON.stringify(
+          typeof value !== 'string' ? value : JSON.parse(value)
+        )
 
         mutate({
           variables: { theme },
@@ -51,26 +27,33 @@ export default compose<PickerProps & PickerState & BaphoTheme, {}>(
             __typename: 'Mutation',
             setTheme: theme
           },
-          update: (proxy, { data: { setTheme } }) =>
+          update: proxy =>
             proxy.writeQuery({
-              query: gql`
-                {
-                  theme
-                }
-              `,
-              data: { theme: setTheme }
+              query: GET_THEME,
+              data: { theme }
             })
         })
       } catch (err) {
-        // noop
+        console.error(err)
       }
     }
   }))
-)(({ onRef, isOpen, toggle, theme: currentTheme, setTheme }) => (
+)(({ isOpen, toggle, theme: currentTheme, setTheme }) => (
   <Picker as="div">
-    <div ref={onRef} className="circle-picker">
+    <div className="circle-picker">
       <CirclePicker
         width="224px"
+        colors={[
+          '#6236BA',
+          '#CB24A0',
+          '#FF467B',
+          '#FF825A',
+          '#FFBF4F',
+          '#F9F871',
+          '#0096DC',
+          '#12819F',
+          '#64BAA9'
+        ]}
         circleSize={6}
         circleSpacing={6}
         onSwatchHover={({ hex }: any) => setTheme(createTheme(hex))}
@@ -121,5 +104,4 @@ export interface PickerState {
 
 export interface PickerProps extends MutateProps, BoxProps {
   onChange?: ColorChangeHandler
-  onRef?: (ref: any) => void
 }

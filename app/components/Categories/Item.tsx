@@ -43,14 +43,17 @@ export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
       <label>{total}</label>
       <span>
         <span>{t}</span>
-        <i className="delete" onClick={handleDelete}>
-          <MdClear size={10} />
-        </i>
+
+        {typeof handleDelete === 'function' && (
+          <i className="delete" onClick={handleDelete}>
+            <MdClear size={10} />
+          </i>
+        )}
       </span>
     </a>
   </Text>
 ))
 
 export interface CategoryItemProps extends Tag {
-  handleDelete: () => void
+  handleDelete?: () => void
 }

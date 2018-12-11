@@ -1,17 +1,18 @@
-import { Resolver } from '../types'
+import { Resolver, Tag } from '../types'
 
-export default (async (_, { input: { tag: title } }, { mongo }) => {
+export default (async (
+  _,
+  { input }: { input: Tag },
+  { mongo }
+): Promise<Tag> => {
   const col = await mongo.collection('tags')
-  const cur = await col.findOne({ title })
 
-  if (cur && '_id' in cur) {
-    return cur
-  }
-
-  const res = await col.insertOne({
-    title,
-    createdAt: new Date()
+  const { insertedId } = await col.insertOne({
+    createdAt: new Date(),
+    isQuery: false,
+    total: 0,
+    ...input
   })
 
-  return res.ops[0]
+  return col.findOne<Tag>({ _id: insertedId })
 }) as Resolver

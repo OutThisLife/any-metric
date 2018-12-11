@@ -1,11 +1,17 @@
 import Dropdown from '@/components/Dropdown'
-import Tag from '@/components/Tag'
-import { getTags, TagHandlers, TagState } from '@/lib/queries'
-import { Product } from '@/server/schema/types'
+import TagLabel from '@/components/TagLabel'
+import { getTags, MODIFY_DOC, TagHandlers, TagState } from '@/lib/queries'
+import { Product, Tag } from '@/server/schema/types'
 import { FaEmptySet } from 'react-icons/fa'
 import { MdLabelOutline } from 'react-icons/md'
 import { Box, Flex } from 'rebass'
-import { compose, setDisplayName, withHandlers } from 'recompose'
+import {
+  compose,
+  setDisplayName,
+  shallowEqual,
+  shouldUpdate,
+  withHandlers
+} from 'recompose'
 
 import { Text } from '../../style'
 import { ColumnProps } from '../Column'
@@ -28,7 +34,7 @@ export default compose<TagsProps & TagsHandlers, TagsProps>(
       }
 
       ;[].slice
-        .call($td.querySelectorAll(`[aria-label="${tag}"]`))
+        .call($td.querySelectorAll(`[aria-label="${tag.slug}"]`))
         .forEach(el => {
           el.addEventListener('animationend', () => delTag(tag), { once: true })
           el.classList.add('anim-out')
@@ -42,7 +48,30 @@ export default compose<TagsProps & TagsHandlers, TagsProps>(
         $a.click()
       }
     }
-  }))
+  })),
+  shouldUpdate<TagState>(({ item = {}, client, tags }, { tags: nextTags }) => {
+    const b = shallowEqual(tags, nextTags)
+
+    if (!(b && ('browser' in process && '_id' in item))) {
+      return b
+    }
+
+    window.requestAnimationFrame(
+      async () =>
+        await client.mutate({
+          mutation: MODIFY_DOC,
+          variables: {
+            objectId: item._id,
+            collectionName: 'products',
+            input: {
+              tags: nextTags.map(t => t._id)
+            }
+          }
+        })
+    )
+
+    return b
+  })
 )(({ children, item = {}, initialTags, tags, handleToggle, handleBlur }) => (
   <Tags name="tags" p={0} disableSort tabIndex={1} onBlur={handleBlur}>
     {!('_id' in item) ? (
@@ -63,11 +92,12 @@ export default compose<TagsProps & TagsHandlers, TagsProps>(
             menu={[
               {
                 title: 'Tags',
-                items: initialTags.map(({ title: t }) => (
+                items: initialTags.map(t => (
                   <Item
-                    title={t}
-                    isChecked={tags.includes(t)}
+                    key={t._id}
+                    isChecked={tags.some(({ _id }) => t._id === _id)}
                     onToggle={(e, isChecked) => handleToggle(e, t, isChecked)}
+                    {...t}
                   />
                 ))
               }
@@ -95,7 +125,7 @@ export default compose<TagsProps & TagsHandlers, TagsProps>(
             padding: var(--pad) 0;
           `}>
           {tags.length ? (
-            tags.map(t => <Tag key={t._id} {...t} />)
+            (tags as Tag[]).map(t => <TagLabel key={t._id} {...t} />)
           ) : (
             <FaEmptySet style={{ opacity: 0.5 }} />
           )}
@@ -107,7 +137,7 @@ export default compose<TagsProps & TagsHandlers, TagsProps>(
 
 interface TagsHandlers {
   handleBlur?: React.FocusEventHandler<HTMLElement>
-  handleToggle?: (e: React.SyntheticEvent, t: string, b: boolean) => void
+  handleToggle?: (e: React.SyntheticEvent, t: Tag, b: boolean) => void
 }
 
 interface TagsProps extends ColumnProps, TagState {

@@ -10,6 +10,10 @@ export default compose<LayoutProps & BaphoTheme, LayoutProps>(
   setDisplayName('layout'),
   lifecycle({
     componentDidMount() {
+      ;[].slice
+        .call(document.querySelectorAll('[tabindex]'))
+        .forEach((el: HTMLElement) => el.setAttribute('tabindex', '-1'))
+
       document.addEventListener('keydown', e => {
         if (e.which !== 9) {
           return

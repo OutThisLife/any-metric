@@ -12,8 +12,11 @@ import { ZoomedChart } from './style'
 
 export default compose<ChartProps, ChartProps>(
   setDisplayName('price'),
-  withContentRect('bounds'),
-  branch(props => props.data.length < 10, renderComponent(() => null))
+  branch<ChartProps>(
+    ({ data = [] }) => data.length < 10,
+    renderComponent(() => null)
+  ),
+  withContentRect('bounds')
 )(({ measureRef, contentRect, ...props }) => (
   <div
     ref={measureRef}

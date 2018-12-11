@@ -43,7 +43,6 @@
     "babel-plugin-module-resolver": "^3.1.1",
     "babel-plugin-styled-components": "1.9.2",
     "body-parser": "^1.18.3",
-    "bson": "^4.0.1",
     "compression": "^1.7.3",
     "cross-env": "^5.2.0",
     "css-loader": "^1.0.1",
@@ -112,7 +111,6 @@
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.0",
-    "@types/bson": "^1.0.11",
     "@types/compression": "^0.0.36",
     "@types/d3": "^5.0.1",
     "@types/d3-array": "^1.2.4",

@@ -1,6 +1,7 @@
 import { KeyValueCache } from 'apollo-server-core'
 import gql from 'graphql-tag'
 import { IFieldResolver } from 'graphql-tools'
+import { Connection } from 'mongoose'
 
 export default gql`
   scalar JSON
@@ -8,6 +9,8 @@ export default gql`
 
   type Query {
     theme: String
+
+    tags: [Tag]
     products(query: Pagination!): [Product]
 
     ebay(keywords: String!): EbayResult
@@ -17,8 +20,9 @@ export default gql`
 
   type Mutation {
     setTheme(theme: String!): String
-    addProduct(input: KeywordInput!): Boolean
-    removeProduct(input: ProductInput!): Boolean
+
+    createTag(input: CreateTagInput!): Tag
+    deleteTag(input: FindByID!): Boolean
   }
 
   type CrawlResult @cacheControl(maxAge: 10e5) {
@@ -42,7 +46,7 @@ export default gql`
     shipping: Int
     qty: Int
     bids: Int
-    tags: [String]
+    tags: [Tag]
   }
 
   type EbayResult @cacheControl(maxAge: 10e5) {
@@ -70,16 +74,22 @@ export default gql`
     topRatedListing: Boolean
   }
 
+  type Tag {
+    _id: ID!
+    title: String
+    slug: String
+  }
+
   input Selector {
     key: String!
     selector: String!
   }
 
-  input KeywordInput {
-    keywords: String!
+  input CreateTagInput {
+    tag: String!
   }
 
-  input ProductInput {
+  input FindByID {
     id: ID!
   }
 
@@ -150,8 +160,16 @@ export interface EbayItem {
   topRatedListing?: boolean
 }
 
+export interface Tag {
+  __typename?: string
+  _id: string
+  title: string
+  slug: string
+}
+
 export interface Context {
   cache: KeyValueCache
+  mongo?: Connection
 }
 
 export type Resolver = IFieldResolver<any, Context>

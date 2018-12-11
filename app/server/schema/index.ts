@@ -1,13 +1,14 @@
+import { KeyValueCache } from 'apollo-server-core'
 import { ApolloServer, Config } from 'apollo-server-express'
 import { RedisCache } from 'apollo-server-redis'
 import * as express from 'express'
 import { IResolvers } from 'graphql-tools'
-import * as LRU from 'lru-cache'
 import * as mongoose from 'mongoose'
+import slugify from 'slugify'
 
 import * as Mutation from './mutations'
 import * as Query from './queries'
-import typeDefs, { Context } from './types'
+import typeDefs, { Context, Tag } from './types'
 
 const router = express.Router()
 
@@ -15,7 +16,11 @@ const resolvers: IResolvers<{}, Context> = {
   Query,
   Mutation,
   JSON: require('graphql-type-json'),
-  Date: require('graphql-iso-date').GraphQLDateTime
+  Date: require('graphql-iso-date').GraphQLDateTime,
+
+  Tag: {
+    slug: async ({ title }: Tag) => slugify(title)
+  }
 }
 
 module.exports = ({
@@ -24,10 +29,10 @@ module.exports = ({
   dev = false
 }: {
   app: express.Express
-  cache: LRU.Cache<any, any>
+  cache: KeyValueCache
   dev?: boolean
 }) => {
-  const options: Config = {
+  const options: Config & { context: Context } = {
     typeDefs,
     resolvers,
     context: { cache },
@@ -37,8 +42,8 @@ module.exports = ({
     cacheControl: true
   }
 
-  if (process.env.REDIS_URL) {
-    try {
+  try {
+    if (process.env.REDIS_URL) {
       const redis = new RedisCache({
         url: process.env.REDIS_URL,
         socket_keepalive: false,
@@ -53,31 +58,32 @@ module.exports = ({
         }
       })
 
-      options.cache = redis as any
-    } catch (err) {
-      console.log('Could not start up redis')
-      console.error(err)
-      process.exit(1)
+      options.cache = redis as RedisCache['client']
     }
-  }
 
-  if (process.env.MONGO_URL) {
-    try {
-      ;(mongoose as any).Promise = global.Promise
-      mongoose.connect(
-        process.env.MONGO_URL,
-        {
-          useNewUrlParser: true
+    if (process.env.MONGO_URL) {
+      ;(async () => {
+        mongoose.Types.ObjectId.prototype.valueOf = function() {
+          return this.toString()
         }
-      )
-    } catch (err) {
-      console.log('Could not start up redis')
-      console.error(err)
-      process.exit(1)
-    }
-  }
 
-  new ApolloServer(options).applyMiddleware({ app })
+        const db = await mongoose.connect(
+          process.env.MONGO_URL,
+          {
+            dbName: 'datasets',
+            useNewUrlParser: true
+          }
+        )
+
+        options.context.mongo = db.connection
+      })()
+    }
+  } catch (err) {
+    console.error(err)
+    process.exit(1)
+  } finally {
+    new ApolloServer(options).applyMiddleware({ app })
+  }
 
   return router
 }

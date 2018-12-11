@@ -8,3 +8,6 @@ export const setTheme: Resolver = async (
   await cache.set('theme', theme)
   return theme
 }
+
+export { default as createTag } from './createTag'
+export { default as deleteTag } from './deleteTag'

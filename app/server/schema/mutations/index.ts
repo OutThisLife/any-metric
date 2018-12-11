@@ -1,13 +1,13 @@
-import { Resolver } from '../types'
+import createProduct from './createProduct'
+import createTag from './createTag'
+import deleteProduct from './deleteProduct'
+import deleteTag from './deleteTag'
+import setTheme from './setTheme'
 
-export const setTheme: Resolver = async (
-  _,
-  { theme }: { theme: string },
-  { cache }
-) => {
-  await cache.set('theme', theme)
-  return theme
+export default {
+  setTheme,
+  createTag,
+  deleteTag,
+  createProduct,
+  deleteProduct
 }
-
-export { default as createTag } from './createTag'
-export { default as deleteTag } from './deleteTag'

@@ -1,8 +1,8 @@
 import * as md5 from 'md5'
 import { parse } from 'url'
 
-import { getPage } from '../../../api'
-import { CrawlResult, Resolver } from '../../types'
+import { getPage } from '../../api'
+import { CrawlResult, Resolver } from '../types'
 
 export const crawl: Resolver = async (
   _,

@@ -1,6 +1,6 @@
 import Text from '@/components/Text'
-import { CategoryItem } from '@/lib/utils'
 import withTagColour, { TagColour } from '@/lib/withTagColour'
+import { Tag } from '@/server/schema/types'
 import { lighten, rgba } from 'polished'
 import { MdClear } from 'react-icons/md'
 import { compose, setDisplayName } from 'recompose'
@@ -51,6 +51,6 @@ export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
   </Text>
 ))
 
-export interface CategoryItemProps extends CategoryItem {
+export interface CategoryItemProps extends Tag {
   handleDelete: () => void
 }

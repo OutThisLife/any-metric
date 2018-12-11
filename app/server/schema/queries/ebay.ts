@@ -1,5 +1,5 @@
-import { getCommerce } from '../../../api'
-import { EbayItem, EbayResult, Resolver } from '../../types'
+import { getCommerce } from '../../api'
+import { EbayItem, EbayResult, Resolver } from '../types'
 
 export default (async (_, args = {}): Promise<EbayResult> => {
   const {

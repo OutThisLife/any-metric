@@ -1,53 +1,19 @@
 import * as Form from '@/components/Form'
 import Module from '@/components/Module'
-import { getTags } from '@/lib/queries'
-import { CategoryItem } from '@/lib/utils'
+import { getTags, TagHandlers, TagState } from '@/lib/queries'
 import withSelections, { SelectionsProps } from '@/lib/withSelections'
+import { Tag } from '@/server/schema/types'
 import { omit, orderBy } from 'lodash'
 import { MdAddCircleOutline } from 'react-icons/md'
 import { BoxProps } from 'rebass'
-import {
-  compose,
-  mapProps,
-  setDisplayName,
-  shallowEqual,
-  StateHandler,
-  StateHandlerMap,
-  withStateHandlers
-} from 'recompose'
+import { compose, mapProps, setDisplayName } from 'recompose'
 
 import Item from './Item'
 import Categories from './style'
 
-export default compose<
-  CategoriesHandlers & CategoriesState & CategoriesProps,
-  CategoriesProps
->(
+export default compose<CategoriesProps & TagHandlers, CategoriesProps>(
   setDisplayName('categories'),
   getTags(),
-  withStateHandlers<CategoriesState, CategoriesHandlers, CategoriesProps>(
-    ({ initialTags: tags = [] }) => ({ tags }),
-    {
-      addTag: ({ tags }) => (tag: CategoryItem) => {
-        if (!tags.find(t => shallowEqual(t, tag))) {
-          tags.push(tag)
-        }
-
-        return { tags }
-      },
-
-      delTag: ({ tags }) => (tag: CategoryItem) => {
-        if (
-          window.confirm(
-            'Are you sure you want to delete this tag? All references will be lost.'
-          )
-        ) {
-          tags.splice(tags.findIndex(t => t === tag), 1)
-          return { tags }
-        }
-      }
-    }
-  ),
   withSelections(),
   mapProps(props => omit(props, ['data']))
 )(({ tags, addTag, delTag, handleDelete, handleMouse, ...props }) => (
@@ -80,17 +46,7 @@ export default compose<
   </Module>
 ))
 
-export interface CategoriesState {
-  tags?: CategoryItem[]
-}
-
-export interface CategoriesProps extends BoxProps, SelectionsProps {
+export interface CategoriesProps extends BoxProps, SelectionsProps, TagState {
   as?: any
-  initialTags?: CategoryItem[]
-  handleDelete?: (t: CategoryItem) => void
-}
-
-export interface CategoriesHandlers extends StateHandlerMap<CategoriesState> {
-  addTag: StateHandler<CategoriesState>
-  delTag: StateHandler<CategoriesState>
+  handleDelete?: (t: Tag) => void
 }

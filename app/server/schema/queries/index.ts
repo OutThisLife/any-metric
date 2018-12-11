@@ -1,15 +1,14 @@
-import defaultTheme from '../../../theme'
-import { Resolver } from '../types'
+import { crawl, google } from './crawl'
+import ebay from './ebay'
+import products from './products'
+import tags from './tags'
+import theme from './theme'
 
-export const theme: Resolver = async (_, __, { cache }) => {
-  const value = await cache.get('theme')
-
-  if (typeof value === 'string') {
-    return value
-  }
-
-  return JSON.stringify(defaultTheme)
+export default {
+  ebay,
+  products,
+  tags,
+  theme,
+  crawl,
+  google
 }
-
-export { default as products } from './products'
-export { default as ebay } from './ebay'

@@ -10,8 +10,8 @@ export default gql`
   type Query {
     theme: String
 
+    products(query: Pagination): [Product]
     tags: [Tag]
-    products(query: Pagination!): [Product]
 
     ebay(keywords: String!): EbayResult
     google(keywords: String!): CrawlResult
@@ -21,8 +21,11 @@ export default gql`
   type Mutation {
     setTheme(theme: String!): String
 
-    createTag(input: CreateTagInput!): Tag
-    deleteTag(input: FindByID!): Boolean
+    createTag(input: TagInput): Tag
+    deleteTag(input: ObjectID!): Boolean
+
+    createProduct(input: ProductInput): Product
+    deleteProduct(input: ObjectID!): Boolean
   }
 
   type CrawlResult @cacheControl(maxAge: 10e5) {
@@ -74,29 +77,40 @@ export default gql`
     topRatedListing: Boolean
   }
 
-  type Tag {
+  type Tag @cacheControl(maxAge: 10e5) {
     _id: ID!
     title: String
     slug: String
+    total: Int
   }
 
-  input Selector {
+  input SelectorInput {
     key: String!
     selector: String!
   }
 
-  input CreateTagInput {
+  input TagInput {
     tag: String!
   }
 
-  input FindByID {
-    id: ID!
+  input ProductInput {
+    title: String
+    title: String
+    price: Int
+    shipping: Int
+    qty: Int
+    bids: Int
+    tags: [TagInput]
   }
 
   input CrawlInput {
     url: String!
     parent: String!
-    selectors: [Selector]!
+    selectors: [SelectorInput]!
+  }
+
+  input ObjectID {
+    id: ID!
   }
 
   input Pagination {
@@ -106,13 +120,13 @@ export default gql`
 `
 
 export interface Product {
-  __typename?: string
   _id: string
+  __typename?: string
   createdAt: Date
+  title?: string
   slug?: string
   image?: string
-  title?: string
-  tags?: string[]
+  tags?: Tag[]
   price?: number
   shipping?: number
   qty?: number
@@ -120,15 +134,15 @@ export interface Product {
 }
 
 export interface CrawlResult {
-  __typename?: string
   _id: string
+  __typename?: string
   err?: string
   title?: string
   img?: string
   url?: string
   hostname?: string
-  meta?: JSON
-  data?: JSON
+  meta?: any
+  data?: any
   tags?: string[]
 }
 
@@ -139,8 +153,8 @@ export interface EbayResult {
 }
 
 export interface EbayItem {
-  __typename?: string
   _id: string
+  __typename?: string
   itemId?: string
   title?: string
   globalId?: string
@@ -161,10 +175,11 @@ export interface EbayItem {
 }
 
 export interface Tag {
-  __typename?: string
   _id: string
-  title: string
-  slug: string
+  __typename?: string
+  title?: string
+  slug?: string
+  total?: number
 }
 
 export interface Context {

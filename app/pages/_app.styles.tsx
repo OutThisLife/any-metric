@@ -197,6 +197,10 @@ export const Main = styled<any>(Box)`
       .hl {
         color: ${theme.colours.price.hl} !important;
       }
+
+      .dead {
+        color: ${theme.colours.muted} !important;
+      }
     }
   `}
 `

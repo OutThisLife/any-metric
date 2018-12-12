@@ -28,13 +28,15 @@ export const isOld = (date: dayjs.Dayjs | Date, h = 24): boolean => {
 export const dateAge = (date: dayjs.ConfigType): string => {
   const age = dayjs().diff(dayjs(date), 'hour', true)
 
-  if (age >= 12) {
-    return 'old'
+  if (age >= 32) {
+    return 'dead'
+  } else if (age >= 12) {
+    return 'down'
   } else if (age >= 4) {
-    return 'stale'
+    return 'hl'
   }
 
-  return 'fresh'
+  return 'up'
 }
 
 export const unixDateFormat = (date: dayjs.ConfigType): string =>

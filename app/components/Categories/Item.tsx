@@ -3,7 +3,6 @@ import { dateAge, relTime } from '@/lib/utils'
 import withTagColour, { TagColour } from '@/lib/withTagColour'
 import { Tag } from '@/server/schema/types'
 import { lighten, rgba } from 'polished'
-import { IoMdRefresh } from 'react-icons/io'
 import { MdClear } from 'react-icons/md'
 import { compose, setDisplayName } from 'recompose'
 
@@ -60,9 +59,8 @@ export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
     </a>
 
     {isQuery && (
-      <time>
+      <time title={props.updatedAt.toString()}>
         <small>{relTime(props.updatedAt)}</small>
-        <IoMdRefresh />
         <i className={dateAge(props.updatedAt)} />
       </time>
     )}

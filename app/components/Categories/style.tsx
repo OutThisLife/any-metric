@@ -1,4 +1,5 @@
 import { BaphoTheme } from '@/theme'
+import { rgba } from 'polished'
 import { Box } from 'rebass'
 import styled, { css } from 'styled-components'
 
@@ -109,13 +110,24 @@ export default styled<any>(Box)`
         width: 5px;
         height: 5px;
         border-radius: 5px;
-        background: ${theme.colours.price.up};
+        background: currentColor;
       }
 
       small {
+        cursor: pointer;
         flex: 1;
         color: ${theme.colours.label};
         font-size: 0.85rem;
+        line-height: 1;
+        border-bottom: 1px dotted ${rgba(theme.colours.label, 0.69)};
+
+        &:not(:hover) {
+          transition: ${theme.eases.base};
+        }
+
+        &:hover {
+          color: ${theme.colours.muted};
+        }
       }
     }
   `}

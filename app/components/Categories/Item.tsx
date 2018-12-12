@@ -8,7 +8,7 @@ import { compose, setDisplayName } from 'recompose'
 export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
   setDisplayName('category-item'),
   withTagColour()
-)(({ tagColours, title: t, total, handleDelete }) => (
+)(({ tagColours, title: t, total, onDelete }) => (
   <Text
     as="li"
     key={t}
@@ -44,8 +44,8 @@ export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
       <span>
         <span>{t}</span>
 
-        {typeof handleDelete === 'function' && (
-          <i className="delete" onClick={handleDelete}>
+        {typeof onDelete === 'function' && (
+          <i className="delete" onClick={onDelete}>
             <MdClear size={10} />
           </i>
         )}
@@ -55,5 +55,5 @@ export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
 ))
 
 export interface CategoryItemProps extends Tag {
-  handleDelete?: () => void
+  onDelete?: () => void
 }

@@ -10,8 +10,8 @@ export default (async (
 
   const col = await mongo.collection(collectionName)
   await col.updateOne(q, {
+    ...input,
     $set: {
-      ...input,
       updatedAt: new Date()
     }
   })

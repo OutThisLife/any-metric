@@ -1,12 +1,9 @@
-import { Product, Resolver } from '../types'
+import { Product } from '../types'
+import create from './create'
 
-export default (async (
-  _,
-  { input }: { input: Product },
-  { mongo }
-): Promise<Product> => {
-  const col = await mongo.collection('products')
-  const { insertedId } = await col.insertOne({
+export default create<Product>({
+  collectionName: 'products',
+  defaultValues: {
     bids: 0,
     createdAt: new Date(),
     image: '',
@@ -15,9 +12,6 @@ export default (async (
     qty: 0,
     shipping: 0,
     tags: [],
-    url: '',
-    ...input
-  })
-
-  return col.findOne<Product>({ _id: insertedId })
-}) as Resolver
+    url: ''
+  }
+})

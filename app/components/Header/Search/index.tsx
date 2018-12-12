@@ -13,8 +13,8 @@ import Search from './style'
 
 export default compose<SearchState & SearchHandlers, BoxProps>(
   setDisplayName('header-search'),
-  withApollo,
   withState('items', 'setItems', []),
+  withApollo,
   withHandlers<SearchState, SearchHandlers>(() => ({
     handleSubmit: ({ client, setItems }) => async ({ target }) => {
       const el = target as HTMLElement

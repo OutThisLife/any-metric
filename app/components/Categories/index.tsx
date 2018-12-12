@@ -2,16 +2,18 @@ import * as Form from '@/components/Form'
 import Module from '@/components/Module'
 import {
   CREATE_TAG,
+  GET_PRODUCTS,
+  GET_TAGS,
   getTags,
-  REMOVE_DOC,
-  TagHandlers,
-  TagState
+  REMOVE_DOC
 } from '@/lib/queries'
 import withSelections, { SelectionsProps } from '@/lib/withSelections'
+import withTags, { TagHandlers, TagState } from '@/lib/withTags'
 import { Tag } from '@/server/schema/types'
-import { omit, orderBy } from 'lodash'
+import { orderBy } from 'lodash'
+import { graphql } from 'react-apollo'
 import { BoxProps } from 'rebass'
-import { compose, mapProps, setDisplayName, withHandlers } from 'recompose'
+import { compose, setDisplayName } from 'recompose'
 
 import Item from './Item'
 import Categories from './style'
@@ -21,55 +23,50 @@ export default compose<
   CategoriesProps
 >(
   setDisplayName('categories'),
-  getTags(),
-  withSelections(),
-  mapProps<CategoriesProps, CategoriesProps>(({ tags, ...props }) => ({
-    ...omit(props, ['data']),
-    productTags: tags.filter(t => t.isQuery),
-    tags: tags.filter(t => !t.isQuery)
-  })),
-  withHandlers<CategoriesProps & TagHandlers, CategoriesHandlers>(() => ({
-    handleAdd: ({ client, addTag }) => (t: Tag) => {
-      addTag(t)
+  withTags(
+    getTags(),
+    graphql<TagHandlers, { createTag: Tag[] }, {}, CategoriesHandlers>(
+      CREATE_TAG,
+      {
+        props: ({ mutate, ownProps: { addTag, updateTag } }) => ({
+          handleAdd: async tag => {
+            addTag(tag)
 
-      window.requestAnimationFrame(
-        async () =>
-          await client.mutate({
-            mutation: CREATE_TAG,
-            variables: {
-              input: {
-                title: t.title
-              }
-            }
-          })
-      )
-    },
-
-    handleDelete: ({ client, delTag }) => (t: Tag) => {
-      if (
-        window.confirm(
-          'Are you sure you want to delete this tag? All references will be lost.'
-        )
-      ) {
-        delTag(t)
-
-        window.requestAnimationFrame(
-          async () =>
-            await client.mutate({
-              mutation: REMOVE_DOC,
-              variables: {
-                objectId: t._id,
-                collectionName: 'tags'
-              }
-            })
-        )
+            window.requestAnimationFrame(() =>
+              mutate({
+                variables: { input: { title: tag.title } },
+                refetchQueries: [{ query: GET_TAGS }],
+                update: (_, { data: { createTag } }) => updateTag(createTag)
+              })
+            )
+          }
+        })
       }
-    }
-  }))
-)(({ productTags, tags, handleAdd, handleDelete, handleMouse, ...props }) => (
+    ),
+    graphql<TagHandlers, {}, {}, CategoriesHandlers>(REMOVE_DOC, {
+      props: ({ mutate, ownProps: { delTag } }) => ({
+        handleDelete: async tag => {
+          if (!window.confirm('Are you sure? All references will be lost.')) {
+            return
+          }
+
+          delTag(tag)
+
+          window.requestAnimationFrame(() =>
+            mutate({
+              variables: { objectId: tag._id, collectionName: 'tags' },
+              refetchQueries: [{ query: GET_PRODUCTS }]
+            })
+          )
+        }
+      })
+    })
+  ),
+  withSelections()
+)(({ tags, handleAdd, handleDelete, handleMouse, ...props }) => (
   <Module>
     <Categories id="filters" onMouseDown={handleMouse} {...props}>
-      {orderBy(productTags, 'createdAt').map(t => (
+      {orderBy(tags.filter(t => t.isQuery), 'createdAt').map(t => (
         <Item key={t._id} {...t} />
       ))}
 
@@ -78,7 +75,9 @@ export default compose<
           const el = e.currentTarget.querySelector('input')
 
           handleAdd({
-            _id: Math.random().toString(),
+            _id: Math.random()
+              .toString(20)
+              .substring(3),
             title: el.value,
             total: 0
           })
@@ -89,19 +88,18 @@ export default compose<
         <Form.Input required tabIndex={-1} placeholder="Add tags" />
       </Form.Container>
 
-      {orderBy(tags, 'total', 'desc').map(t => (
-        <Item key={t._id} handleDelete={() => handleDelete(t)} {...t} />
+      {orderBy(tags.filter(t => !t.isQuery), 'total', 'desc').map(t => (
+        <Item key={t._id} onDelete={() => handleDelete(t)} {...t} />
       ))}
     </Categories>
   </Module>
 ))
 
 export interface CategoriesHandlers {
-  handleAdd: (t: Tag) => void
-  handleDelete: (t: Tag) => void
+  handleAdd?: (t: Tag) => any
+  handleDelete?: (t: Tag) => any
 }
 
 export interface CategoriesProps extends BoxProps, SelectionsProps, TagState {
   as?: any
-  productTags?: TagState['tags']
 }

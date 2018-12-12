@@ -48,7 +48,6 @@ export default styled<any>(Box)`
         line-height: 1;
         padding: 2px 4px;
         font-size: 0.85rem;
-        text-transform: capitalize;
         text-align: center;
         border: 1px solid transparent;
         border-radius: var(--radius);

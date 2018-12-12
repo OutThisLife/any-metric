@@ -34,7 +34,7 @@ export default compose<PickerProps & PickerState & BaphoTheme, {}>(
             })
         })
       } catch (err) {
-        console.error(err)
+        // noop
       }
     }
   }))

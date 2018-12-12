@@ -11,14 +11,17 @@ mongoose.Types.ObjectId.prototype.valueOf = function() {
   return this.toString()
 }
 
-module.exports = ({ app, cache, dev = false }) => {
+mongoose.set('debug', true)
+;(mongoose as any).Promise = global.Promise
+
+module.exports = ({ app, cache }) => {
   const options: Config & { context: Context } = {
     typeDefs,
     resolvers,
     context: { cache },
-    introspection: dev,
-    playground: dev,
-    tracing: dev,
+    introspection: true,
+    playground: true,
+    tracing: true,
     cacheControl: true
   }
 

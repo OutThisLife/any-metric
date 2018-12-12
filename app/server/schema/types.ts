@@ -23,7 +23,7 @@ export default gql`
     createTag(input: TagInput): Tag
     createProduct(input: ProductInput): Product
 
-    remove(objectId: ID!, collectionName: String!): MongoResult
+    remove(objectId: ID, collectionName: String!): MongoResult
     modify(objectId: ID!, collectionName: String!, input: JSON): T
   }
 
@@ -153,14 +153,12 @@ export interface Product extends MongoEntry {
   shipping?: number
   slug?: string
   tags?: Array<Tag['_id']> | Tag[]
-  title?: string
   url?: string
 }
 
 export interface Tag extends MongoEntry {
   isQuery?: boolean
   slug?: string
-  title?: string
   total?: number
 }
 
@@ -169,9 +167,10 @@ export interface Context {
   mongo?: Connection
 }
 
-interface MongoEntry {
+export interface MongoEntry {
   __typename?: string
   _id: string
+  title?: string
   createdAt?: Date
   deletedAt?: Date
   isDeleted?: boolean

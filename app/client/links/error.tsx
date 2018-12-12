@@ -7,16 +7,8 @@ const {
 
 export default () =>
   onError(({ graphQLErrors, networkError }) => {
-    if (graphQLErrors) {
-      graphQLErrors.map(
-        ({ message, locations, path }) =>
-          isDev &&
-          console.error(
-            `[GraphQL error]: Message: ${message}, Location: ${JSON.stringify(
-              locations
-            )}, Path: ${path}`
-          )
-      )
+    if (graphQLErrors && isDev) {
+      console.table(JSON.stringify(graphQLErrors, null, 2))
     }
 
     if (networkError && isDev) {

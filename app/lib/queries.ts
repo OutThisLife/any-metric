@@ -1,14 +1,7 @@
 import { Product, Tag } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
-import { ApolloClient } from 'apollo-boost'
 import gql from 'graphql-tag'
-import { ChildProps, DataProps, graphql, withApollo } from 'react-apollo'
-import {
-  compose,
-  StateHandler,
-  StateHandlerMap,
-  withStateHandlers
-} from 'recompose'
+import { ChildProps, DataProps, graphql } from 'react-apollo'
 
 const tagFragment = gql`
   fragment TagFields on Tag {
@@ -85,53 +78,14 @@ export const CREATE_TAG = gql`
   ${tagFragment}
 `
 
-export const getTags = () =>
-  compose<TagState & TagHandlers, {}>(
-    withApollo,
-    graphql<{}, { tags: Tag[] }>(GET_TAGS, {
-      props: ({ data: { tags = [], ...data } }) => ({
-        data,
-        initialTags: tags
-      })
-    }),
-    withStateHandlers<TagState, TagHandlers, TagState>(
-      props => {
-        let tags = props.initialTags
-
-        if ('item' in props) {
-          tags = props.item.tags as Tag[]
-        }
-
-        return { tags }
-      },
-      {
-        addTag: ({ tags }) => (tag: Tag) => {
-          if (!tags.some(t => t._id === tag._id)) {
-            tags.push(tag)
-          }
-
-          return { tags }
-        },
-
-        delTag: ({ tags }) => (tag: Tag) => {
-          tags.splice(tags.findIndex(t => t._id === tag._id), 1)
-          return { tags }
-        }
-      }
-    )
-  )
-
-export interface TagState {
-  tags?: Tag[]
-  item?: Product
-  initialTags?: Tag[]
-  client?: ApolloClient<{}>
-}
-
-export interface TagHandlers extends StateHandlerMap<TagState> {
-  addTag?: StateHandler<TagState>
-  delTag?: StateHandler<TagState>
-}
+export const getTags = (options = {}, key = 'tags') =>
+  graphql<{}, { tags: Tag[] }>(GET_TAGS, {
+    ...options,
+    props: ({ data: { tags = [], ...data } }) => ({
+      data,
+      [key]: tags
+    })
+  })
 
 // ------------------------------------------------
 

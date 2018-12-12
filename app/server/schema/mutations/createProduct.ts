@@ -5,7 +5,6 @@ export default create<Product>({
   collectionName: 'products',
   defaultValues: {
     bids: 0,
-    createdAt: new Date(),
     image: '',
     isQuery: false,
     price: 0,

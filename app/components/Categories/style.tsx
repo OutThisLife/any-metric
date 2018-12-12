@@ -22,6 +22,10 @@ export default styled<any>(Box)`
       &:first-child {
         margin-top: 0;
       }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
     }
 
     > li a[href] {
@@ -43,6 +47,10 @@ export default styled<any>(Box)`
         justify-content: center;
       }
 
+      &:hover {
+        transition: none;
+      }
+
       > label {
         display: inline-block;
         line-height: 1;
@@ -60,7 +68,6 @@ export default styled<any>(Box)`
         justify-content: space-between;
 
         > span {
-          font-size: 0.85rem;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -84,6 +91,31 @@ export default styled<any>(Box)`
 
       &:not(:hover) > span i {
         visibility: hidden;
+      }
+    }
+
+    time {
+      display: flex;
+      align-items: center;
+      justify-self: flex-end;
+      color: ${theme.colours.muted};
+
+      > * + * {
+        margin-left: 0.5em;
+      }
+
+      i {
+        display: block;
+        width: 5px;
+        height: 5px;
+        border-radius: 5px;
+        background: ${theme.colours.price.up};
+      }
+
+      small {
+        flex: 1;
+        color: ${theme.colours.label};
+        font-size: 0.85rem;
       }
     }
   `}

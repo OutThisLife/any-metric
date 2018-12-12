@@ -14,20 +14,6 @@ export default compose<LayoutProps & BaphoTheme, LayoutProps>(
         .call(document.querySelectorAll('[tabindex]'))
         .forEach((el: HTMLElement) => el.setAttribute('tabindex', '-1'))
 
-      document.addEventListener('keydown', e => {
-        if (e.which !== 9) {
-          return
-        }
-
-        e.preventDefault()
-
-        const $active = document.activeElement
-        ;[].slice
-          .call(document.querySelectorAll('input'))
-          .find((el: HTMLElement) => el !== $active)
-          .focus()
-      })
-
       document.addEventListener('mousemove', ({ clientX: x, clientY: y }) =>
         Object.defineProperty(window, 'mouse', {
           enumerable: true,

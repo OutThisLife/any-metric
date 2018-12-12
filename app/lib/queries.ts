@@ -8,6 +8,7 @@ const tagFragment = gql`
     _id
     createdAt
     deletedAt
+    isDeleted
     isQuery
     restoredAt
     slug
@@ -27,6 +28,7 @@ const productFragment = gql`
     createdAt
     deletedAt
     image
+    isDeleted
     price
     qty
     restoredAt

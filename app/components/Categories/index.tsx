@@ -34,8 +34,8 @@ export default compose<
 
             window.requestAnimationFrame(() =>
               mutate({
-                variables: { input: { title: tag.title } },
                 refetchQueries: [{ query: GET_TAGS }],
+                variables: { input: { title: tag.title } },
                 update: (_, { data: { createTag } }) => updateTag(createTag)
               })
             )
@@ -54,8 +54,8 @@ export default compose<
 
           window.requestAnimationFrame(() =>
             mutate({
-              variables: { objectId: tag._id, collectionName: 'tags' },
-              refetchQueries: [{ query: GET_PRODUCTS }]
+              refetchQueries: [{ query: GET_TAGS }, { query: GET_PRODUCTS }],
+              variables: { objectId: tag._id, collectionName: 'tags' }
             })
           )
         }
@@ -66,10 +66,6 @@ export default compose<
 )(({ tags, handleAdd, handleDelete, handleMouse, ...props }) => (
   <Module>
     <Categories id="filters" onMouseDown={handleMouse} {...props}>
-      {orderBy(tags.filter(t => t.isQuery), 'createdAt').map(t => (
-        <Item key={t._id} {...t} />
-      ))}
-
       <Form.Container
         onSubmit={e => {
           const el = e.currentTarget.querySelector('input')
@@ -88,7 +84,7 @@ export default compose<
         <Form.Input required tabIndex={-1} placeholder="Add tags" />
       </Form.Container>
 
-      {orderBy(tags.filter(t => !t.isQuery), 'total', 'desc').map(t => (
+      {orderBy(tags, ['isQuery', 'total'], ['desc', 'desc']).map(t => (
         <Item key={t._id} onDelete={() => handleDelete(t)} {...t} />
       ))}
     </Categories>

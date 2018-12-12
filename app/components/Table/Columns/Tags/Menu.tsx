@@ -15,8 +15,7 @@ export default compose<TagsMenuProps & TagState, TagsMenuProps>(
   getTags({}, 'initialTags'),
   graphql<TagsMenuProps & TagHandlers, {}, {}, TagsMenuProps>(MODIFY_DOC, {
     props: ({ mutate, ownProps: { item, addTag, delTag } }) => ({
-      handleToggle: (e, isChecked, tag) => {
-        console.log(e, isChecked, tag)
+      handleToggle: (isChecked, tag) => {
         if (isChecked) {
           addTag(tag)
         } else {
@@ -37,6 +36,7 @@ export default compose<TagsMenuProps & TagState, TagsMenuProps>(
 
         window.requestAnimationFrame(() =>
           mutate({
+            refetchQueries: [{ query: GET_PRODUCTS }],
             variables: {
               objectId: item._id,
               collectionName: 'products',
@@ -47,8 +47,7 @@ export default compose<TagsMenuProps & TagState, TagsMenuProps>(
                   }
                 })
               )
-            },
-            refetchQueries: [{ query: GET_PRODUCTS }]
+            }
           })
         )
       }
@@ -85,5 +84,5 @@ export default compose<TagsMenuProps & TagState, TagsMenuProps>(
 
 export interface TagsMenuProps extends ColumnProps {
   initialTags?: Tag[]
-  handleToggle?: (e: React.SyntheticEvent, b: boolean, t: Tag) => any
+  handleToggle?: (b: boolean, t: Tag) => any
 }

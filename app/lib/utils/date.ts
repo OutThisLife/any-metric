@@ -17,9 +17,24 @@ export const dateFormat = (date: dayjs.ConfigType): string => {
   return d.format('MMM DD, YY')
 }
 
+export const relTime = (date: dayjs.ConfigType): string =>
+  (dayjs(date) as any).fromNow()
+
 export const isOld = (date: dayjs.Dayjs | Date, h = 24): boolean => {
   const d = dayjs(date instanceof Date ? dayjs(date) : date)
   return dayjs().diff(d, 'hour', true) > h
+}
+
+export const dateAge = (date: dayjs.ConfigType): string => {
+  const age = dayjs().diff(dayjs(date), 'hour', true)
+
+  if (age >= 12) {
+    return 'old'
+  } else if (age >= 4) {
+    return 'stale'
+  }
+
+  return 'fresh'
 }
 
 export const unixDateFormat = (date: dayjs.ConfigType): string =>

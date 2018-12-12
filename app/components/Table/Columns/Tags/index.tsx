@@ -18,10 +18,10 @@ export default compose<TagsProps, TagsProps>(
   )
 )(({ children, item = {}, tags, ...props }) => (
   <Tags
-    name="tags"
     p={0}
-    disableSort
+    name="tags"
     tabIndex={1}
+    disableSort
     onBlur={({ currentTarget: el, relatedTarget: target }) => {
       const $a = el.querySelector('.menu-true')
 
@@ -38,7 +38,6 @@ export default compose<TagsProps, TagsProps>(
           display: grid;
           grid-template-columns: 25px 170px;
         `}>
-        {console.log(tags, item)}
         <Box
           css={`
             position: relative;

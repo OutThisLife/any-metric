@@ -4,7 +4,7 @@ import { MdCheckBoxOutlineBlank } from 'react-icons/md'
 import { Box } from 'rebass'
 import { compose, setDisplayName, withState } from 'recompose'
 
-import { TagsHandlers } from '.'
+import { TagsMenuProps } from '.'
 import { Text } from '../../style'
 
 export default compose<MenuItemState & MenuItemProps, MenuItemProps>(
@@ -16,8 +16,7 @@ export default compose<MenuItemState & MenuItemProps, MenuItemProps>(
     href="javascript:;"
     onClick={e => {
       e.persist()
-      const b = !isChecked
-      toggle(b, () => onToggle(e, b, props))
+      toggle(!isChecked, () => onToggle(!isChecked, props))
     }}
     css={`
       svg {
@@ -39,6 +38,6 @@ interface MenuItemState {
 }
 
 export interface MenuItemProps extends Tag {
-  onToggle?: TagsHandlers['handleToggle']
+  onToggle?: TagsMenuProps['handleToggle']
   isChecked?: boolean
 }

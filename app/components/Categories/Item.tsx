@@ -1,27 +1,34 @@
 import Text from '@/components/Text'
+import { dateAge, relTime } from '@/lib/utils'
 import withTagColour, { TagColour } from '@/lib/withTagColour'
 import { Tag } from '@/server/schema/types'
 import { lighten, rgba } from 'polished'
+import { IoMdRefresh } from 'react-icons/io'
 import { MdClear } from 'react-icons/md'
 import { compose, setDisplayName } from 'recompose'
 
 export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
   setDisplayName('category-item'),
   withTagColour()
-)(({ tagColours, title: t, total, onDelete }) => (
+)(({ tagColours, onDelete, isQuery, ...props }) => (
   <Text
     as="li"
-    key={t}
+    key={props._id}
     className="row"
-    data-tag={t}
+    data-tag={props.slug}
     css={`
+      ${isQuery &&
+        `grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        `};
+
       a[href] {
         color: ${tagColours.colour};
 
         &:hover {
           color: ${tagColours.colour};
           outline-color: ${rgba(tagColours.border, 0.5)};
-          transition: none;
         }
 
         label {
@@ -40,9 +47,9 @@ export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
       }
     `}>
     <a href="javascript:;" tabIndex={-1}>
-      <label>{total}</label>
+      <label>{props.total}</label>
       <span>
-        <span>{t}</span>
+        <span>{props.title}</span>
 
         {typeof onDelete === 'function' && (
           <i className="delete" onClick={onDelete}>
@@ -51,6 +58,14 @@ export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
         )}
       </span>
     </a>
+
+    {isQuery && (
+      <time>
+        <small>{relTime(props.updatedAt)}</small>
+        <IoMdRefresh />
+        <i className={dateAge(props.updatedAt)} />
+      </time>
+    )}
   </Text>
 ))
 

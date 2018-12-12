@@ -10,7 +10,9 @@ export default <T extends MongoEntry>({
   if (entry === null) {
     const { insertedId } = await col.insertOne({
       ...defaultValues,
-      ...input
+      ...input,
+      createdAt: new Date(),
+      updatedAt: new Date()
     })
 
     return col.findOne<T>({ _id: insertedId })

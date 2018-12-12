@@ -1,9 +1,9 @@
 import * as Form from '@/components/Form'
 import Text from '@/components/Text'
 import { CREATE_TAG, GET_TAGS, SEARCH_EBAY } from '@/lib/queries'
-import { EbayItem, EbayResult, Tag } from '@/server/schema/types'
+import { EbayItem, EbayResult } from '@/server/schema/types'
 import { ApolloClient } from 'apollo-boost'
-import { withApollo } from 'react-apollo'
+import { graphql, withApollo } from 'react-apollo'
 import { IoIosSearch } from 'react-icons/io'
 import { Box, BoxProps } from 'rebass'
 import { compose, setDisplayName, withHandlers, withState } from 'recompose'
@@ -15,6 +15,30 @@ export default compose<SearchState & SearchHandlers, BoxProps>(
   setDisplayName('header-search'),
   withState('items', 'setItems', []),
   withApollo,
+  graphql<{}, {}, {}, SearchHandlers>(CREATE_TAG, {
+    props: ({ mutate }) => ({
+      handleConfirm: () => {
+        const el = document.getElementById('s') as HTMLInputElement
+        const { value: title } = el
+
+        if (title.length) {
+          window.requestAnimationFrame(() =>
+            mutate({
+              refetchQueries: [{ query: GET_TAGS }],
+              variables: {
+                input: {
+                  title,
+                  isQuery: true
+                }
+              }
+            })
+          )
+        }
+
+        el.closest('form').reset()
+      }
+    })
+  }),
   withHandlers<SearchState, SearchHandlers>(() => ({
     handleSubmit: ({ client, setItems }) => async ({ target }) => {
       const el = target as HTMLElement
@@ -43,25 +67,6 @@ export default compose<SearchState & SearchHandlers, BoxProps>(
         el.addEventListener('animationend', () => setItems([]), { once: true })
         el.classList.add('anim-out')
       }
-    },
-
-    handleConfirm: ({ client }) => async () => {
-      const el = document.getElementById('s') as HTMLInputElement
-
-      if (el.value.length) {
-        await client.mutate<{ tags: Tag[] }>({
-          mutation: CREATE_TAG,
-          refetchQueries: [{ query: GET_TAGS }],
-          variables: {
-            input: {
-              title: el.value,
-              isQuery: true
-            }
-          }
-        })
-      }
-
-      el.closest('form').reset()
     }
   }))
 )(({ items, handleSubmit, handleReset, handleConfirm }) => (
@@ -116,7 +121,7 @@ export interface SearchState {
 }
 
 export interface SearchHandlers {
-  handleSubmit: React.KeyboardEventHandler<HTMLFormElement>
-  handleReset: React.MouseEventHandler<HTMLButtonElement>
-  handleConfirm: React.MouseEventHandler<HTMLButtonElement>
+  handleSubmit?: React.KeyboardEventHandler<HTMLFormElement>
+  handleReset?: React.MouseEventHandler<HTMLButtonElement>
+  handleConfirm?: React.MouseEventHandler<HTMLButtonElement>
 }

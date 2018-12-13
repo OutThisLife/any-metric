@@ -14,9 +14,6 @@ export default compose<TagsMenuProps & TagState, TagsMenuProps>(
   setDisplayName('col-menu-dropdown'),
   getTags(),
   graphql<TagsMenuProps & TagHandlers, {}, {}, TagsMenuProps>(MODIFY_DOC, {
-    options: {
-      awaitRefetchQueries: true
-    },
     props: ({ mutate, ownProps: { item, addTag, delTag } }) => ({
       handleToggle: (isChecked, tag) => {
         if (isChecked) {

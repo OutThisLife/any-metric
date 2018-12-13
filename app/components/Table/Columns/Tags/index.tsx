@@ -12,8 +12,8 @@ import Tags from './style'
 export default compose<TagsProps, TagsProps>(
   setDisplayName('col-menu'),
   withTags(
-    withProps<TagsProps, TagsProps>(({ item = {} }: any) => ({
-      tags: 'tags' in item ? item.tags : []
+    withProps<TagsProps, TagsProps>(({ item = {} }) => ({
+      initialTags: 'tags' in item ? (item.tags as Tag[]) : []
     }))
   )
 )(({ children, item = {}, tags, ...props }) => (
@@ -55,7 +55,7 @@ export default compose<TagsProps, TagsProps>(
             padding: var(--pad) 0;
           `}>
           {tags.length ? (
-            (tags as Tag[]).map(t => <TagLabel key={t._id} {...t} />)
+            tags.map(t => <TagLabel key={t._id} {...t} />)
           ) : (
             <FaEmptySet style={{ opacity: 0.5 }} />
           )}

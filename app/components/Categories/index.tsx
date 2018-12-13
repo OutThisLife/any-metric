@@ -41,6 +41,9 @@ export default compose<
       }
     ),
     graphql<TagHandlers, {}, {}, CategoriesHandlers>(REMOVE_DOC, {
+      options: {
+        awaitRefetchQueries: true
+      },
       props: ({ mutate, ownProps: { delTag } }) => ({
         handleDelete: async tag => {
           if (!window.confirm('Are you sure? All references will be lost.')) {

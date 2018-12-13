@@ -17,17 +17,5 @@ export default styled<any>(Flex)`
       font-size: initial;
       text-transform: uppercase;
     }
-
-    > form {
-      align-self: stretch;
-      position: relative;
-      transition: ${theme.eases.base};
-
-      &.loading {
-        pointer-events: none;
-        cursor: wait;
-        opacity: 0.5;
-      }
-    }
   `}
 `

@@ -80,7 +80,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           {renderedData.length} results found :: {siteName}
         </title>
       </Head>
-
+{/*
       <Box
         css={`
           grid-area: table;
@@ -121,7 +121,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
             }
           ]}
         />
-      </Box>
+      </Box> */}
 
       <Flex
         flexWrap="wrap"
@@ -142,7 +142,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           {products.length && <Categories />}
         </Box>
 
-        <Box
+        {/* <Box
           as="section"
           css={`
             @media (min-width: 1025px) {
@@ -160,7 +160,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           ) : (
             <Loader>Insufficient data</Loader>
           )}
-        </Box>
+        </Box> */}
       </Flex>
     </Home>
   )

@@ -40,7 +40,7 @@ const productFragment = gql`
 `
 
 export const GET_PRODUCTS = gql`
-  {
+  query GetProducts {
     products {
       ...ProductFields
     }
@@ -61,7 +61,7 @@ export const getProducts = () =>
 // ------------------------------------------------
 
 export const GET_TAGS = gql`
-  {
+  query GetTags {
     tags {
       ...TagFields
     }
@@ -92,7 +92,7 @@ export const getTags = (options = {}, key = 'tags') =>
 // ------------------------------------------------
 
 export const GET_THEME = gql`
-  {
+  query GetTheme {
     theme
   }
 `

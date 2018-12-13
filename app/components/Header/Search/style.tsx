@@ -5,6 +5,16 @@ import styled, { css } from 'styled-components'
 
 export default styled<any>(Form.Container)`
   ${({ theme }: BaphoTheme) => css`
+    align-self: stretch;
+    position: relative;
+    transition: ${theme.eases.base};
+
+    &.loading [type] {
+      pointer-events: none;
+      cursor: wait;
+      filter: grayscale(1) opacity(0.5);
+    }
+
     section {
       z-index: 100;
       position: absolute;

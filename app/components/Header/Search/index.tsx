@@ -1,86 +1,123 @@
 import * as Form from '@/components/Form'
 import Text from '@/components/Text'
 import { CREATE_TAG, GET_TAGS, SEARCH_EBAY } from '@/lib/queries'
-import { EbayItem, EbayResult } from '@/server/schema/types'
-import { ApolloClient } from 'apollo-boost'
-import { graphql, withApollo } from 'react-apollo'
+import { EbayItem } from '@/server/schema/types'
+import { graphql, GraphqlQueryControls } from 'react-apollo'
 import { IoIosSearch } from 'react-icons/io'
-import { Box, BoxProps } from 'rebass'
-import { compose, setDisplayName, withHandlers, withState } from 'recompose'
+import { Box } from 'rebass'
+import {
+  compose,
+  setDisplayName,
+  StateHandler,
+  StateHandlerMap,
+  withHandlers,
+  withStateHandlers
+} from 'recompose'
 
+import Loader from './Loader'
 import Result from './Result'
 import Search from './style'
 
-export default compose<SearchState & SearchHandlers, BoxProps>(
+export default compose<SearchState & SearchStateHandlers & SearchHandlers, {}>(
   setDisplayName('header-search'),
-  withState('items', 'setItems', []),
-  withApollo,
-  graphql<{}, {}, {}, SearchHandlers>(CREATE_TAG, {
-    props: ({ mutate }) => ({
-      handleConfirm: () => {
-        const el = document.getElementById('s') as HTMLInputElement
-        const { value: title } = el
-
-        if (title.length) {
-          window.requestAnimationFrame(() =>
-            mutate({
-              refetchQueries: [{ query: GET_TAGS }],
-              variables: {
-                input: {
-                  title,
-                  isQuery: true
-                }
-              }
-            })
-          )
+  graphql<{}, {}, {}, SearchHandlers>(CREATE_TAG),
+  graphql(SEARCH_EBAY, {
+    options: {
+      ssr: false,
+      variables: {
+        keywords: 'adidas',
+        paginationInput: {
+          pageNumber: 1,
+          entriesPerPage: 1
         }
-
-        el.closest('form').reset()
       }
-    })
+    },
+    props: ({ data: { fetchMore } }) => ({ fetchMore })
   }),
-  withHandlers<SearchState, SearchHandlers>(() => ({
-    handleSubmit: ({ client, setItems }) => async ({ target }) => {
+  withStateHandlers<SearchState, SearchStateHandlers>(
+    {
+      isOpen: false,
+      items: []
+    },
+    {
+      toggle: () => isOpen => ({ isOpen }),
+      setItems: () => items => ({ items })
+    }
+  ),
+  withHandlers<SearchState & SearchStateHandlers, SearchHandlers>(() => ({
+    handleSubmit: ({ fetchMore, toggle, setItems }) => async ({ target }) => {
       const el = target as HTMLElement
-      const keywords = (document.getElementById('s') as HTMLInputElement).value
-
       el.classList.add('loading')
 
-      const { data } = await client.query<{ ebay: EbayResult }>({
-        query: SEARCH_EBAY,
+      toggle(true)
+      setItems([])
+
+      await fetchMore({
         variables: {
-          keywords,
+          keywords: (document.getElementById('s') as HTMLInputElement).value,
           paginationInput: {
             pageNumber: 1,
             entriesPerPage: 4
           }
+        },
+        updateQuery: (_, { fetchMoreResult }) => {
+          el.classList.remove('loading')
+
+          if (fetchMoreResult) {
+            setItems(fetchMoreResult.ebay.items)
+          }
         }
       })
-
-      setItems(data.ebay.items, () => el.classList.remove('loading'))
     },
 
-    handleReset: ({ setItems }) => ({ target }) => {
+    handleReset: ({ setItems, toggle }) => ({ target }) => {
       const el = (target as HTMLElement).querySelector('section')
 
-      if (el instanceof HTMLElement) {
-        el.addEventListener('animationend', () => setItems([]), { once: true })
-        el.classList.add('anim-out')
+      el.addEventListener(
+        'animationend',
+        () => {
+          toggle(false)
+          setItems([])
+        },
+        { once: true }
+      )
+
+      el.classList.add('anim-out')
+    },
+
+    handleConfirm: ({ mutate }) => () => {
+      const el = document.getElementById('s') as HTMLInputElement
+      const { value: title } = el
+
+      if (title.length) {
+        window.requestAnimationFrame(() =>
+          mutate({
+            refetchQueries: [{ query: GET_TAGS }],
+            variables: {
+              input: {
+                title,
+                isQuery: true
+              }
+            }
+          })
+        )
       }
+
+      el.closest('form').reset()
     }
   }))
-)(({ items, handleSubmit, handleReset, handleConfirm }) => (
+)(({ isOpen, items, handleSubmit, handleReset, handleConfirm }) => (
   <Search onSubmit={handleSubmit} onReset={handleReset}>
     <Form.Input
       required
       id="s"
       tabIndex={-1}
-      isFocused={items.length > 0}
+      isFocused={isOpen}
       placeholder="Add a product"
       icon={IoIosSearch}
     />
 
-    {items.length ? (
+    {isOpen && (
       <Box as="section">
         <Box>
           <Text as="h5" m={0}>
@@ -96,9 +133,11 @@ export default compose<SearchState & SearchHandlers, BoxProps>(
               grid-gap: calc(var(--pad) * 2);
               padding: var(--offset);
             `}>
-            {items.map((d, i) => (
-              <Result key={`${i}-${d._id}`} {...d} />
-            ))}
+            {items.length ? (
+              items.map((item, i) => <Result key={i + item._id} {...item} />)
+            ) : (
+              <Loader />
+            )}
           </Box>
 
           <Form.Button type="button" onClick={handleConfirm}>
@@ -110,14 +149,19 @@ export default compose<SearchState & SearchHandlers, BoxProps>(
           </Form.Button>
         </Box>
       </Box>
-    ) : null}
+    )}
   </Search>
 ))
 
 export interface SearchState {
   items: EbayItem[]
-  setItems: (i: EbayItem[], cb?: () => void) => void
-  client?: ApolloClient<{}>
+  isOpen: boolean
+  fetchMore?: GraphqlQueryControls['fetchMore']
+}
+
+export interface SearchStateHandlers extends StateHandlerMap<SearchState> {
+  setItems?: StateHandler<SearchState>
+  toggle?: StateHandler<SearchState>
 }
 
 export interface SearchHandlers {

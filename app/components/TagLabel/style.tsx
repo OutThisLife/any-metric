@@ -31,7 +31,11 @@ export default styled<any>(Box)`
   border-radius: var(--radius);
   white-space: nowrap;
   overflow: hidden;
-  animation: ${animIn} 0.2s ${timingFunctions('easeOutQuad')} forwards;
+  animation: none 0.2s ${timingFunctions('easeOutQuad')} forwards;
+
+  &.anim-in {
+    animation-name: ${animIn};
+  }
 
   &.anim-out {
     animation-name: ${animOut};

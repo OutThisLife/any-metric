@@ -9,7 +9,11 @@ export default (...funcs) =>
     withStateHandlers(({ initialTags: tags = [] }) => ({ tags }), {
       addTag: ({ tags }) => (tag: Tag) => {
         if (!tags.some(t => t._id === tag._id)) {
-          tags.push(tag)
+          tags.push(
+            Object.assign({}, tag, {
+              ui: true
+            })
+          )
         }
 
         return { tags }

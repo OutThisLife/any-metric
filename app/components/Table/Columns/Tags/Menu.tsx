@@ -36,7 +36,6 @@ export default compose<TagsMenuProps & TagState, TagsMenuProps>(
 
         window.requestAnimationFrame(() =>
           mutate({
-            refetchQueries: ['getProducts'],
             variables: {
               objectId: item._id,
               collectionName: 'products',

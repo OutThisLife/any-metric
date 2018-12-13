@@ -2,6 +2,7 @@ import Categories from '@/components/Categories'
 import Chart, { Loader } from '@/components/Chart'
 import Table from '@/components/Table'
 import { getProducts } from '@/lib/queries'
+import withStateHandlers from '@/lib/withStateHandlers'
 import { Product } from '@/server/schema/types'
 import { siteName } from '@/theme'
 import { orderBy } from 'lodash'
@@ -14,8 +15,7 @@ import {
   StateHandler,
   StateHandlerMap,
   withContext,
-  withPropsOnChange,
-  withStateHandlers
+  withPropsOnChange
 } from 'recompose'
 
 import Home from './style'
@@ -24,7 +24,7 @@ import worker, { isWorkerReady } from './worker'
 export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
   setDisplayName('dashboard'),
   getProducts(),
-  withStateHandlers<HomeState, HomeStateHandlers, HomeState>(
+  withStateHandlers(
     ({ products = [] }) => ({
       renderedData: products,
       sort: {

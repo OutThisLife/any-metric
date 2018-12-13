@@ -9,10 +9,11 @@ import TagLabel from './style'
 export default compose<TagState & TagProps, TagProps>(
   setDisplayName('tag'),
   withTagColour()
-)(({ title, slug, tagColours: { bg, colour, border } }) => (
+)(({ ui = false, title, slug, tagColours: { bg, colour, border } }) => (
   <TagLabel
     as="label"
     aria-label={slug}
+    className={ui ? 'anim-in' : ''}
     style={{
       color: colour,
       borderColor: border,
@@ -25,5 +26,6 @@ export default compose<TagState & TagProps, TagProps>(
 type TagState = BaphoTheme & TagColour
 
 export interface TagProps extends BoxProps, Tag {
+  ui?: boolean
   as?: any
 }

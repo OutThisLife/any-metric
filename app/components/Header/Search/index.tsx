@@ -1,6 +1,6 @@
 import * as Form from '@/components/Form'
 import Text from '@/components/Text'
-import { CREATE_TAG, GET_TAGS, SEARCH_EBAY } from '@/lib/queries'
+import { CREATE_TAG, SEARCH_EBAY } from '@/lib/queries'
 import { EbayItem } from '@/server/schema/types'
 import { graphql, GraphqlQueryControls } from 'react-apollo'
 import { IoIosSearch } from 'react-icons/io'
@@ -20,7 +20,11 @@ import Search from './style'
 
 export default compose<SearchState & SearchStateHandlers & SearchHandlers, {}>(
   setDisplayName('header-search'),
-  graphql<{}, {}, {}, SearchHandlers>(CREATE_TAG),
+  graphql<{}, {}, {}, SearchHandlers>(CREATE_TAG, {
+    options: {
+      awaitRefetchQueries: true
+    }
+  }),
   graphql(SEARCH_EBAY, {
     options: {
       ssr: false,
@@ -92,7 +96,7 @@ export default compose<SearchState & SearchStateHandlers & SearchHandlers, {}>(
       if (title.length) {
         window.requestAnimationFrame(() =>
           mutate({
-            refetchQueries: [{ query: GET_TAGS }],
+            refetchQueries: ['getTags'],
             variables: {
               input: {
                 title,

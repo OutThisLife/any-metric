@@ -40,7 +40,7 @@ const productFragment = gql`
 `
 
 export const GET_PRODUCTS = gql`
-  query GetProducts {
+  query getProducts {
     products {
       ...ProductFields
     }
@@ -61,7 +61,7 @@ export const getProducts = () =>
 // ------------------------------------------------
 
 export const GET_TAGS = gql`
-  query GetTags {
+  query getTags {
     tags {
       ...TagFields
     }
@@ -80,19 +80,19 @@ export const CREATE_TAG = gql`
   ${tagFragment}
 `
 
-export const getTags = (options = {}, key = 'tags') =>
+export const getTags = (options = {}) =>
   graphql<{}, { tags: Tag[] }>(GET_TAGS, {
     ...options,
     props: ({ data: { tags = [], ...data } }) => ({
       data,
-      [key]: tags
+      initialTags: tags
     })
   })
 
 // ------------------------------------------------
 
 export const GET_THEME = gql`
-  query GetTheme {
+  query getTheme {
     theme
   }
 `
@@ -149,7 +149,7 @@ const ebayFragment = gql`
 `
 
 export const SEARCH_EBAY = gql`
-  query GetEbay($keywords: String!, $paginationInput: Pagination) {
+  query getEbay($keywords: String!, $paginationInput: Pagination) {
     ebay(keywords: $keywords, paginationInput: $paginationInput) {
       ...EbayFields
     }

@@ -1,5 +1,5 @@
 import Dropdown from '@/components/Dropdown'
-import { GET_PRODUCTS, getTags, MODIFY_DOC } from '@/lib/queries'
+import { getTags, MODIFY_DOC } from '@/lib/queries'
 import withTags, { TagHandlers, TagState } from '@/lib/withTags'
 import { Tag } from '@/server/schema/types'
 import { graphql } from 'react-apollo'
@@ -12,8 +12,11 @@ import Item from './Item'
 
 export default compose<TagsMenuProps & TagState, TagsMenuProps>(
   setDisplayName('col-menu-dropdown'),
-  getTags({}, 'initialTags'),
+  getTags(),
   graphql<TagsMenuProps & TagHandlers, {}, {}, TagsMenuProps>(MODIFY_DOC, {
+    options: {
+      awaitRefetchQueries: true
+    },
     props: ({ mutate, ownProps: { item, addTag, delTag } }) => ({
       handleToggle: (isChecked, tag) => {
         if (isChecked) {
@@ -36,7 +39,7 @@ export default compose<TagsMenuProps & TagState, TagsMenuProps>(
 
         window.requestAnimationFrame(() =>
           mutate({
-            refetchQueries: [{ query: GET_PRODUCTS }],
+            refetchQueries: ['getProducts'],
             variables: {
               objectId: item._id,
               collectionName: 'products',

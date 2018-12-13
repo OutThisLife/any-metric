@@ -1,7 +1,7 @@
 import { IResolvers } from 'graphql-tools'
 import slugify from 'slugify'
 
-import Mutation from './mutations'
+import Mutation, { convertIds } from './mutations'
 import Query from './queries'
 import { Context, Product, Tag } from './types'
 
@@ -14,6 +14,10 @@ export default {
   JSON: require('graphql-type-json'),
   Date: require('graphql-iso-date').GraphQLDateTime,
 
+  T: {
+    __resolveType: async o => ('tags' in o ? 'Product' : 'Tag')
+  },
+
   Tag: {
     slug,
     total: async ({ _id: tags }: Tag, _, { mongo }) =>
@@ -24,12 +28,12 @@ export default {
 
   Product: {
     slug,
-    tags: async ({ tags = [] }: Product, _, { mongo }) =>
+    tags: async ({ tags }: Product, _, { mongo }) =>
       mongo
         .collection('tags')
         .find({
           _id: {
-            $in: tags
+            $in: convertIds(tags as string[])
           }
         })
         .toArray()

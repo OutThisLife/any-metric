@@ -1,6 +1,11 @@
 import 'isomorphic-unfetch'
 
-import { ApolloClient, ApolloLink, InMemoryCache } from 'apollo-boost'
+import {
+  ApolloClient,
+  ApolloLink,
+  InMemoryCache,
+  IntrospectionFragmentMatcher
+} from 'apollo-boost'
 import getConfig from 'next/config'
 
 import { errorLink, httpLink } from './links'
@@ -13,7 +18,10 @@ let client
 
 const createCache = (): InMemoryCache =>
   new InMemoryCache({
-    dataIdFromObject: o => (o.id ? `${o.__typename}:${o.id}` : null)
+    fragmentMatcher: new IntrospectionFragmentMatcher({
+      introspectionQueryResultData: require('../static/fragmentTypes.json')
+    }),
+    dataIdFromObject: (o: any) => (o._id ? `${o.__typename}:${o._id}` : null)
   })
 
 const create = initialState => {

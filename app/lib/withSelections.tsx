@@ -1,44 +1,41 @@
-import { compose, setDisplayName, withHandlers } from 'recompose'
+import { withHandlers } from 'recompose'
 
 export default () =>
-  compose(
-    setDisplayName('with-selection'),
-    withHandlers<SelectionsProps, SelectionsProps>(() => ({
-      handleMouse: () => ({ currentTarget: $parent, target, button }) => {
-        if (
-          button ||
-          !(target instanceof HTMLElement) ||
-          /img/i.test(target.tagName)
-        ) {
-          return
-        }
-
-        const handleMouseMove: EventListener = ({ target: tgt }) => {
-          $parent.classList.add('dragging')
-
-          if (tgt instanceof HTMLElement) {
-            select(tgt)
-          }
-        }
-
-        $parent.addEventListener('mousemove', handleMouseMove)
-        $parent.addEventListener(
-          'mouseup',
-          () => {
-            ;[].slice
-              .call(document.getElementsByClassName('seen'))
-              .forEach(el => el.classList.remove('seen'))
-
-            $parent.classList.remove('dragging')
-            $parent.removeEventListener('mousemove', handleMouseMove)
-          },
-          { once: true }
-        )
-
-        select(target)
+  withHandlers<SelectionsProps, SelectionsProps>(() => ({
+    handleMouse: () => ({ currentTarget: $parent, target, button }) => {
+      if (
+        button ||
+        !(target instanceof HTMLElement) ||
+        /img/i.test(target.tagName)
+      ) {
+        return
       }
-    }))
-  )
+
+      const handleMouseMove: EventListener = ({ target: tgt }) => {
+        $parent.classList.add('dragging')
+
+        if (tgt instanceof HTMLElement) {
+          select(tgt)
+        }
+      }
+
+      $parent.addEventListener('mousemove', handleMouseMove)
+      $parent.addEventListener(
+        'mouseup',
+        () => {
+          ;[].slice
+            .call(document.getElementsByClassName('seen'))
+            .forEach(el => el.classList.remove('seen'))
+
+          $parent.classList.remove('dragging')
+          $parent.removeEventListener('mousemove', handleMouseMove)
+        },
+        { once: true }
+      )
+
+      select(target)
+    }
+  }))
 
 export const select = (
   el: HTMLElement | HTMLInputElement,

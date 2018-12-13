@@ -1,4 +1,5 @@
 import Text from '@/components/Text'
+import { dateAge, relTime } from '@/lib/utils'
 import withTagColour, { TagColour } from '@/lib/withTagColour'
 import { Tag } from '@/server/schema/types'
 import { lighten, rgba } from 'polished'
@@ -8,20 +9,25 @@ import { compose, setDisplayName } from 'recompose'
 export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
   setDisplayName('category-item'),
   withTagColour()
-)(({ tagColours, title: t, total, handleDelete }) => (
+)(({ tagColours, onDelete, isQuery, ...props }) => (
   <Text
     as="li"
-    key={t}
+    key={props._id}
     className="row"
-    data-tag={t}
+    data-tag={props.slug}
     css={`
+      ${isQuery &&
+        `grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        `};
+
       a[href] {
         color: ${tagColours.colour};
 
         &:hover {
           color: ${tagColours.colour};
           outline-color: ${rgba(tagColours.border, 0.5)};
-          transition: none;
         }
 
         label {
@@ -40,17 +46,27 @@ export default compose<CategoryItemProps & TagColour, CategoryItemProps>(
       }
     `}>
     <a href="javascript:;" tabIndex={-1}>
-      <label>{total}</label>
+      <label>{props.total}</label>
       <span>
-        <span>{t}</span>
-        <i className="delete" onClick={handleDelete}>
-          <MdClear size={10} />
-        </i>
+        <span>{props.title}</span>
+
+        {typeof onDelete === 'function' && (
+          <i className="delete" onClick={onDelete}>
+            <MdClear size={10} />
+          </i>
+        )}
       </span>
     </a>
+
+    {isQuery && (
+      <time title={props.updatedAt.toString()}>
+        <small>{relTime(props.updatedAt)}</small>
+        <i className={dateAge(props.updatedAt)} />
+      </time>
+    )}
   </Text>
 ))
 
 export interface CategoryItemProps extends Tag {
-  handleDelete: () => void
+  onDelete?: () => void
 }

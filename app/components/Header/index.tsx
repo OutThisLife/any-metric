@@ -1,11 +1,10 @@
-import * as Form from '@/components/Form'
 import Text from '@/components/Text'
 import { siteName } from '@/theme'
-import { IoIosSearch } from 'react-icons/io'
 import { BoxProps } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
 import Picker from './Picker'
+import Search from './Search'
 import Header from './style'
 
 export default compose<HeaderProps, HeaderProps>(setDisplayName('header'))(
@@ -15,14 +14,7 @@ export default compose<HeaderProps, HeaderProps>(setDisplayName('header'))(
         {siteName}
       </Text>
 
-      <Form.Container>
-        <Form.Input
-          required
-          tabIndex={-1}
-          placeholder="Add a product"
-          icon={IoIosSearch}
-        />
-      </Form.Container>
+      <Search />
 
       <Picker />
     </Header>

@@ -72,17 +72,10 @@ export default compose<TableState & TableProps, TableProps>(
 
       <Table.Body onScroll={handleScroll}>
         {data.map(d => (
-          <Table.Row key={d.createdAt.valueOf()} id={d._id}>
+          <Table.Row key={d.updatedAt.valueOf()} id={d._id}>
             <RenderColumns props={() => ({ item: d })} />
           </Table.Row>
         ))}
-
-        <tr>
-          <td
-            colSpan={columns.length}
-            style={{ height: 'calc(var(--offset) * 1.5)' }}
-          />
-        </tr>
       </Table.Body>
     </Table.Container>
   </Box>

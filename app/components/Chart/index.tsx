@@ -3,7 +3,7 @@ import { Product } from '@/server/schema/types'
 import * as d3 from 'd3'
 import { MdFullscreen } from 'react-icons/md'
 import { MeasuredComponentProps, withContentRect } from 'react-measure'
-import { compose, setDisplayName } from 'recompose'
+import { branch, compose, renderComponent, setDisplayName } from 'recompose'
 
 import Text from '../Text'
 import Loader from './Loader'
@@ -12,6 +12,10 @@ import { ZoomedChart } from './style'
 
 export default compose<ChartProps, ChartProps>(
   setDisplayName('price'),
+  branch<ChartProps>(
+    ({ data = [] }) => data.length < 10,
+    renderComponent(() => null)
+  ),
   withContentRect('bounds')
 )(({ measureRef, contentRect, ...props }) => (
   <div

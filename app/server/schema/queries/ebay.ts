@@ -4,7 +4,11 @@ import { EbayItem, EbayResult, Resolver } from '../types'
 export default (async (_, args = {}): Promise<EbayResult> => {
   const {
     searchResult: [res]
-  } = await getCommerce(args)
+  } = await getCommerce(
+    Object.assign(args, {
+      outputSelector: ['PictureURLSuperSize', 'SellerInfo', 'UnitPrice']
+    })
+  )
 
   return {
     total: res['@count'] as number,
@@ -22,7 +26,6 @@ export default (async (_, args = {}): Promise<EbayResult> => {
       }
 
       item._id = item.itemId
-      delete item.itemId
 
       return item
     })

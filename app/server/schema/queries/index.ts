@@ -5,10 +5,10 @@ import tags from './tags'
 import theme from './theme'
 
 export default {
+  crawl,
   ebay,
+  google,
   products,
   tags,
-  theme,
-  crawl,
-  google
+  theme
 }

@@ -2,106 +2,106 @@ import { Product, Tag } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import gql from 'graphql-tag'
 import { ChildProps, DataProps, graphql } from 'react-apollo'
-import {
-  compose,
-  shallowEqual,
-  StateHandler,
-  StateHandlerMap,
-  withStateHandlers
-} from 'recompose'
+
+const tagFragment = gql`
+  fragment TagFields on Tag {
+    _id
+    createdAt
+    deletedAt
+    isDeleted
+    isQuery
+    restoredAt
+    slug
+    title
+    total
+    updatedAt
+  }
+`
+
+const productFragment = gql`
+  fragment ProductFields on Product {
+    _id
+    tags {
+      ...TagFields
+    }
+    bids
+    createdAt
+    deletedAt
+    image
+    isDeleted
+    price
+    qty
+    restoredAt
+    shipping
+    slug
+    title
+    updatedAt
+  }
+`
+
+export const GET_PRODUCTS = gql`
+  query getProducts {
+    products {
+      ...ProductFields
+    }
+  }
+
+  ${productFragment}
+  ${tagFragment}
+`
 
 export const getProducts = () =>
-  graphql<{}, { results: Product[] }>(
-    gql`
-      query GetProduct($query: Pagination!) {
-        results: products(query: $query) {
-          _id
-          createdAt
-          slug
-          image
-          title
-          tags
-          price
-          shipping
-          qty
-          bids
-        }
-      }
-    `,
-    {
-      options: ({ pagination }: any) => ({
-        variables: {
-          query: pagination || {
-            offset: 0,
-            limit: 25
-          }
-        }
-      }),
-      props: ({ data: { results = [], ...data } }) => ({
-        data,
-        results
-      })
+  graphql<{}, { products: Product[] }>(GET_PRODUCTS, {
+    props: ({ data: { products = [], ...data } }) => ({
+      data,
+      products
+    })
+  })
+
+// ------------------------------------------------
+
+export const GET_TAGS = gql`
+  query getTags {
+    tags {
+      ...TagFields
     }
-  )
+  }
+
+  ${tagFragment}
+`
+
+export const CREATE_TAG = gql`
+  mutation createTag($input: TagInput) {
+    createTag(input: $input) {
+      ...TagFields
+    }
+  }
+
+  ${tagFragment}
+`
+
+export const getTags = (options = {}) =>
+  graphql<{}, { tags: Tag[] }>(GET_TAGS, {
+    ...options,
+    props: ({ data: { tags = [], ...data } }) => ({
+      data,
+      initialTags: tags
+    })
+  })
 
 // ------------------------------------------------
 
-export const getTags = () =>
-  compose<TagState & TagHandlers, {}>(
-    graphql<{}, { tags: Tag[] }>(
-      gql`
-        {
-          tags {
-            _id
-            title
-            slug
-            total
-          }
-        }
-      `,
-      {
-        props: ({ data: { tags = [], ...data } }) => ({
-          data,
-          initialTags: tags
-        })
-      }
-    ),
-    withStateHandlers<TagState, TagHandlers>(
-      ({ initialTags = [] }: { initialTags: Tag[] }) => ({ tags: initialTags }),
-      {
-        addTag: ({ tags }) => (tag: Tag) => {
-          if (!tags.find(t => shallowEqual(t, tag))) {
-            tags.push(tag)
-          }
+export const GET_THEME = gql`
+  query getTheme {
+    theme
+  }
+`
 
-          return { tags }
-        },
-
-        delTag: ({ tags }) => (tag: Tag) => {
-          if (
-            window.confirm(
-              'Are you sure you want to delete this tag? All references will be lost.'
-            )
-          ) {
-            tags.splice(tags.findIndex(t => t === tag), 1)
-            return { tags }
-          }
-        }
-      }
-    )
-  )
-
-export interface TagState {
-  tags?: Tag[]
-  initialTags?: Tag[]
-}
-
-export interface TagHandlers extends StateHandlerMap<TagState> {
-  addTag?: StateHandler<TagState>
-  delTag?: StateHandler<TagState>
-}
-
-// ------------------------------------------------
+export const SET_THEME = gql`
+  mutation setTheme($theme: String!) {
+    setTheme(theme: $theme)
+  }
+`
 
 export const getTheme = () =>
   graphql<
@@ -109,13 +109,79 @@ export const getTheme = () =>
     { theme: string },
     DataProps<{ theme: string }>,
     ChildProps<BaphoTheme>
-  >(
-    gql`
-      {
-        theme
-      }
-    `,
-    {
-      props: ({ data: { theme } }) => ({ theme: JSON.parse(theme) })
+  >(GET_THEME, {
+    props: ({ data: { theme } }) => ({ theme: JSON.parse(theme) })
+  })
+
+// ------------------------------------------------
+
+const ebayFragment = gql`
+  fragment EbayFields on EbayResult {
+    total
+    items {
+      _id
+      attribute
+      autoPay
+      condition
+      country
+      galleryInfoContainer
+      galleryURL
+      globalId
+      isMultiVariationListing
+      listingInfo
+      location
+      paymentMethod
+      pictureURLSuperSize
+      postalCode
+      primaryCategory
+      returnsAccepted
+      sellerInfo
+      sellingStatus
+      shippingInfo
+      subtitle
+      timestamp
+      title
+      topRatedListing
+      unitPrice
+      viewItemURL
     }
-  )
+  }
+`
+
+export const SEARCH_EBAY = gql`
+  query getEbay($keywords: String!, $paginationInput: Pagination) {
+    ebay(keywords: $keywords, paginationInput: $paginationInput) {
+      ...EbayFields
+    }
+  }
+
+  ${ebayFragment}
+`
+
+// ------------------------------------------------
+
+export const REMOVE_DOC = gql`
+  mutation remove($objectId: ID!, $collectionName: String!) {
+    remove(objectId: $objectId, collectionName: $collectionName) {
+      ok
+    }
+  }
+`
+
+export const MODIFY_DOC = gql`
+  mutation modify($objectId: ID!, $collectionName: String!, $input: JSON) {
+    modify(
+      objectId: $objectId
+      collectionName: $collectionName
+      input: $input
+    ) {
+      ... on Product {
+        _id
+      }
+
+      ... on Tag {
+        _id
+      }
+    }
+  }
+`

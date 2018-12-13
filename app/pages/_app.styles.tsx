@@ -49,17 +49,6 @@ export default createGlobalStyle`
       padding: 0;
     }
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    input[type],
-    button[type] {
-      font-family: ${theme.fonts.family};
-    }
-
     html {
       color: ${theme.colours.base};
       font-weight: 400;
@@ -83,6 +72,25 @@ export default createGlobalStyle`
 
     :focus {
       outline: none;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    input[type],
+    button[type] {
+      font-family: ${theme.fonts.family};
+    }
+
+    h5 {
+      color: ${theme.colours.label};
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
     img,
@@ -190,11 +198,8 @@ export const Main = styled<any>(Box)`
         color: ${theme.colours.price.hl} !important;
       }
 
-      h5 {
-        font-weight: 600;
-        font-size: 0.9rem;
-        letter-spacing: 1px;
-        text-transform: uppercase;
+      .dead {
+        color: ${theme.colours.muted} !important;
       }
     }
   `}
@@ -206,12 +211,12 @@ export const fadeIn = keyframes`
 `
 
 export const fadeOut = keyframes`
+  from { opacity: 1; }
   to { opacity: 0; }
 `
 
 export const animIn = keyframes`
   from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: none }
 `
 
 export const animOut = keyframes`

@@ -1,12 +1,12 @@
 import defaultTheme from '../../../theme'
 import { Resolver } from '../types'
 
-export default (async (_, __, { cache }) => {
-  const value = await cache.get('theme')
+export default (async (_, __, { mongo }): Promise<string> => {
+  const res = await mongo.collection('theme').findOne<{
+    _id?: string
+    theme?: string
+    updatedAt?: Date
+  }>({})
 
-  if (typeof value === 'string') {
-    return value
-  }
-
-  return JSON.stringify(defaultTheme)
+  return 'theme' in res ? res.theme : JSON.stringify(defaultTheme)
 }) as Resolver

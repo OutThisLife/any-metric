@@ -1,22 +1,12 @@
 import * as express from 'express'
-import * as LRU from 'lru-cache'
 import * as mime from 'mime'
-import * as next from 'next'
 import { URL } from 'url'
 
 import { getPage } from '../api'
 
 const router = express.Router()
 
-module.exports = ({
-  nextApp,
-  cache,
-  dev
-}: {
-  nextApp: next.Server
-  cache: LRU.Cache<any, any>
-  dev?: boolean
-}) => {
+module.exports = ({ nextApp, cache, dev }) => {
   const render = (page = '/') => (
     req: express.Request,
     res: express.Response

@@ -17,9 +17,5 @@ export default styled<any>(Flex)`
       font-size: initial;
       text-transform: uppercase;
     }
-
-    > form {
-      align-self: stretch;
-    }
   `}
 `

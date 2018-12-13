@@ -1,6 +1,11 @@
 import { Product, Resolver } from '../types'
 
-export default (async (_, __, { mongo }): Promise<Product[]> => {
-  const col = await mongo.collection('products')
-  return col.find<Product>().toArray()
-}) as Resolver
+export default (async (_, __, { mongo }): Promise<Product[]> =>
+  mongo
+    .collection('products')
+    .find<Product>({
+      isDeleted: {
+        $ne: true
+      }
+    })
+    .toArray()) as Resolver

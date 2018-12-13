@@ -84,5 +84,9 @@ export default styled<any>(Button)`
       fill: var(--colour) !important;
       transform: translate(-50%, -50%);
     }
+
+    + button {
+      margin-left: 1em;
+    }
   `}
 `

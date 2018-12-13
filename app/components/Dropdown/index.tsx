@@ -1,4 +1,3 @@
-import Text from '@/components/Text'
 import { Direction, positionToMouse } from '@/lib/withPortal'
 import { Box } from 'rebass'
 import {
@@ -60,21 +59,7 @@ export default compose<DropdownState & DropdownProps, DropdownProps>(
 
     {isOpen && (
       <Dropdown ref={onRef} as="div" className="dropdown" {...props}>
-        <Box>
-          {menu.map(({ title, items = [] }) => (
-            <Box as="ul" key={title}>
-              <li>
-                <Text as="h5" m={0}>
-                  {[title]}
-                </Text>
-              </li>
-
-              {items.map((item, i) => (
-                <li key={`${title}-${i}`}>{item}</li>
-              ))}
-            </Box>
-          ))}
-        </Box>
+        <Box>{menu({ isOpen })}</Box>
       </Dropdown>
     )}
   </>
@@ -88,11 +73,8 @@ interface DropdownState {
 
 export interface DropdownProps {
   isShown?: boolean
-  children: (props: DropdownState) => JSX.Element
   direction: Direction
+  children: (props: DropdownState) => JSX.Element
+  menu: (props: DropdownState) => JSX.Element
   onClick?: (a?: {}) => void
-  menu: Array<{
-    title: string
-    items: JSX.Element[]
-  }>
 }

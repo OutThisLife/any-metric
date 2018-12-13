@@ -1,4 +1,4 @@
-import { Product, Tag } from '@/server/schema/types'
+import { Tag } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import gql from 'graphql-tag'
 import { ChildProps, DataProps, graphql } from 'react-apollo'
@@ -49,14 +49,6 @@ export const GET_PRODUCTS = gql`
   ${productFragment}
   ${tagFragment}
 `
-
-export const getProducts = () =>
-  graphql<{}, { products: Product[] }>(GET_PRODUCTS, {
-    props: ({ data: { products = [], ...data } }) => ({
-      data,
-      products
-    })
-  })
 
 // ------------------------------------------------
 

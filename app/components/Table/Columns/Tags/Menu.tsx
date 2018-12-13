@@ -1,18 +1,18 @@
 import Dropdown from '@/components/Dropdown'
 import { getTags, MODIFY_DOC } from '@/lib/queries'
-import withTags, { TagHandlers, TagState } from '@/lib/withTags'
+import { TagHandlers, TagState } from '@/lib/withTags'
 import { Tag } from '@/server/schema/types'
 import { graphql } from 'react-apollo'
-import { MdLabelOutline } from 'react-icons/md'
-import { compose, setDisplayName } from 'recompose'
+import { IoMdCheckmark } from 'react-icons/io'
+import { MdCheckBoxOutlineBlank, MdLabelOutline } from 'react-icons/md'
+import { Box } from 'rebass'
+import { compose, setDisplayName, shouldUpdate, withState } from 'recompose'
 
 import { Text } from '../../style'
 import { ColumnProps } from '../Column'
-import Item from './Item'
 
 export default compose<TagsMenuProps & TagState, TagsMenuProps>(
   setDisplayName('col-menu-dropdown'),
-  getTags(),
   graphql<TagsMenuProps & TagHandlers, {}, {}, TagsMenuProps>(MODIFY_DOC, {
     props: ({ mutate, ownProps: { item, addTag, delTag } }) => ({
       handleToggle: (isChecked, tag) => {
@@ -36,6 +36,7 @@ export default compose<TagsMenuProps & TagState, TagsMenuProps>(
 
         window.requestAnimationFrame(() =>
           mutate({
+            refetchQueries: ['getTags'],
             variables: {
               objectId: item._id,
               collectionName: 'products',
@@ -52,22 +53,10 @@ export default compose<TagsMenuProps & TagState, TagsMenuProps>(
       }
     })
   })
-)(({ item, initialTags: tags, handleToggle }) => (
+)(props => (
   <Dropdown
     direction="bottom"
-    menu={[
-      {
-        title: 'Tags',
-        items: tags.map(t => (
-          <Item
-            key={t._id}
-            isChecked={(item.tags as Tag[]).some(tt => t._id === tt._id)}
-            onToggle={handleToggle}
-            {...t}
-          />
-        ))
-      }
-    ]}>
+    menu={({ isOpen }) => <Menu isOpen={isOpen} {...props} />}>
     {({ isOpen, toggle }) => (
       <Text
         as="a"
@@ -81,7 +70,64 @@ export default compose<TagsMenuProps & TagState, TagsMenuProps>(
   </Dropdown>
 ))
 
+const Menu = compose<TagsMenuProps, TagsMenuProps>(
+  getTags(),
+  shouldUpdate<TagsMenuProps>((p, np) => p.isOpen !== np.isOpen)
+)(({ item, initialTags: tags, ...props }) => (
+  <Box as="ul">
+    <li>
+      <Text as="h5" m={0}>
+        Tags
+      </Text>
+    </li>
+
+    {tags.map(t => (
+      <MenuItem
+        key={t._id}
+        isChecked={(item.tags as Tag[]).some(tt => t._id === tt._id)}
+        handleToggle={props.handleToggle}
+        {...t}
+      />
+    ))}
+  </Box>
+))
+
+const MenuItem = compose<MenuItemState & MenuItemProps, MenuItemProps>(
+  setDisplayName('col-menu-item'),
+  withState('isChecked', 'toggle', ({ isChecked = false }) => isChecked)
+)(({ isChecked, toggle, handleToggle, ...props }) => (
+  <Box
+    as="li"
+    css={`
+      svg {
+        transform: translate(0, -1px);
+      }
+    `}>
+    <a
+      href="javascript:;"
+      onClick={() => toggle(!isChecked, () => handleToggle(!isChecked, props))}>
+      {isChecked ? (
+        <IoMdCheckmark size={12} />
+      ) : (
+        <MdCheckBoxOutlineBlank size={12} />
+      )}
+
+      <Text>{props.title}</Text>
+    </a>
+  </Box>
+))
+
+interface MenuItemState {
+  toggle?: (b: boolean, cb?: any) => void
+}
+
+export interface MenuItemProps extends Tag {
+  handleToggle?: TagsMenuProps['handleToggle']
+  isChecked?: boolean
+}
+
 export interface TagsMenuProps extends ColumnProps {
+  isOpen?: boolean
   initialTags?: Tag[]
   handleToggle?: (b: boolean, t: Tag) => any
 }

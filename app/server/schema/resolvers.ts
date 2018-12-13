@@ -20,9 +20,11 @@ export default {
 
   Tag: {
     slug,
-    total: async ({ _id: tags }: Tag, _, { mongo }) =>
+    total: async ({ _id }: Tag, _, { mongo }) =>
       mongo.collection('products').countDocuments({
-        tags
+        tags: {
+          $in: [_id.valueOf()]
+        }
       })
   },
 

@@ -1,5 +1,5 @@
 import { MODIFY_DOC } from '@/lib/queries'
-import { dateAge, relTime } from '@/lib/utils'
+import { dateAge, relTime, shortFormat } from '@/lib/utils'
 import withTagColour, { TagColour } from '@/lib/withTagColour'
 import { Tag } from '@/server/schema/types'
 import * as d3 from 'd3'
@@ -39,23 +39,22 @@ export default compose<
               entriesPerPage: 100
             }
           },
-          (_, { fetchMoreResult }) => {
+          ({ items }) => {
             setTime(new Date(), () => setTimeout(() => setLoading(false), 600))
 
-            window.requestAnimationFrame(
-              async () =>
-                await mutate({
-                  refetchQueries: fetchMoreResult ? ['getProducts'] : [],
-                  variables: {
-                    objectId: _id,
-                    collectionName: 'tags',
-                    input: JSON.parse(
-                      JSON.stringify({
-                        $set: { updatedAt: new Date() }
-                      })
-                    )
-                  }
-                })
+            window.requestAnimationFrame(() =>
+              mutate({
+                refetchQueries: items.length ? ['getProducts'] : [],
+                variables: {
+                  objectId: _id,
+                  collectionName: 'tags',
+                  input: JSON.parse(
+                    JSON.stringify({
+                      $set: { updatedAt: new Date() }
+                    })
+                  )
+                }
+              })
             )
           }
         )
@@ -88,7 +87,6 @@ export default compose<
     _id,
     onRef,
     onDelete,
-    onFilter,
     onRefresh,
     title,
     total,
@@ -101,8 +99,8 @@ export default compose<
       data-tag={_id}
       className={`row ${loading ? 'loading' : ''}`}
       {...props}>
-      <a href="javascript:;" tabIndex={-1} onClick={onFilter}>
-        <label>{total}</label>
+      <a href="javascript:;" tabIndex={-1}>
+        <label>{shortFormat(total)}</label>
 
         <span>
           <span>{title}</span>
@@ -148,7 +146,6 @@ export interface CategoryItemProps extends Tag {
   setLoading?: (b: boolean, cb?: () => void) => void
   setTime?: (t: Date, cb?: () => void) => void
   onDelete?: () => CategoriesHandlers['handleDelete']
-  onFilter?: CategoriesHandlers['handleFilter']
 }
 
 export interface CategoryItemHandles {

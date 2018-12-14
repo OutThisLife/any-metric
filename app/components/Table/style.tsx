@@ -3,9 +3,28 @@ import { rgba } from 'polished'
 import { bool } from 'prop-types'
 import { Box, BoxProps } from 'rebass'
 import { compose, setDisplayName, withContext } from 'recompose'
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 
 import BaseText, { TextProps } from '../Text'
+
+const animRowIn = keyframes`
+from {
+  opacity: 0;
+  transform: translate3d(0, -1rem, 0);
+}
+
+to {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+`
+
+const animRowOut = keyframes`
+to {
+  opacity: 0;
+  transform: scale(0.9) translate3d(-10px, 0, 0);
+}
+`
 
 export const Container = styled<any>(Box as any)`
   ${({ theme }: BaphoTheme) => css`
@@ -104,6 +123,15 @@ export const Container = styled<any>(Box as any)`
 
       &.chart-link td {
         outline-color: ${theme.colours.price.hl};
+      }
+
+      &.anim-in td {
+        animation: ${animRowIn} ${theme.eases.base} forwards;
+      }
+
+      &.anim-out td {
+        animation: ${animRowOut} ${theme.eases.base} forwards;
+        transform-origin: center top;
       }
     }
   `}

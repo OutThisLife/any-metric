@@ -4,7 +4,13 @@ import { BaphoTheme } from '@/theme'
 import { lighten } from 'polished'
 import { OrbitSpinner } from 'react-epic-spinners'
 import { MeasuredComponentProps, withContentRect } from 'react-measure'
-import { compose, lifecycle, setDisplayName, withState } from 'recompose'
+import {
+  compose,
+  lifecycle,
+  setDisplayName,
+  withHandlers,
+  withState
+} from 'recompose'
 import { withTheme } from 'styled-components'
 
 import Loader from './Loader'
@@ -16,24 +22,29 @@ export default compose<ChartProps & BaphoTheme, ChartProps>(
   withState('loaded', 'setLoading', false),
   withTheme,
   withContentRect('bounds'),
+  withHandlers<ChartProps, ChartProps>(({ setLoading }) => ({
+    loadChart: ({ data }) => () => {
+      if (!data.length || !('browser' in process)) {
+        return
+      }
+
+      const el = document.querySelector('.chart-spinner')
+
+      if (el instanceof HTMLElement) {
+        window.requestAnimationFrame(() => {
+          el.style.opacity = '0'
+          setTimeout(() => setLoading(true), 1100)
+        })
+      }
+    }
+  })),
   lifecycle<ChartProps, {}>({
     componentDidMount() {
-      const { data } = this.props
+      this.props.loadChart()
+    },
 
-      window.addEventListener('load', () => {
-        if (data.length < 10) {
-          return
-        }
-
-        const el = document.querySelector('.chart-spinner')
-
-        if (el instanceof HTMLElement) {
-          window.requestAnimationFrame(() => {
-            el.style.opacity = '0'
-            setTimeout(() => this.props.setLoading(true), 1100)
-          })
-        }
-      })
+    componentDidUpdate() {
+      this.props.loadChart()
     }
   })
 )(({ theme, loaded, measureRef, contentRect, ...props }) => (
@@ -87,10 +98,11 @@ export default compose<ChartProps & BaphoTheme, ChartProps>(
 ))
 
 export interface ChartProps extends Partial<MeasuredComponentProps> {
-  data: any[]
+  data?: any[]
   isDesktop?: boolean
   loaded?: boolean
-  setLoading: (b: boolean) => void
+  setLoading?: (b: boolean) => void
+  loadChart?: () => void
 }
 
 export interface ChartCVProps {

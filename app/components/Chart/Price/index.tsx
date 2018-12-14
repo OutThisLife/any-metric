@@ -71,13 +71,17 @@ export default compose<ChartState & BaphoTheme, ChartCVProps>(
         left: isModal ? 50 : 30
       }
 
-      const tickStyle = {
+      const tickStyle: any = {
         fontSize: isModal ? 12 : 10,
         gridWidth: width - margin.left - margin.right,
         gridHeight: height - margin.top - margin.bottom,
         tickStrokeDashArray: 'LongDashDotDot',
         tickStrokeOpacity: 0.2,
         tickStrokeWidth: 1
+      }
+
+      if (!isModal) {
+        tickStyle.ticks = 3
       }
 
       return {
@@ -108,16 +112,18 @@ export default compose<ChartState & BaphoTheme, ChartCVProps>(
       <Chart id={1} yExtents={[d => d.close, MA.accessor()]} yPan={false}>
         {isModal && <MetaData />}
 
-        <ScatterSeries
-          yAccessor={d => d.close}
-          marker={TriangleMarker}
-          markerProps={{
-            width: 8,
-            r: 2.5,
-            fill: theme.colours.price.hl,
-            stroke: 'transparent'
-          }}
-        />
+        {isModal && (
+          <ScatterSeries
+            yAccessor={d => d.close}
+            marker={TriangleMarker}
+            markerProps={{
+              width: 8,
+              r: 2.5,
+              fill: theme.colours.price.hl,
+              stroke: 'transparent'
+            }}
+          />
+        )}
 
         <LineSeries
           yAccessor={d => d.close}
@@ -129,21 +135,23 @@ export default compose<ChartState & BaphoTheme, ChartCVProps>(
         <LineSeries
           yAccessor={MA.accessor()}
           stroke={theme.colours.secondary}
-          strokeWidth={2}
+          strokeWidth={isModal ? 2 : 1}
           interpolation={d3.curveStep}
         />
 
-        <XAxis
-          axisAt="bottom"
-          orient="bottom"
-          fontSize={fontSize}
-          stroke={theme.colours.border}
-          tickStroke={theme.colours.label}
-          innerTickSize={-1 * gridHeight}
-          {...tickStyle}
-        />
+        {isModal && (
+          <XAxis
+            axisAt="bottom"
+            orient="bottom"
+            fontSize={fontSize}
+            stroke={theme.colours.border}
+            tickStroke={theme.colours.label}
+            innerTickSize={-1 * gridHeight}
+            {...tickStyle}
+          />
+        )}
 
-        {isDesktop && (
+        {isModal && (
           <MouseCoordinateX
             fontSize={fontSize}
             snapX={false}
@@ -166,7 +174,7 @@ export default compose<ChartState & BaphoTheme, ChartCVProps>(
           {...tickStyle}
         />
 
-        {isDesktop && (
+        {isModal && (
           <MouseCoordinateY
             fontSize={fontSize}
             at="right"

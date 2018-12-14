@@ -119,18 +119,19 @@ export default compose<
   }))
 )(({ tags, handleSubmit, handleMouse, handleFilter, handleDelete }) => (
   <Module>
-    <Categories id="filters" onMouseDown={handleMouse}>
+    <Categories
+      id="filters"
+      onMouseDown={e => {
+        e.persist()
+        handleMouse(e)
+        handleFilter(e)
+      }}>
       <Form.Container onSubmit={handleSubmit}>
         <Form.Input required placeholder="Add tags" tabIndex={-1} />
       </Form.Container>
 
       {tags.map(t => (
-        <Item
-          key={t._id}
-          onFilter={handleFilter}
-          onDelete={() => handleDelete(t)}
-          {...t}
-        />
+        <Item key={t._id} onDelete={() => handleDelete(t)} {...t} />
       ))}
     </Categories>
   </Module>

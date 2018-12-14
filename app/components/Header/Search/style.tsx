@@ -9,7 +9,8 @@ export default styled<any>(Form.Container)`
     position: relative;
     transition: ${theme.eases.base};
 
-    &.loading [type] {
+    &.loading [type],
+    &.loading section nav {
       pointer-events: none;
       cursor: wait;
       filter: grayscale(1) opacity(0.5);

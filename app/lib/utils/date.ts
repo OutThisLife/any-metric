@@ -29,18 +29,17 @@ export const dateFormat = withDate(d => {
 export const tickerFormat = withDate(d => {
   const now = dayjs()
   const dDiff = d.diff(now, 'day')
-  const hDiff = d.diff(now, 'hour')
+  const hDiff = d.diff(now, 'hour') % 24
+  const mDiff = d.diff(now, 'minute') % 50
+  const sDiff = d.diff(now, 'second') % 60
 
   if (hDiff <= 12) {
-    return now.add(d.diff(now, 'hour'), 'hour').format('HH:mm:ss:SSS')
-  } else if (hDiff <= 0) {
-    const mDiff = d.diff(now, 'minute')
-    const sDiff = d.diff(now, 'second')
-
-    return `${mDiff}m ${sDiff / 2}s`
+    return `${hDiff}h ${mDiff}m ${sDiff}s`
+  } else if (dDiff >= 1) {
+    return `${dDiff}d ${hDiff}h`
   }
 
-  return `${dDiff}d ${hDiff}h`
+  return `${mDiff}m ${sDiff}s`
 })
 
 export const dateAge = withDate(d => {

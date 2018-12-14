@@ -35,8 +35,9 @@ export default compose<TableState & TableProps, TableProps>(
       }
     },
 
-    handleScroll: () => ({ currentTarget }) => {
-      const el = currentTarget.firstChild.firstChild as HTMLElement
+    handleScroll: () => () => {
+      const el = document.querySelector('table')
+
       el.style.pointerEvents = 'none'
 
       if ('stop' in tm) {
@@ -48,6 +49,7 @@ export default compose<TableState & TableProps, TableProps>(
   }))
 )(({ columns, data, handleContextMenu, handleScroll, ...props }) => (
   <Box
+    onScroll={handleScroll}
     css={`
       overflow: auto;
 
@@ -73,7 +75,7 @@ export default compose<TableState & TableProps, TableProps>(
         <RenderColumns props={c => ({ children: c.label })} />
       </Table.Head>
 
-      <Table.Body onScroll={handleScroll}>
+      <Table.Body>
         {data.length ? (
           data.map(d => (
             <Table.Row key={d._id} id={d._id}>

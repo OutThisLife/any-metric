@@ -1,11 +1,12 @@
 import * as Form from '@/components/Form'
 import Text from '@/components/Text'
-import { CREATE_TAG, SEARCH_EBAY } from '@/lib/queries'
-import { EbayItem } from '@/server/schema/types'
-import { graphql } from 'react-apollo'
+import { MODIFY_DOC, SEARCH_EBAY } from '@/lib/queries'
+import { EbayItem, EbayResult } from '@/server/schema/types'
+import { ApolloClient } from 'apollo-boost'
+import { withApollo } from 'react-apollo'
 import { IoIosSearch } from 'react-icons/io'
 import { Box } from 'rebass'
-import { compose, setDisplayName, withState } from 'recompose'
+import { compose, setDisplayName, withHandlers, withState } from 'recompose'
 
 import Loader from './Loader'
 import Result from './Result'
@@ -15,102 +16,111 @@ export default compose<SearchState & SearchHandlers, {}>(
   setDisplayName('header-search'),
   withState('isOpen', 'toggle', false),
   withState('items', 'setItems', []),
-  graphql<SearchState, {}, {}, SearchHandlers>(SEARCH_EBAY, {
-    options: {
-      ssr: false,
-      variables: {
-        save: false,
-        keywords: 'fancy dress',
-        paginationInput: {
-          pageNumber: 1,
-          entriesPerPage: 1
-        }
-      }
-    },
-    props: ({ data: { fetchMore }, ownProps: { toggle, setItems } }) => {
-      const collect = async (variables, updateQuery: any = () => null) =>
-        await fetchMore({
-          updateQuery,
+  withApollo,
+  withHandlers<SearchState, SearchHandlers>(({ toggle, setItems, client }) => {
+    const collect = async (
+      variables,
+      cb: (a: EbayResult) => void = () => null
+    ) => {
+      const res = await client.query<{ ebay: EbayResult }>({
+        query: SEARCH_EBAY,
+        variables
+      })
+
+      cb(res.data.ebay)
+
+      if (variables.save && res.data.ebay.items.length) {
+        await client.mutate({
+          mutation: MODIFY_DOC,
+          refetchQueries: ['getTags', 'getProducts'],
           variables: {
-            ...variables,
-            save: true
+            objectId: res.data.ebay.items[0]._id,
+            collectionName: 'products',
+            input: JSON.parse(
+              JSON.stringify({
+                $set: {
+                  updatedAt: new Date()
+                }
+              })
+            )
           }
         })
-
-      if ('browser' in process && !('collect' in window)) {
-        ;(window as any).collect = collect
-      }
-
-      return {
-        handleSubmit: async ({ target }) => {
-          const el = target as HTMLElement
-          el.classList.add('loading')
-
-          toggle(true)
-          setItems([])
-
-          collect(
-            {
-              keywords: (document.getElementById('s') as HTMLInputElement)
-                .value,
-              paginationInput: {
-                pageNumber: 1,
-                entriesPerPage: 4
-              }
-            },
-            (_, { fetchMoreResult }) => {
-              el.classList.remove('loading')
-
-              if (fetchMoreResult) {
-                window.requestAnimationFrame(() =>
-                  setItems(fetchMoreResult.ebay.items)
-                )
-              }
-            }
-          )
-        },
-
-        handleReset: ({ target }) => {
-          const el = (target as HTMLElement).querySelector('section')
-
-          el.addEventListener(
-            'animationend',
-            () => {
-              toggle(false)
-              setItems([])
-            },
-            { once: true }
-          )
-
-          el.classList.add('anim-out')
-        }
       }
     }
-  }),
-  graphql<SearchState, {}, {}, SearchHandlers>(CREATE_TAG, {
-    props: ({ mutate }) => ({
-      handleConfirm: () => {
+
+    if ('browser' in process && !('collect' in window)) {
+      ;(window as any).collect = collect
+    }
+
+    return {
+      handleSubmit: () => async ({ target }) => {
+        const el = target as HTMLElement
+        el.classList.add('loading')
+
+        toggle(true)
+        setItems([])
+
+        collect(
+          {
+            keywords: (document.getElementById('s') as HTMLInputElement).value,
+            paginationInput: {
+              pageNumber: 1,
+              entriesPerPage: 4
+            }
+          },
+          ({ items = [] }) => {
+            el.classList.remove('loading')
+
+            if (items.length) {
+              window.requestAnimationFrame(() => setItems(items))
+            }
+          }
+        )
+      },
+
+      handleReset: () => ({ target }) => {
+        const el = (target as HTMLElement).querySelector('section')
+
+        el.addEventListener(
+          'animationend',
+          () => {
+            toggle(false)
+            setItems([])
+          },
+          { once: true }
+        )
+
+        el.classList.add('anim-out')
+      },
+
+      handleConfirm: () => () => {
         const el = document.getElementById('s') as HTMLInputElement
         const { value: title } = el
+        const $form = el.closest('form') as HTMLFormElement
+
+        $form.classList.add('loading')
 
         if (!title.length) {
+          $form.classList.remove('loading')
           return
         }
 
-        window.requestAnimationFrame(() =>
-          mutate({
-            update: () => el.closest('form').reset(),
-            refetchQueries: ['getTags'],
-            variables: {
-              input: {
-                title,
-                isQuery: true
-              }
+        ;(window as any).collect(
+          {
+            keywords: title,
+            save: true,
+            paginationInput: {
+              pageNumber: 1,
+              entriesPerPage: 100
             }
-          })
+          },
+          () => {
+            $form.reset()
+            $form.classList.remove('loading')
+          }
         )
       }
-    })
+    }
   })
 )(({ isOpen, items, handleSubmit, handleReset, handleConfirm }) => (
   <Search onSubmit={handleSubmit} onReset={handleReset}>
@@ -164,6 +174,7 @@ export interface SearchState {
   isOpen: boolean
   setItems?: (r: EbayItem[]) => void
   toggle?: (b: boolean) => void
+  client?: ApolloClient<{}>
 }
 
 export interface SearchHandlers {

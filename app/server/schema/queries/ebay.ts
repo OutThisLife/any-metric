@@ -37,19 +37,33 @@ export default (async (
   }
 
   if (save) {
-    const tag = await mongo.collection('tags').findOne<Tag>({
-      title: keywords
-    })
+    const q = { title: keywords, isQuery: true }
+    await mongo.collection('tags').updateOne(
+      q,
+      {
+        $setOnInsert: {
+          title: keywords,
+          total: 0,
+          isQuery: true,
+          isDeleted: false,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+      },
+      { upsert: true }
+    )
+
+    const tag = await mongo.collection('tags').findOne<Tag>(q)
 
     result.items.map(
       async ({
-        title,
-        viewItemURL = 'javascript:;',
+        listingInfo,
+        pictureURLSuperSize = '',
         sellingStatus,
         shippingInfo,
-        listingInfo,
+        title,
         unitPrice = {},
-        pictureURLSuperSize = ''
+        viewItemURL = 'javascript:;'
       }) => {
         const { upsertedCount } = await mongo.collection('products').updateOne(
           { title },
@@ -58,8 +72,9 @@ export default (async (
               bids: 'bidCount' in sellingStatus ? sellingStatus.bidCount[0] : 0,
               createdAt: new Date(listingInfo.startTime),
               image: pictureURLSuperSize,
+              qty: 'quantity' in unitPrice ? parseFloat(unitPrice.quantity) : 0,
               status: sellingStatus.sellingState[0],
-              tags: tag ? [tag._id] : [],
+              tags: '_id' in tag ? [tag._id] : [],
               timeLeft: new Date(listingInfo.endTime),
               title,
               updatedAt: new Date(),
@@ -70,8 +85,6 @@ export default (async (
                   ? parseFloat(sellingStatus.currentPrice[0].__value__)
                   : 0,
 
-              qty: 'quantity' in unitPrice ? parseFloat(unitPrice.quantity) : 0,
-
               shipping:
                 'shippingServiceCost' in shippingInfo
                   ? parseFloat(shippingInfo.shippingServiceCost[0].__value__)
@@ -81,17 +94,11 @@ export default (async (
           { upsert: true }
         )
 
-        if (upsertedCount) {
-          tag.total += upsertedCount
-        }
+        await mongo
+          .collection('tags')
+          .updateOne(q, { $inc: { total: upsertedCount } })
       }
     )
-
-    if (tag) {
-      await mongo
-        .collection('tags')
-        .updateOne({ _id: tag._id }, { $set: { total: tag.total } })
-    }
   }
 
   return result

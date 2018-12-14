@@ -22,20 +22,9 @@ const rm = (input: () => { [key: string]: any }): Resolver => async (
       }
     })
 
-    if (/tags/i.test(collectionName)) {
-      await mongo
-        .collection('products')
-        .updateMany({}, { $pull: { tags: { $in: [objectId] } } })
-    }
-
     return result
   }
 }
 
 export default rm(() => ({ isDeleted: true, deletedAt: new Date() }))
 export const undo = rm(() => ({ isDeleted: false, restoredAt: new Date() }))
-
-/*
-  db.products.updateMany({}, { $pull: { tags: { $in: ["5c1091926edfc03180d55e9d"] } } })
-
-  */

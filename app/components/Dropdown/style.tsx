@@ -1,6 +1,5 @@
 import { animIn, animOut } from '@/pages/_app.styles'
 import { BaphoTheme } from '@/theme'
-import { darken, lighten, rgba } from 'polished'
 import { Box } from 'rebass'
 import styled, { css } from 'styled-components'
 
@@ -25,10 +24,8 @@ export default styled<any>(Box)`
     }
 
     > div {
-      padding: 1px;
       border-radius: var(--radius);
-      box-shadow: 0 3px 5px 0 ${rgba(theme.colours.panel, 0.5)};
-      background: ${theme.colours.secondary};
+      background: ${theme.colours.base};
     }
 
     ul,
@@ -40,58 +37,39 @@ export default styled<any>(Box)`
     }
 
     ul {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      padding: 2px;
 
-      li:first-child {
-        grid-column: 1 / -1;
+      &:first-of-type {
+        display: inline-flex;
+        white-space: nowrap;
       }
     }
 
-    li h5 {
-      display: block;
-      color: ${theme.colours.base};
-      padding: calc(var(--pad) / 3) calc(var(--pad) / 2);
-    }
-
-    li a {
+    li a[href] {
       display: flex;
       align-items: center;
-      padding: calc(var(--pad) / 6) calc(var(--pad) / 2);
+      line-height: 0px;
+      color: ${theme.colours.panel};
+      padding: calc(var(--pad) / 3) calc(var(--pad) / 2);
+      outline: 1px solid transparent;
+      outline-offset: -1px;
       transition: ${theme.eases.base};
 
-      &:not(:hover) {
-        color: ${lighten(0.33, theme.colours.secondary)};
-      }
-
       &:hover {
-        color: ${theme.colours.base};
-        transition: none;
-        background: ${darken(0.1, theme.colours.secondary)};
-
-        &:active {
-          background: ${darken(0.25, theme.colours.secondary)};
-        }
+        color: ${theme.colours.panel};
+        outline-color: ${theme.colours.border};
       }
 
       svg {
+        width: 1rem;
         max-width: none;
         vertical-align: middle;
 
         + span {
           flex: 1;
-          padding-left: 0.3em;
+          padding-left: 0.5em;
         }
       }
-    }
-
-    ul + ul:before {
-      content: '';
-      display: block;
-      width: 100%;
-      height: 1px;
-      margin: 0.5em auto;
-      background: ${rgba(theme.colours.base, 0.1)};
     }
   `}
 `

@@ -32,7 +32,7 @@ export default styled<any>(Box)`
     > li a[href] {
       cursor: pointer;
       display: grid;
-      grid-template-columns: 25px calc(100% - 25px);
+      grid-template-columns: max-content calc(100% - 25px);
       grid-column-gap: 0.5em;
       align-items: center;
       justify-content: space-between;

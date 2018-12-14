@@ -10,10 +10,10 @@ export default (async (
 
   const col = await mongo.collection(collectionName)
   await col.updateOne(q, {
-    ...input,
     $set: {
       updatedAt: new Date()
-    }
+    },
+    ...input
   })
 
   return col.findOne<Product | Tag>(q)

@@ -1,4 +1,5 @@
 import { withHandlers } from 'recompose'
+import { resolve } from 'url'
 
 export default () =>
   withHandlers<SelectionsProps, SelectionsProps>(() => ({
@@ -57,6 +58,14 @@ export const select = (
 
   if (isChecked) {
     $row.toggleAttribute('data-checked')
+
+    if ($row.hasAttribute('data-hash')) {
+      window.history.replaceState(
+        {},
+        null,
+        resolve(location.href, $row.dataset.hash)
+      )
+    }
   }
 
   $row.classList.remove('seen')

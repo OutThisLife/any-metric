@@ -77,22 +77,24 @@ export default compose<
   }))
 )(
   ({
-    theme,
-    setLoading,
-    loading,
     _id,
-    onRef,
+    loading,
     onDelete,
+    onRef,
     onRefresh,
+    setLoading,
+    slug,
+    theme,
+    time,
     title,
     total,
-    time,
     ...props
   }) => (
     <Item
       as="li"
       key={_id}
       data-tag={_id}
+      data-hash={slug}
       className={`row ${loading ? 'loading' : ''}`}
       {...props}>
       <a href="javascript:;" tabIndex={-1}>

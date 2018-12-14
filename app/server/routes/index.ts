@@ -38,7 +38,7 @@ module.exports = ({ nextApp, cache, dev }) => {
     }
   }
 
-  router.get('/', render('/Dashboard'))
+  router.get('/:category?', render('/Dashboard'))
 
   router.get(
     '/screenshot',

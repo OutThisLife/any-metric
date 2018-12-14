@@ -54,28 +54,34 @@ export default compose<SearchState & SearchHandlers, {}>(
 
     return {
       handleSubmit: () => async ({ target }) => {
-        const el = target as HTMLElement
+        const el = target as HTMLFormElement
         el.classList.add('loading')
 
         toggle(true)
         setItems([])
 
-        collect(
-          {
-            keywords: (document.getElementById('s') as HTMLInputElement).value,
-            paginationInput: {
-              pageNumber: 1,
-              entriesPerPage: 4
-            }
-          },
-          ({ items = [] }) => {
-            el.classList.remove('loading')
+        try {
+          collect(
+            {
+              keywords: (document.getElementById('s') as HTMLInputElement)
+                .value,
+              paginationInput: {
+                pageNumber: 1,
+                entriesPerPage: 4
+              }
+            },
+            ({ items = [] }) => {
+              el.classList.remove('loading')
 
-            if (items.length) {
-              window.requestAnimationFrame(() => setItems(items))
+              if (items.length) {
+                window.requestAnimationFrame(() => setItems(items))
+              }
             }
-          }
-        )
+          )
+        } catch (err) {
+          el.classList.remove('loading')
+          el.reset()
+        }
       },
 
       handleReset: () => ({ target }) => {

@@ -37,6 +37,10 @@ export const Container = styled<any>(Box as any)`
     justify-content: center;
     border-left: 1px solid var(--border);
 
+    &.loading {
+      opacity: 0.5;
+    }
+
     thead,
     tbody,
     tfoot,

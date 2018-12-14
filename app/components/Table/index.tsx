@@ -101,6 +101,15 @@ export default compose<TableState & TableProps, TableProps>(
             </td>
           </Table.Row>
         )}
+
+        <Table.Row>
+          <td
+            style={{
+              gridColumn: '1 / -1',
+              padding: 'calc(var(--pad) * 2)'
+            }}
+          />
+        </Table.Row>
       </Table.Body>
     </Table.Container>
   </Box>

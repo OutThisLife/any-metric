@@ -1,12 +1,13 @@
 import * as Form from '@/components/Form'
 import Module from '@/components/Module'
 import { CREATE_TAG, getTags, REMOVE_DOC } from '@/lib/queries'
-import withSelections, { select } from '@/lib/withSelections'
+import { select } from '@/lib/withSelections'
 import withTags, { TagHandlers, TagState } from '@/lib/withTags'
 import { DataTableFilter } from '@/pages/Dashboard'
 import { Tag } from '@/server/schema/types'
 import { orderBy } from 'lodash'
-import { func } from 'prop-types'
+import { RouterProps } from 'next/router'
+import { func, object } from 'prop-types'
 import { graphql } from 'react-apollo'
 import { BoxProps } from 'rebass'
 import {
@@ -25,7 +26,7 @@ export default compose<
   CategoriesProps
 >(
   setDisplayName('categories'),
-  getContext({ filter: func }),
+  getContext({ filter: func, router: object }),
   withTags(
     getTags(),
     graphql<TagHandlers, { createTag: Tag[] }, {}, CategoriesHandlers>(
@@ -67,6 +68,36 @@ export default compose<
   ),
   withHandlers<CategoriesProps & CategoriesHandlers, CategoriesHandlers>(
     () => ({
+      handleClick: ({ filter }) => e => {
+        select(e.target as HTMLElement)
+
+        setTimeout(() => {
+          const $checked = document.querySelectorAll('#filters [data-checked]')
+          const $table = document.querySelector('table').parentElement
+
+          $table.scrollTop = 0
+
+          if (!$checked.length) {
+            filter({
+              value: '',
+              action: 'RESET'
+            })
+
+            return
+          }
+
+          window.requestAnimationFrame(() =>
+            filter({
+              action: 'TAG',
+              value: [].slice
+                .call($checked)
+                .map((el: HTMLElement) => el.dataset.tag)
+                .join(',')
+            })
+          )
+        }, 350)
+      },
+
       handleSubmit: ({ handleAdd }) => ({ currentTarget }) => {
         const el = currentTarget.querySelector('input')
 
@@ -81,47 +112,36 @@ export default compose<
 
         el.value = ''
         el.blur()
-      },
-
-      handleFilter: ({ filter }) => () => {
-        const $checked = document.querySelectorAll('#filters [data-checked]')
-        const $table = document.querySelector('table').parentElement
-
-        $table.scrollTop = 0
-
-        if (!$checked.length) {
-          filter({
-            value: '',
-            action: 'RESET'
-          })
-
-          return
-        }
-
-        window.requestAnimationFrame(() =>
-          filter({
-            action: 'TAG',
-            value: [].slice
-              .call($checked)
-              .map((el: HTMLElement) => el.dataset.tag)
-              .join(',')
-          })
-        )
       }
     })
   ),
-  withProps(({ tags }) => ({
+  withHandlers<CategoriesProps & CategoriesHandlers, CategoriesHandlers>(
+    () => ({
+      onRef: ({ handleClick, router }) => ref => {
+        if (!ref) {
+          return
+        }
+
+        if (router.query.category) {
+          const $a = document.querySelector(
+            `[data-hash="${router.query.category}"]`
+          )
+
+          if ($a instanceof HTMLElement) {
+            handleClick({
+              target: $a
+            } as any)
+          }
+        }
+      }
+    })
+  ),
+  withProps(({ tags, router }) => ({
     tags: orderBy(tags, ['isQuery', 'createdAt'], ['desc', 'desc'])
   }))
-)(({ tags, handleSubmit, handleFilter, handleDelete }) => (
+)(({ tags, handleSubmit, handleClick, handleDelete }) => (
   <Module>
-    <Categories
-      id="filters"
-      onMouseDown={e => {
-        e.persist()
-        select(e.target)
-        handleFilter(e)
-      }}>
+    <Categories id="filters" onClick={handleClick}>
       <Form.Container onSubmit={handleSubmit}>
         <Form.Input required placeholder="Add tags" tabIndex={-1} />
       </Form.Container>
@@ -135,12 +155,14 @@ export default compose<
 
 export interface CategoriesHandlers {
   filter?: DataTableFilter
+  onRef?: (ref: HTMLElement) => void
+  handleClick?: React.MouseEventHandler<HTMLElement>
   handleAdd?: (t: Tag) => any
   handleDelete?: (t: Tag) => any
-  handleFilter?: React.MouseEventHandler<HTMLAnchorElement>
   handleSubmit?: React.FormEventHandler<HTMLFormElement>
 }
 
 export interface CategoriesProps extends BoxProps, TagState {
+  router?: RouterProps
   as?: any
 }

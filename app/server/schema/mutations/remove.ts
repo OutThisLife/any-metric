@@ -1,5 +1,5 @@
 import { convertId } from '.'
-import { Resolver } from '../types'
+import { Resolver, Tag } from '../types'
 
 const rm = (input: () => { [key: string]: any }): Resolver => async (
   _,
@@ -21,6 +21,30 @@ const rm = (input: () => { [key: string]: any }): Resolver => async (
         updatedAt: new Date()
       }
     })
+
+    if (collectionName === 'tags') {
+      const tag = await mongo.collection('tags').findOne<Tag>(q)
+
+      if (tag.isQuery && tag.isDeleted) {
+        await mongo.collection('products').updateMany(
+          {
+            tags: {
+              $in: [tag._id]
+            }
+          },
+          {
+            $set: {
+              isDeleted: true,
+              deletedAt: new Date()
+            },
+
+            $pull: {
+              tags: [tag._id]
+            }
+          }
+        )
+      }
+    }
 
     return result
   }

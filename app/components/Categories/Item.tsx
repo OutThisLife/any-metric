@@ -48,11 +48,7 @@ export default compose<
                 variables: {
                   objectId: _id,
                   collectionName: 'tags',
-                  input: JSON.parse(
-                    JSON.stringify({
-                      $set: { updatedAt: new Date() }
-                    })
-                  )
+                  input: {}
                 }
               })
             )

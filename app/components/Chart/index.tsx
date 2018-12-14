@@ -19,12 +19,15 @@ import { ZoomedChart } from './style'
 
 export default compose<ChartProps & BaphoTheme, ChartProps>(
   setDisplayName('price'),
-  withState('loaded', 'setLoading', false),
+  withState('loading', 'setLoading', true),
   withTheme,
   withContentRect('bounds'),
-  withHandlers<ChartProps, ChartProps>(({ setLoading }) => ({
+  withHandlers<ChartProps, ChartProps>(({ loading, setLoading }) => ({
     loadChart: ({ data }) => () => {
-      if (!data.length || !('browser' in process)) {
+      if (!('browser' in process) || !data.length) {
+        return
+      } else if (!loading && !data.length) {
+        setLoading(true)
         return
       }
 
@@ -33,7 +36,7 @@ export default compose<ChartProps & BaphoTheme, ChartProps>(
       if (el instanceof HTMLElement) {
         window.requestAnimationFrame(() => {
           el.style.opacity = '0'
-          setTimeout(() => setLoading(true), 1100)
+          setTimeout(() => setLoading(false), 1100)
         })
       }
     }
@@ -47,7 +50,7 @@ export default compose<ChartProps & BaphoTheme, ChartProps>(
       this.props.loadChart()
     }
   })
-)(({ theme, loaded, measureRef, contentRect, ...props }) => (
+)(({ theme, loading, measureRef, contentRect, ...props }) => (
   <div
     ref={measureRef}
     id="chart-container"
@@ -57,7 +60,7 @@ export default compose<ChartProps & BaphoTheme, ChartProps>(
     }}>
     <Modal
       id="price-chart-modal"
-      isShown={loaded && /chart/.test(location.search)}
+      isShown={!loading && /chart/.test(location.search)}
       render={() => {
         const width = innerWidth * 0.66
 
@@ -74,21 +77,21 @@ export default compose<ChartProps & BaphoTheme, ChartProps>(
       }}>
       {({ isOpen, toggle }) => (
         <>
-          {loaded ? (
-            <Price
-              isDesktop={window.innerWidth >= 1025}
-              width={contentRect.bounds.width}
-              height={contentRect.bounds.width * 0.7}
-              onSelect={() => toggle(!isOpen)}
-              {...props}
-            />
-          ) : (
+          {loading ? (
             <OrbitSpinner
               className="chart-spinner"
               size={120}
               color={lighten(0.1, theme.colours.module)}
               animationDuration={668}
               style={{ margin: '-50% auto 0', transition: 'opacity 1s linear' }}
+            />
+          ) : (
+            <Price
+              isDesktop={window.innerWidth >= 1025}
+              width={contentRect.bounds.width}
+              height={contentRect.bounds.width * 0.7}
+              onSelect={() => toggle(!isOpen)}
+              {...props}
             />
           )}
         </>
@@ -100,16 +103,16 @@ export default compose<ChartProps & BaphoTheme, ChartProps>(
 export interface ChartProps extends Partial<MeasuredComponentProps> {
   data?: any[]
   isDesktop?: boolean
-  loaded?: boolean
+  loading?: boolean
   setLoading?: (b: boolean) => void
   loadChart?: () => void
 }
 
 export interface ChartCVProps {
-  data: Product[]
+  data?: Product[]
   ratio?: number
-  width: number
-  height: number
+  width?: number
+  height?: number
   isModal?: boolean
   isDesktop?: boolean
   onSelect?: () => void

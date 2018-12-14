@@ -31,9 +31,6 @@ export default compose<
     graphql<TagHandlers, { createTag: Tag[] }, {}, CategoriesHandlers>(
       CREATE_TAG,
       {
-        options: {
-          awaitRefetchQueries: true
-        },
         props: ({ mutate, ownProps: { addTag, updateTag } }) => ({
           handleAdd: async tag => {
             addTag(tag)
@@ -50,9 +47,6 @@ export default compose<
       }
     ),
     graphql<TagHandlers, {}, {}, CategoriesHandlers>(REMOVE_DOC, {
-      options: {
-        awaitRefetchQueries: true
-      },
       props: ({ mutate, ownProps: { delTag } }) => ({
         handleDelete: async tag => {
           if (!window.confirm('Are you sure? All references will be lost.')) {

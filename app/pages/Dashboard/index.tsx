@@ -66,7 +66,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
       filter
     })
   )
-)(({ sort, products }) => (
+)(({ sort, products = [] }) => (
   <Home as="section">
     <Head>
       <title key="title">

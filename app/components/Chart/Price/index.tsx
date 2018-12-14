@@ -18,7 +18,14 @@ import {
   TriangleMarker
 } from 'react-stockcharts/lib/series'
 import { last } from 'react-stockcharts/lib/utils'
-import { compose, defaultProps, setDisplayName, withProps } from 'recompose'
+import {
+  branch,
+  compose,
+  defaultProps,
+  renderComponent,
+  setDisplayName,
+  withProps
+} from 'recompose'
 import { withTheme } from 'styled-components'
 
 import { ChartCVProps, ChartState } from '..'
@@ -39,6 +46,7 @@ export default compose<ChartState & BaphoTheme, ChartCVProps>(
     ratio: 1
   }),
   withTheme,
+  branch(({ data }) => !data.length, renderComponent(() => null)),
   withProps<Partial<ChartState>, ChartState>(
     ({ data: initialData, width, height, isModal }) => {
       const calculatedData = MA(

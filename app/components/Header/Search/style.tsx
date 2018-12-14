@@ -66,7 +66,7 @@ export default styled<any>(Form.Container)`
 
       aside {
         flex: 1;
-        padding-left: var(--pad);
+        padding: 0 var(--pad);
       }
     }
   `}

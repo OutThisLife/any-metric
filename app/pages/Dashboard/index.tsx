@@ -106,7 +106,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           {
             label: 'State',
             key: 'status',
-            width: '0.33fr'
+            width: '.7fr'
           },
           {
             label: '',

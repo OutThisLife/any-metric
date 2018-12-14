@@ -15,6 +15,15 @@ export default (async (
     })
   )
 
+  if (typeof res === 'undefined') {
+    console.error(res)
+
+    return {
+      total: 0,
+      items: []
+    }
+  }
+
   const result: EbayResult = {
     total: res['@count'] as number,
     items: (res.item as EbayItem[]).map(item => {

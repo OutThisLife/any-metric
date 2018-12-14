@@ -10,6 +10,7 @@ export default styled<any>(Column)`
     figure {
       position: relative;
       margin: 0;
+      height: 80px;
       background: ${lighten(0.35, theme.colours.secondary)};
 
       .row:not(:hover) & {

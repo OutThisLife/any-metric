@@ -1,4 +1,4 @@
-import { numFormat } from '@/lib/utils'
+import { moneyFormat, numFormat } from '@/lib/utils'
 import { Product } from '@/server/schema/types'
 import { compose, setDisplayName } from 'recompose'
 
@@ -13,11 +13,13 @@ export default compose<PriceProps, PriceProps>(setDisplayName('col-price'))(
         children
       ) : (
         <>
-          <Text as="div" className={item.price % 2 ? 'up' : 'down'}>
-            {numFormat(item.price)}
+          <Text as="div" className="up">
+            {moneyFormat(item.price)}
           </Text>
 
-          <Text as="div">S: {numFormat(item.shipping)}</Text>
+          <Text as="div">
+            S: {item.shipping > 0 ? numFormat(item.shipping) : 'n/a'}
+          </Text>
         </>
       )}
     </Price>

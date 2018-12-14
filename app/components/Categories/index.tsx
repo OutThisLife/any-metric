@@ -72,9 +72,6 @@ export default compose<
     })
   ),
   withSelections(),
-  withProps(({ tags }) => ({
-    tags: orderBy(tags, ['isQuery', 'total'], ['desc', 'desc'])
-  })),
   withHandlers<CategoriesProps & CategoriesHandlers, CategoriesHandlers>(
     () => ({
       handleSubmit: ({ handleAdd }) => ({ currentTarget }) => {
@@ -105,25 +102,26 @@ export default compose<
           return
         }
 
-        const value = [].slice
-          .call($checked)
-          .map(el => el.dataset.tag)
-          .join(',')
-
         window.requestAnimationFrame(() =>
           filter({
             action: 'TAG',
-            value
+            value: [].slice
+              .call($checked)
+              .map((el: HTMLElement) => el.dataset.tag)
+              .join(',')
           })
         )
       }
     })
-  )
+  ),
+  withProps(({ tags }) => ({
+    tags: orderBy(tags, ['isQuery', 'createdAt'], ['desc', 'desc'])
+  }))
 )(({ tags, handleSubmit, handleMouse, handleFilter, handleDelete }) => (
   <Module>
     <Categories id="filters" onMouseDown={handleMouse}>
       <Form.Container onSubmit={handleSubmit}>
-        <Form.Input required tabIndex={-1} placeholder="Add tags" />
+        <Form.Input required placeholder="Add tags" tabIndex={-1} />
       </Form.Container>
 
       {tags.map(t => (
@@ -142,7 +140,6 @@ export interface CategoriesHandlers {
   filter?: DataTableFilter
   handleAdd?: (t: Tag) => any
   handleDelete?: (t: Tag) => any
-  handleRefresh?: (t: Tag) => any
   handleFilter?: React.MouseEventHandler<HTMLAnchorElement>
   handleSubmit?: React.FormEventHandler<HTMLFormElement>
 }

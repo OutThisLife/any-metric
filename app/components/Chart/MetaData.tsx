@@ -14,7 +14,7 @@ export default compose<BaphoTheme, {}>(
 )(({ theme }) => (
   <OHLCTooltip
     accessor={d => d}
-    origin={[-30, -15]}
+    origin={[0, -25]}
     fontSize={9}
     textFill={theme.colours.muted}
     labelFill={theme.colours.label}

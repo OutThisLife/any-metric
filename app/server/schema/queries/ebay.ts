@@ -1,16 +1,21 @@
 import { getCommerce } from '../../api'
-import { EbayItem, EbayResult, Resolver } from '../types'
+import { EbayItem, EbayResult, Resolver, Tag } from '../types'
 
-export default (async (_, args = {}): Promise<EbayResult> => {
+export default (async (
+  _,
+  { keywords, save = false, ...args },
+  { mongo }
+): Promise<EbayResult> => {
   const {
     searchResult: [res]
   } = await getCommerce(
     Object.assign(args, {
+      keywords,
       outputSelector: ['PictureURLSuperSize', 'SellerInfo', 'UnitPrice']
     })
   )
 
-  return {
+  const result: EbayResult = {
     total: res['@count'] as number,
     items: (res.item as EbayItem[]).map(item => {
       for (const [k, v] of Object.entries(item)) {
@@ -30,4 +35,64 @@ export default (async (_, args = {}): Promise<EbayResult> => {
       return item
     })
   }
+
+  if (save) {
+    const tag = await mongo.collection('tags').findOne<Tag>({
+      title: keywords
+    })
+
+    result.items.map(
+      async ({
+        title,
+        viewItemURL = 'javascript:;',
+        sellingStatus,
+        shippingInfo,
+        listingInfo,
+        unitPrice = {},
+        pictureURLSuperSize = ''
+      }) => {
+        const { upsertedCount } = await mongo.collection('products').updateOne(
+          { title },
+          {
+            $setOnInsert: {
+              bids: 'bidCount' in sellingStatus ? sellingStatus.bidCount[0] : 0,
+              createdAt: new Date(listingInfo.startTime),
+              image: pictureURLSuperSize,
+              status: sellingStatus.sellingState[0],
+              tags: tag ? [tag._id] : [],
+              timeLeft: new Date(listingInfo.endTime),
+              title,
+              updatedAt: new Date(),
+              url: viewItemURL,
+
+              price:
+                'currentPrice' in sellingStatus
+                  ? parseFloat(sellingStatus.currentPrice[0].__value__)
+                  : 0,
+
+              qty: 'quantity' in unitPrice ? parseFloat(unitPrice.quantity) : 0,
+
+              shipping:
+                'shippingServiceCost' in shippingInfo
+                  ? parseFloat(shippingInfo.shippingServiceCost[0].__value__)
+                  : 0
+            }
+          },
+          { upsert: true }
+        )
+
+        if (upsertedCount) {
+          tag.total += upsertedCount
+        }
+      }
+    )
+
+    if (tag) {
+      await mongo
+        .collection('tags')
+        .updateOne({ _id: tag._id }, { $set: { total: tag.total } })
+    }
+  }
+
+  return result
 }) as Resolver

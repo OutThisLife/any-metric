@@ -8,7 +8,7 @@ import Time from './style'
 export default compose<ColumnProps, ColumnProps>(
   setDisplayName('col-datetime')
 )(({ children, item = {} }) => (
-  <Time name="date">
-    {!('_id' in item) ? children : <Text>{dateFormat(item.date)}</Text>}
+  <Time name="createdAt">
+    {!('_id' in item) ? children : <Text>{dateFormat(item.createdAt)}</Text>}
   </Time>
 ))

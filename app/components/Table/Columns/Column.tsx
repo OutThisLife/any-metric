@@ -41,6 +41,7 @@ export default compose<
 
     return (
       <HeaderCell
+        {...props}
         aria-label={name}
         data-sorted={isSorted}
         onClick={() =>
@@ -48,8 +49,7 @@ export default compose<
             name,
             dir: isSorted ? (dir === 'asc' ? 'desc' : 'asc') : 'desc'
           })
-        }
-        {...props}>
+        }>
         <Flex alignItems="center" justifyContent="inherit">
           <span style={{ marginRight: 2 }}>
             <Text as="h5">{children}</Text>

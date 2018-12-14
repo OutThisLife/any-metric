@@ -3633,6 +3633,11 @@ date-now@^0.1.4:
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
   integrity sha1-6vQ5/U1ISK105cx9vvIAZyueNFs=
 
+dayjs-plugin-utc@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/dayjs-plugin-utc/-/dayjs-plugin-utc-0.1.0.tgz#7d6a91d713fda7545dc78bbe045b4286a62dcad5"
+  integrity sha512-4pBTndU5Atn7NM+geW7/vb6eXJIjxkj+zS/wpRyA6laJDEbgUMdnPaa1cpxX2Pg1p6Dgbr9J0qJPKLM6Q0XaiA==
+
 dayjs@^1.7.7:
   version "1.7.7"
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.7.7.tgz#8df20f78ac2476e3f5348ef49f8f22ebc3016370"

@@ -26,9 +26,12 @@ export default compose<TableState & TableProps, TableProps>(
       const $row = (e.target as HTMLElement).closest('tr')
 
       if ($row instanceof HTMLTableRowElement) {
-        const $a: HTMLLinkElement = $row.querySelector('[class*="menu-"]')
-        $a.closest('td').focus()
-        $a.click()
+        const $a = $row.querySelector('[class*="menu-"]')
+
+        if ($a instanceof HTMLAnchorElement) {
+          $a.closest('td').focus()
+          $a.click()
+        }
       }
     },
 
@@ -71,11 +74,25 @@ export default compose<TableState & TableProps, TableProps>(
       </Table.Head>
 
       <Table.Body onScroll={handleScroll}>
-        {data.map(d => (
-          <Table.Row key={d.updatedAt.valueOf()} id={d._id}>
-            <RenderColumns props={() => ({ item: d })} />
+        {data.length ? (
+          data.map(d => (
+            <Table.Row key={d._id} id={d._id}>
+              <RenderColumns props={() => ({ item: d })} />
+            </Table.Row>
+          ))
+        ) : (
+          <Table.Row>
+            <td
+              style={{
+                gridColumn: '1 / -1',
+                textAlign: 'center',
+                justifyContent: 'center',
+                padding: 'var(--pad)'
+              }}>
+              ¯\_(ツ)_/¯
+            </td>
           </Table.Row>
-        ))}
+        )}
       </Table.Body>
     </Table.Container>
   </Box>
@@ -106,6 +123,7 @@ export interface TableProps {
   columns: Array<{
     label: string
     key: string
+    skey?: string
     width: number | string
   }>
 }

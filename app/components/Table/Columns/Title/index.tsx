@@ -16,7 +16,7 @@ export default compose<TitleProps, TitleProps>(setDisplayName('col-title'))(
         <Box>
           <Text
             as="a"
-            href={`//twitter.com/${item.slug}`}
+            href={item.url}
             target="_blank"
             tabIndex={-1}
             rel="noopener">

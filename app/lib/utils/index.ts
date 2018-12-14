@@ -1,5 +1,4 @@
 export * from './date'
-export * from './data'
 export * from './maths'
 export * from './worker'
 export * from './numbers'

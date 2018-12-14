@@ -1,48 +1,60 @@
 import dayjs from 'dayjs'
+import utc from 'dayjs-plugin-utc'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
+dayjs.extend(utc)
 dayjs.extend(relativeTime)
 
-export const dateFormat = (date: dayjs.ConfigType): string => {
-  const d = dayjs(date)
+export const djs = (d = new Date()): dayjs.Dayjs | any =>
+  (dayjs(d) as any).local()
 
-  if (isOld(d, 12)) {
+const withDate = (cb: (d: dayjs.Dayjs | any) => any) => (
+  d: dayjs.ConfigType | Date | any
+) => cb(djs(d instanceof Date ? dayjs(d) : d))
+
+export const dateFormat = withDate(d => {
+  const hDiff = d.diff(dayjs(), 'hour')
+
+  if (hDiff >= 12) {
     return d.format('h:mm a')
-  } else if (isOld(d)) {
-    return (d as any).fromNow()
+  } else if (hDiff >= 24) {
+    return d.fromNow()
   } else if (d.year() === dayjs().year()) {
     return d.format('MMM DD')
   }
 
   return d.format('MMM DD, YY')
-}
+})
 
-export const relTime = (date: dayjs.ConfigType): string =>
-  (dayjs(date) as any).fromNow()
+export const tickerFormat = withDate(d => {
+  const now = dayjs()
+  const dDiff = d.diff(now, 'day')
+  const hDiff = d.diff(now, 'hour')
 
-export const isOld = (date: dayjs.Dayjs | Date, h = 24): boolean => {
-  const d = dayjs(date instanceof Date ? dayjs(date) : date)
-  return dayjs().diff(d, 'hour', true) > h
-}
+  if (hDiff <= 12) {
+    return now.add(d.diff(now, 'hour'), 'hour').format('HH:mm:ss:SSS')
+  } else if (hDiff <= 0) {
+    const mDiff = d.diff(now, 'minute')
+    const sDiff = d.diff(now, 'second')
 
-export const dateAge = (date: dayjs.ConfigType): string => {
-  const age = dayjs().diff(dayjs(date), 'hour', true)
+    return `${mDiff}m ${sDiff / 2}s`
+  }
 
-  if (age >= 32) {
+  return `${dDiff}d ${hDiff}h`
+})
+
+export const dateAge = withDate(d => {
+  const hDiff = d.diff(dayjs(), 'hour')
+
+  if (hDiff >= 32) {
     return 'dead'
-  } else if (age >= 12) {
+  } else if (hDiff >= 12) {
     return 'down'
-  } else if (age >= 4) {
+  } else if (hDiff >= 4) {
     return 'hl'
   }
 
   return 'up'
-}
+})
 
-export const unixDateFormat = (date: dayjs.ConfigType): string =>
-  dayjs(date)
-    .valueOf()
-    .toString()
-
-export const sortByDate = <T extends { date?: Date }>(a: T, b: T): number =>
-  dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1
+export const relTime = withDate(d => d.fromNow())

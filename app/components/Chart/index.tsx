@@ -1,93 +1,96 @@
 import Modal from '@/components/Modal'
 import { Product } from '@/server/schema/types'
-import * as d3 from 'd3'
-import { MdFullscreen } from 'react-icons/md'
+import { BaphoTheme } from '@/theme'
+import { lighten } from 'polished'
+import { OrbitSpinner } from 'react-epic-spinners'
 import { MeasuredComponentProps, withContentRect } from 'react-measure'
-import { branch, compose, renderComponent, setDisplayName } from 'recompose'
+import { compose, lifecycle, setDisplayName, withState } from 'recompose'
+import { withTheme } from 'styled-components'
 
-import Text from '../Text'
 import Loader from './Loader'
 import Price from './Price'
 import { ZoomedChart } from './style'
 
-export default compose<ChartProps, ChartProps>(
+export default compose<ChartProps & BaphoTheme, ChartProps>(
   setDisplayName('price'),
-  branch<ChartProps>(
-    ({ data = [] }) => data.length < 10,
-    renderComponent(() => null)
-  ),
-  withContentRect('bounds')
-)(({ measureRef, contentRect, ...props }) => (
+  withState('loaded', 'setLoading', false),
+  withTheme,
+  withContentRect('bounds'),
+  lifecycle<ChartProps, {}>({
+    componentDidMount() {
+      const { data } = this.props
+
+      window.addEventListener('load', () => {
+        if (data.length < 10) {
+          return
+        }
+
+        const el = document.querySelector('.chart-spinner')
+
+        if (el instanceof HTMLElement) {
+          window.requestAnimationFrame(() => {
+            el.style.opacity = '0'
+            setTimeout(() => this.props.setLoading(true), 1100)
+          })
+        }
+      })
+    }
+  })
+)(({ theme, loaded, measureRef, contentRect, ...props }) => (
   <div
     ref={measureRef}
-    onMouseLeave={() => d3.timeout(unlink, 700)}
-    style={{ position: 'relative', width: '100%' }}>
-    {!isNaN(contentRect.bounds.width) && (
-      <Modal
-        id="price-chart-modal"
-        isShown={'browser' in process && /chart/.test(location.search)}
-        render={() => {
-          const width = innerWidth * 0.66
+    id="chart-container"
+    style={{
+      position: 'relative',
+      width: '100%'
+    }}>
+    <Modal
+      id="price-chart-modal"
+      isShown={loaded && /chart/.test(location.search)}
+      render={() => {
+        const width = innerWidth * 0.66
 
-          return (
-            <ZoomedChart>
-              <Price
-                isModal={true}
-                width={width}
-                height={width * 0.54}
-                {...props}
-              />
-            </ZoomedChart>
-          )
-        }}>
-        {({ isOpen, toggle }) => (
-          <>
-            <Text
-              as="a"
-              href="javascript:;"
-              onClick={() => toggle(!isOpen)}
-              css={`
-                display: block;
-                width: 100%;
-                font-size: 0.85rem;
-
-                &[href] {
-                  cursor: zoom-in;
-                  color: ${({ theme }) => theme.colours.label};
-
-                  svg {
-                    transform: translate(0, -2px);
-                  }
-                }
-              `}>
-              <MdFullscreen size={16} />
-              Expand
-            </Text>
-
+        return (
+          <ZoomedChart>
             <Price
-              isDesktop={'browser' in process && window.innerWidth >= 1025}
-              width={contentRect.bounds.width}
-              height={contentRect.bounds.width * 0.7}
+              isModal={true}
+              width={width}
+              height={width * 0.54}
               {...props}
             />
-          </>
-        )}
-      </Modal>
-    )}
+          </ZoomedChart>
+        )
+      }}>
+      {({ isOpen, toggle }) => (
+        <>
+          {loaded ? (
+            <Price
+              isDesktop={window.innerWidth >= 1025}
+              width={contentRect.bounds.width}
+              height={contentRect.bounds.width * 0.7}
+              onSelect={() => toggle(!isOpen)}
+              {...props}
+            />
+          ) : (
+            <OrbitSpinner
+              className="chart-spinner"
+              size={120}
+              color={lighten(0.1, theme.colours.module)}
+              animationDuration={668}
+              style={{ margin: '-50% auto 0', transition: 'opacity 1s linear' }}
+            />
+          )}
+        </>
+      )}
+    </Modal>
   </div>
 ))
-
-export const unlink = () => {
-  const $cur = document.querySelector('.chart-link')
-
-  if ($cur) {
-    $cur.classList.remove('chart-link')
-  }
-}
 
 export interface ChartProps extends Partial<MeasuredComponentProps> {
   data: any[]
   isDesktop?: boolean
+  loaded?: boolean
+  setLoading: (b: boolean) => void
 }
 
 export interface ChartCVProps {
@@ -97,6 +100,7 @@ export interface ChartCVProps {
   height: number
   isModal?: boolean
   isDesktop?: boolean
+  onSelect?: () => void
 }
 
 export interface ChartState extends ChartCVProps {

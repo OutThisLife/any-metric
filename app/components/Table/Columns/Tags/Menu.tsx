@@ -2,11 +2,18 @@ import Dropdown from '@/components/Dropdown'
 import { getTags, MODIFY_DOC } from '@/lib/queries'
 import { TagHandlers, TagState } from '@/lib/withTags'
 import { Tag } from '@/server/schema/types'
+import { orderBy } from 'lodash'
 import { graphql } from 'react-apollo'
 import { IoMdCheckmark } from 'react-icons/io'
 import { MdCheckBoxOutlineBlank, MdLabelOutline } from 'react-icons/md'
 import { Box } from 'rebass'
-import { compose, setDisplayName, shouldUpdate, withState } from 'recompose'
+import {
+  compose,
+  setDisplayName,
+  shouldUpdate,
+  withProps,
+  withState
+} from 'recompose'
 
 import { Text } from '../../style'
 import { ColumnProps } from '../Column'
@@ -72,8 +79,11 @@ export default compose<TagsMenuProps & TagState, TagsMenuProps>(
 
 const Menu = compose<TagsMenuProps, TagsMenuProps>(
   getTags(),
+  withProps<TagsMenuProps, TagsMenuProps>(({ initialTags }) => ({
+    tags: orderBy(initialTags, ['isQuery', 'createdAt'], ['desc', 'desc'])
+  })),
   shouldUpdate<TagsMenuProps>((p, np) => p.isOpen !== np.isOpen)
-)(({ item, initialTags: tags, ...props }) => (
+)(({ item, tags, ...props }) => (
   <Box as="ul">
     <li>
       <Text as="h5" m={0}>
@@ -129,5 +139,6 @@ export interface MenuItemProps extends Tag {
 export interface TagsMenuProps extends ColumnProps {
   isOpen?: boolean
   initialTags?: Tag[]
+  tags?: Tag[]
   handleToggle?: (b: boolean, t: Tag) => any
 }

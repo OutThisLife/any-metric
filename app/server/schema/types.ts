@@ -1,4 +1,5 @@
 import { KeyValueCache } from 'apollo-server-core'
+import { ObjectID } from 'bson'
 import gql from 'graphql-tag'
 import { IFieldResolver } from 'graphql-tools'
 import { Connection } from 'mongoose'
@@ -10,7 +11,13 @@ export default gql`
 
   type Query {
     crawl(query: CrawlInput!): CrawlResult
-    ebay(keywords: String!, paginationInput: Pagination): EbayResult
+
+    ebay(
+      keywords: String!
+      save: Boolean
+      paginationInput: Pagination
+    ): EbayResult
+
     google(keywords: String!): CrawlResult
     products(paginationInput: Pagination): [Product]
     tags: [Tag]
@@ -33,13 +40,16 @@ export default gql`
   }
 
   type Product @cacheControl(maxAge: 10e5) {
-    bids: Int
+    bids: Float
     image: String
-    price: Int
-    qty: Int
-    shipping: Int
+    price: Float
+    qty: Float
+    query: String
+    shipping: Float
     slug: String
+    status: String
     tags: [Tag]
+    timeLeft: Date
     title: String
     url: String
   }
@@ -152,8 +162,11 @@ export interface Product extends MongoEntry {
   qty?: number
   shipping?: number
   slug?: string
-  tags?: Array<Tag['_id']> | Tag[]
+  tags?: Array<Tag['_id']> | Tag[] | ObjectID[]
   url?: string
+  query?: string
+  timeLeft?: Date
+  status?: string
 }
 
 export interface Tag extends MongoEntry {
@@ -222,6 +235,7 @@ export interface EbayItem {
   timestamp?: Date
   title?: string
   topRatedListing?: boolean
+  unitPrice?: any
   viewItemURL?: string
 }
 

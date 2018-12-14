@@ -22,6 +22,10 @@ import Home from './style'
 
 export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
   setDisplayName('dashboard'),
+  withState('sort', 'sortBy', {
+    name: 'timeLeft',
+    dir: 'asc'
+  }),
   withState('filter', 'setFilter', {
     value: '',
     action: 'RESET'
@@ -50,10 +54,6 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
       })
     }
   ),
-  withState('sort', 'sortBy', {
-    name: 'date',
-    dir: 'desc'
-  }),
   withContext(
     {
       sort: object,
@@ -100,6 +100,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           {
             label: 'Date',
             key: 'time',
+            skey: 'timeLeft',
             width: '0.33fr'
           },
           {
@@ -149,7 +150,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           }
         `}>
         {products ? (
-          <Chart data={orderBy(products, 'date', 'asc')} />
+          <Chart data={orderBy(products, 'createdAt', 'asc')} />
         ) : (
           <Loader>Insufficient data</Loader>
         )}

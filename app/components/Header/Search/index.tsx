@@ -2,100 +2,104 @@ import * as Form from '@/components/Form'
 import Text from '@/components/Text'
 import { CREATE_TAG, SEARCH_EBAY } from '@/lib/queries'
 import { EbayItem } from '@/server/schema/types'
-import { graphql, GraphqlQueryControls } from 'react-apollo'
+import { graphql } from 'react-apollo'
 import { IoIosSearch } from 'react-icons/io'
 import { Box } from 'rebass'
-import {
-  compose,
-  setDisplayName,
-  StateHandler,
-  StateHandlerMap,
-  withHandlers,
-  withStateHandlers
-} from 'recompose'
+import { compose, setDisplayName, withState } from 'recompose'
 
 import Loader from './Loader'
 import Result from './Result'
 import Search from './style'
 
-export default compose<SearchState & SearchStateHandlers & SearchHandlers, {}>(
+export default compose<SearchState & SearchHandlers, {}>(
   setDisplayName('header-search'),
-  graphql<{}, {}, {}, SearchHandlers>(CREATE_TAG, {
-    options: {
-      awaitRefetchQueries: true
-    }
-  }),
-  graphql(SEARCH_EBAY, {
+  withState('isOpen', 'toggle', false),
+  withState('items', 'setItems', []),
+  graphql<SearchState, {}, {}, SearchHandlers>(SEARCH_EBAY, {
     options: {
       ssr: false,
       variables: {
-        keywords: 'adidas',
+        save: false,
+        keywords: 'fancy dress',
         paginationInput: {
           pageNumber: 1,
           entriesPerPage: 1
         }
       }
     },
-    props: ({ data: { fetchMore } }) => ({ fetchMore })
-  }),
-  withStateHandlers<SearchState, SearchStateHandlers>(
-    {
-      isOpen: false,
-      items: []
-    },
-    {
-      toggle: () => isOpen => ({ isOpen }),
-      setItems: () => items => ({ items })
-    }
-  ),
-  withHandlers<SearchState & SearchStateHandlers, SearchHandlers>(() => ({
-    handleSubmit: ({ fetchMore, toggle, setItems }) => async ({ target }) => {
-      const el = target as HTMLElement
-      el.classList.add('loading')
-
-      toggle(true)
-      setItems([])
-
-      await fetchMore({
-        variables: {
-          keywords: (document.getElementById('s') as HTMLInputElement).value,
-          paginationInput: {
-            pageNumber: 1,
-            entriesPerPage: 4
+    props: ({ data: { fetchMore }, ownProps: { toggle, setItems } }) => {
+      const collect = async (variables, updateQuery: any = () => null) =>
+        await fetchMore({
+          updateQuery,
+          variables: {
+            ...variables,
+            save: true
           }
-        },
-        updateQuery: (_, { fetchMoreResult }) => {
-          el.classList.remove('loading')
+        })
 
-          if (fetchMoreResult) {
-            setItems(fetchMoreResult.ebay.items)
-          }
-        }
-      })
-    },
+      if ('browser' in process && !('collect' in window)) {
+        ;(window as any).collect = collect
+      }
 
-    handleReset: ({ setItems, toggle }) => ({ target }) => {
-      const el = (target as HTMLElement).querySelector('section')
+      return {
+        handleSubmit: async ({ target }) => {
+          const el = target as HTMLElement
+          el.classList.add('loading')
 
-      el.addEventListener(
-        'animationend',
-        () => {
-          toggle(false)
+          toggle(true)
           setItems([])
+
+          collect(
+            {
+              keywords: (document.getElementById('s') as HTMLInputElement)
+                .value,
+              paginationInput: {
+                pageNumber: 1,
+                entriesPerPage: 4
+              }
+            },
+            (_, { fetchMoreResult }) => {
+              el.classList.remove('loading')
+
+              if (fetchMoreResult) {
+                window.requestAnimationFrame(() =>
+                  setItems(fetchMoreResult.ebay.items)
+                )
+              }
+            }
+          )
         },
-        { once: true }
-      )
 
-      el.classList.add('anim-out')
-    },
+        handleReset: ({ target }) => {
+          const el = (target as HTMLElement).querySelector('section')
 
-    handleConfirm: ({ mutate }) => () => {
-      const el = document.getElementById('s') as HTMLInputElement
-      const { value: title } = el
+          el.addEventListener(
+            'animationend',
+            () => {
+              toggle(false)
+              setItems([])
+            },
+            { once: true }
+          )
 
-      if (title.length) {
+          el.classList.add('anim-out')
+        }
+      }
+    }
+  }),
+  graphql<SearchState, {}, {}, SearchHandlers>(CREATE_TAG, {
+    props: ({ mutate }) => ({
+      handleConfirm: () => {
+        const el = document.getElementById('s') as HTMLInputElement
+        const { value: title } = el
+
+        if (!title.length) {
+          return
+        }
+
         window.requestAnimationFrame(() =>
           mutate({
+            update: () => el.closest('form').reset(),
             refetchQueries: ['getTags'],
             variables: {
               input: {
@@ -106,10 +110,8 @@ export default compose<SearchState & SearchStateHandlers & SearchHandlers, {}>(
           })
         )
       }
-
-      el.closest('form').reset()
-    }
-  }))
+    })
+  })
 )(({ isOpen, items, handleSubmit, handleReset, handleConfirm }) => (
   <Search onSubmit={handleSubmit} onReset={handleReset}>
     <Form.Input
@@ -160,12 +162,8 @@ export default compose<SearchState & SearchStateHandlers & SearchHandlers, {}>(
 export interface SearchState {
   items: EbayItem[]
   isOpen: boolean
-  fetchMore?: GraphqlQueryControls['fetchMore']
-}
-
-export interface SearchStateHandlers extends StateHandlerMap<SearchState> {
-  setItems?: StateHandler<SearchState>
-  toggle?: StateHandler<SearchState>
+  setItems?: (r: EbayItem[]) => void
+  toggle?: (b: boolean) => void
 }
 
 export interface SearchHandlers {

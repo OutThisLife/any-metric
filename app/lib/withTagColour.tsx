@@ -5,12 +5,12 @@ import { compose, mapProps, setDisplayName } from 'recompose'
 import { withTheme } from 'styled-components'
 
 export default () =>
-  compose<TagColour & Tag, Tag>(
+  compose<TagColour & Tag & BaphoTheme, Tag>(
     setDisplayName('with-tag-colour'),
     withTheme,
-    mapProps<TagColour, Tag & TagColour>(({ theme, title, ...props }) => ({
+    mapProps<TagColour, Tag & TagColour>(({ title, ...props }) => ({
       title,
-      tagColours: getTagColours(title, theme.colours.secondary),
+      tagColours: getTagColours(title, props.theme.colours.secondary),
       ...props
     }))
   )

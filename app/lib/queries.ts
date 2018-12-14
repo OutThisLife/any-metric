@@ -34,8 +34,11 @@ const productFragment = gql`
     restoredAt
     shipping
     slug
+    status
+    timeLeft
     title
     updatedAt
+    url
   }
 `
 
@@ -141,8 +144,12 @@ const ebayFragment = gql`
 `
 
 export const SEARCH_EBAY = gql`
-  query getEbay($keywords: String!, $paginationInput: Pagination) {
-    ebay(keywords: $keywords, paginationInput: $paginationInput) {
+  query getEbay(
+    $keywords: String!
+    $save: Boolean
+    $paginationInput: Pagination
+  ) {
+    ebay(keywords: $keywords, save: $save, paginationInput: $paginationInput) {
       ...EbayFields
     }
   }

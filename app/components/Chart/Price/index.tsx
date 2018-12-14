@@ -6,18 +6,18 @@ import { Chart } from 'react-stockcharts'
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes'
 import {
   CrossHairCursor,
+  EdgeIndicator,
   MouseCoordinateX,
   MouseCoordinateY
 } from 'react-stockcharts/lib/coordinates'
 import { sma } from 'react-stockcharts/lib/indicator'
 import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
 import {
-  AreaSeries,
   LineSeries,
   ScatterSeries,
   TriangleMarker
 } from 'react-stockcharts/lib/series'
-import { createVerticalLinearGradient, last } from 'react-stockcharts/lib/utils'
+import { last } from 'react-stockcharts/lib/utils'
 import { compose, defaultProps, setDisplayName, withProps } from 'recompose'
 import { withTheme } from 'styled-components'
 
@@ -27,7 +27,7 @@ import ChartCanvas from '../style'
 import Tooltip from '../Tooltip'
 
 const MA = sma()
-  .options({ windowSize: 10, sourcePath: 'price' })
+  .options({ windowSize: 4, sourcePath: 'price' })
   .merge((d, c) => ({ ...d, MA: c }))
   .accessor(d => d.MA)
 
@@ -64,15 +64,19 @@ export default compose<ChartState & BaphoTheme, ChartCVProps>(
       const end = xAccessor(data[Math.max(0, data.length - 150)])
       const xExtents = [start, end]
 
-      const margin = { top: 30, right: 0, bottom: 30, left: 30 }
+      const margin = {
+        top: isModal ? 50 : 30,
+        right: isModal ? 60 : 30,
+        bottom: 30,
+        left: isModal ? 50 : 30
+      }
 
       const tickStyle = {
-        fontSize: isModal ? 14 : 10,
-        ticks: isModal ? Math.max(width, height) / 150 : 5,
+        fontSize: isModal ? 12 : 10,
         gridWidth: width - margin.left - margin.right,
         gridHeight: height - margin.top - margin.bottom,
-        tickStrokeDashArray: 'Solid',
-        tickStrokeOpacity: isModal ? 0.2 : 0,
+        tickStrokeDashArray: 'LongDashDotDot',
+        tickStrokeOpacity: 0.2,
         tickStrokeWidth: 1
       }
 
@@ -95,9 +99,39 @@ export default compose<ChartState & BaphoTheme, ChartCVProps>(
     tickStyle: { fontSize, gridWidth, gridHeight, ...tickStyle },
     ...props
   }) => (
-    <ChartCanvas seriesName="Price" clamp={true} type="hybrid" {...props}>
+    <ChartCanvas
+      seriesName="Price"
+      clamp={true}
+      mouseMoveEvent={isModal}
+      panEvent={isModal}
+      {...props}>
       <Chart id={1} yExtents={[d => d.close, MA.accessor()]} yPan={false}>
-        <MetaData />
+        {isModal && <MetaData />}
+
+        <ScatterSeries
+          yAccessor={d => d.close}
+          marker={TriangleMarker}
+          markerProps={{
+            width: 8,
+            r: 2.5,
+            fill: theme.colours.price.hl,
+            stroke: 'transparent'
+          }}
+        />
+
+        <LineSeries
+          yAccessor={d => d.close}
+          stroke={rgba(theme.colours.price.hl, 0.33)}
+          strokeWidth={1}
+          strokeDasharray="Dot"
+        />
+
+        <LineSeries
+          yAccessor={MA.accessor()}
+          stroke={theme.colours.secondary}
+          strokeWidth={2}
+          interpolation={d3.curveStep}
+        />
 
         <XAxis
           axisAt="bottom"
@@ -136,91 +170,26 @@ export default compose<ChartState & BaphoTheme, ChartCVProps>(
           <MouseCoordinateY
             fontSize={fontSize}
             at="right"
-            orient="left"
+            orient="right"
             fill={theme.colours.border}
             fillText={theme.colours.base}
             displayFormat={moneyFormat}
           />
         )}
 
-        <ScatterSeries
-          yAccessor={d => d.close}
-          marker={TriangleMarker}
-          markerProps={{
-            width: 8,
-            r: 2.5,
-            fill: theme.colours.price.hl,
-            stroke: 'transparent'
-          }}
-        />
-
-        <LineSeries
-          yAccessor={d => d.close}
-          stroke={rgba(theme.colours.price.hl, 0.33)}
-          strokeWidth={1}
-          interpolation={d3.curveMonotoneX}
-          strokeDasharray="Dot"
-        />
-
-        <LineSeries
-          yAccessor={MA.accessor()}
-          stroke={theme.colours.secondary}
-          strokeWidth={2}
-          interpolation={d3.curveMonotoneX}
-        />
-
-        {isDesktop && <Tooltip fontSize={fontSize} />}
+        {isModal && <Tooltip fontSize={fontSize} />}
+        {isModal && (
+          <EdgeIndicator
+            yAccessor={MA.accessor()}
+            itemType="last"
+            orient="right"
+            edgeAt="right"
+            fill={theme.colours.secondary}
+          />
+        )}
       </Chart>
 
-      <Chart
-        id={2}
-        height={75}
-        yPan={false}
-        yAccessor={d => d.volume()}
-        yExtents={d => d.volume}
-        origin={(_, h) => [0, h - 75]}>
-        <defs>
-          <linearGradient
-            id="BarSeriesGradient"
-            x1="0"
-            y1="100%"
-            x2="0"
-            y2="0%">
-            <stop
-              offset="0%"
-              stopColor={theme.colours.border}
-              stopOpacity={0}
-            />
-
-            <stop
-              offset="50%"
-              stopColor={theme.colours.border}
-              stopOpacity={0.2}
-            />
-
-            <stop
-              offset="100%"
-              stopColor={theme.colours.border}
-              stopOpacity={0.5}
-            />
-          </linearGradient>
-        </defs>
-
-        <AreaSeries
-          yAccessor={d => d.volume}
-          fill="url(#BarSeriesGradient)"
-          stroke="transparent"
-          strokeWidth={0}
-          interpolation={d3.curveMonotoneX}
-          canvasGradient={createVerticalLinearGradient([
-            { stop: 0, color: rgba(theme.colours.border, 0) },
-            { stop: 0.5, color: rgba(theme.colours.border, 0.2) },
-            { stop: 1, color: rgba(theme.colours.border, 0.5) }
-          ])}
-        />
-      </Chart>
-
-      {isDesktop && (
+      {isModal && (
         <CrossHairCursor
           snapX={false}
           StrokeDasharray="ShortDashDot"

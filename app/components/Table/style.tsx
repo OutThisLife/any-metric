@@ -176,7 +176,6 @@ export const Row = compose<
       const el = ref.querySelector('td')
 
       if (el instanceof HTMLElement) {
-        el.parentElement.style.visibility = 'hidden'
         observer.observe(el)
       }
     }

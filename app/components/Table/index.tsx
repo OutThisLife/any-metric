@@ -37,7 +37,7 @@ export default compose<TableState & TableProps, TableProps>(
     },
 
     handleScroll: () => () => {
-      const el = document.getElementById('data-table')
+      const el = document.querySelector('table')
 
       el.style.pointerEvents = 'none'
 

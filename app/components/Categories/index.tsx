@@ -1,7 +1,7 @@
 import * as Form from '@/components/Form'
 import Module from '@/components/Module'
 import { CREATE_TAG, getTags, REMOVE_DOC } from '@/lib/queries'
-import withSelections, { SelectionsProps } from '@/lib/withSelections'
+import withSelections, { select } from '@/lib/withSelections'
 import withTags, { TagHandlers, TagState } from '@/lib/withTags'
 import { DataTableFilter } from '@/pages/Dashboard'
 import { Tag } from '@/server/schema/types'
@@ -65,7 +65,6 @@ export default compose<
       })
     })
   ),
-  withSelections(),
   withHandlers<CategoriesProps & CategoriesHandlers, CategoriesHandlers>(
     () => ({
       handleSubmit: ({ handleAdd }) => ({ currentTarget }) => {
@@ -86,6 +85,9 @@ export default compose<
 
       handleFilter: ({ filter }) => () => {
         const $checked = document.querySelectorAll('#filters [data-checked]')
+        const $table = document.querySelector('table').parentElement
+
+        $table.scrollTop = 0
 
         if (!$checked.length) {
           filter({
@@ -111,13 +113,13 @@ export default compose<
   withProps(({ tags }) => ({
     tags: orderBy(tags, ['isQuery', 'createdAt'], ['desc', 'desc'])
   }))
-)(({ tags, handleSubmit, handleMouse, handleFilter, handleDelete }) => (
+)(({ tags, handleSubmit, handleFilter, handleDelete }) => (
   <Module>
     <Categories
       id="filters"
       onMouseDown={e => {
         e.persist()
-        handleMouse(e)
+        select(e.target)
         handleFilter(e)
       }}>
       <Form.Container onSubmit={handleSubmit}>
@@ -139,6 +141,6 @@ export interface CategoriesHandlers {
   handleSubmit?: React.FormEventHandler<HTMLFormElement>
 }
 
-export interface CategoriesProps extends BoxProps, SelectionsProps, TagState {
+export interface CategoriesProps extends BoxProps, TagState {
   as?: any
 }

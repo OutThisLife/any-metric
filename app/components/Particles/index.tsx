@@ -5,13 +5,16 @@ import { compose, setDisplayName, withPropsOnChange } from 'recompose'
 import defaultParams from './params'
 
 export default compose<ParticleProps & MeasuredComponentProps, {}>(
+  setDisplayName('particles'),
   withContentRect('bounds'),
   withPropsOnChange<ParticleProps, ParticleProps & MeasuredComponentProps>(
     ['contentRect'],
     ({ contentRect }) => {
       const params = defaultParams
 
-      const b = contentRect.bounds.width > 1025
+      const b =
+        contentRect.bounds.width > 1025 &&
+        document.visibilityState === 'visible'
 
       params.particles.color.value = '#fafafa'
       params.particles.line_linked.color = params.particles.color.value
@@ -20,11 +23,11 @@ export default compose<ParticleProps & MeasuredComponentProps, {}>(
 
       return { params }
     }
-  ),
-  setDisplayName('particles')
+  )
 )(({ measureRef, params, contentRect: { bounds: { width, height } } }) => (
   <div
     ref={measureRef}
+    id="particles"
     style={{
       zIndex: 100,
       pointerEvents: 'none',

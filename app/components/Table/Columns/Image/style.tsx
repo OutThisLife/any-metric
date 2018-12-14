@@ -10,6 +10,7 @@ export default styled<any>(Column)`
     figure {
       position: relative;
       margin: 0;
+      width: 80px;
       height: 80px;
       background: ${lighten(0.35, theme.colours.secondary)};
 
@@ -30,9 +31,14 @@ export default styled<any>(Column)`
 
       img {
         object-fit: cover;
-        height: 100%;
         width: 100%;
+        height: 100%;
         mix-blend-mode: color-burn;
+
+        &[src=''],
+        &:not([src]) {
+          opacity: 0.15;
+        }
 
         + img {
           z-index: 1;

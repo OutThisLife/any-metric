@@ -2,7 +2,7 @@ import { BaphoTheme } from '@/theme'
 import { rgba } from 'polished'
 import { bool } from 'prop-types'
 import { Box, BoxProps } from 'rebass'
-import { compose, setDisplayName, withContext } from 'recompose'
+import { compose, setDisplayName, withContext, withHandlers } from 'recompose'
 import styled, { css, keyframes } from 'styled-components'
 
 import BaseText, { TextProps } from '../Text'
@@ -142,12 +142,49 @@ export const Body = compose<
   Cell<HTMLTableSectionElement>
 >(setDisplayName('table-tbody'))(props => <Box as="tbody" {...props} />)
 
+const observer =
+  'browser' in process &&
+  new IntersectionObserver(
+    entries => {
+      for (let i = 0, l = entries.length; i < l; i++) {
+        const e = entries[i]
+        const isVisible = e.intersectionRatio > 0
+
+        const $row = (e.target as HTMLElement).parentElement
+
+        $row.style.visibility = isVisible ? 'inherit' : 'hidden'
+        $row.style.pointerEvents = isVisible ? 'inherit' : 'none'
+      }
+    },
+    {
+      root: document.querySelector('table').parentElement,
+      threshold: 0.25
+    }
+  )
+
 export const Row = compose<
   Cell<HTMLTableRowElement>,
   Cell<HTMLTableRowElement>
->(setDisplayName('table-tr'))(props => (
+>(
+  setDisplayName('table-tr'),
+  withHandlers(() => ({
+    onRef: () => ref => {
+      if (!('browser' in process) || !ref) {
+        return
+      }
+
+      const el = ref.querySelector('td')
+
+      if (el instanceof HTMLElement) {
+        el.parentElement.style.visibility = 'hidden'
+        observer.observe(el)
+      }
+    }
+  }))
+)(({ onRef, ...props }) => (
   <Box
     as="tr"
+    ref={onRef}
     className="row"
     onMouseEnter={e => e.currentTarget.classList.add('hover')}
     onMouseLeave={e => e.currentTarget.classList.remove('hover')}
@@ -186,4 +223,7 @@ export const Text = compose<Cell<HTMLParagraphElement>, TextProps>(
   setDisplayName('table-text')
 )(BaseText)
 
-export type Cell<T> = React.HTMLAttributes<T> & BoxProps
+export type Cell<T> = React.HTMLAttributes<T> &
+  BoxProps & {
+    onRef?: (ref?: T) => void
+  }

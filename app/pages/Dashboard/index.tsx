@@ -1,5 +1,5 @@
 import Categories from '@/components/Categories'
-import Chart, { Loader } from '@/components/Chart'
+import Chart from '@/components/Chart'
 import Table from '@/components/Table'
 import { GET_PRODUCTS } from '@/lib/queries'
 import { Product, Tag } from '@/server/schema/types'
@@ -80,12 +80,12 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
         align-self: inherit;
       `}>
       <Table
-        data={orderBy(products, sort.name, [sort.dir])}
+        data={orderBy(products, sort.name, [sort.dir]).slice(0, 100)}
         columns={[
           {
             label: 'Price',
             key: 'price',
-            width: 'min-content'
+            width: 150
           },
           {
             label: '',
@@ -111,7 +111,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           {
             label: '',
             key: 'tags',
-            width: 'max-content'
+            width: 200
           }
         ]}
       />
@@ -139,21 +139,19 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
       <Box
         as="section"
         css={`
+          width: 100%;
+
           @media (min-width: 1025px) {
             align-self: flex-end;
-            width: 100%;
             margin: var(--pad) auto 0;
           }
 
           @media (max-width: 1025px) {
-            display: none;
+            align-self: center;
+            margin: var(--pad);
           }
         `}>
-        {products ? (
-          <Chart data={orderBy(products, 'createdAt', 'asc')} />
-        ) : (
-          <Loader>Insufficient data</Loader>
-        )}
+        <Chart data={orderBy(products, 'createdAt', 'asc')} />
       </Box>
     </Flex>
   </Home>

@@ -55,7 +55,7 @@ export default compose<TagsProps, TagsProps>(
             padding: var(--pad) 0;
           `}>
           {tags.length ? (
-            tags.map(t => <TagLabel key={t._id} {...t} />)
+            tags.map((t, i) => <TagLabel key={i + t._id} {...t} />)
           ) : (
             <FaEmptySet style={{ opacity: 0.5 }} />
           )}

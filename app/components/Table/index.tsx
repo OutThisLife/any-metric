@@ -1,7 +1,7 @@
 import { Product } from '@/server/schema/types'
 import * as d3 from 'd3'
 import { array } from 'prop-types'
-import { MeasuredComponentProps } from 'react-measure'
+import { MeasuredComponentProps, withContentRect } from 'react-measure'
 import { Box } from 'rebass'
 import {
   compose,
@@ -19,6 +19,7 @@ let tm: d3.Timer | {} = {}
 export default compose<TableState & TableProps, TableProps>(
   setDisplayName('table'),
   withContext({ columns: array }, ({ columns }) => ({ columns })),
+  withContentRect('bounds'),
   withHandlers<{}, TableState>(() => ({
     handleContextMenu: () => e => {
       e.preventDefault()
@@ -68,6 +69,10 @@ export default compose<TableState & TableProps, TableProps>(
         grid-template-columns: ${columns
           .map(c => (typeof c.width === 'number' ? `${c.width}px` : c.width))
           .join(' ')};
+
+        @media (max-width: 768px) {
+          grid-template-columns: repeat(${columns.length}, 1fr);
+        }
       `}
       onContextMenu={handleContextMenu}
       {...props}>

@@ -50,55 +50,59 @@ export default compose<ChartProps & BaphoTheme, ChartProps>(
       this.props.loadChart()
     }
   })
-)(({ theme, loading, measureRef, contentRect, ...props }) => (
-  <div
-    ref={measureRef}
-    id="chart-container"
-    style={{
-      position: 'relative',
-      width: '100%'
-    }}>
-    <Modal
-      id="price-chart-modal"
-      isShown={!loading && /chart/.test(location.search)}
-      render={() => {
-        const width = innerWidth * 0.66
+)(({ theme, loading, measureRef, contentRect, ...props }) => {
+  const isDesktop = 'browser' in process && window.innerWidth >= 1025
+  const width = contentRect.bounds.width
+  const height = width * (isDesktop ? 0.7 : 0.4)
 
-        return (
-          <ZoomedChart>
-            <Price
-              isModal={true}
-              width={width}
-              height={width * 0.54}
-              {...props}
-            />
-          </ZoomedChart>
-        )
+  return (
+    <div
+      ref={measureRef}
+      id="chart-container"
+      style={{
+        position: 'relative',
+        width: '100%'
       }}>
-      {({ isOpen, toggle }) => (
-        <>
-          {loading ? (
-            <OrbitSpinner
-              className="chart-spinner"
-              size={120}
-              color={lighten(0.1, theme.colours.module)}
-              animationDuration={668}
-              style={{ margin: '-50% auto 0', transition: 'opacity 1s linear' }}
-            />
-          ) : (
-            <Price
-              isDesktop={window.innerWidth >= 1025}
-              width={contentRect.bounds.width}
-              height={contentRect.bounds.width * 0.7}
-              onSelect={() => toggle(!isOpen)}
-              {...props}
-            />
-          )}
-        </>
-      )}
-    </Modal>
-  </div>
-))
+      <Modal
+        id="price-chart-modal"
+        isShown={!loading && /chart/.test(location.search)}
+        render={() => {
+          const w = window.innerWidth * (isDesktop ? 0.66 : 0.9)
+
+          return (
+            <ZoomedChart>
+              <Price isModal={true} width={w} height={w * 0.54} {...props} />
+            </ZoomedChart>
+          )
+        }}>
+        {({ isOpen, toggle }) => (
+          <>
+            {loading ? (
+              <OrbitSpinner
+                className="chart-spinner"
+                size={120}
+                color={lighten(0.1, theme.colours.module)}
+                animationDuration={668}
+                style={{
+                  margin: '-50% auto 0',
+                  transition: 'opacity 1s linear'
+                }}
+              />
+            ) : (
+              <Price
+                isDesktop={isDesktop}
+                width={width}
+                height={height}
+                onSelect={() => toggle(!isOpen)}
+                {...props}
+              />
+            )}
+          </>
+        )}
+      </Modal>
+    </div>
+  )
+})
 
 export interface ChartProps extends Partial<MeasuredComponentProps> {
   data?: any[]

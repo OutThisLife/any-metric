@@ -47,8 +47,19 @@ export const select = (
     return
   }
 
+  const isChecked = !$row.hasAttribute('data-checked')
   $row.classList.add('seen')
-  $row.toggleAttribute('data-checked')
+
+  //
+  ;[].slice
+    .call(document.querySelectorAll('[data-checked]'))
+    .forEach(($sib: HTMLElement) => $sib.removeAttribute('data-checked'))
+
+  if (isChecked) {
+    $row.toggleAttribute('data-checked')
+  }
+
+  $row.classList.remove('seen')
 
   if (typeof cb === 'function') {
     window.requestAnimationFrame(cb)

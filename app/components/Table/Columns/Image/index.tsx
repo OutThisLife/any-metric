@@ -23,7 +23,7 @@ export default compose<ImageProps, ImageProps>(
       <Popover
         id={`popover-${item._id}`}
         direction="right"
-        render={() => <img ref={onRef} src={item.image} alt={item.title} />}>
+        render={() => <img ref={onRef} src={item.image} />}>
         {({ toggle }) => (
           <Box
             as="figure"
@@ -31,13 +31,12 @@ export default compose<ImageProps, ImageProps>(
               cursor: zoom-in;
             `}>
             <img
-              src={item.image}
-              alt={item.title}
+              data-src={item.image}
               onMouseEnter={() => toggle(true)}
               onMouseLeave={() => toggle(false)}
             />
 
-            <img src={item.image} />
+            <img data-src={item.image} />
           </Box>
         )}
       </Popover>

@@ -32,21 +32,12 @@ export default compose<ParticleProps, {}>(
       el.style.height = '100%'
       ;(el.style as any).mixBlendMode = 'soft-light'
 
-      const maybeFreeze = () => {
-        const b =
-          window.innerWidth > 1025 && document.visibilityState === 'visible'
+      params.particles.color.value = '#fafafa'
+      params.particles.line_linked.color = params.particles.color.value
+      params.interactivity.events.onhover.enable = false
+      params.particles.move.enable = false
 
-        params.particles.color.value = '#fafafa'
-        params.particles.line_linked.color = params.particles.color.value
-        params.interactivity.events.onhover.enable = b
-        params.particles.move.enable = b
-
-        window.requestAnimationFrame(() => setParams(params))
-      }
-
-      window.requestAnimationFrame(maybeFreeze)
-      document.addEventListener('visibilitychange', maybeFreeze)
-      window.addEventListener('resize', maybeFreeze)
+      window.requestAnimationFrame(() => setParams(params))
     }
   }))
 )(({ onRef, params }) => (

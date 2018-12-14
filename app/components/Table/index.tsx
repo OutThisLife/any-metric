@@ -6,6 +6,7 @@ import { Box } from 'rebass'
 import {
   compose,
   getContext,
+  lifecycle,
   setDisplayName,
   withContext,
   withHandlers
@@ -15,6 +16,38 @@ import * as Columns from './Columns'
 import * as Table from './style'
 
 let tm: d3.Timer | {} = {}
+
+const getObserver = () =>
+  'browser' in process &&
+  new IntersectionObserver(
+    entries => {
+      console.log(entries)
+      for (let i = 0, l = entries.length; i < l; i++) {
+        const e = entries[i]
+        const isVisible = e.intersectionRatio > 0
+
+        const $row = (e.target as HTMLElement).parentElement
+
+        $row.style.visibility = isVisible ? 'inherit' : 'hidden'
+        $row.style.pointerEvents = isVisible ? 'inherit' : 'none'
+        ;[].slice
+          .call($row.querySelectorAll('[data-src]'))
+          .forEach($im =>
+            isVisible ? ($im.src = $im.dataset.src) : $im.removeAttribute('src')
+          )
+      }
+    },
+    {
+      root: document.getElementById('data-table'),
+      threshold: 0.25
+    }
+  )
+
+const observeRows = (observer: IntersectionObserver) =>
+  'browser' in process &&
+  [].slice
+    .call(document.querySelectorAll('tr > td'))
+    .forEach(el => observer.observe(el))
 
 export default compose<TableState & TableProps, TableProps>(
   setDisplayName('table'),
@@ -47,9 +80,15 @@ export default compose<TableState & TableProps, TableProps>(
 
       tm = d3.timeout(() => (el.style.pointerEvents = 'auto'), 300)
     }
-  }))
+  })),
+  lifecycle({
+    componentDidMount() {
+      observeRows(getObserver())
+    }
+  })
 )(({ columns, data, handleContextMenu, handleScroll, ...props }) => (
   <Box
+    id="data-table"
     onScroll={handleScroll}
     css={`
       overflow: auto;

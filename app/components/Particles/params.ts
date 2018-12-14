@@ -55,7 +55,7 @@ export default {
       width: 1
     },
     move: {
-      enable: true,
+      enable: false,
       speed: 1.5,
       direction: 'none',
       random: true,
@@ -73,7 +73,7 @@ export default {
     detect_on: 'window',
     events: {
       onhover: {
-        enable: true,
+        enable: false,
         mode: 'grab'
       },
       onclick: {

@@ -31,12 +31,12 @@ export default compose<ImageProps, ImageProps>(
               cursor: zoom-in;
             `}>
             <img
-              data-src={item.image}
+              src={item.image}
               onMouseEnter={() => toggle(true)}
               onMouseLeave={() => toggle(false)}
             />
 
-            <img data-src={item.image} />
+            <img src={item.image} />
           </Box>
         )}
       </Popover>

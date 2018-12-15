@@ -32,12 +32,7 @@ export default compose<TagsProps, TagsProps>(
     {!('_id' in item) ? (
       children
     ) : (
-      <Flex
-        alignItems="center"
-        css={`
-          display: grid;
-          grid-template-columns: 25px 170px;
-        `}>
+      <Flex alignItems="center">
         <Box
           css={`
             position: relative;

@@ -33,7 +33,6 @@ export const Container = styled<any>(Box as any)`
     user-select: none;
     display: grid;
     align-items: stretch;
-    align-content: center;
     justify-content: center;
     border-left: 1px solid var(--border);
 

@@ -8,19 +8,21 @@ import {
   getContext,
   setDisplayName,
   withContext,
-  withHandlers
+  withHandlers,
+  withState
 } from 'recompose'
 
 import * as Columns from './Columns'
 import * as Table from './style'
 
-let tm: d3.Timer | {} = {}
+const tm: d3.Timer | {} = {}
 
 export default compose<TableState & TableProps, TableProps>(
   setDisplayName('table'),
+  withState('visible', 'setVisible', []),
   withContext({ columns: array }, ({ columns }) => ({ columns })),
   withContentRect('bounds'),
-  withHandlers<{}, TableState>(() => ({
+  withHandlers<TableProps & TableState, TableState>(({ setVisible }) => ({
     handleContextMenu: () => e => {
       e.preventDefault()
 
@@ -36,22 +38,48 @@ export default compose<TableState & TableProps, TableProps>(
       }
     },
 
-    handleScroll: () => () => {
-      const el = document.querySelector('table')
-
-      el.style.pointerEvents = 'none'
-
+    onRef: ({ data = [] }) => ref => {
       if ('stop' in tm) {
         tm.stop()
       }
 
-      tm = d3.timeout(() => (el.style.pointerEvents = 'auto'), 300)
+      if (!(ref || data.length)) {
+        return
+      }
+
+      const el = document.getElementById('data-table') as HTMLElement
+      const scroll = el.firstElementChild as HTMLElement
+      const table = scroll.firstElementChild as HTMLTableElement
+      const row = document.getElementById('vsize').firstElementChild
+
+      const h = row.clientHeight
+
+      table.style.position = 'absolute'
+      table.style.top = '0px'
+      table.style.right = '0px'
+      table.style.bottom = '0px'
+      table.style.left = '0px'
+      scroll.style.position = 'relative'
+      scroll.style.height = `${(data.length * h) / 2}px`
+
+      const handleScroll = () => {
+        const rowCount = (el.clientHeight * 1.5) / h
+        const start = el.scrollTop / h
+
+        console.log(rowCount)
+
+        const end = Math.min(data.length, start + rowCount)
+        setVisible(data.slice(start, end))
+      }
+
+      window.requestAnimationFrame(handleScroll)
+      el.addEventListener('scroll', handleScroll)
     }
   }))
-)(({ columns, data, handleContextMenu, handleScroll, ...props }) => (
+)(({ onRef, columns, visible: data, handleContextMenu }) => (
   <Box
     id="data-table"
-    onScroll={handleScroll}
+    ref={onRef}
     css={`
       overflow: auto;
 
@@ -64,54 +92,55 @@ export default compose<TableState & TableProps, TableProps>(
         overflow: auto;
       }
     `}>
-    <Table.Container
-      as="table"
-      onContextMenu={handleContextMenu}
-      css={`
-        grid-template-columns: ${columns
-          .map(c => (typeof c.width === 'number' ? `${c.width}px` : c.width))
-          .join(' ')};
+    <div>
+      <Table.Container
+        as="table"
+        onContextMenu={handleContextMenu}
+        css={`
+          grid-template-columns: ${columns
+            .map(c => (typeof c.width === 'number' ? `${c.width}px` : c.width))
+            .join(' ')};
 
-        @media (max-width: 768px) {
-          grid-template-columns: repeat(${columns.length}, 1fr);
-        }
-      `}
-      {...props}>
-      <Table.Head>
-        <RenderColumns props={c => ({ children: c.label })} />
-      </Table.Head>
+          @media (max-width: 768px) {
+            grid-template-columns: repeat(${columns.length}, 1fr);
+          }
+        `}>
+        <Table.Head>
+          <RenderColumns props={c => ({ children: c.label })} />
+        </Table.Head>
 
-      <Table.Body>
-        {data.length ? (
-          data.map(d => (
-            <Table.Row key={d._id} id={d._id}>
-              <RenderColumns props={() => ({ item: d })} />
+        <Table.Body>
+          {data.length ? (
+            data.map(d => (
+              <Table.Row key={d._id} id={d._id}>
+                <RenderColumns props={() => ({ item: d })} />
+              </Table.Row>
+            ))
+          ) : (
+            <Table.Row>
+              <td
+                style={{
+                  gridColumn: '1 / -1',
+                  textAlign: 'center',
+                  justifyContent: 'center',
+                  padding: 'var(--pad)'
+                }}>
+                ¯\_(ツ)_/¯
+              </td>
             </Table.Row>
-          ))
-        ) : (
-          <Table.Row>
+          )}
+
+          <Table.Row id="vsize">
             <td
               style={{
                 gridColumn: '1 / -1',
-                textAlign: 'center',
-                justifyContent: 'center',
-                padding: 'var(--pad)'
-              }}>
-              ¯\_(ツ)_/¯
-            </td>
+                padding: 'calc(var(--pad) * 2)'
+              }}
+            />
           </Table.Row>
-        )}
-
-        <Table.Row>
-          <td
-            style={{
-              gridColumn: '1 / -1',
-              padding: 'calc(var(--pad) * 2)'
-            }}
-          />
-        </Table.Row>
-      </Table.Body>
-    </Table.Container>
+        </Table.Body>
+      </Table.Container>
+    </div>
   </Box>
 ))
 
@@ -131,7 +160,9 @@ export const RenderColumns = compose<RenderColumnProps, RenderColumnProps>(
 ))
 
 export interface TableState extends Partial<MeasuredComponentProps> {
-  handleScroll?: React.UIEventHandler<HTMLElement>
+  visible?: Product[]
+  setVisible?: (a: Product[]) => void
+  onRef?: React.UIEventHandler<HTMLElement>
   handleContextMenu?: React.UIEventHandler<HTMLElement>
 }
 

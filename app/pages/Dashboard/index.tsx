@@ -85,7 +85,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           {
             label: 'Price',
             key: 'price',
-            width: 150
+            width: 'min-content'
           },
           {
             label: '',
@@ -106,7 +106,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           {
             label: 'State',
             key: 'status',
-            width: '.7fr'
+            width: '0.5fr'
           },
           {
             label: '',

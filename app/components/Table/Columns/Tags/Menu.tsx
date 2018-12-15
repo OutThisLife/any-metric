@@ -5,7 +5,7 @@ import { Tag } from '@/server/schema/types'
 import { orderBy } from 'lodash'
 import { graphql } from 'react-apollo'
 import { IoMdCheckmark, IoMdTrash } from 'react-icons/io'
-import { MdCheckBoxOutlineBlank, MdLabelOutline } from 'react-icons/md'
+import { MdCheckBoxOutlineBlank } from 'react-icons/md'
 import { Box } from 'rebass'
 import {
   compose,
@@ -136,9 +136,8 @@ export default compose<TagsMenuProps & TagState, TagsMenuProps>(
         href="javascript:;"
         tabIndex={-1}
         className={`menu-${isOpen}`}
-        onClick={() => toggle(!isOpen)}>
-        <MdLabelOutline />
-      </Text>
+        onClick={() => toggle(!isOpen)}
+      />
     )}
   </Dropdown>
 ))

@@ -12,9 +12,9 @@ export default styled<any>(Column)`
       margin: 0;
       width: 80px;
       height: 80px;
-      background: ${lighten(0.35, theme.colours.secondary)};
+      background-color: ${lighten(0.35, theme.colours.secondary)};
 
-      .row:not(:hover) & {
+      article:not(:hover) & {
         filter: grayscale(0.4);
         opacity: 0.65;
         transition: 1s ${theme.eases.easing};
@@ -34,11 +34,6 @@ export default styled<any>(Column)`
         width: 100%;
         height: 100%;
         mix-blend-mode: color-burn;
-
-        &[src=''],
-        &:not([src]) {
-          opacity: 0.15;
-        }
 
         + img {
           z-index: 1;

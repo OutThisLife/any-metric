@@ -116,13 +116,9 @@ export default createGlobalStyle`
       &:hover {
         color: ${theme.colours.focus};
       }
-    }
 
-    .row {
-      user-select: none;
-
-      .dragging & * {
-        pointer-events: none !important;
+      &:visited {
+        color: ${theme.colours.muted};
       }
     }
   `}
@@ -181,23 +177,18 @@ export const Main = styled<any>(Box)`
           );
         }
       }
-
       @media (max-width: 1025px) {
         width: calc(90vw - var(--offset));
       }
-
       .up {
         color: ${theme.colours.price.up} !important;
       }
-
       .down {
         color: ${theme.colours.price.down} !important;
       }
-
       .hl {
         color: ${theme.colours.price.hl} !important;
       }
-
       .dead {
         color: ${theme.colours.muted} !important;
       }

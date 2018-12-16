@@ -85,7 +85,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           {
             label: 'Price',
             key: 'price',
-            width: 'min-content'
+            width: 85
           },
           {
             label: '',
@@ -95,18 +95,17 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           {
             label: 'Name',
             key: 'title',
-            width: '2fr'
+            width: '1fr'
           },
           {
             label: 'Date',
             key: 'time',
-            skey: 'timeLeft',
-            width: '0.33fr'
+            width: 125
           },
           {
             label: 'State',
             key: 'status',
-            width: '0.5fr'
+            width: 125
           },
           {
             label: '',

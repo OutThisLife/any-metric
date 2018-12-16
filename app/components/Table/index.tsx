@@ -6,6 +6,7 @@ import { Box } from 'rebass'
 import {
   compose,
   getContext,
+  pure,
   setDisplayName,
   withContext,
   withHandlers,
@@ -15,7 +16,7 @@ import {
 import * as Columns from './Columns'
 import * as Table from './style'
 
-const tm: d3.Timer | {} = {}
+let tm: d3.Timer | any = {}
 
 export default compose<TableState & TableProps, TableProps>(
   setDisplayName('table'),
@@ -26,13 +27,13 @@ export default compose<TableState & TableProps, TableProps>(
     handleContextMenu: () => e => {
       e.preventDefault()
 
-      const $row = (e.target as HTMLElement).closest('tr')
+      const $row = (e.target as HTMLElement).closest('article')
 
       if ($row instanceof HTMLTableRowElement) {
         const $a = $row.querySelector('[class*="menu-"]')
 
         if ($a instanceof HTMLAnchorElement) {
-          $a.closest('td').focus()
+          $a.closest('div').focus()
           $a.click()
         }
       }
@@ -48,38 +49,54 @@ export default compose<TableState & TableProps, TableProps>(
       }
 
       const el = document.getElementById('data-table') as HTMLElement
-      const scroll = el.firstElementChild as HTMLElement
-      const table = scroll.firstElementChild as HTMLTableElement
-      const row = document.getElementById('vsize').firstElementChild
+      const $scroll = el.firstElementChild as HTMLElement
+      const avg = 80
 
-      const h = row.clientHeight
+      el.style.position = 'relative'
+      el.style.overflow = 'auto'
 
-      table.style.position = 'absolute'
-      table.style.top = '0px'
-      table.style.right = '0px'
-      table.style.bottom = '0px'
-      table.style.left = '0px'
-      scroll.style.position = 'relative'
-      scroll.style.height = `${(data.length * h) / 2}px`
+      $scroll.style.position = 'relative'
+      $scroll.style.height = `${data.length * avg}px`
+      $scroll.style.maxHeight = $scroll.style.height
+      $scroll.style.overflow = 'hidden'
 
-      const handleScroll = () => {
-        const rowCount = (el.clientHeight * 1.5) / h
-        const start = el.scrollTop / h
+      tm = d3.timer(() => {
+        setVisible(
+          data.slice(
+            el.scrollTop / avg,
+            Math.min(data.length, el.scrollTop / avg + el.clientHeight / avg)
+          )
+        )
 
-        console.log(rowCount)
+        d3.selectAll('article').style('top', (_, i, $rows) => {
+          const $r = $rows[i] as HTMLElement
+          const $prev = $r.previousElementSibling
 
-        const end = Math.min(data.length, start + rowCount)
-        setVisible(data.slice(start, end))
-      }
+          let y = el.scrollTop
 
-      window.requestAnimationFrame(handleScroll)
-      el.addEventListener('scroll', handleScroll)
+          if ($prev instanceof HTMLElement) {
+            y = $prev.clientHeight + $prev.offsetTop
+          }
+
+          const $im = $r.querySelector('[data-src]')
+
+          if ($im instanceof HTMLElement) {
+            const src = $im.getAttribute('data-src')
+            $im.setAttribute('src', src)
+            $im.nextElementSibling.setAttribute('src', src)
+          }
+
+          return `${y}px`
+        })
+      })
     }
-  }))
+  })),
+  pure
 )(({ onRef, columns, visible: data, handleContextMenu }) => (
   <Box
     id="data-table"
     ref={onRef}
+    onContextMenu={handleContextMenu}
     css={`
       overflow: auto;
 
@@ -92,11 +109,14 @@ export default compose<TableState & TableProps, TableProps>(
         overflow: auto;
       }
     `}>
-    <div>
-      <Table.Container
-        as="table"
-        onContextMenu={handleContextMenu}
-        css={`
+    <Table.Container
+      css={`
+        article {
+          display: grid;
+          position: absolute;
+          left: 0;
+          right: 0;
+
           grid-template-columns: ${columns
             .map(c => (typeof c.width === 'number' ? `${c.width}px` : c.width))
             .join(' ')};
@@ -104,43 +124,38 @@ export default compose<TableState & TableProps, TableProps>(
           @media (max-width: 768px) {
             grid-template-columns: repeat(${columns.length}, 1fr);
           }
-        `}>
-        <Table.Head>
-          <RenderColumns props={c => ({ children: c.label })} />
-        </Table.Head>
-
-        <Table.Body>
-          {data.length ? (
-            data.map(d => (
-              <Table.Row key={d._id} id={d._id}>
-                <RenderColumns props={() => ({ item: d })} />
-              </Table.Row>
-            ))
-          ) : (
-            <Table.Row>
-              <td
-                style={{
-                  gridColumn: '1 / -1',
-                  textAlign: 'center',
-                  justifyContent: 'center',
-                  padding: 'var(--pad)'
-                }}>
-                ¯\_(ツ)_/¯
-              </td>
-            </Table.Row>
-          )}
-
-          <Table.Row id="vsize">
-            <td
-              style={{
-                gridColumn: '1 / -1',
-                padding: 'calc(var(--pad) * 2)'
-              }}
-            />
+        }
+      `}>
+      {data.length ? (
+        data.map(d => (
+          <Table.Row key={d._id} id={d._id}>
+            <RenderColumns props={() => ({ item: d })} />
           </Table.Row>
-        </Table.Body>
-      </Table.Container>
-    </div>
+        ))
+      ) : (
+        <Table.Row className="row">
+          <article
+            style={{
+              gridColumn: '1 / -1',
+              textAlign: 'center',
+              justifyContent: 'center',
+              padding: 'var(--pad)'
+            }}>
+            ¯\_(ツ)_/¯
+          </article>
+        </Table.Row>
+      )}
+
+      <Table.Row>
+        <article
+          id="vsize"
+          style={{
+            gridColumn: '1 / -1',
+            padding: 'calc(var(--pad) * 2)'
+          }}
+        />
+      </Table.Row>
+    </Table.Container>
   </Box>
 ))
 

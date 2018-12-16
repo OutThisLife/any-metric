@@ -28,7 +28,7 @@ export default styled<any>(Column)`
           display: none;
         }
 
-        .row:not(:hover) & {
+        article:not(:hover) & {
           transition: ${theme.eases.base};
 
           &:last-of-type {

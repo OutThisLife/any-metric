@@ -30,44 +30,11 @@ export const Container = styled<any>(Box as any)`
   ${({ theme }: BaphoTheme) => css`
     --border: ${rgba(theme.colours.border, 0.33)};
 
-    user-select: none;
-    display: grid;
-    align-items: stretch;
-    justify-content: center;
-    border-left: 1px solid var(--border);
-
     &.loading {
       opacity: 0.5;
     }
 
-    thead,
-    tbody,
-    tfoot,
-    tr {
-      display: contents;
-    }
-
-    td,
-    th {
-      display: block;
-      color: ${theme.colours.label};
-    }
-
-    th,
-    td {
-      padding-left: var(--pad);
-      padding-right: var(--pad);
-
-      &:first-of-type {
-        justify-content: flex-start;
-      }
-
-      &:last-of-type {
-        justify-content: flex-end;
-      }
-    }
-
-    thead th {
+    .cell-head {
       cursor: s-resize;
       z-index: 1;
       justify-content: center;
@@ -99,19 +66,36 @@ export const Container = styled<any>(Box as any)`
       }
     }
 
-    tbody tr {
-      td {
+    article {
+      display: contents;
+      user-select: none;
+      display: grid;
+      align-items: stretch;
+      justify-content: center;
+
+      > div {
         cursor: cell;
         display: flex;
         width: 100%;
         align-items: center;
         justify-content: center;
         outline: 1px solid transparent;
+        color: ${theme.colours.label};
+        padding-left: var(--pad);
+        padding-right: var(--pad);
         outline-offset: -1px;
         background-color: rgba(0, 0, 0, 0);
         border-bottom: 1px solid var(--border);
         transition: ${theme.eases.base};
         transition-delay: ${theme.eases.delay};
+
+        &:first-of-type {
+          justify-content: flex-start;
+        }
+
+        &:last-of-type {
+          justify-content: flex-end;
+        }
 
         &:hover {
           outline-color: ${theme.colours.border};
@@ -119,20 +103,20 @@ export const Container = styled<any>(Box as any)`
         }
       }
 
-      &.hover td {
+      &:hover > div {
         transition: none;
         background-color: ${rgba(theme.colours.base, 0.01)};
       }
 
-      &.chart-link td {
+      &.chart-link > div {
         outline-color: ${theme.colours.price.hl};
       }
 
-      &.anim-in td {
+      &.anim-in > div {
         animation: ${animRowIn} ${theme.eases.base} forwards;
       }
 
-      &.anim-out td {
+      &.anim-out > div {
         animation: ${animRowOut} ${theme.eases.base} forwards;
         transform-origin: center top;
       }
@@ -143,39 +127,23 @@ export const Container = styled<any>(Box as any)`
 export const Body = compose<
   Cell<HTMLTableSectionElement>,
   Cell<HTMLTableSectionElement>
->(setDisplayName('table-tbody'))(props => <Box as="tbody" {...props} />)
+>(setDisplayName('table-tbody'))(props => <Box {...props} />)
 
 export const Row = compose<
   Cell<HTMLTableRowElement>,
   Cell<HTMLTableRowElement>
->(setDisplayName('table-tr'))(props => (
-  <Box
-    as="tr"
-    className="row"
-    onMouseEnter={e => e.currentTarget.classList.add('hover')}
-    onMouseLeave={e => e.currentTarget.classList.remove('hover')}
-    {...props}
-  />
-))
+>(setDisplayName('table-tr'))(props => <Box as="article" {...props} />)
 
 export const Cell = compose<
   Cell<HTMLTableCellElement>,
   Cell<HTMLTableCellElement>
->(setDisplayName('table-td'))(props => (
-  <Box as="td" className="cell" {...props} />
-))
+>(setDisplayName('table-td'))(props => <Box className="cell" {...props} />)
 
 export const Head = compose(
   setDisplayName('table-thead'),
   withContext({ isHeader: bool }, () => ({ isHeader: true }))
 )(({ children }) => (
-  <Box as="thead" className="head">
-    <Row>{children}</Row>
-  </Box>
-))
-
-export const Foot = compose(setDisplayName('table-tfoot'))(({ children }) => (
-  <Box as="tfoot" className="foot">
+  <Box className="head">
     <Row>{children}</Row>
   </Box>
 ))
@@ -183,7 +151,7 @@ export const Foot = compose(setDisplayName('table-tfoot'))(({ children }) => (
 export const HeaderCell = compose<
   Cell<HTMLTableHeaderCellElement> & BaphoTheme,
   Cell<HTMLTableHeaderCellElement>
->(setDisplayName('table-th'))(props => <Box as="th" {...props} />)
+>(setDisplayName('table-th'))(props => <Box className="cell-head" {...props} />)
 
 export const Text = compose<Cell<HTMLParagraphElement>, TextProps>(
   setDisplayName('table-text')

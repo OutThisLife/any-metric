@@ -30,13 +30,15 @@ export default compose<ImageProps, ImageProps>(
             css={`
               cursor: zoom-in;
             `}>
-            <img
-              src={item.image}
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener"
               onMouseEnter={() => toggle(true)}
-              onMouseLeave={() => toggle(false)}
-            />
-
-            <img src={item.image} />
+              onMouseLeave={() => toggle(false)}>
+              <img data-src={item.image} />
+              <img data-src={item.image} />
+            </a>
           </Box>
         )}
       </Popover>

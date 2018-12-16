@@ -21,7 +21,7 @@ export const createTheme = (secondary: string) => {
     },
 
     get muted() {
-      return shade(0.1, desaturate(0.8, this.secondary))
+      return desaturate(0.7, shade(0.5, this.secondary))
     },
 
     get label() {

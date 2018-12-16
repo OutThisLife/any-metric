@@ -1,8 +1,7 @@
 import { Product, Resolver, Tag } from '../types'
 
 export default (async (_, __, { mongo }): Promise<Product[]> => {
-  const tags = await mongo
-    .collection('tags')
+  const tags = await mongo.tags
     .find<Tag>({
       isDeleted: {
         $ne: true
@@ -10,8 +9,7 @@ export default (async (_, __, { mongo }): Promise<Product[]> => {
     })
     .toArray()
 
-  return (await mongo
-    .collection('products')
+  return (await mongo.products
     .find<Product>({
       isDeleted: {
         $ne: true

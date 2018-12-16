@@ -1,5 +1,5 @@
 import { getCommerce } from '../../api'
-import { EbayItem, EbayResult, Resolver, Tag } from '../types'
+import { EbayItem, EbayResult, Product, Resolver, Tag } from '../types'
 
 export default (async (
   _,
@@ -47,7 +47,7 @@ export default (async (
 
   if (save) {
     const q = { title: keywords, isQuery: true }
-    await mongo.collection('tags').updateOne(
+    await mongo.tags.updateOne(
       q,
       {
         $setOnInsert: {
@@ -62,7 +62,7 @@ export default (async (
       { upsert: true }
     )
 
-    const tag = await mongo.collection('tags').findOne<Tag>(q)
+    const tag = await mongo.tags.findOne<Tag>(q)
 
     result.items.map(
       async ({
@@ -74,38 +74,49 @@ export default (async (
         unitPrice = {},
         viewItemURL = 'javascript:;'
       }) => {
-        const { upsertedCount } = await mongo.collection('products').updateOne(
-          { title },
-          {
-            $setOnInsert: {
-              bids: 'bidCount' in sellingStatus ? sellingStatus.bidCount[0] : 0,
-              createdAt: new Date(listingInfo.startTime),
-              image: pictureURLSuperSize,
-              qty: 'quantity' in unitPrice ? parseFloat(unitPrice.quantity) : 0,
-              status: sellingStatus.sellingState[0],
-              tags: '_id' in tag ? [tag._id] : [],
-              timeLeft: new Date(listingInfo.endTime),
-              title,
-              updatedAt: new Date(),
-              url: viewItemURL,
+        const product = await mongo.products.findOne<Product>({
+          title
+        })
 
-              price:
-                'currentPrice' in sellingStatus
-                  ? parseFloat(sellingStatus.currentPrice[0].__value__)
-                  : 0,
+        if (product && product.isDeleted) {
+          await mongo.products.updateOne(
+            { title },
+            { $set: { isDeleted: false, restoredAt: new Date() } }
+          )
+        } else {
+          const { upsertedCount } = await mongo.products.updateOne(
+            { title },
+            {
+              $setOnInsert: {
+                bids:
+                  'bidCount' in sellingStatus ? sellingStatus.bidCount[0] : 0,
+                createdAt: new Date(listingInfo.startTime),
+                image: pictureURLSuperSize,
+                qty:
+                  'quantity' in unitPrice ? parseFloat(unitPrice.quantity) : 0,
+                status: sellingStatus.sellingState[0],
+                tags: '_id' in tag ? [tag._id] : [],
+                timeLeft: new Date(listingInfo.endTime),
+                title,
+                updatedAt: new Date(),
+                url: viewItemURL,
 
-              shipping:
-                'shippingServiceCost' in shippingInfo
-                  ? parseFloat(shippingInfo.shippingServiceCost[0].__value__)
-                  : 0
-            }
-          },
-          { upsert: true }
-        )
+                price:
+                  'currentPrice' in sellingStatus
+                    ? parseFloat(sellingStatus.currentPrice[0].__value__)
+                    : 0,
 
-        await mongo
-          .collection('tags')
-          .updateOne(q, { $inc: { total: upsertedCount } })
+                shipping:
+                  'shippingServiceCost' in shippingInfo
+                    ? parseFloat(shippingInfo.shippingServiceCost[0].__value__)
+                    : 0
+              }
+            },
+            { upsert: true }
+          )
+
+          await mongo.tags.updateOne(q, { $inc: { total: upsertedCount } })
+        }
       }
     )
   }

@@ -1,8 +1,7 @@
 import { Resolver, Tag } from '../types'
 
 export default (async (_, __, { mongo }): Promise<Tag[]> =>
-  mongo
-    .collection('tags')
+  mongo.tags
     .find<Tag>({
       isDeleted: {
         $ne: true

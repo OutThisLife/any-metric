@@ -8,10 +8,6 @@ import { DropdownProps } from '.'
 export default styled<any>(Box)`
   ${({ direction: dir, theme }: BaphoTheme & Partial<DropdownProps>) => css`
     z-index: 100;
-    display: inline-block;
-    position: absolute;
-    width: auto;
-    white-space: nowrap;
     animation: ${animIn} 0.15s ${theme.eases.easing} forwards;
 
     ${dir === 'top' && 'transform-origin: center bottom'};
@@ -40,8 +36,8 @@ export default styled<any>(Box)`
       padding: 2px;
 
       &:first-of-type {
-        display: inline-flex;
-        white-space: nowrap;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
       }
     }
 

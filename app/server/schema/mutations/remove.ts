@@ -1,9 +1,9 @@
 import { convertId } from '.'
 import { Resolver, Tag } from '../types'
 
-const rm = (input: () => { [key: string]: any }): Resolver => async (
+export default (async (
   _,
-  { objectId, collectionName },
+  { objectId, collectionName, input = {} },
   { mongo }
 ) => {
   if (/^all/i.test(collectionName)) {
@@ -13,20 +13,25 @@ const rm = (input: () => { [key: string]: any }): Resolver => async (
 
     return result
   } else {
-    const q = convertId(objectId)
+    const q = objectId ? convertId(objectId) : input
 
     const { result } = await mongo.collection(collectionName).updateOne(q, {
       $set: {
-        ...input(),
-        updatedAt: new Date()
+        isDeleted: true,
+        deletedAt: new Date()
       }
     })
 
     if (collectionName === 'tags') {
-      const tag = await mongo.collection('tags').findOne<Tag>(q)
+      const tag = await mongo.tags.findOne<Tag>(
+        Object.assign({}, q, {
+          isQuery: true,
+          isDeleted: true
+        })
+      )
 
-      if (tag.isQuery && tag.isDeleted) {
-        await mongo.collection('products').updateMany(
+      if (tag) {
+        await mongo.products.updateMany(
           {
             tags: {
               $in: [tag._id]
@@ -48,7 +53,4 @@ const rm = (input: () => { [key: string]: any }): Resolver => async (
 
     return result
   }
-}
-
-export default rm(() => ({ isDeleted: true, deletedAt: new Date() }))
-export const undo = rm(() => ({ isDeleted: false, restoredAt: new Date() }))
+}) as Resolver

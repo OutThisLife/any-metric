@@ -37,6 +37,9 @@ module.exports = ({ app, cache }) => {
         )
 
         options.context.mongo = db.connection
+        ;['tags', 'products', 'theme'].forEach(
+          c => (options.context.mongo[c] = db.connection.collection(c))
+        )
       })()
     }
   } catch (err) {

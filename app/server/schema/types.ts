@@ -2,7 +2,7 @@ import { KeyValueCache } from 'apollo-server-core'
 import { ObjectID } from 'bson'
 import gql from 'graphql-tag'
 import { IFieldResolver } from 'graphql-tools'
-import { Connection } from 'mongoose'
+import { Collection, Connection } from 'mongoose'
 
 export default gql`
   scalar JSON
@@ -30,8 +30,8 @@ export default gql`
     createTag(input: TagInput): Tag
     createProduct(input: ProductInput): Product
 
-    remove(objectId: ID, collectionName: String!): MongoResult
-    modify(objectId: ID!, collectionName: String!, input: JSON): T
+    remove(objectId: ID, collectionName: String!, input: JSON): MongoResult
+    modify(objectId: ID, collectionName: String!, input: JSON): T
   }
 
   type MongoResult {
@@ -177,7 +177,11 @@ export interface Tag extends MongoEntry {
 
 export interface Context {
   cache: KeyValueCache
-  mongo?: Connection
+  mongo?: Connection & {
+    tags: Collection
+    products: Collection
+    theme: Collection
+  }
 }
 
 export interface MongoEntry {

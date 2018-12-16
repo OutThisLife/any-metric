@@ -1,14 +1,11 @@
 import { Product } from '@/server/schema/types'
 import * as d3 from 'd3'
-import { array } from 'prop-types'
-import { MeasuredComponentProps, withContentRect } from 'react-measure'
+import { MeasuredComponentProps } from 'react-measure'
 import { Box } from 'rebass'
 import {
   compose,
-  getContext,
-  pure,
+  lifecycle,
   setDisplayName,
-  withContext,
   withHandlers,
   withState
 } from 'recompose'
@@ -21,52 +18,43 @@ let tm: d3.Timer | any = {}
 export default compose<TableState & TableProps, TableProps>(
   setDisplayName('table'),
   withState('visible', 'setVisible', []),
-  withContext({ columns: array }, ({ columns }) => ({ columns })),
-  withContentRect('bounds'),
   withHandlers<TableProps & TableState, TableState>(({ setVisible }) => ({
-    handleContextMenu: () => e => {
-      e.preventDefault()
-
-      const $row = (e.target as HTMLElement).closest('article')
-
-      if ($row instanceof HTMLTableRowElement) {
-        const $a = $row.querySelector('[class*="menu-"]')
-
-        if ($a instanceof HTMLAnchorElement) {
-          $a.closest('div').focus()
-          $a.click()
-        }
-      }
-    },
-
-    onRef: ({ data = [] }) => ref => {
+    virtualize: ({ data = [] }) => () => {
       if ('stop' in tm) {
         tm.stop()
       }
 
-      if (!(ref || data.length)) {
+      if (!data.length) {
         return
       }
 
       const el = document.getElementById('data-table') as HTMLElement
       const $scroll = el.firstElementChild as HTMLElement
-      const avg = 80
+      const heightMap = [80]
+      const getAverage = () =>
+        heightMap.reduce((a, n) => a + n, 0) / heightMap.length
 
-      el.style.position = 'relative'
-      el.style.overflow = 'auto'
+      const handleResize = () => {
+        el.style.position = 'relative'
+        el.style.overflow = 'auto'
 
-      $scroll.style.position = 'relative'
-      $scroll.style.height = `${data.length * avg}px`
-      $scroll.style.maxHeight = $scroll.style.height
-      $scroll.style.overflow = 'hidden'
+        $scroll.style.position = 'relative'
+        $scroll.style.height = `${data.length * getAverage()}px`
+        $scroll.style.maxHeight = $scroll.style.height
+        $scroll.style.overflow = 'hidden'
+      }
+
+      window.requestAnimationFrame(handleResize)
 
       tm = d3.timer(() => {
-        setVisible(
-          data.slice(
-            el.scrollTop / avg,
-            Math.min(data.length, el.scrollTop / avg + el.clientHeight / avg)
-          )
+        const avg = getAverage()
+        const start = el.scrollTop / avg
+        const end = parseInt(
+          Math.min(data.length, start + el.clientHeight / avg).toFixed(0),
+          10
         )
+
+        setVisible(data.slice(start, end))
 
         d3.selectAll('article').style('top', (_, i, $rows) => {
           const $r = $rows[i] as HTMLElement
@@ -86,16 +74,38 @@ export default compose<TableState & TableProps, TableProps>(
             $im.nextElementSibling.setAttribute('src', src)
           }
 
+          heightMap[i] = $r.clientHeight
+
           return `${y}px`
         })
       })
+
+      window.addEventListener('resize', handleResize)
+    },
+
+    handleContextMenu: () => e => {
+      e.preventDefault()
+
+      const $row = (e.target as HTMLElement).closest('article')
+
+      if ($row instanceof HTMLElement) {
+        const $a = $row.querySelector('[class*="menu-"]')
+
+        if ($a instanceof HTMLAnchorElement) {
+          ;($a.closest('[tabindex]') as HTMLElement).focus()
+          $a.click()
+        }
+      }
     }
   })),
-  pure
-)(({ onRef, columns, visible: data, handleContextMenu }) => (
+  lifecycle<TableProps, {}>({
+    componentDidMount() {
+      window.requestAnimationFrame(this.props.virtualize)
+    }
+  })
+)(({ columns, visible: data, handleContextMenu }) => (
   <Box
     id="data-table"
-    ref={onRef}
     onContextMenu={handleContextMenu}
     css={`
       overflow: auto;
@@ -129,7 +139,7 @@ export default compose<TableState & TableProps, TableProps>(
       {data.length ? (
         data.map(d => (
           <Table.Row key={d._id} id={d._id}>
-            <RenderColumns props={() => ({ item: d })} />
+            <RenderColumns columns={columns} props={() => ({ item: d })} />
           </Table.Row>
         ))
       ) : (
@@ -160,8 +170,7 @@ export default compose<TableState & TableProps, TableProps>(
 ))
 
 export const RenderColumns = compose<RenderColumnProps, RenderColumnProps>(
-  setDisplayName('render-columns'),
-  getContext({ columns: array })
+  setDisplayName('render-columns')
 )(({ props, columns = [] }) => (
   <>
     {columns.map(c => {
@@ -182,6 +191,7 @@ export interface TableState extends Partial<MeasuredComponentProps> {
 }
 
 export interface TableProps {
+  virtualize?: () => void
   onRef?: (ref: HTMLElement) => void
   data: Product[]
   columns: Array<{

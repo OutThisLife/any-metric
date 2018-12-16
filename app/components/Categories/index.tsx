@@ -69,13 +69,11 @@ export default compose<
   withHandlers<CategoriesProps & CategoriesHandlers, CategoriesHandlers>(
     () => ({
       handleClick: ({ filter }) => e => {
+        console.log(e.target)
         select(e.target as HTMLElement)
 
         setTimeout(() => {
           const $checked = document.querySelectorAll('#filters [data-checked]')
-          const $table = document.querySelector('table').parentElement
-
-          $table.scrollTop = 0
 
           if (!$checked.length) {
             filter({

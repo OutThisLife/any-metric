@@ -17,6 +17,7 @@ export default styled<any>(Column)`
       display: block;
       width: 100%;
       font-weight: 600;
+      white-space: nowrap;
       padding: calc(var(--pad) / 2) var(--pad);
 
       svg {

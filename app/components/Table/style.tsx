@@ -1,6 +1,7 @@
 import { BaphoTheme } from '@/theme'
 import { rgba } from 'polished'
 import { bool } from 'prop-types'
+import VirtualList from 'react-tiny-virtual-list'
 import { Box, BoxProps } from 'rebass'
 import { compose, setDisplayName, withContext } from 'recompose'
 import styled, { css, keyframes } from 'styled-components'
@@ -26,44 +27,12 @@ to {
 }
 `
 
-export const Container = styled<any>(Box as any)`
+export const Container = styled<any>(VirtualList)`
   ${({ theme }: BaphoTheme) => css`
     --border: ${rgba(theme.colours.border, 0.33)};
 
     &.loading {
       opacity: 0.5;
-    }
-
-    .cell-head {
-      cursor: s-resize;
-      z-index: 1;
-      justify-content: center;
-      position: sticky;
-      top: 0;
-      width: 100%;
-      padding-bottom: var(--pad);
-      text-transform: uppercase;
-      border-bottom: 1px solid var(--border);
-      background: ${rgba(theme.colours.panel, 0.95)};
-
-      &[data-sorted='true'] {
-        color: ${theme.colours.secondary};
-
-        h5 {
-          color: inherit;
-        }
-      }
-
-      h5 {
-        font-weight: 600;
-        font-size: 0.9rem;
-        letter-spacing: 1px;
-        margin: 0;
-      }
-
-      svg {
-        width: 10px;
-      }
     }
 
     article {

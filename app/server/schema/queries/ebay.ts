@@ -67,6 +67,7 @@ export default (async (
 
     if (result.items.length) {
       const tag = await mongo.tags.findOne<Tag>(q)
+      await mongo.tags.updateOne(q, { $se: { isDeleted: false } })
 
       result.items.map(
         async ({
@@ -91,7 +92,7 @@ export default (async (
             const createdAt = new Date(listingInfo.startTime)
             const image = pictureURLSuperSize
             const status = sellingStatus.sellingState[0]
-            const tags = '_id' in tag ? [tag._id] : []
+            const tags = [tag._id]
             const timeLeft = new Date(listingInfo.endTime)
             const updatedAt = new Date()
             const url = viewItemURL

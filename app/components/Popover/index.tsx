@@ -23,5 +23,5 @@ export default compose<PopoverProps & PortalState, PopoverProps & PortalProps>(
 
 export interface PopoverProps {
   id: string
-  direction: Direction
+  direction?: Direction
 }

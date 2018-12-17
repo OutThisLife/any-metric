@@ -117,8 +117,8 @@ export default createGlobalStyle`
         color: ${theme.colours.focus};
       }
 
-      &:visited {
-        color: ${theme.colours.muted};
+      &:visited:not(:hover) {
+        color: ${shade(0.5, theme.colours.base)};
       }
     }
   `}
@@ -177,18 +177,23 @@ export const Main = styled<any>(Box)`
           );
         }
       }
+
       @media (max-width: 1025px) {
         width: calc(90vw - var(--offset));
       }
+
       .up {
         color: ${theme.colours.price.up} !important;
       }
+
       .down {
         color: ${theme.colours.price.down} !important;
       }
+
       .hl {
         color: ${theme.colours.price.hl} !important;
       }
+
       .dead {
         color: ${theme.colours.muted} !important;
       }

@@ -6,9 +6,10 @@ import {
   InMemoryCache,
   IntrospectionFragmentMatcher
 } from 'apollo-boost'
+import { persistCache } from 'apollo-cache-persist'
 import getConfig from 'next/config'
 
-import { errorLink, httpLink, localLink } from './links'
+import { errorLink, httpLink, stateLink } from './links'
 
 const {
   publicRuntimeConfig: { isDev }
@@ -16,17 +17,29 @@ const {
 
 let client
 
-const createCache = (): InMemoryCache =>
-  new InMemoryCache({
+const createCache = (): InMemoryCache => {
+  const cache = new InMemoryCache({
     fragmentMatcher: new IntrospectionFragmentMatcher({
       introspectionQueryResultData: require('../static/fragmentTypes.json')
     }),
     dataIdFromObject: (o: any) => (o._id ? `${o.__typename}:${o._id}` : null)
   })
 
+  if ('browser' in process) {
+    ;(async () =>
+      await persistCache({
+        cache,
+        storage: window.localStorage,
+        debug: isDev
+      }))()
+  }
+
+  return cache
+}
+
 const create = initialState => {
   const cache = createCache().restore(initialState)
-  const link = ApolloLink.from([errorLink(), localLink(), httpLink()])
+  const link = ApolloLink.from([stateLink(), errorLink(), httpLink()])
 
   return new ApolloClient({
     link,

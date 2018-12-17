@@ -1,5 +1,6 @@
 import { fadeIn } from '@/pages/_app.styles'
 import { BaphoTheme } from '@/theme'
+import { darken } from 'polished'
 import { ChartCanvas } from 'react-stockcharts'
 import { Box } from 'rebass'
 import styled, { css } from 'styled-components'
@@ -28,6 +29,7 @@ export const ZoomedChart = styled<any>(Box)`
   ${({ theme }: BaphoTheme) => css`
     padding: calc(var(--pad) * 2);
     border: 1px solid ${theme.colours.module};
+    box-shadow: 0 17px 50px 0 ${darken(0.03, theme.colours.panel)};
     background: ${theme.colours.panel};
   `}
 `

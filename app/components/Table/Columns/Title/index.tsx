@@ -3,7 +3,7 @@ import { getWatchlist, SET_WATCHLIST } from '@/lib/queries'
 import { Product } from '@/server/schema/types'
 import { graphql } from 'react-apollo'
 import { IoMdStar, IoMdStarOutline } from 'react-icons/io'
-import { compose, setDisplayName, withState } from 'recompose'
+import { compose, setDisplayName, withProps } from 'recompose'
 
 import { ColumnProps } from '..'
 import Title from './style'
@@ -11,27 +11,25 @@ import Title from './style'
 export default compose<TitleProps & TitleState, TitleProps>(
   setDisplayName('col-title'),
   getWatchlist(),
-  withState('isFav', 'toggleFav', ({ item, watchlist = [] }) =>
-    watchlist.some(i => i._id === item._id)
-  ),
+  withProps(({ item, watchlist }) => ({
+    isFav: watchlist.some(t => t._id === item._id)
+  })),
   graphql<TitleState & TitleProps, {}, {}, TitleState>(SET_WATCHLIST, {
-    options: {
-      awaitRefetchQueries: true
-    },
-    props: ({ mutate, ownProps: { item, watchlist, isFav, toggleFav } }) => ({
-      handleClick: e => {
+    props: ({ mutate, ownProps: { item, watchlist } }) => ({
+      handleClick: async e => {
         e.preventDefault()
-        toggleFav(!isFav, async () => {
-          if (!isFav) {
-            watchlist.push(item)
-          } else {
-            watchlist.splice(watchlist.findIndex(t => t._id === item._id), 1)
-          }
 
-          await mutate({
-            refetchQueries: ['getWatchlist'],
-            variables: { watchlist }
-          })
+        const idx = watchlist.findIndex(t => t._id === item._id)
+
+        if (idx === -1) {
+          watchlist.push(item)
+        } else {
+          watchlist.splice(idx, 1)
+        }
+
+        await mutate({
+          refetchQueries: ['getWatchlist'],
+          variables: { watchlist }
         })
       }
     })
@@ -45,12 +43,10 @@ export default compose<TitleProps & TitleState, TitleProps>(
       target="_blank"
       rel="noopener"
       className="title">
-      {isFav ? (
-        <IoMdStar onClick={handleClick} className="favourite hl fill" />
-      ) : (
-        <IoMdStarOutline onClick={handleClick} className="favourite" />
-      )}
-      {item.title}
+      <span onClick={handleClick} className="favourite">
+        {isFav ? <IoMdStar className="hl" /> : <IoMdStarOutline />}
+      </span>
+      <span dangerouslySetInnerHTML={{ __html: item.title }} />
     </Text>
   </Title>
 ))
@@ -62,6 +58,5 @@ interface TitleProps extends ColumnProps {
 
 interface TitleState {
   isFav?: boolean
-  toggleFav?: (b: boolean, cb?: () => any) => void
   handleClick?: React.MouseEventHandler<any>
 }

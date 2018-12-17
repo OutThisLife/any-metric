@@ -160,9 +160,10 @@ export const SEARCH_EBAY = gql`
 // ------------------------------------------------
 
 export const GET_WATCHLIST = gql`
-  query getWatchlist @client {
+  query getWatchlist {
     watchlist @client {
       _id
+      createdAt
       image
       price
       shipping
@@ -170,12 +171,17 @@ export const GET_WATCHLIST = gql`
       timeLeft
       title
       url
+      tags {
+        _id
+        title
+        slug
+      }
     }
   }
 `
 
 export const SET_WATCHLIST = gql`
-  mutation updateWatchlist($watchlist: JSON) {
+  mutation updateWatchlist($watchlist: [Product]) {
     updateWatchlist(watchlist: $watchlist) @client
   }
 `

@@ -67,7 +67,8 @@ export default () => (Component: React.ComponentType<any>) =>
 export const positionToMouse = (
   $parent: HTMLElement,
   el = $parent,
-  direction: Direction
+  direction: Direction,
+  o = 5
 ) => {
   if ('stop' in tm) {
     tm.stop()
@@ -80,7 +81,6 @@ export const positionToMouse = (
   const draw = () => {
     let { x, y } = (window as any).mouse
     const { clientWidth: w, clientHeight: h } = el
-    const o = 5
 
     switch (direction) {
       case 'top':

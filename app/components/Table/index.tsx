@@ -30,7 +30,7 @@ export default compose<TableState & TableProps, TableProps>(
 )(({ measureRef, contentRect, columns, data, handleContextMenu }) => (
   <div
     ref={measureRef}
-    style={{ height: ' calc(100vh - (var(--offset) * 2))' }}
+    style={{ height: ' calc(100vh - (var(--offset) * 3))' }}
     onContextMenu={handleContextMenu}>
     <Table
       width="100%"

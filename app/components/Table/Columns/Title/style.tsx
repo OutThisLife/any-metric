@@ -20,7 +20,7 @@ export default styled<any>(Box)`
       white-space: nowrap;
       padding: calc(var(--pad) / 2) var(--pad);
 
-      .favourite {
+      .favourite svg {
         width: 1.5rem;
         margin-right: 0.5em;
         transition: inherit;

@@ -1,48 +1,68 @@
-import Module from '@/components/Module'
+import Text from '@/components//Text'
 import { getWatchlist, SET_WATCHLIST } from '@/lib/queries'
 import { Product } from '@/server/schema/types'
+import { omit } from 'lodash'
 import { graphql } from 'react-apollo'
-import { branch, compose, renderComponent, setDisplayName } from 'recompose'
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
+import { Box, BoxProps } from 'rebass'
+import { compose, mapProps, setDisplayName, withState } from 'recompose'
 
 import Item from './Item'
+import Watchlist from './style'
 
-export default compose<WatchlistProps, {}>(
+export default compose<WatchlistState & WatchlistProps, WatchlistProps>(
   setDisplayName('watchlist'),
+  withState('isOpen', 'toggle', 1),
   getWatchlist(),
-  branch<WatchlistProps>(
-    ({ watchlist = [] }) => !watchlist.length,
-    renderComponent(() => null)
-  ),
-  graphql<WatchlistProps, {}, {}, WatchlistProps>(SET_WATCHLIST, {
-    props: ({ mutate, ownProps: { watchlist } }) => ({
-      handleClick: async item => {
-        const idx = watchlist.findIndex(t => t._id === item._id)
+  graphql<WatchlistProps & WatchlistState, {}, {}, WatchlistProps>(
+    SET_WATCHLIST,
+    {
+      props: ({ mutate, ownProps: { watchlist } }) => ({
+        handleDelete: async item => {
+          watchlist.splice(watchlist.findIndex(t => t._id === item._id), 1)
 
-        if (idx === -1) {
-          watchlist.push(item)
-        } else {
-          watchlist.splice(idx, 1)
+          await mutate({
+            refetchQueries: ['getWatchlist'],
+            variables: { watchlist }
+          })
         }
+      })
+    }
+  ),
+  mapProps(props => omit(props, ['data']))
+)(({ isOpen, toggle, watchlist, handleDelete, ...props }) => (
+  <Watchlist {...props}>
+    <h5
+      style={{ cursor: 'pointer' }}
+      onClick={e => {
+        e.stopPropagation()
+        toggle(!isOpen)
+      }}>
+      Watchlist
+      {isOpen ? <FaChevronDown /> : <FaChevronUp />}
+    </h5>
 
-        await mutate({
-          refetchQueries: ['getWatchlist'],
-          variables: { watchlist }
-        })
-      }
-    })
-  })
-)(({ watchlist }) => (
-  <Module
-    css={`
-      margin-top: var(--pad);
-    `}>
-    {watchlist.map(d => (
-      <Item key={d._id} {...d} />
-    ))}
-  </Module>
+    {isOpen && (
+      <Box as="section">
+        {watchlist.length ? (
+          watchlist.map(d => (
+            <Item key={d._id} {...d} onDelete={() => handleDelete(d)} />
+          ))
+        ) : (
+          <Text>Click the star next to products to pin them here.</Text>
+        )}
+      </Box>
+    )}
+  </Watchlist>
 ))
 
-export interface WatchlistProps {
+export interface WatchlistState {
+  isOpen?: boolean
+  toggle?: (b: boolean, cb?: () => void) => void
+}
+
+export interface WatchlistProps extends BoxProps {
+  as?: any
   watchlist?: Product[]
-  handleClick?: (item: Product) => void
+  handleDelete?: (item: Product) => void
 }

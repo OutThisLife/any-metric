@@ -56,9 +56,9 @@ export default styled<any>(VirtualList)`
         outline: 1px solid transparent;
         outline-offset: -1px;
         border-bottom: 1px solid ${rgba(theme.colours.border, 0.33)};
-        background-color: rgba(0, 0, 0, 0);
         transition: ${theme.eases.base};
         transition-delay: ${theme.eases.delay};
+        background-color: rgba(0, 0, 0, 0);
 
         &:first-of-type {
           justify-content: flex-start;

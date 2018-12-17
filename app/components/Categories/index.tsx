@@ -47,14 +47,31 @@ export default compose<
         })
       }
     ),
-    graphql<TagHandlers, {}, {}, CategoriesHandlers>(REMOVE_DOC, {
-      props: ({ mutate, ownProps: { delTag } }) => ({
+    graphql<
+      CategoriesProps & CategoriesHandlers & TagHandlers,
+      {},
+      {},
+      CategoriesHandlers
+    >(REMOVE_DOC, {
+      props: ({ mutate, ownProps: { delTag, filter } }) => ({
         handleDelete: async tag => {
           if (!window.confirm('Are you sure? All references will be lost.')) {
             return
           }
 
           delTag(tag)
+
+          if (location.pathname.endsWith(tag.slug)) {
+            filter({
+              action: 'RESET'
+            })
+
+            window.history.replaceState(
+              null,
+              null,
+              location.href.replace(location.pathname, '')
+            )
+          }
 
           window.requestAnimationFrame(() =>
             mutate({
@@ -136,11 +153,15 @@ export default compose<
   withProps(({ tags }) => ({
     tags: orderBy(tags, ['isQuery', 'createdAt'], ['desc', 'desc'])
   }))
-)(({ onRef, tags, handleSubmit, handleClick, handleDelete }) => (
+)(({ onRef, total, tags, handleSubmit, handleClick, handleDelete }) => (
   <Module>
+    <h5>
+      Products &amp; Tags <span>{total}</span>
+    </h5>
+
     <Categories id="filters" ref={onRef} onClick={handleClick}>
       <Form.Container onSubmit={handleSubmit}>
-        <Form.Input required placeholder="Add tags" tabIndex={-1} />
+        <Form.Input required placeholder="Add basic tag" tabIndex={-1} />
       </Form.Container>
 
       {tags.map(t => (
@@ -169,4 +190,5 @@ export interface CategoriesHandlers {
 export interface CategoriesProps extends BoxProps, TagState {
   router?: RouterProps
   as?: any
+  total?: number
 }

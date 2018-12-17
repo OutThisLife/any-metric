@@ -19,8 +19,6 @@ export const dateFormat = withDate(d => {
     return d.format('h:mm a')
   } else if (hDiff >= 24) {
     return d.fromNow()
-  } else if (d.year() === dayjs().year()) {
-    return d.format('MMM DD')
   }
 
   return d.format('MMM DD, YY')

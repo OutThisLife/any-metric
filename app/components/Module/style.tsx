@@ -32,5 +32,17 @@ export default styled<any>(Module)`
       border-radius: var(--radius);
       background: ${theme.colours.module};
     }
+
+    h5 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 0 calc(var(--pad) / 2);
+      padding: 0;
+
+      &:only-child {
+        margin: 0;
+      }
+    }
   `}
 `

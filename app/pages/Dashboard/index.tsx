@@ -98,6 +98,15 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           }
         ]}
       />
+
+      <Watchlist
+        css={`
+          z-index: 1000;
+          position: fixed;
+          right: calc(var(--offset) * 1.25);
+          bottom: 0;
+        `}
+      />
     </Box>
 
     <Flex
@@ -116,8 +125,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
         css={`
           width: 100%;
         `}>
-        <Categories />
-        <Watchlist />
+        <Categories total={products.length} />
       </Box>
 
       <Box

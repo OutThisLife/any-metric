@@ -28,12 +28,10 @@ export default compose<TitleProps & TitleState, TitleProps>(
             watchlist.splice(watchlist.findIndex(t => t._id === item._id), 1)
           }
 
-          const res = await mutate({
+          await mutate({
             refetchQueries: ['getWatchlist'],
             variables: { watchlist }
           })
-
-          console.log(res)
         })
       }
     })

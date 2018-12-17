@@ -133,12 +133,12 @@ export default compose<
       }
     })
   ),
-  withProps(({ tags, router }) => ({
+  withProps(({ tags }) => ({
     tags: orderBy(tags, ['isQuery', 'createdAt'], ['desc', 'desc'])
   }))
-)(({ tags, handleSubmit, handleClick, handleDelete }) => (
+)(({ onRef, tags, handleSubmit, handleClick, handleDelete }) => (
   <Module>
-    <Categories id="filters" onClick={handleClick}>
+    <Categories id="filters" ref={onRef} onClick={handleClick}>
       <Form.Container onSubmit={handleSubmit}>
         <Form.Input required placeholder="Add tags" tabIndex={-1} />
       </Form.Container>

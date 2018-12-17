@@ -1,9 +1,8 @@
 import { BaphoTheme } from '@/theme'
+import { Box } from 'rebass'
 import styled, { css } from 'styled-components'
 
-import Column from '../Column'
-
-export default styled<any>(Column)`
+export default styled<any>(Box)`
   ${({ theme }: BaphoTheme) => css`
     padding: 0 !important;
     justify-content: flex-start !important;
@@ -13,34 +12,26 @@ export default styled<any>(Column)`
       margin-right: auto;
     }
 
-    a[href] {
+    .title {
       display: block;
+      position: relative;
       width: 100%;
       font-weight: 600;
       white-space: nowrap;
       padding: calc(var(--pad) / 2) var(--pad);
 
-      svg {
-        width: 13px;
-        margin: 0 0 0 5px;
-        color: ${theme.colours.label};
+      .favourite {
+        width: 1.5rem;
+        margin-right: 0.5em;
+        transition: inherit;
 
-        @media (max-width: 768px) {
-          display: none;
+        &:not(.hl) {
+          fill: ${theme.colours.muted};
         }
 
-        article:not(:hover) & {
-          transition: ${theme.eases.base};
-
-          &:last-of-type {
-            opacity: 0;
-            transform: translate(8px, 0);
-          }
+        &:hover {
+          fill: ${theme.colours.price.hl};
         }
-      }
-
-      &:hover svg {
-        fill: ${theme.colours.focus} !important;
       }
     }
   `}

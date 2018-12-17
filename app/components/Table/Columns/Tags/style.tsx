@@ -1,9 +1,8 @@
 import { BaphoTheme } from '@/theme'
+import { Box } from 'rebass'
 import styled, { css } from 'styled-components'
 
-import Column from '../Column'
-
-export default styled<any>(Column)`
+export default styled<any>(Box)`
   ${({ theme }: BaphoTheme) => css`
     position: relative;
 

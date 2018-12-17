@@ -1,4 +1,12 @@
-import { desaturate, invert, lighten, rgba, shade, tint } from 'polished'
+import {
+  desaturate,
+  getLuminance,
+  invert,
+  lighten,
+  rgba,
+  shade,
+  tint
+} from 'polished'
 import { ThemeProps } from 'styled-components'
 
 export const siteName = '$ɮΔքɦօʍɛ✞ʀɨƈ'
@@ -17,7 +25,13 @@ export const createTheme = (secondary: string) => {
     },
 
     get focus() {
-      return invert(this.secondary)
+      const inverted = invert(this.secondary)
+
+      if (getLuminance(inverted) < 0.33) {
+        return tint(0.2, inverted)
+      }
+
+      return inverted
     },
 
     get muted() {

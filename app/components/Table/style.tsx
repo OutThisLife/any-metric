@@ -1,9 +1,8 @@
 import { BaphoTheme } from '@/theme'
 import { rgba } from 'polished'
-import { bool } from 'prop-types'
 import VirtualList from 'react-tiny-virtual-list'
-import { Box, BoxProps } from 'rebass'
-import { compose, setDisplayName, withContext } from 'recompose'
+import { BoxProps } from 'rebass'
+import { compose, setDisplayName } from 'recompose'
 import styled, { css, keyframes } from 'styled-components'
 
 import BaseText, { TextProps } from '../Text'
@@ -27,16 +26,19 @@ to {
 }
 `
 
-export const Container = styled<any>(VirtualList)`
+export default styled<any>(VirtualList)`
   ${({ theme }: BaphoTheme) => css`
-    --border: ${rgba(theme.colours.border, 0.33)};
+    will-change: unset !important;
 
     &.loading {
       opacity: 0.5;
     }
 
+    .scrolling article {
+      pointer-events: none !important;
+    }
+
     article {
-      display: contents;
       user-select: none;
       display: grid;
       align-items: stretch;
@@ -48,13 +50,13 @@ export const Container = styled<any>(VirtualList)`
         width: 100%;
         align-items: center;
         justify-content: center;
-        outline: 1px solid transparent;
         color: ${theme.colours.label};
         padding-left: var(--pad);
         padding-right: var(--pad);
+        outline: 1px solid transparent;
         outline-offset: -1px;
+        border-bottom: 1px solid ${rgba(theme.colours.border, 0.33)};
         background-color: rgba(0, 0, 0, 0);
-        border-bottom: 1px solid var(--border);
         transition: ${theme.eases.base};
         transition-delay: ${theme.eases.delay};
 
@@ -92,35 +94,6 @@ export const Container = styled<any>(VirtualList)`
     }
   `}
 `
-
-export const Body = compose<
-  Cell<HTMLTableSectionElement>,
-  Cell<HTMLTableSectionElement>
->(setDisplayName('table-tbody'))(props => <Box {...props} />)
-
-export const Row = compose<
-  Cell<HTMLTableRowElement>,
-  Cell<HTMLTableRowElement>
->(setDisplayName('table-tr'))(props => <Box as="article" {...props} />)
-
-export const Cell = compose<
-  Cell<HTMLTableCellElement>,
-  Cell<HTMLTableCellElement>
->(setDisplayName('table-td'))(props => <Box className="cell" {...props} />)
-
-export const Head = compose(
-  setDisplayName('table-thead'),
-  withContext({ isHeader: bool }, () => ({ isHeader: true }))
-)(({ children }) => (
-  <Box className="head">
-    <Row>{children}</Row>
-  </Box>
-))
-
-export const HeaderCell = compose<
-  Cell<HTMLTableHeaderCellElement> & BaphoTheme,
-  Cell<HTMLTableHeaderCellElement>
->(setDisplayName('table-th'))(props => <Box className="cell-head" {...props} />)
 
 export const Text = compose<Cell<HTMLParagraphElement>, TextProps>(
   setDisplayName('table-text')

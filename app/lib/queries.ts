@@ -1,4 +1,4 @@
-import { Tag } from '@/server/schema/types'
+import { Product, Tag } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import gql from 'graphql-tag'
 import { ChildProps, DataProps, graphql } from 'react-apollo'
@@ -156,6 +156,34 @@ export const SEARCH_EBAY = gql`
 
   ${ebayFragment}
 `
+
+// ------------------------------------------------
+
+export const GET_WATCHLIST = gql`
+  query getWatchlist @client {
+    watchlist @client {
+      _id
+      image
+      price
+      shipping
+      status
+      timeLeft
+      title
+      url
+    }
+  }
+`
+
+export const SET_WATCHLIST = gql`
+  mutation updateWatchlist($watchlist: JSON) {
+    updateWatchlist(watchlist: $watchlist) @client
+  }
+`
+
+export const getWatchlist = () =>
+  graphql<{}, { watchlist: Product[] }>(GET_WATCHLIST, {
+    props: ({ data: { watchlist = [], ...data } }) => ({ data, watchlist })
+  })
 
 // ------------------------------------------------
 

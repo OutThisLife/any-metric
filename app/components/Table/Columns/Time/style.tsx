@@ -1,14 +1,22 @@
-import { BaphoTheme } from '@/theme'
-import styled, { css } from 'styled-components'
+import { Box } from 'rebass'
+import styled from 'styled-components'
 
-import Column from '../Column'
+export default styled<any>(Box)`
+  flex-wrap: wrap;
 
-export default styled<any>(Column)`
-  ${({ theme }: BaphoTheme) => css`
-    tbody & span {
-      color: ${theme.colours.muted};
-      font-weight: 300;
-      font-size: 0.85rem;
+  div {
+    width: 100%;
+    text-align: center;
+
+    &:first-of-type {
+      align-self: flex-end;
+      font-weight: 600;
     }
-  `}
+
+    &:last-of-type {
+      align-self: flex-start;
+      font-size: 0.85rem;
+      line-height: 1;
+    }
+  }
 `

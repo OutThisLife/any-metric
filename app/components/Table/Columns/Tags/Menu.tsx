@@ -1,5 +1,5 @@
 import Dropdown from '@/components/Dropdown'
-import { getTags, MODIFY_DOC, REMOVE_DOC } from '@/lib/queries'
+import { GET_TAGS, MODIFY_DOC, REMOVE_DOC } from '@/lib/queries'
 import { TagHandlers, TagState } from '@/lib/withTags'
 import { Tag } from '@/server/schema/types'
 import { orderBy } from 'lodash'
@@ -15,8 +15,8 @@ import {
   withState
 } from 'recompose'
 
+import { ColumnProps } from '..'
 import { Text } from '../../style'
-import { ColumnProps } from '../Column'
 
 export default compose<TagsMenuProps & TagState, TagsMenuProps>(
   setDisplayName('col-menu-dropdown'),
@@ -143,7 +143,13 @@ export default compose<TagsMenuProps & TagState, TagsMenuProps>(
 ))
 
 const Menu = compose<TagsMenuProps, TagsMenuProps>(
-  getTags(),
+  graphql<TagsMenuProps, { tags: Tag[] }>(GET_TAGS, {
+    skip: ({ isOpen }) => !isOpen,
+    props: ({ data: { tags = [], ...data } }) => ({
+      data,
+      initialTags: tags
+    })
+  }),
   withProps<TagsMenuProps, TagsMenuProps>(({ initialTags }) => ({
     tags: orderBy(initialTags, ['isQuery', 'createdAt'], ['desc', 'desc'])
   })),

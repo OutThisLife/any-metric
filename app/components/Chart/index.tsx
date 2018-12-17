@@ -8,6 +8,7 @@ import {
   compose,
   lifecycle,
   setDisplayName,
+  shouldUpdate,
   withHandlers,
   withState
 } from 'recompose'
@@ -19,9 +20,9 @@ import { ZoomedChart } from './style'
 
 export default compose<ChartProps & BaphoTheme, ChartProps>(
   setDisplayName('price'),
-  withState('loading', 'setLoading', true),
   withTheme,
   withContentRect('bounds'),
+  withState('loading', 'setLoading', true),
   withHandlers<ChartProps, ChartProps>(({ loading, setLoading }) => ({
     loadChart: ({ data }) => () => {
       if (!('browser' in process) || !data.length) {
@@ -41,12 +42,9 @@ export default compose<ChartProps & BaphoTheme, ChartProps>(
       }
     }
   })),
+  shouldUpdate<ChartProps>((_, np) => np.data.length > 5),
   lifecycle<ChartProps, {}>({
     componentDidMount() {
-      this.props.loadChart()
-    },
-
-    componentDidUpdate() {
       this.props.loadChart()
     }
   })

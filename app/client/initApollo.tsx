@@ -8,7 +8,7 @@ import {
 } from 'apollo-boost'
 import getConfig from 'next/config'
 
-import { errorLink, httpLink } from './links'
+import { errorLink, httpLink, localLink } from './links'
 
 const {
   publicRuntimeConfig: { isDev }
@@ -26,7 +26,7 @@ const createCache = (): InMemoryCache =>
 
 const create = initialState => {
   const cache = createCache().restore(initialState)
-  const link = ApolloLink.from([errorLink(), httpLink()])
+  const link = ApolloLink.from([errorLink(), localLink(), httpLink()])
 
   return new ApolloClient({
     link,

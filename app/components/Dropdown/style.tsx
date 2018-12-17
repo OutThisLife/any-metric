@@ -34,11 +34,6 @@ export default styled<any>(Box)`
 
     ul {
       padding: 2px;
-
-      &:first-of-type {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-      }
     }
 
     li a[href] {

@@ -69,7 +69,6 @@ export default compose<
   withHandlers<CategoriesProps & CategoriesHandlers, CategoriesHandlers>(
     () => ({
       handleClick: ({ filter }) => e => {
-        console.log(e.target)
         select(e.target as HTMLElement)
 
         setTimeout(() => {
@@ -145,7 +144,14 @@ export default compose<
       </Form.Container>
 
       {tags.map(t => (
-        <Item key={t._id} onDelete={() => handleDelete(t)} {...t} />
+        <Item
+          key={t._id}
+          onDelete={e => {
+            e.stopPropagation()
+            handleDelete(t)
+          }}
+          {...t}
+        />
       ))}
     </Categories>
   </Module>

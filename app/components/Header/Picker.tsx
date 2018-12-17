@@ -46,6 +46,7 @@ export default compose<PickerProps & PickerState & BaphoTheme, {}>(
         colors={[
           '#6236BA',
           '#CB24A0',
+          '#D805C2',
           '#FF467B',
           '#FF825A',
           '#FFBF4F',

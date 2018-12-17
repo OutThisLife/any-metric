@@ -1,12 +1,13 @@
 import Categories from '@/components/Categories'
 import Chart from '@/components/Chart'
 import Table from '@/components/Table'
+import Watchlist from '@/components/Watchlist'
 import { GET_PRODUCTS } from '@/lib/queries'
 import { Product, Tag } from '@/server/schema/types'
 import { siteName } from '@/theme'
 import { orderBy } from 'lodash'
 import Head from 'next/head'
-import { func, object } from 'prop-types'
+import { func } from 'prop-types'
 import { graphql } from 'react-apollo'
 import { Box, BoxProps, Flex } from 'rebass'
 import {
@@ -22,51 +23,39 @@ import Home from './style'
 
 export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
   setDisplayName('dashboard'),
-  withState('sort', 'sortBy', {
-    name: 'timeLeft',
-    dir: 'asc'
-  }),
   withState('filter', 'setFilter', {
     value: '',
     action: 'RESET'
   }),
-  graphql<HomeState & HomeProps & HomeStateHandlers, { products: Product[] }>(
-    GET_PRODUCTS,
-    {
-      props: ({
-        data: { products: initial = [], ...data },
-        ownProps: {
-          filter: { action, value }
-        }
-      }) => ({
-        data,
-        products: (() => {
-          switch (action) {
-            default:
-              return initial
+  graphql<HomeState & HomeProps & HomeStateHandlers, HomeState>(GET_PRODUCTS, {
+    props: ({
+      data: { products: initial = [], ...data },
+      ownProps: {
+        filter: { action, value }
+      }
+    }) => {
+      const getProducts = (f: (t?: Tag) => boolean = () => true) => {
+        switch (action) {
+          default:
+            return initial
 
-            case 'TAG':
-              return initial.filter(d =>
-                (d.tags as Tag[]).some(t => value.split(',').includes(t._id))
+          case 'TAG':
+            return initial.filter(d =>
+              (d.tags as Tag[]).some(
+                t => value.split(',').includes(t._id) && f(t)
               )
-          }
-        })()
-      })
+            )
+        }
+      }
+
+      return {
+        data,
+        products: getProducts()
+      }
     }
-  ),
-  withContext(
-    {
-      sort: object,
-      sortBy: func,
-      filter: func
-    },
-    ({ sort, sortBy, setFilter: filter }) => ({
-      sort,
-      sortBy,
-      filter
-    })
-  )
-)(({ sort, products = [] }) => (
+  }),
+  withContext({ filter: func }, ({ setFilter: filter }) => ({ filter }))
+)(({ products = [] }) => (
   <Home as="section">
     <Head>
       <title key="title">
@@ -80,12 +69,12 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
         align-self: inherit;
       `}>
       <Table
-        data={orderBy(products, sort.name, [sort.dir]).slice(0, 100)}
+        data={orderBy(products, 'createdAt', 'asc').slice(0, 100)}
         columns={[
           {
             label: 'Price',
             key: 'price',
-            width: 85
+            width: 100
           },
           {
             label: '',
@@ -100,12 +89,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           {
             label: 'Date',
             key: 'time',
-            width: 125
-          },
-          {
-            label: 'State',
-            key: 'status',
-            width: 125
+            width: 150
           },
           {
             label: '',
@@ -133,6 +117,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           width: 100%;
         `}>
         <Categories />
+        <Watchlist />
       </Box>
 
       <Box
@@ -163,14 +148,10 @@ interface HomeProps extends BoxProps {
 }
 
 export interface HomeState {
+  initial?: Product[]
   products?: Product[]
 
-  sort: {
-    name?: string
-    dir?: 'asc' | 'desc'
-  }
-
-  filter: {
+  filter?: {
     value?: string
     action?: 'RESET' | 'TAG'
   }

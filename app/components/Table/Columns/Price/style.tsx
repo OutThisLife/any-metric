@@ -1,11 +1,10 @@
+import { Box } from 'rebass'
 import styled from 'styled-components'
 
-import Column from '../Column'
-
-export default styled<any>(Column)`
+export default styled<any>(Box)`
   flex-wrap: wrap;
 
-  tbody tr & div {
+  div {
     width: 100%;
 
     &:first-of-type {

@@ -8,7 +8,6 @@ import { BreedingRhombusSpinner } from 'react-epic-spinners'
 import { MdClear } from 'react-icons/md'
 import { compose, setDisplayName, withHandlers, withState } from 'recompose'
 
-import { CategoriesHandlers } from '.'
 import Item from './Item.style'
 
 let tm: any = {}
@@ -143,7 +142,7 @@ export interface CategoryItemProps extends Tag {
   onRef?: (ref: HTMLElement) => void
   setLoading?: (b: boolean, cb?: () => void) => void
   setTime?: (t: Date, cb?: () => void) => void
-  onDelete?: () => CategoriesHandlers['handleDelete']
+  onDelete?: React.MouseEventHandler<any>
 }
 
 export interface CategoryItemHandles {

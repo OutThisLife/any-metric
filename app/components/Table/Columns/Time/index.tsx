@@ -1,14 +1,22 @@
-import { dateFormat } from '@/lib/utils'
+import { dateFormat, djs, tickerFormat } from '@/lib/utils'
 import { compose, setDisplayName } from 'recompose'
 
+import { ColumnProps } from '../'
 import { Text } from '../../style'
-import { ColumnProps } from '../Column'
 import Time from './style'
 
 export default compose<ColumnProps, ColumnProps>(
   setDisplayName('col-datetime')
-)(({ children, item = {} }) => (
+)(({ item }) => (
   <Time name="createdAt">
-    {!('_id' in item) ? children : <Text>{dateFormat(item.createdAt)}</Text>}
+    {item.status !== 'Active' || djs(item.timeLeft).isBefore(djs()) ? (
+      <Text as="div">{item.status}</Text>
+    ) : (
+      <Text as="div" className="hl">
+        <time>{tickerFormat(item.timeLeft)}</time>
+      </Text>
+    )}
+
+    <Text as="div">{dateFormat(item.createdAt)}</Text>
   </Time>
 ))

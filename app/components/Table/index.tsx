@@ -1,14 +1,16 @@
 import { Product } from '@/server/schema/types'
 import { MeasuredComponentProps, withContentRect } from 'react-measure'
-import { compose, setDisplayName, withHandlers, withState } from 'recompose'
+import { Box } from 'rebass'
+import { compose, setDisplayName, withHandlers } from 'recompose'
 
 import * as Columns from './Columns'
-import * as Table from './style'
+import Table from './style'
+
+let tm
 
 export default compose<TableState & TableProps, TableProps>(
   setDisplayName('table'),
   withContentRect('bounds'),
-  withState('visible', 'setVisible', []),
   withHandlers<TableProps & TableState, TableState>(() => ({
     handleContextMenu: () => e => {
       e.preventDefault()
@@ -25,29 +27,26 @@ export default compose<TableState & TableProps, TableProps>(
       }
     }
   }))
-)(({ measureRef, contentRect, columns, data }) => (
+)(({ measureRef, contentRect, columns, data, handleContextMenu }) => (
   <div
     ref={measureRef}
-    style={{ height: ' calc(100vh - (var(--offset) * 2))' }}>
-    <Table.Container
+    style={{ height: ' calc(100vh - (var(--offset) * 2))' }}
+    onContextMenu={handleContextMenu}>
+    <Table
       width="100%"
       height={
         isNaN(contentRect.bounds.height) ? 500 : contentRect.bounds.height
       }
       itemCount={data.length}
       itemSize={80}
-      onItemsRendered={() =>
-        'browser' in process &&
-        [].slice
-          .call(document.querySelectorAll('img[data-src]:not([src]'))
-          .forEach((el: HTMLElement) =>
-            window.requestAnimationFrame(() =>
-              el.setAttribute('src', el.getAttribute('data-src'))
-            )
-          )
-      }
+      onScroll={(_, e) => {
+        clearTimeout(tm)
+        e.target.classList.add('scrolling')
+        tm = setTimeout(() => e.target.classList.remove('scrolling'), 250)
+      }}
       renderItem={({ index, style }) => (
-        <Table.Row
+        <Box
+          as="article"
           key={data[index]._id}
           id={data[index]._id}
           style={style}
@@ -66,7 +65,7 @@ export default compose<TableState & TableProps, TableProps>(
             columns={columns}
             props={() => ({ item: data[index] })}
           />
-        </Table.Row>
+        </Box>
       )}
     />
   </div>
@@ -77,17 +76,14 @@ export const RenderColumns = compose<RenderColumnProps, RenderColumnProps>(
 )(({ props, columns = [] }) => (
   <>
     {columns.map(c => {
-      const C =
-        Columns[c.key.slice(0, 1).toUpperCase() + c.key.slice(1)] ||
-        Columns.Base
-
+      const C = Columns[c.key.slice(0, 1).toUpperCase() + c.key.slice(1)]
       return <C key={c.key} {...props(c)} />
     })}
   </>
 ))
 
 export interface TableState extends Partial<MeasuredComponentProps> {
-  handleContextMenu?: React.UIEventHandler<HTMLElement>
+  handleContextMenu?: React.MouseEventHandler<any>
 }
 
 export interface TableProps {

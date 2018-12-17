@@ -1,9 +1,8 @@
-import { lighten } from 'polished'
+import { darken, getLuminance, lighten } from 'polished'
+import { Box } from 'rebass'
 import styled, { css } from 'styled-components'
 
-import Column from '../Column'
-
-export default styled<any>(Column)`
+export default styled<any>(Box)`
   ${({ theme }) => css`
     padding: 0 !important;
 
@@ -12,7 +11,11 @@ export default styled<any>(Column)`
       margin: 0;
       width: 80px;
       height: 80px;
-      background-color: ${lighten(0.35, theme.colours.secondary)};
+      background-color: ${getLuminance(
+        lighten(0.35, theme.colours.secondary)
+      ) >= 0.66
+        ? darken(0.2, theme.colours.secondary)
+        : lighten(0.35, theme.colours.secondary)};
 
       article:not(:hover) & {
         filter: grayscale(0.4);

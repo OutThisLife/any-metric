@@ -1,6 +1,6 @@
 import * as Form from '@/components/Form'
 import Text from '@/components/Text'
-import { MODIFY_DOC, SEARCH_EBAY } from '@/lib/queries'
+import { SEARCH_EBAY } from '@/lib/queries'
 import { EbayItem, EbayResult } from '@/server/schema/types'
 import { ApolloClient } from 'apollo-boost'
 import { withApollo } from 'react-apollo'
@@ -28,24 +28,6 @@ export default compose<SearchState & SearchHandlers, {}>(
       })
 
       cb(res.data.ebay)
-
-      if (variables.save && res.data.ebay.items.length) {
-        await client.mutate({
-          mutation: MODIFY_DOC,
-          refetchQueries: ['getTags', 'getProducts'],
-          variables: {
-            objectId: res.data.ebay.items[0]._id,
-            collectionName: 'products',
-            input: JSON.parse(
-              JSON.stringify({
-                $set: {
-                  updatedAt: new Date()
-                }
-              })
-            )
-          }
-        })
-      }
     }
 
     if ('browser' in process && !('collect' in window)) {

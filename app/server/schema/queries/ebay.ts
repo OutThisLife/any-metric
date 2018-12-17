@@ -25,7 +25,6 @@ export default (async (
   }
 
   const result: EbayResult = {
-    total: res['@count'] as number,
     items: (res.item as EbayItem[]).map(item => {
       for (const [k, v] of Object.entries(item)) {
         if (Array.isArray(v) && v.length === 1) {
@@ -45,7 +44,11 @@ export default (async (
     })
   }
 
-  if (save && result.items.length) {
+  if (!save) {
+    result.total = parseInt(res['@count'], 10)
+  } else {
+    result.total = 0
+
     const q = { title: keywords, isQuery: true }
     await mongo.tags.updateOne(
       q,
@@ -62,63 +65,80 @@ export default (async (
       { upsert: true }
     )
 
-    const tag = await mongo.tags.findOne<Tag>(q)
+    if (result.items.length) {
+      const tag = await mongo.tags.findOne<Tag>(q)
 
-    result.items.map(
-      async ({
-        listingInfo,
-        pictureURLSuperSize = '',
-        sellingStatus,
-        shippingInfo,
-        title,
-        unitPrice = {},
-        viewItemURL = 'javascript:;'
-      }) => {
-        const product = await mongo.products.findOne<Product>({
-          title
-        })
+      result.items.map(
+        async ({
+          listingInfo,
+          pictureURLSuperSize = '',
+          sellingStatus,
+          shippingInfo,
+          title,
+          unitPrice = {},
+          viewItemURL = 'javascript:;'
+        }) => {
+          const product = await mongo.products.findOne<Product>({
+            title
+          })
 
-        if (product && product.isDeleted) {
-          await mongo.products.updateOne(
-            { title },
-            { $set: { isDeleted: false, restoredAt: new Date() } }
-          )
-        } else {
-          const { upsertedCount } = await mongo.products.updateOne(
-            { title },
-            {
-              $setOnInsert: {
-                bids:
-                  'bidCount' in sellingStatus ? sellingStatus.bidCount[0] : 0,
-                createdAt: new Date(listingInfo.startTime),
-                image: pictureURLSuperSize,
-                qty:
-                  'quantity' in unitPrice ? parseFloat(unitPrice.quantity) : 0,
-                status: sellingStatus.sellingState[0],
-                tags: '_id' in tag ? [tag._id] : [],
-                timeLeft: new Date(listingInfo.endTime),
-                title,
-                updatedAt: new Date(),
-                url: viewItemURL,
+          if (product) {
+            await mongo.products.updateOne(
+              { title },
+              { $set: { isDeleted: false, restoredAt: new Date() } }
+            )
+          } else {
+            const createdAt = new Date(listingInfo.startTime)
+            const image = pictureURLSuperSize
+            const status = sellingStatus.sellingState[0]
+            const tags = '_id' in tag ? [tag._id] : []
+            const timeLeft = new Date(listingInfo.endTime)
+            const updatedAt = new Date()
+            const url = viewItemURL
 
-                price:
-                  'currentPrice' in sellingStatus
-                    ? parseFloat(sellingStatus.currentPrice[0].__value__)
-                    : 0,
+            const bids =
+              'bidCount' in sellingStatus ? sellingStatus.bidCount[0] : 0
 
-                shipping:
-                  'shippingServiceCost' in shippingInfo
-                    ? parseFloat(shippingInfo.shippingServiceCost[0].__value__)
-                    : 0
-              }
-            },
-            { upsert: true }
-          )
+            const qty =
+              'quantity' in unitPrice ? parseFloat(unitPrice.quantity) : 0
 
-          await mongo.tags.updateOne(q, { $inc: { total: upsertedCount } })
+            const price =
+              'currentPrice' in sellingStatus
+                ? parseFloat(sellingStatus.currentPrice[0].__value__)
+                : 0
+
+            const shipping =
+              'shippingServiceCost' in shippingInfo
+                ? parseFloat(shippingInfo.shippingServiceCost[0].__value__)
+                : 0
+
+            const { upsertedCount } = await mongo.products.updateOne(
+              { title },
+              {
+                $setOnInsert: {
+                  bids,
+                  createdAt,
+                  image,
+                  price,
+                  qty,
+                  shipping,
+                  status,
+                  tags,
+                  timeLeft,
+                  title,
+                  updatedAt,
+                  url
+                }
+              },
+              { upsert: true }
+            )
+
+            await mongo.tags.updateOne(q, { $inc: { total: upsertedCount } })
+            result.total += upsertedCount
+          }
         }
-      }
-    )
+      )
+    }
   }
 
   return result

@@ -208,8 +208,8 @@ export interface CrawlResult {
 
 export interface EbayResult {
   __typename?: string
-  items: EbayItem[]
-  total: number
+  items?: EbayItem[]
+  total?: number
 }
 
 export interface EbayItem {

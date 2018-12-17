@@ -7,7 +7,7 @@ import {
   shouldRefresh
 } from '@/lib/utils'
 import withTagColour, { TagColour } from '@/lib/withTagColour'
-import { EbayItem, Tag } from '@/server/schema/types'
+import { EbayResult, Tag } from '@/server/schema/types'
 import * as d3 from 'd3'
 import { graphql } from 'react-apollo'
 import { BreedingRhombusSpinner } from 'react-epic-spinners'
@@ -37,22 +37,25 @@ export default compose<
         ;(window as any).collect(
           {
             keywords,
+            save: true,
             paginationInput: {
               pageNumber: 1,
               entriesPerPage: 100
             }
           },
-          ({ items }: { items: EbayItem[] }) => {
+          ({ total, items }: EbayResult) => {
             setTime(new Date(), () => setTimeout(() => setLoading(false), 600))
 
-            if (items.length) {
+            if (total > 0) {
+              const { title, sellingStatus } = items[items.length - 1]
+
               const _ = new Notification(
-                `[${keywords.toUpperCase()}] - ${items.length} found`,
+                `[${keywords.toUpperCase()}] - ${total} found`,
                 {
                   icon: '/static/favicon.ico',
                   body: `${moneyFormat(
-                    items[0].sellingStatus.currentPrice[0].__value__
-                  )} - ${items[0].title.slice(0, 25)}...`
+                    sellingStatus.currentPrice[0].__value__
+                  )} - ${title.slice(0, 25)}...`
                 }
               )
             }

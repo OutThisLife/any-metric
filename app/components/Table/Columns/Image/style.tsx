@@ -9,8 +9,8 @@ export default styled<any>(Box)`
     figure {
       position: relative;
       margin: 0;
-      width: 80px;
-      height: 80px;
+      width: 100%;
+      height: 100%;
       background-color: ${getLuminance(
         lighten(0.35, theme.colours.secondary)
       ) >= 0.66

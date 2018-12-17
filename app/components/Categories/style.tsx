@@ -12,7 +12,11 @@ export default styled<any>(Box)`
     padding: 0;
 
     @media (max-width: 1025px) and (min-width: 768px) {
-      grid-template-columns: repeat(auto-fit, minmax(max-content, 50px));
+      grid-template-columns: repeat(
+        auto-fit,
+        minmax(max-content, calc(33% - 1rem))
+      );
+      grid-gap: 1rem;
       justify-content: center;
     }
 

@@ -36,26 +36,37 @@ export default styled<any>(VirtualList)`
       }
 
       @media (max-width: 1500px) {
-        grid-template-rows: 1fr max-content;
+        grid-template-rows: 1fr var(--pad) max-content var(--pad);
         grid-template-columns: 100px 80px 1fr 100px auto;
 
         [name] {
           grid-row: 1;
         }
 
+        [name='title'] {
+          grid-column: 3 / -1;
+        }
+
         [name='createdAt'] {
-          grid-row: 2;
+          grid-row: 3;
           grid-column: 2 / -1;
-          padding: 0 var(--pad) var(--pad) 0;
+          padding: 0;
 
           > div {
             align-self: flex-start;
             text-align: left;
           }
         }
+
+        [name='tags'] {
+          grid-row: 3;
+          grid-column: 3 / -1;
+        }
       }
 
       @media (max-width: 1024px) {
+        grid-template-columns: 80px 15vw 1fr 100px auto;
+
         [name='title'],
         [name='tags'] {
           grid-column: 3 / -1;

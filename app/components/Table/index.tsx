@@ -39,7 +39,7 @@ export default compose<TableState & TableProps, TableProps>(
       }
       itemCount={data.length}
       itemSize={() => {
-        if (window.innerWidth <= 1500) {
+        if ('browser' in process && window.innerWidth <= 1500) {
           return 80 * 2
         }
 

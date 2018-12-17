@@ -8,7 +8,7 @@ dayjs.extend(relativeTime)
 export const djs = (d = new Date()): dayjs.Dayjs | any =>
   (dayjs(d) as any).local()
 
-const withDate = (cb: (d: dayjs.Dayjs | any) => any) => (
+export const withDate = (cb: (d: dayjs.Dayjs | any) => any) => (
   d: dayjs.ConfigType | Date | any
 ) => cb(djs(d instanceof Date ? dayjs(d) : d))
 
@@ -55,3 +55,4 @@ export const dateAge = withDate(d => {
 })
 
 export const relTime = withDate(d => d.fromNow())
+export const shouldRefresh = withDate(d => dayjs().diff(d, 'hour', true) >= 1)

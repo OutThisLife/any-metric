@@ -6,8 +6,6 @@ import { compose, setDisplayName, withHandlers } from 'recompose'
 import * as Columns from './Columns'
 import Table from './style'
 
-let tm
-
 export default compose<TableState & TableProps, TableProps>(
   setDisplayName('table'),
   withContentRect('bounds'),
@@ -45,17 +43,12 @@ export default compose<TableState & TableProps, TableProps>(
 
         return 80
       }}
-      onScroll={(_, e) => {
-        clearTimeout(tm)
-        e.target.classList.add('scrolling')
-        tm = setTimeout(() => e.target.classList.remove('scrolling'), 250)
-      }}
       renderItem={({ index, style }) => (
         <Box
           as="article"
           key={data[index]._id}
           id={data[index]._id}
-          style={style}>
+          style={style as React.HTMLAttributes<HTMLElement>['style']}>
           <RenderColumns
             columns={columns}
             props={() => ({ item: data[index] })}

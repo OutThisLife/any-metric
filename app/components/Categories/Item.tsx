@@ -1,7 +1,13 @@
 import { MODIFY_DOC } from '@/lib/queries'
-import { dateAge, relTime, shortFormat } from '@/lib/utils'
+import {
+  dateAge,
+  moneyFormat,
+  relTime,
+  shortFormat,
+  shouldRefresh
+} from '@/lib/utils'
 import withTagColour, { TagColour } from '@/lib/withTagColour'
-import { Tag } from '@/server/schema/types'
+import { EbayItem, Tag } from '@/server/schema/types'
 import * as d3 from 'd3'
 import { graphql } from 'react-apollo'
 import { BreedingRhombusSpinner } from 'react-epic-spinners'
@@ -9,8 +15,6 @@ import { MdClear } from 'react-icons/md'
 import { compose, setDisplayName, withHandlers, withState } from 'recompose'
 
 import Item from './Item.style'
-
-let tm: any = {}
 
 export default compose<
   CategoryItemProps & CategoryItemHandles & TagColour,
@@ -38,8 +42,20 @@ export default compose<
               entriesPerPage: 100
             }
           },
-          ({ items }) => {
+          ({ items }: { items: EbayItem[] }) => {
             setTime(new Date(), () => setTimeout(() => setLoading(false), 600))
+
+            if (items.length) {
+              const _ = new Notification(
+                `[${keywords.toUpperCase()}] - ${items.length} found`,
+                {
+                  icon: '/static/favicon.ico',
+                  body: `${moneyFormat(
+                    items[0].sellingStatus.currentPrice[0].__value__
+                  )} - ${items[0].title.slice(0, 25)}...`
+                }
+              )
+            }
 
             window.requestAnimationFrame(() =>
               mutate({
@@ -56,30 +72,47 @@ export default compose<
       }
     })
   }),
-  withHandlers<CategoryItemProps, CategoryItemHandles>(() => ({
-    onRef: ({ loading, time }) => ref => {
-      if ('stop' in tm) {
-        tm.stop()
+  withHandlers<CategoryItemProps & CategoryItemHandles, CategoryItemHandles>(
+    () => {
+      let tm: d3.Timer
+
+      if ('browser' in process) {
+        Notification.requestPermission()
       }
 
-      if (!ref || loading) {
-        return
-      }
+      return {
+        onRef: ({ loading, time }) => ref => {
+          if (tm) {
+            tm.stop()
+          }
 
-      const el = ref.querySelector('small')
+          if (!ref || loading) {
+            return
+          }
 
-      if (el instanceof HTMLElement) {
-        el.innerText = relTime(time)
-        tm = d3.interval(() => (el.innerText = relTime(time)), 36e2)
+          const el = ref.querySelector('small')
+
+          if (el instanceof HTMLElement) {
+            el.innerText = relTime(time)
+
+            tm = d3.timer(() => {
+              el.innerText = relTime(time)
+
+              if (shouldRefresh(time)) {
+                ref.click()
+              }
+            })
+          }
+        }
       }
     }
-  }))
+  )
 )(
   ({
+    onRef,
     _id,
     loading,
     onDelete,
-    onRef,
     onRefresh,
     setLoading,
     slug,

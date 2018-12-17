@@ -12,7 +12,7 @@ import Watchlist from './style'
 
 export default compose<WatchlistState & WatchlistProps, WatchlistProps>(
   setDisplayName('watchlist'),
-  withState('isOpen', 'toggle', 1),
+  withState('isOpen', 'toggle', false),
   getWatchlist(),
   graphql<WatchlistProps & WatchlistState, {}, {}, WatchlistProps>(
     SET_WATCHLIST,
@@ -38,7 +38,7 @@ export default compose<WatchlistState & WatchlistProps, WatchlistProps>(
         e.stopPropagation()
         toggle(!isOpen)
       }}>
-      Watchlist
+      <span>Watchlist</span>
       {isOpen ? <FaChevronDown /> : <FaChevronUp />}
     </h5>
 

@@ -73,28 +73,23 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
         columns={[
           {
             label: 'Price',
-            key: 'price',
-            width: 100
+            key: 'price'
           },
           {
             label: '',
-            key: 'image',
-            width: 80
+            key: 'image'
           },
           {
             label: 'Name',
-            key: 'title',
-            width: '1fr'
+            key: 'title'
           },
           {
             label: 'Date',
-            key: 'time',
-            width: 150
+            key: 'time'
           },
           {
             label: '',
-            key: 'tags',
-            width: 200
+            key: 'tags'
           }
         ]}
       />
@@ -105,6 +100,10 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           position: fixed;
           right: calc(var(--offset) * 1.25);
           bottom: 0;
+
+          @media (max-width: 768px) {
+            right: 0;
+          }
         `}
       />
     </Box>

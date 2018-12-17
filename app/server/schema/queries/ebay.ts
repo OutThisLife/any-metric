@@ -45,7 +45,7 @@ export default (async (
     })
   }
 
-  if (save) {
+  if (save && result.items.length) {
     const q = { title: keywords, isQuery: true }
     await mongo.tags.updateOne(
       q,

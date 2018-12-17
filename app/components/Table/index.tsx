@@ -38,7 +38,13 @@ export default compose<TableState & TableProps, TableProps>(
         isNaN(contentRect.bounds.height) ? 500 : contentRect.bounds.height
       }
       itemCount={data.length}
-      itemSize={80}
+      itemSize={() => {
+        if (window.innerWidth <= 1500) {
+          return 80 * 2
+        }
+
+        return 80
+      }}
       onScroll={(_, e) => {
         clearTimeout(tm)
         e.target.classList.add('scrolling')
@@ -49,18 +55,7 @@ export default compose<TableState & TableProps, TableProps>(
           as="article"
           key={data[index]._id}
           id={data[index]._id}
-          style={style}
-          css={`
-            grid-template-columns: ${columns
-              .map(c =>
-                typeof c.width === 'number' ? `${c.width}px` : c.width
-              )
-              .join(' ')};
-
-            @media (max-width: 768px) {
-              grid-template-columns: repeat(${columns.length}, 1fr);
-            }
-          `}>
+          style={style}>
           <RenderColumns
             columns={columns}
             props={() => ({ item: data[index] })}
@@ -92,8 +87,6 @@ export interface TableProps {
   columns: Array<{
     label: string
     key: string
-    skey?: string
-    width: number | string
   }>
 }
 

@@ -6,14 +6,26 @@ import styled, { css } from 'styled-components'
 export default styled<any>(Module)`
   ${({ theme }: BaphoTheme) => css`
     width: auto;
-    min-width: 220px;
-    white-space: nowrap;
     box-shadow: -8px -8px 50px 0 ${darken(0.03, theme.colours.panel)};
+
+    @media (min-width: 768px) {
+      min-width: 220px;
+      white-space: nowrap;
+    }
 
     h5 {
       padding: calc(var(--pad) / 2);
       margin: 0 0 calc(var(--pad) / 2);
       border-bottom: 1px solid ${rgba(theme.colours.border, 0.33)};
+
+      @media (max-width: 768px) {
+        padding: var(--pad);
+        padding-left: 0;
+
+        > span {
+          font-size: 0px;
+        }
+      }
     }
 
     > div {
@@ -28,6 +40,10 @@ export default styled<any>(Module)`
         overflow: auto;
         padding: calc(var(--pad) / 2);
         padding-bottom: var(--pad);
+
+        @media (max-width: 768px) {
+          width: 66vw;
+        }
 
         article > * {
           display: flex;

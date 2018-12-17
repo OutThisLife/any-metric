@@ -138,7 +138,7 @@ export default compose<
 
         if (router.query.category) {
           const $a = document.querySelector(
-            `[data-hash="${router.query.category}"]`
+            `[data-hash="${router.query.category}"]:not([data-checked])`
           )
 
           if ($a instanceof HTMLElement) {

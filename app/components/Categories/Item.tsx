@@ -73,7 +73,7 @@ export default compose<
     })
   }),
   withHandlers<CategoryItemProps & CategoryItemHandles, CategoryItemHandles>(
-    () => {
+    ({ setLoading, onRefresh }) => {
       let tm: d3.Timer
 
       if ('browser' in process) {
@@ -99,7 +99,8 @@ export default compose<
               el.innerText = relTime(time)
 
               if (shouldRefresh(time)) {
-                ref.click()
+                setLoading(true, () => onRefresh())
+                tm.stop()
               }
             })
           }

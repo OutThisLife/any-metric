@@ -59,7 +59,10 @@ export const select = (
   if (isChecked) {
     $row.toggleAttribute('data-checked')
 
-    if ($row.hasAttribute('data-hash')) {
+    if (
+      $row.hasAttribute('data-hash') &&
+      !location.pathname.endsWith($row.getAttribute('data-hash'))
+    ) {
       window.history.replaceState(
         {},
         null,

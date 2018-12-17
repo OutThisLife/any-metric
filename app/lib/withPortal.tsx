@@ -41,9 +41,7 @@ export default () => (Component: React.ComponentType<any>) =>
         el.lastElementChild.addEventListener(
           'animationend',
           () => np.toggle(false),
-          {
-            once: true
-          }
+          { once: true }
         )
 
         return false
@@ -104,12 +102,9 @@ export const positionToMouse = (
 
     $parent.style.zIndex = '9999'
     $parent.style.position = 'fixed'
-
     $parent.style.right = 'auto'
     $parent.style.bottom = 'auto'
-
     $parent.style.top = `${Math.min(window.innerHeight - h, Math.max(o, y))}px`
-
     $parent.style.left = `${Math.min(window.innerWidth - w, Math.max(o, x))}px`
   }
 

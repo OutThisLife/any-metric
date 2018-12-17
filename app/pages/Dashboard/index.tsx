@@ -94,18 +94,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
         ]}
       />
 
-      <Watchlist
-        css={`
-          z-index: 1000;
-          position: fixed;
-          right: calc(var(--offset) * 1.25);
-          bottom: 0;
-
-          @media (max-width: 768px) {
-            right: 0;
-          }
-        `}
-      />
+      <Watchlist />
     </Box>
 
     <Flex

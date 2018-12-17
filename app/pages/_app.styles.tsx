@@ -86,7 +86,7 @@ export default createGlobalStyle`
     }
 
     h5 {
-      color: ${theme.colours.label};
+      color: ${theme.colours.muted};
       font-weight: 600;
       font-size: 0.9rem;
       letter-spacing: 1px;
@@ -177,23 +177,18 @@ export const Main = styled<any>(Box)`
           );
         }
       }
-
       @media (max-width: 1025px) {
         width: calc(90vw - var(--offset));
       }
-
       .up {
         color: ${theme.colours.price.up} !important;
       }
-
       .down {
         color: ${theme.colours.price.down} !important;
       }
-
       .hl {
         color: ${theme.colours.price.hl} !important;
       }
-
       .dead {
         color: ${theme.colours.muted} !important;
       }

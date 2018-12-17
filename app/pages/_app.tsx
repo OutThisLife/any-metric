@@ -14,25 +14,23 @@ export default withData(
     public render() {
       return (
         <ApolloProvider client={this.props.client}>
-          <Container>
-            <Particles />
+          <GetTheme>
+            {({ theme }) => (
+              <Container>
+                <Particles />
 
-            <GetTheme>
-              {({ theme }) => (
-                <>
-                  <Head>
-                    <link
-                      key="google-fonts"
-                      rel="stylesheet"
-                      href={theme.fonts.src}
-                    />
-                  </Head>
-                  <GlobalStyles />
-                  <Layout {...this.props} />
-                </>
-              )}
-            </GetTheme>
-          </Container>
+                <Head>
+                  <link
+                    key="google-fonts"
+                    rel="stylesheet"
+                    href={theme.fonts.src}
+                  />
+                </Head>
+                <GlobalStyles />
+                <Layout {...this.props} />
+              </Container>
+            )}
+          </GetTheme>
         </ApolloProvider>
       )
     }

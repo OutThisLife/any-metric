@@ -1,3 +1,4 @@
+import { BaphoTheme } from '@/theme'
 import Particles, { IParticlesParams } from 'react-particles-js'
 import {
   branch,
@@ -7,14 +8,16 @@ import {
   withHandlers,
   withState
 } from 'recompose'
+import { withTheme } from 'styled-components'
 
 import defaultParams from './params'
 
-export default compose<ParticleProps, {}>(
+export default compose<ParticleProps & BaphoTheme, {}>(
   setDisplayName('particles'),
   branch(() => !('browser' in process), renderComponent(() => null)),
   withState('params', 'setParams', defaultParams),
-  withHandlers(() => ({
+  withTheme,
+  withHandlers<ParticleProps & BaphoTheme, ParticleProps>(({ theme }) => ({
     onRef: ({ params, setParams }) => ref => {
       if (!ref) {
         return
@@ -30,12 +33,16 @@ export default compose<ParticleProps, {}>(
       el.style.left = '0'
       el.style.width = '100%'
       el.style.height = '100%'
-      ;(el.style as any).mixBlendMode = 'soft-light'
+      ;(el.style as any).mixBlendMode = 'color-dodge'
 
-      params.particles.color.value = '#fafafa'
+      const max = Math.max(window.innerWidth, window.innerHeight)
+
+      params.particles.color.value = theme.colours.secondary
+      params.particles.number.value = max / (5 * window.devicePixelRatio)
+      params.particles.number.density.value_area = max * 2
       params.particles.line_linked.color = params.particles.color.value
-      params.interactivity.events.onhover.enable = false
-      params.particles.move.enable = false
+      params.interactivity.events.onhover.enable = true
+      params.particles.move.enable = true
 
       window.requestAnimationFrame(() => setParams(params))
     }
@@ -46,9 +53,6 @@ export default compose<ParticleProps, {}>(
       params={params}
       width={window.innerWidth + 'px'}
       height={window.innerHeight + 'px'}
-      style={{
-        opacity: 0.2
-      }}
     />
   </div>
 ))
@@ -56,6 +60,6 @@ export default compose<ParticleProps, {}>(
 interface ParticleProps {
   onRef?: (r: HTMLElement) => void
   freeze?: () => void
-  params: Partial<IParticlesParams>
-  setParams: (p: ParticleProps['params']) => void
+  params?: Partial<IParticlesParams>
+  setParams?: (p: ParticleProps['params']) => void
 }

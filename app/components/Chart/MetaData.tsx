@@ -16,8 +16,9 @@ export default compose<BaphoTheme, {}>(
     accessor={d => d}
     origin={[0, -25]}
     fontSize={9}
-    textFill={theme.colours.muted}
-    labelFill={theme.colours.label}
+    fontFamily={theme.fonts.family}
+    textFill={theme.colours.label}
+    labelFill={theme.colours.muted}
     xDisplayFormat={d3.timeFormat('%Y-%m-%d')}
     volumeFormat={d3.format('.4s')}
     percentFormat={d3.format('.2%')}
@@ -36,7 +37,8 @@ export default compose<BaphoTheme, {}>(
           x={0}
           y={0}
           fontFamily={p.fontFamily}
-          fontSize={p.fontSize}>
+          fontSize={p.fontSize}
+          fontWeight="900">
           <ToolTipTSpanLabel fill={p.labelFill} key="label" x={0} dy={0}>
             {p.displayTexts.d}
           </ToolTipTSpanLabel>

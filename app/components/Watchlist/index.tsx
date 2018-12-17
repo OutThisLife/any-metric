@@ -1,5 +1,6 @@
 import Text from '@/components//Text'
 import { getWatchlist, SET_WATCHLIST } from '@/lib/queries'
+import withDraggable, { DraggableProps } from '@/lib/withDraggable'
 import { Product } from '@/server/schema/types'
 import { omit } from 'lodash'
 import { graphql } from 'react-apollo'
@@ -29,34 +30,31 @@ export default compose<WatchlistState & WatchlistProps, WatchlistProps>(
       })
     }
   ),
+  withDraggable({
+    left: '50%',
+    bottom: 0
+  }),
   mapProps(props => omit(props, ['data']))
-)(({ isOpen, toggle, watchlist, handleDelete, ...props }) => (
-  <Watchlist {...props}>
-    <h5
-      style={{ cursor: 'pointer' }}
-      onClick={e => {
-        e.stopPropagation()
-        toggle(!isOpen)
-      }}>
+)(({ isOpen, toggle, watchlist, handleDelete, dragHandle, ...props }) => (
+  <Watchlist data-draggable data-open={isOpen} {...props}>
+    <h5 ref={dragHandle} onClick={() => toggle(!isOpen)}>
       <span>Watchlist</span>
       {isOpen ? <FaChevronDown /> : <FaChevronUp />}
     </h5>
 
-    {isOpen && (
-      <Box as="section">
-        {watchlist.length ? (
-          watchlist.map(d => (
-            <Item key={d._id} {...d} onDelete={() => handleDelete(d)} />
-          ))
-        ) : (
-          <Text>Click the star next to products to pin them here.</Text>
-        )}
-      </Box>
-    )}
+    <Box as="section">
+      {watchlist.length ? (
+        watchlist.map(d => (
+          <Item key={d._id} {...d} onDelete={() => handleDelete(d)} />
+        ))
+      ) : (
+        <Text>Click the star next to products to pin them here.</Text>
+      )}
+    </Box>
   </Watchlist>
 ))
 
-export interface WatchlistState {
+export interface WatchlistState extends DraggableProps {
   isOpen?: boolean
   toggle?: (b: boolean, cb?: () => void) => void
 }

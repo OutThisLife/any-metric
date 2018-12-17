@@ -135,7 +135,7 @@ export default compose<ChartState & BaphoTheme, ChartCVProps>(
 
         <LineSeries
           yAccessor={d => d.close}
-          stroke={rgba(theme.colours.price.hl, 0.33)}
+          stroke={rgba(theme.colours.price.hl, 0.25)}
           strokeWidth={1}
           strokeDasharray="Dot"
         />

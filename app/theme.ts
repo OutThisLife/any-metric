@@ -9,7 +9,7 @@ import {
 } from 'polished'
 import { ThemeProps } from 'styled-components'
 
-export const siteName = '$ɮΔքɦօʍɛ✞ʀɨƈ'
+export const siteName = '$ɮΔք𝔥Ø𝔪Δ✞ʀɨჯ'
 
 export const between = (min = 1, max = 2, vmin = 400, vmax = 2000) =>
   `calc(${min}px + (${max} - ${min}) * (100vw - ${vmin}px) / ${vmax - vmin})`

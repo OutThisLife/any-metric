@@ -23,17 +23,14 @@ export default compose<ImageProps, ImageProps>(
         direction="right"
         render={() => <img ref={onRef} src={item.image} />}>
         {({ toggle }) => (
-          <Box
-            as="figure"
-            css={`
-              cursor: zoom-in;
-            `}>
+          <Box as="figure">
             <a
               href={item.url}
               target="_blank"
               rel="noopener"
               onMouseEnter={() => toggle(true)}
-              onMouseLeave={() => toggle(false)}>
+              onMouseLeave={() => toggle(false)}
+              style={{ cursor: 'zoom-in' }}>
               <img src={item.image} />
               <img src={item.image} />
             </a>

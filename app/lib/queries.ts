@@ -98,13 +98,13 @@ export const SET_THEME = gql`
   }
 `
 
-export const getTheme = (client = false) =>
+export const getTheme = () =>
   graphql<
     {},
     { theme: string },
     DataProps<{ theme: string }>,
     ChildProps<BaphoTheme>
-  >(client ? GET_THEME_CLIENT : GET_THEME, {
+  >(GET_THEME, {
     props: ({ data: { theme } }) => ({ theme: JSON.parse(theme) })
   })
 

@@ -29,7 +29,7 @@ export const ZoomedChart = styled<any>(Box)`
   ${({ theme }: BaphoTheme) => css`
     padding: calc(var(--pad) * 2);
     border: 1px solid ${theme.colours.module};
-    border-radius: 2px;
+    border-radius: var(--radius);
     box-shadow: 0 17px 50px 0 ${darken(0.03, theme.colours.panel)};
     transition: ${theme.eases.base};
     background: ${theme.colours.panel};

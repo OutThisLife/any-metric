@@ -4,10 +4,11 @@ import withDraggable, { DraggableProps } from '@/lib/withDraggable'
 import { Product } from '@/server/schema/types'
 import { omit } from 'lodash'
 import { graphql } from 'react-apollo'
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
+import { FaChevronRight } from 'react-icons/fa'
 import { Box, BoxProps } from 'rebass'
 import { compose, mapProps, setDisplayName, withState } from 'recompose'
 
+import Module from '../Module'
 import Item from './Item'
 import Watchlist from './style'
 
@@ -30,27 +31,32 @@ export default compose<WatchlistState & WatchlistProps, WatchlistProps>(
       })
     }
   ),
-  withDraggable({
-    left: '50%',
-    bottom: 0
-  }),
+  withDraggable(),
   mapProps(props => omit(props, ['data']))
 )(({ isOpen, toggle, watchlist, handleDelete, dragHandle, ...props }) => (
-  <Watchlist data-draggable data-open={isOpen} {...props}>
-    <h5 ref={dragHandle} onClick={() => toggle(!isOpen)}>
-      <span>Watchlist</span>
-      {isOpen ? <FaChevronDown /> : <FaChevronUp />}
-    </h5>
+  <Watchlist
+    data-draggable
+    data-open={isOpen}
+    onClick={() => toggle(!isOpen)}
+    {...props}>
+    <Module>
+      <h5 ref={dragHandle}>{isOpen ? 'watchlist' : <FaChevronRight />}</h5>
 
-    <Box as="section">
-      {watchlist.length ? (
-        watchlist.map(d => (
-          <Item key={d._id} {...d} onDelete={() => handleDelete(d)} />
-        ))
-      ) : (
-        <Text>Click the star next to products to pin them here.</Text>
-      )}
-    </Box>
+      <Box
+        css={`
+          padding: var(--pad);
+        `}>
+        <Box as="section" onWheel={e => e.stopPropagation()}>
+          {watchlist.length ? (
+            watchlist.map(d => (
+              <Item key={d._id} {...d} onDelete={() => handleDelete(d)} />
+            ))
+          ) : (
+            <Text>Click the star next to products to pin them here.</Text>
+          )}
+        </Box>
+      </Box>
+    </Module>
   </Watchlist>
 ))
 

@@ -35,6 +35,41 @@ export default styled<any>(VirtualList)`
         background-color: ${rgba(theme.colours.base, 0.01)};
       }
 
+      > div {
+        position: relative;
+
+        &:first-child,
+        &:last-child {
+          &:before {
+            z-index: 1;
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: -1px;
+            width: 100%;
+            background: linear-gradient(
+              90deg,
+              transparent,
+              ${theme.colours.panel} 80%
+            );
+          }
+
+          &:first-child:before {
+            left: 0;
+            transform: scaleX(-1);
+          }
+
+          &:last-child:before {
+            right: 0;
+          }
+
+          > * {
+            z-index: 2;
+            position: relative;
+          }
+        }
+      }
+
       @media (max-width: 1500px) {
         grid-template-rows: 1fr var(--pad) max-content var(--pad);
         grid-template-columns: 100px 80px 1fr 100px auto;

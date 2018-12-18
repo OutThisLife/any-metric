@@ -28,5 +28,9 @@ export default styled<any>(Flex)`
     time {
       color: ${theme.colours.label};
     }
+
+    svg + a {
+      flex: 1;
+    }
   `}
 `

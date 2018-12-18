@@ -93,8 +93,6 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
           }
         ]}
       />
-
-      <Watchlist />
     </Box>
 
     <Flex
@@ -113,6 +111,7 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
         css={`
           width: 100%;
         `}>
+        <Watchlist />
         <Categories total={products.length} />
       </Box>
 

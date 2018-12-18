@@ -159,7 +159,7 @@ export default compose<
       Products &amp; Tags <span>{total}</span>
     </h5>
 
-    <Categories id="filters" ref={onRef} onClick={handleClick}>
+    <Categories id="filters" as="section" ref={onRef} onClick={handleClick}>
       <Form.Container onSubmit={handleSubmit}>
         <Form.Input required placeholder="Add basic tag" tabIndex={-1} />
       </Form.Container>

@@ -1,4 +1,7 @@
+import * as d3 from 'd3'
 import { withHandlers } from 'recompose'
+
+const tm: d3.Timer | any = {}
 
 export default (style: React.CSSProperties = {}) =>
   withHandlers<void, DraggableProps>(() => ({
@@ -10,40 +13,38 @@ export default (style: React.CSSProperties = {}) =>
       const el = ref.closest('[data-draggable]')
 
       if (el instanceof HTMLElement) {
-        el.style.cursor = 'move'
-        el.style.userSelect = 'none'
-        el.style.zIndex = '9999'
-        el.style.position = 'fixed'
-
         for (const [k, v] of Object.entries(style)) {
           el.style[k] = v
         }
 
-        const handleMouseMove = ({ pageX, pageY }) => {
-          el.classList.add('dragging')
+        d3.select(el).call(
+          d3
+            .drag()
+            .subject(() => el.getBoundingClientRect())
+            .on('start', () => {
+              el.style.cursor = 'move'
+              el.style.zIndex = '9999'
+              el.style.position = 'fixed'
 
-          let { x, y } = (window as any).mouse
-          const { top, left, width: w, height: h } = el.getBoundingClientRect()
+              const { width: w, height: h } = el.getBoundingClientRect()
 
-          x = pageX - (x - left)
-          y = pageY - (y - top)
+              d3.event.on('drag', () => {
+                el.classList.add('dragging')
 
-          el.style.right = 'auto'
-          el.style.bottom = 'auto'
-          el.style.top = `${Math.min(window.innerHeight - h, Math.max(0, y))}px`
-          el.style.left = `${Math.min(window.innerWidth - w, Math.max(0, x))}px`
-        }
+                el.style.top = `${Math.min(
+                  window.innerHeight - h,
+                  Math.max(0, d3.event.y)
+                )}px`
 
-        const handleMouseOut = () => {
-          el.classList.remove('dragging')
-          el.removeEventListener('mousemove', handleMouseMove)
-        }
+                el.style.left = `${Math.min(
+                  window.innerWidth - w,
+                  Math.max(0, d3.event.x)
+                )}px`
+              })
 
-        el.addEventListener('mousedown', () => {
-          el.addEventListener('mousemove', handleMouseMove)
-          el.addEventListener('mouseup', handleMouseOut, { once: true })
-          el.addEventListener('mouseleave', handleMouseOut, { once: true })
-        })
+              d3.event.on('end', () => el.classList.remove('dragging'))
+            })
+        )
       }
     }
   }))

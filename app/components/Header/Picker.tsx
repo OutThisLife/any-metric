@@ -1,18 +1,15 @@
-import * as Form from '@/components/Form'
-import { GET_THEME, getTheme, SET_THEME } from '@/lib/queries'
+import { GET_THEME, SET_THEME } from '@/lib/queries'
 import { BaphoTheme, createTheme } from '@/theme'
+import * as d3 from 'd3'
 import { graphql, MutateProps } from 'react-apollo'
-import { CirclePicker, ColorChangeHandler } from 'react-color'
-import { IoMdCheckmark, IoMdClose, IoMdThermometer } from 'react-icons/io'
+import { CirclePicker } from 'react-color'
 import { BoxProps } from 'rebass'
-import { compose, setDisplayName, withHandlers, withState } from 'recompose'
+import { compose, setDisplayName, withHandlers } from 'recompose'
 
 import Picker from './Picker.style'
 
-export default compose<PickerProps & PickerState & BaphoTheme, {}>(
+export default compose<PickerProps & PickerState, {}>(
   setDisplayName('theme-picker'),
-  withState('isOpen', 'toggle', false),
-  getTheme(),
   graphql(SET_THEME),
   withHandlers<PickerProps, PickerState>(() => ({
     setTheme: ({ mutate }) => value => {
@@ -21,88 +18,55 @@ export default compose<PickerProps & PickerState & BaphoTheme, {}>(
           typeof value !== 'string' ? value : JSON.parse(value)
         )
 
-        mutate({
-          variables: { theme },
-          optimisticResponse: {
-            __typename: 'Mutation',
-            setTheme: theme
-          },
-          update: proxy =>
-            proxy.writeQuery({
-              query: GET_THEME,
-              data: { theme }
-            })
-        })
+        window.requestAnimationFrame(async () =>
+          mutate({
+            variables: { theme },
+            optimisticResponse: {
+              __typename: 'Mutation',
+              setTheme: theme
+            },
+            update: proxy =>
+              proxy.writeQuery({
+                query: GET_THEME,
+                data: { theme }
+              })
+          })
+        )
       } catch (err) {
         // noop
       }
     }
   }))
-)(({ isOpen, toggle, theme: currentTheme, setTheme }) => (
+)(({ setTheme }) => (
   <Picker as="div">
-    <div className="circle-picker">
-      <CirclePicker
-        width="224px"
-        colors={[
-          '#6236BA',
-          '#CB24A0',
-          '#D805C2',
-          '#FF467B',
-          '#FF825A',
-          '#FFBF4F',
-          '#F9F871',
-          '#0096DC',
-          '#12819F',
-          '#64BAA9'
-        ]}
-        circleSize={6}
-        circleSpacing={6}
-        onSwatchHover={({ hex }: any) => setTheme(createTheme(hex))}
-      />
-
-      <a href="javascript:;" tabIndex={-1} onClick={() => toggle(!isOpen)}>
-        <IoMdThermometer />
-      </a>
-    </div>
-
-    {isOpen && (
-      <Form.Container
-        onSubmit={({ currentTarget: el }) =>
-          setTheme(el.querySelector('textarea').value)
-        }>
-        <div className="controls">
-          <Form.Button
-            type="button"
-            variant="icon | noBorder"
-            onClick={() => toggle(false)}>
-            <IoMdClose />
-          </Form.Button>
-
-          <Form.Button type="submit" variant="icon | noBorder">
-            <IoMdCheckmark />
-          </Form.Button>
-        </div>
-
-        <Form.Input
-          as="textarea"
-          defaultValue={JSON.stringify(currentTheme, null, 2)}
-          onKeyPress={({ which, ctrlKey, currentTarget: el }) =>
-            which === 13 &&
-            ctrlKey &&
-            (el.parentElement.parentElement as HTMLFormElement).submit()
-          }
-        />
-      </Form.Container>
-    )}
+    <CirclePicker
+      width="224px"
+      circleSize={5}
+      circleSpacing={6}
+      onChange={({ hex }: any) => setTheme(createTheme(hex))}
+      colors={[
+        d3.interpolateRainbow,
+        d3.interpolateMagma,
+        d3.interpolateViridis,
+        d3.interpolateWarm,
+        d3.interpolateCool,
+        d3.interpolateSinebow,
+        d3.interpolateSpectral
+      ].reduce(
+        (acc, int) =>
+          acc.push(
+            ...[...Array(10).keys()].map(i =>
+              d3.scaleSequential(int).domain([1, 100])((1 + i) * 10)
+            )
+          ) && acc,
+        []
+      )}
+    />
   </Picker>
 ))
 
 export interface PickerState {
-  isOpen?: boolean
-  toggle?: (b: boolean) => void
   setTheme?: (theme: any) => void
 }
 
-export interface PickerProps extends MutateProps, BoxProps {
-  onChange?: ColorChangeHandler
-}
+export type PickerProps = MutateProps & BoxProps & BaphoTheme

@@ -1,3 +1,4 @@
+import { getTheme } from '@/lib/queries'
 import { BaphoTheme } from '@/theme'
 import Particles, { IParticlesParams } from 'react-particles-js'
 import {
@@ -6,18 +7,18 @@ import {
   renderComponent,
   setDisplayName,
   withHandlers,
+  withPropsOnChange,
   withState
 } from 'recompose'
-import { withTheme } from 'styled-components'
 
 import defaultParams from './params'
 
-export default compose<ParticleProps & BaphoTheme, {}>(
+export default compose<ParticleProps, {}>(
   setDisplayName('particles'),
   branch(() => !('browser' in process), renderComponent(() => null)),
+  getTheme(),
   withState('params', 'setParams', defaultParams),
-  withTheme,
-  withHandlers<ParticleProps & BaphoTheme, ParticleProps>(({ theme }) => ({
+  withHandlers<ParticleProps, ParticleProps>(() => ({
     onRef: ({ params, setParams }) => ref => {
       if (!ref) {
         return
@@ -25,9 +26,9 @@ export default compose<ParticleProps & BaphoTheme, {}>(
 
       const el = ref as HTMLElement
 
+      el.style.zIndex = '9999'
       el.style.pointerEvents = 'none'
-      el.style.zIndex = '100'
-      el.style.pointerEvents = 'none'
+      el.style.opacity = '0.5'
       el.style.position = 'fixed'
       el.style.top = '0'
       el.style.left = '0'
@@ -37,7 +38,6 @@ export default compose<ParticleProps & BaphoTheme, {}>(
 
       const max = Math.max(window.innerWidth, window.innerHeight)
 
-      params.particles.color.value = theme.colours.secondary
       params.particles.number.value = max / (5 * window.devicePixelRatio)
       params.particles.number.density.value_area = max * 2
       params.particles.line_linked.color = params.particles.color.value
@@ -46,7 +46,14 @@ export default compose<ParticleProps & BaphoTheme, {}>(
 
       window.requestAnimationFrame(() => setParams(params))
     }
-  }))
+  })),
+  withPropsOnChange<ParticleProps, ParticleProps & BaphoTheme>(
+    ['theme'],
+    ({ theme, params }) => {
+      params.particles.color.value = theme.colours.secondary
+      return { params }
+    }
+  )
 )(({ onRef, params }) => (
   <div ref={onRef} id="particles">
     <Particles

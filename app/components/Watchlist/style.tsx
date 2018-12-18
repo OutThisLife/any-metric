@@ -1,87 +1,68 @@
-import Module from '@/components/Module'
 import { BaphoTheme } from '@/theme'
-import { darken, rgba } from 'polished'
+import { darken } from 'polished'
 import styled, { css } from 'styled-components'
 
-export default styled<any>(Module)`
+export default styled<any>('div')`
   ${({ theme }: BaphoTheme) => css`
-    [data-draggable] {
+    user-select: none;
+    position: fixed;
+    transition: ${theme.eases.base};
+
+    aside {
       width: 600px;
-      padding-bottom: calc(var(--pad) / 2);
       overflow: hidden;
       border: 1px solid transparent;
-      border-radius: var(--radius) var(--radius) 0 0;
-      box-shadow: -8px -8px 50px 0 ${darken(0.03, theme.colours.panel)};
       transition: ${theme.eases.base};
       transition-property: border-color, width, height;
 
-      &:hover {
-        border-color: ${theme.colours.focus};
-      }
-
-      &.dragging > * {
-        pointer-events: none;
+      > div {
+        padding: 0;
       }
 
       h5 {
-        margin: 0;
-        padding: calc(var(--pad) / 2);
-        border-bottom: 1px solid ${rgba(theme.colours.border, 0.33)};
-
-        @media (max-width: 768px) {
-          padding: var(--pad);
-          padding-left: 0;
-
-          > span {
-            font-size: 0px;
-          }
-        }
-      }
-
-      section {
-        width: 600px;
-        height: 150px;
-        overflow: auto;
-        transition: ${theme.eases.base};
-        transform-origin: right bottom;
-      }
-
-      &[data-open='false'] {
-        width: 165px;
-        height: 45px;
-
-        section {
-          opacity: 0;
-          transform: translate(0, 10px);
+        svg {
+          width: 1.5rem;
         }
       }
     }
 
-    > div {
-      padding: 0;
+    &[data-open='false'] {
+      top: calc(50% - 46px) !important;
+      left: 0 !important;
 
-      section {
-        display: grid;
-        grid-template-columns: min-content 25px 1fr max-content max-content;
+      aside {
+        width: 46px;
+        height: 46px;
+
+        section {
+          opacity: 0;
+          transform: scale(0.25);
+        }
+      }
+    }
+
+    &[data-open='true'] aside {
+      box-shadow: -8px -8px 50px 0 ${darken(0.03, theme.colours.panel)};
+    }
+
+    &:hover aside {
+      border-color: ${theme.colours.focus};
+    }
+
+    section {
+      display: grid;
+      grid-template-columns: min-content 25px 1fr max-content max-content;
+      align-items: center;
+      grid-gap: 1em;
+      max-height: 300px;
+      overflow: auto;
+      transition: ${theme.eases.base};
+      transform-origin: left top;
+
+      article > * {
+        display: flex;
         align-items: center;
-        grid-gap: 1em;
-        max-height: 33vh;
-        overflow: auto;
-        padding: calc(var(--pad) / 2);
-        padding-bottom: var(--pad);
-
-        &.open-false {
-        }
-
-        @media (max-width: 768px) {
-          width: 66vw;
-        }
-
-        article > * {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
+        justify-content: center;
       }
     }
   `}

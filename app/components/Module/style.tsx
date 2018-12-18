@@ -1,8 +1,9 @@
+import { rgba } from 'polished'
 import { Box } from 'rebass'
 import styled, { css } from 'styled-components'
 
 const Module = ({ className, ...props }) => (
-  <Box css="position: relative" className={className}>
+  <Box as="aside" css="position: relative" className={className}>
     <Box {...props} />
   </Box>
 )
@@ -28,17 +29,30 @@ export default styled<any>(Module)`
     }
 
     > div {
-      padding: var(--pad);
       border-radius: var(--radius);
       background: ${theme.colours.module};
+
+      section {
+        padding: calc(var(--pad) / 2);
+      }
     }
 
     h5 {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 0 0 calc(var(--pad) / 2);
-      padding: 0;
+      margin: 0;
+      padding: 1em;
+      border-bottom: 1px solid ${rgba(theme.colours.border, 0.33)};
+
+      @media (max-width: 768px) {
+        padding: var(--pad);
+        padding-left: 0;
+
+        > span {
+          font-size: 0px;
+        }
+      }
 
       &:only-child {
         margin: 0;

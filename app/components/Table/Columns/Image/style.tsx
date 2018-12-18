@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 export default styled<any>(Box)`
   ${({ theme }) => css`
     padding: 0 !important;
+    height: inherit;
 
     figure {
       position: relative;

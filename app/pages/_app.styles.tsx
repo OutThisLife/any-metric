@@ -8,6 +8,8 @@ export default createGlobalStyle`
     :root {
       --cellSize: calc(100vw / 40);
       --pad: ${between('8px', '16px')};
+      --offset: calc(var(--pad) * 3);
+      --radius: 2px;
 
       --mainGrid: 20vw minmax(70vw, 1fr);
 
@@ -121,13 +123,14 @@ export default createGlobalStyle`
         color: ${shade(0.5, theme.colours.base)};
       }
     }
+
+    .dragging * {
+      pointer-events: none !important;
+    }
   `}
 `
 
 export const Main = styled<any>(Box)`
-  --offset: calc(var(--pad) * 3);
-  --radius: 2px;
-
   display: grid;
   grid-template: 'head' 'main';
   grid-template-rows: min-content 1fr;
@@ -149,9 +152,7 @@ export const Main = styled<any>(Box)`
       position: relative;
       width: 100%;
       border: 1px solid transparent;
-      border-radius: calc(var(--radius) * 5);
-      box-shadow: 0 17px 50px -5px ${rgba(theme.colours.panel, 0.7)},
-        0 17px 150px -10px ${rgba(theme.colours.panel, 0.7)};
+      border-radius: var(--radius);
       background: ${theme.colours.panel};
 
       @media (min-width: 1025px) {
@@ -177,9 +178,11 @@ export const Main = styled<any>(Box)`
           );
         }
       }
+
       @media (max-width: 1025px) {
         width: calc(90vw - var(--offset));
       }
+
       .up {
         color: ${theme.colours.price.up} !important;
       }

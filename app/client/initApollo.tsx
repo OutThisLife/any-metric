@@ -29,8 +29,11 @@ const createCache = (): InMemoryCache => {
     ;(async () =>
       await persistCache({
         cache,
+        maxSize: 1048576,
         storage: window.localStorage,
-        debug: isDev
+        debug: isDev,
+        trigger: 'background',
+        debounce: 1000
       }))()
   }
 

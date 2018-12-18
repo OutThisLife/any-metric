@@ -1,4 +1,4 @@
-import { GET_THEME, SET_THEME } from '@/lib/queries'
+import { GET_THEME } from '@/lib/queries'
 import { BaphoTheme, createTheme } from '@/theme'
 import * as d3 from 'd3'
 import { graphql, MutateProps } from 'react-apollo'
@@ -43,7 +43,7 @@ export default compose<PickerProps & PickerState, {}>(
       width="224px"
       circleSize={5}
       circleSpacing={6}
-      onChange={({ hex }: any) => setTheme(createTheme(hex))}
+      onSwatchHover={({ hex }: any) => setTheme(createTheme(hex))}
       colors={[
         d3.interpolateRainbow,
         d3.interpolateMagma,

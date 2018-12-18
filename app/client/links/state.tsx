@@ -3,7 +3,7 @@ import { withClientState } from 'apollo-link-state'
 export default () =>
   withClientState({
     defaults: {
-      'watchlist@client': []
+      'watchlist@client': [],
     },
     resolvers: {
       Mutation: {

@@ -11,10 +11,6 @@ export default styled<any>('div')`
     outline-offset: -2px;
     transition: ${theme.eases.base};
 
-    &.flash {
-      background-color: ${theme.colours.secondary};
-    }
-
     aside {
       width: 600px;
       overflow: hidden;
@@ -36,6 +32,10 @@ export default styled<any>('div')`
     &[data-open='false'] {
       top: calc(50% - 46px) !important;
       left: 0 !important;
+
+      &.flash {
+        background-color: ${theme.colours.secondary};
+      }
 
       aside {
         width: 46px;

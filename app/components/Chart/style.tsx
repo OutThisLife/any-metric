@@ -32,7 +32,7 @@ export const ZoomedChart = styled<any>(Box)`
     border-radius: var(--radius);
     box-shadow: 0 17px 50px 0 ${darken(0.03, theme.colours.panel)};
     transition: ${theme.eases.base};
-    background: ${theme.colours.panel};
+    background: ${darken(0.33, theme.colours.module)};
 
     &:hover {
       border-color: ${theme.colours.focus};

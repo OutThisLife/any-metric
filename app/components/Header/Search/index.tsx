@@ -37,6 +37,7 @@ export default compose<SearchState & SearchHandlers, {}>(
     return {
       handleSubmit: () => async ({ target }) => {
         const el = target as HTMLFormElement
+
         el.classList.add('loading')
 
         toggle(true)
@@ -57,6 +58,15 @@ export default compose<SearchState & SearchHandlers, {}>(
 
               if (items.length) {
                 window.requestAnimationFrame(() => setItems(items))
+              } else {
+                toggle(false, () => {
+                  el.classList.add('shake')
+                  el.addEventListener(
+                    'animationend',
+                    () => el.classList.remove('shake'),
+                    { once: true }
+                  )
+                })
               }
             }
           )
@@ -160,8 +170,8 @@ export default compose<SearchState & SearchHandlers, {}>(
 export interface SearchState {
   items: EbayItem[]
   isOpen: boolean
-  setItems?: (r: EbayItem[]) => void
-  toggle?: (b: boolean) => void
+  setItems?: (r: EbayItem[] | string[]) => void
+  toggle?: (b: boolean, cb?: () => void) => void
   client?: ApolloClient<{}>
 }
 

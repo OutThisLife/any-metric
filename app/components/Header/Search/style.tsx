@@ -1,13 +1,32 @@
 import * as Form from '@/components/Form'
 import { animIn, animOut } from '@/pages/_app.styles'
 import { BaphoTheme } from '@/theme'
-import styled, { css } from 'styled-components'
+import { timingFunctions } from 'polished'
+import styled, { css, keyframes } from 'styled-components'
+
+const shakeAnim = keyframes`
+0% {
+  transform: translate(-5px, 0);
+}
+
+50% {
+  transform: translate(5px, 0);
+}
+
+100% {
+  transform: translate(0, 0);
+}
+`
 
 export default styled<any>(Form.Container)`
   ${({ theme }: BaphoTheme) => css`
     align-self: stretch;
     position: relative;
     transition: ${theme.eases.base};
+
+    &.shake {
+      animation: ${shakeAnim} 0.3s ${timingFunctions('easeInOutBack')};
+    }
 
     &.loading [type],
     &.loading section nav {

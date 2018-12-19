@@ -54,7 +54,7 @@ export default compose<TableState & TableProps, TableProps>(
           return 80 * 2
         }
 
-        return 80
+        return 96
       }}
       renderItem={({ index, style }) => (
         <Box

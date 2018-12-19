@@ -20,12 +20,11 @@ export default styled<any>('div')`
 
       > div {
         padding: 0;
+        background: ${darken(0.33, theme.colours.module)};
       }
 
-      h5 {
-        svg {
-          width: 1.5rem;
-        }
+      h5 svg {
+        width: 1.5rem;
       }
     }
 

@@ -7,11 +7,15 @@ const {
 
 export default () =>
   onError(({ graphQLErrors, networkError }) => {
-    if (graphQLErrors && isDev) {
-      console.table(JSON.stringify(graphQLErrors, null, 2))
+    if (!isDev) {
+      return
     }
 
-    if (networkError && isDev) {
+    if (graphQLErrors) {
+      console.log(JSON.stringify(graphQLErrors, null, 1))
+    }
+
+    if (networkError) {
       console.error('[Network error]', networkError)
     }
   })

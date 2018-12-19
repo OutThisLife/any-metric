@@ -1,22 +1,17 @@
-import { darken, getLuminance, lighten } from 'polished'
+import { rgba } from 'polished'
 import { Box } from 'rebass'
 import styled, { css } from 'styled-components'
 
 export default styled<any>(Box)`
   ${({ theme }) => css`
     padding: 0 !important;
-    height: inherit;
 
     figure {
       position: relative;
       margin: 0;
       width: 100%;
       height: 100%;
-      background-color: ${getLuminance(
-        lighten(0.35, theme.colours.secondary)
-      ) >= 0.66
-        ? darken(0.2, theme.colours.secondary)
-        : lighten(0.35, theme.colours.secondary)};
+      background-color: ${rgba(theme.colours.secondary, 0.7)};
 
       article:not(:hover) & {
         filter: grayscale(0.4);
@@ -37,7 +32,7 @@ export default styled<any>(Box)`
         object-fit: cover;
         width: 100%;
         height: 100%;
-        mix-blend-mode: color-burn;
+        mix-blend-mode: luminosity;
 
         + img {
           z-index: 1;

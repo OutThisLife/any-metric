@@ -1,7 +1,7 @@
 import {
+  complement,
   desaturate,
   getLuminance,
-  invert,
   lighten,
   rgba,
   shade,
@@ -17,15 +17,15 @@ export const between = (min = 1, max = 2, vmin = 400, vmax = 2000) =>
 export const createTheme = (secondary: string) => {
   const colours = {
     base: '#fafafa',
-    panel: '#0A0F14',
+    panel: '#020202',
     secondary,
 
     get module() {
-      return lighten(0.021, this.panel)
+      return lighten(0.03, this.panel)
     },
 
     get focus() {
-      const inverted = invert(this.secondary)
+      const inverted = complement(this.secondary)
 
       if (getLuminance(inverted) < 0.33) {
         return tint(0.2, inverted)

@@ -15,7 +15,7 @@ export default (async (
     })
   )
 
-  if (typeof res === 'undefined') {
+  if (typeof res === 'undefined' || !('item' in res)) {
     console.error(res)
 
     return {

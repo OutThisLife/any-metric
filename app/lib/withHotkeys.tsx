@@ -10,7 +10,11 @@ export default <T extends {}>(map: Array<HotkeyMap<T>> = []) =>
       this.handleKeyDown = (e: KeyboardEvent) => {
         const handle = map.find(({ key }) => key === e.keyCode)
 
-        if (handle && 'action' in handle) {
+        if (
+          handle &&
+          'action' in handle &&
+          !/input/i.test(document.activeElement.tagName)
+        ) {
           handle.action(this.props)
         }
       }

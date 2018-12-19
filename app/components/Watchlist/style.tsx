@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 export default styled<any>('div')`
   ${({ theme }: BaphoTheme) => css`
     user-select: none;
+    z-index: 9999;
     position: fixed;
     outline: 1px solid transparent;
     outline-offset: -2px;

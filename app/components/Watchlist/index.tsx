@@ -7,7 +7,13 @@ import { omit } from 'lodash'
 import { graphql } from 'react-apollo'
 import { FaChevronRight } from 'react-icons/fa'
 import { Box, BoxProps } from 'rebass'
-import { compose, mapProps, setDisplayName, withState } from 'recompose'
+import {
+  compose,
+  mapProps,
+  setDisplayName,
+  withPropsOnChange,
+  withState
+} from 'recompose'
 
 import Module from '../Module'
 import Item from './Item'
@@ -39,6 +45,20 @@ export default compose<WatchlistState & WatchlistProps, WatchlistProps>(
     }
   ),
   withDraggable(),
+  withPropsOnChange<void, WatchlistState>(['isOpen'], () => {
+    if (!('browser' in process)) {
+      return
+    }
+
+    const $watchlist = document.getElementById('watchlist')
+
+    if ($watchlist instanceof HTMLElement) {
+      const { x, y } = (window as any).mouse
+
+      $watchlist.style.top = `${y - 30}px`
+      $watchlist.style.left = `${x - 30}px`
+    }
+  }),
   mapProps(props => omit(props, ['data']))
 )(({ isOpen, toggle, watchlist, handleDelete, dragHandle, ...props }) => (
   <Watchlist

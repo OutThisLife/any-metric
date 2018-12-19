@@ -67,7 +67,7 @@ export default (async (
 
     if (result.items.length) {
       const tag = await mongo.tags.findOne<Tag>(q)
-      await mongo.tags.updateOne(q, { $se: { isDeleted: false } })
+      await mongo.tags.updateOne(q, { $set: { isDeleted: false } })
 
       result.items.map(
         async ({

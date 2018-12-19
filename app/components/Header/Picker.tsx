@@ -1,4 +1,4 @@
-import { GET_THEME } from '@/lib/queries'
+import { GET_THEME, SET_THEME } from '@/lib/queries'
 import { BaphoTheme, createTheme } from '@/theme'
 import * as d3 from 'd3'
 import { graphql, MutateProps } from 'react-apollo'

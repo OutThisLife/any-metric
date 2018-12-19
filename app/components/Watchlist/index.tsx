@@ -52,7 +52,7 @@ export default compose<WatchlistState & WatchlistProps, WatchlistProps>(
 
     const $watchlist = document.getElementById('watchlist')
 
-    if ($watchlist instanceof HTMLElement) {
+    if ($watchlist instanceof HTMLElement && 'mouse' in window) {
       const { x, y } = (window as any).mouse
 
       $watchlist.style.top = `${y - 30}px`

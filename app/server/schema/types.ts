@@ -93,6 +93,7 @@ export default gql`
   type EbayResult @cacheControl(maxAge: 10e5) {
     items: [EbayItem]
     total: String
+    op: String
   }
 
   type EbayItem @cacheControl(maxAge: 10e5) {
@@ -208,6 +209,7 @@ export interface CrawlResult {
 
 export interface EbayResult {
   __typename?: string
+  op?: string
   items?: EbayItem[]
   total?: number
 }

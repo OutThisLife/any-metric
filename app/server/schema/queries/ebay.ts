@@ -1,53 +1,64 @@
-import { getCommerce } from '../../api'
+import { EbayOperations, getCommerce } from '../../api'
 import { EbayItem, EbayResult, Product, Resolver, Tag } from '../types'
 
 export default (async (
   _,
-  { keywords, save = false, ...args },
+  { keywords, save = false, ...args }: EbayArgs,
   { mongo }
 ): Promise<EbayResult> => {
-  const {
-    searchResult: [res]
-  } = await getCommerce(
-    Object.assign(args, {
-      keywords,
-      outputSelector: ['PictureURLSuperSize', 'SellerInfo', 'UnitPrice']
-    })
-  )
+  const operations = ['findItemsByKeywords', 'findCompletedItems']
 
-  if (typeof res === 'undefined' || !('item' in res)) {
-    console.error(res)
+  const res = (await Promise.all<EbayResult>(
+    operations.map(
+      (op: EbayOperations) =>
+        new Promise(async resolve => {
+          const {
+            searchResult: [sr]
+          } = await getCommerce(
+            Object.assign(args, {
+              keywords,
+              outputSelector: ['PictureURLSuperSize', 'SellerInfo', 'UnitPrice']
+            }),
+            op
+          )
 
-    return {
+          resolve({
+            op,
+            total: parseInt(sr['@count'], 10),
+            items: (sr.item as EbayItem[]).map(item => {
+              for (const [k, v] of Object.entries(item)) {
+                if (Array.isArray(v) && v.length === 1) {
+                  const kv = v.pop()
+
+                  if (typeof kv === 'string' && /false|true/.test(kv)) {
+                    item[k] = !(kv === 'false')
+                  } else {
+                    item[k] = kv
+                  }
+                }
+              }
+
+              item._id = item.itemId
+
+              return item
+            })
+          })
+        })
+    )
+  )).reduce(
+    (acc: EbayResult, r: EbayResult) => ({
+      ...r,
+      total: acc.total += r.total,
+      items: acc.items.concat(...r.items)
+    }),
+    {
       total: 0,
       items: []
     }
-  }
+  )
 
-  const result: EbayResult = {
-    items: (res.item as EbayItem[]).map(item => {
-      for (const [k, v] of Object.entries(item)) {
-        if (Array.isArray(v) && v.length === 1) {
-          const kv = v.pop()
-
-          if (typeof kv === 'string' && /false|true/.test(kv)) {
-            item[k] = !(kv === 'false')
-          } else {
-            item[k] = kv
-          }
-        }
-      }
-
-      item._id = item.itemId
-
-      return item
-    })
-  }
-
-  if (!save) {
-    result.total = parseInt(res['@count'], 10)
-  } else {
-    result.total = 0
+  if (save) {
+    res.total = 0
 
     const q = { title: keywords, isQuery: true }
     await mongo.tags.updateOne(
@@ -65,11 +76,11 @@ export default (async (
       { upsert: true }
     )
 
-    if (result.items.length) {
+    if (res.items.length) {
       const tag = await mongo.tags.findOne<Tag>(q)
       await mongo.tags.updateOne(q, { $set: { isDeleted: false } })
 
-      result.items.map(
+      res.items.map(
         async ({
           listingInfo,
           pictureURLSuperSize = '',
@@ -135,12 +146,19 @@ export default (async (
             )
 
             await mongo.tags.updateOne(q, { $inc: { total: upsertedCount } })
-            result.total += upsertedCount
+            res.total += upsertedCount
           }
         }
       )
     }
   }
 
-  return result
+  return res
 }) as Resolver
+
+interface EbayArgs {
+  keywords: string
+  save?: boolean
+  operation?: EbayOperations
+  [key: string]: any
+}

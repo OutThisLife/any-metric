@@ -6,7 +6,7 @@ const { EBAY_APP_ID } = process.env
 
 export const getCommerce = async (
   body: Response,
-  operation: Operations = 'findItemsByKeywords'
+  operation: EbayOperations = 'findItemsByKeywords'
 ): Promise<Response> => {
   try {
     const url = (() => {
@@ -41,7 +41,7 @@ export const getCommerce = async (
   }
 }
 
-type Operations = 'findItemsByKeywords' | 'findCompletedItems'
+export type EbayOperations = 'findItemsByKeywords' | 'findCompletedItems'
 
 interface Response {
   [key: string]: any

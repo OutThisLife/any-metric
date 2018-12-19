@@ -12,7 +12,7 @@ export default compose<PortalState & DraggableProps, PortalProps>(
   }),
   withPortal(),
   withDraggable(),
-  withHandlers(({ toggle }) => {
+  withHandlers<PortalState & PortalProps, PortalProps>(({ toggle }) => {
     const closeHandle = ({ keyCode }) => keyCode === 27 && toggle(false)
 
     return {

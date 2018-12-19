@@ -1,10 +1,10 @@
 import Dropdown from '@/components/Dropdown'
-import { GET_TAGS, MODIFY_DOC, REMOVE_DOC } from '@/lib/queries'
+import { GET_TAGS, MODIFY_DOC } from '@/lib/queries'
 import { TagHandlers, TagState } from '@/lib/withTags'
 import { Tag } from '@/server/schema/types'
 import { orderBy } from 'lodash'
 import { graphql } from 'react-apollo'
-import { IoMdCheckmark, IoMdTrash } from 'react-icons/io'
+import { IoMdCheckmark } from 'react-icons/io'
 import { MdCheckBoxOutlineBlank } from 'react-icons/md'
 import { Box } from 'rebass'
 import {
@@ -20,34 +20,8 @@ import { Text } from '../../style'
 
 export default compose<TagsMenuProps & TagState, TagsMenuProps>(
   setDisplayName('col-menu-dropdown'),
-  graphql<TagsMenuProps & TagHandlers, {}, {}, TagsMenuProps>(REMOVE_DOC, {
-    props: ({ mutate, ownProps: { item } }) => ({
-      delItem: ({ target }) => {
-        const $row = (target as HTMLElement).closest('tr')
-
-        if ($row instanceof HTMLElement) {
-          $row.firstElementChild.addEventListener(
-            'animationend',
-            () => {
-              $row.remove()
-
-              mutate({
-                variables: {
-                  objectId: item._id,
-                  collectionName: 'products'
-                }
-              })
-            },
-            { once: true }
-          )
-
-          $row.classList.add('anim-out')
-        }
-      }
-    })
-  }),
   graphql<TagsMenuProps & TagHandlers, {}, {}, TagsMenuProps>(MODIFY_DOC, {
-    props: ({ mutate, ownProps: { item, addTag, delTag, delItem } }) => ({
+    props: ({ mutate, ownProps: { item, addTag, delTag } }) => ({
       handleToggle: (isChecked, tag) => {
         if (isChecked) {
           addTag(tag)
@@ -97,32 +71,6 @@ export default compose<TagsMenuProps & TagState, TagsMenuProps>(
             }
           })
         })
-      },
-
-      handleDelete: e => {
-        e.persist()
-        delItem(e)
-
-        for (let i = 0, l = item.tags.length; i < l; i++) {
-          const tag = item.tags[i] as Tag
-
-          window.requestAnimationFrame(() =>
-            mutate({
-              refetchQueries: i === l - 1 ? ['getTags'] : [],
-              variables: {
-                objectId: tag._id,
-                collectionName: 'tags',
-                input: JSON.parse(
-                  JSON.stringify({
-                    $inc: {
-                      total: -1
-                    }
-                  })
-                )
-              }
-            })
-          )
-        }
       }
     })
   })
@@ -155,27 +103,16 @@ const Menu = compose<TagsMenuProps, TagsMenuProps>(
   })),
   shouldUpdate<TagsMenuProps>((p, np) => p.isOpen !== np.isOpen)
 )(({ item, tags, ...props }) => (
-  <>
-    <Box as="ul">
-      {tags.map(t => (
-        <MenuItem
-          key={t._id}
-          isChecked={(item.tags as Tag[]).some(tt => t._id === tt._id)}
-          handleToggle={props.handleToggle}
-          {...t}
-        />
-      ))}
-    </Box>
-
-    <Box as="ul">
-      <li>
-        <a href="javascript:;" onClick={props.handleDelete}>
-          <IoMdTrash />
-          <Text>Delete</Text>
-        </a>
-      </li>
-    </Box>
-  </>
+  <Box as="ul">
+    {tags.map(t => (
+      <MenuItem
+        key={t._id}
+        isChecked={(item.tags as Tag[]).some(tt => t._id === tt._id)}
+        handleToggle={props.handleToggle}
+        {...t}
+      />
+    ))}
+  </Box>
 ))
 
 const MenuItem = compose<MenuItemState & MenuItemProps, MenuItemProps>(
@@ -193,7 +130,6 @@ const MenuItem = compose<MenuItemState & MenuItemProps, MenuItemProps>(
       href="javascript:;"
       onClick={() => toggle(!isChecked, () => handleToggle(!isChecked, props))}>
       {isChecked ? <IoMdCheckmark /> : <MdCheckBoxOutlineBlank />}
-
       <Text>{props.title}</Text>
     </a>
   </Box>
@@ -213,6 +149,4 @@ export interface TagsMenuProps extends ColumnProps {
   initialTags?: Tag[]
   tags?: Tag[]
   handleToggle?: (b: boolean, t: Tag) => any
-  delItem?: React.MouseEventHandler<HTMLElement>
-  handleDelete?: React.MouseEventHandler<HTMLElement>
 }

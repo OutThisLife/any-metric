@@ -31,6 +31,17 @@ export default compose<TitleProps & TitleState, TitleProps>(
           refetchQueries: ['getWatchlist'],
           variables: { watchlist }
         })
+
+        const $watchlist = document.getElementById('watchlist')
+
+        if ($watchlist instanceof HTMLElement) {
+          $watchlist.classList.add('flash')
+          $watchlist.addEventListener(
+            'transitionend',
+            () => $watchlist.classList.remove('flash'),
+            { once: true }
+          )
+        }
       }
     })
   })
@@ -43,9 +54,10 @@ export default compose<TitleProps & TitleState, TitleProps>(
       target="_blank"
       rel="noopener"
       className="title">
-      <span onClick={handleClick} className="favourite">
+      <span className="favourite" onClick={handleClick}>
         {isFav ? <IoMdStar className="hl" /> : <IoMdStarOutline />}
       </span>
+
       <span dangerouslySetInnerHTML={{ __html: item.title }} />
     </Text>
   </Title>

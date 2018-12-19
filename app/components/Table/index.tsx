@@ -1,3 +1,4 @@
+import withHotkeys from '@/lib/withHotkeys'
 import { Product } from '@/server/schema/types'
 import { MeasuredComponentProps, withContentRect } from 'react-measure'
 import { Box } from 'rebass'
@@ -9,6 +10,18 @@ import Table from './style'
 export default compose<TableState & TableProps, TableProps>(
   setDisplayName('table'),
   withContentRect('bounds'),
+  withHotkeys([
+    {
+      key: 70,
+      action: () => {
+        const $row = document.querySelector('article.active-row')
+
+        if ($row instanceof HTMLElement) {
+          ;($row.querySelector('.favourite') as HTMLElement).click()
+        }
+      }
+    }
+  ]),
   withHandlers<TableProps & TableState, TableState>(() => ({
     handleContextMenu: () => e => {
       e.preventDefault()
@@ -48,7 +61,9 @@ export default compose<TableState & TableProps, TableProps>(
           as="article"
           key={data[index]._id}
           id={data[index]._id}
-          style={style as React.HTMLAttributes<HTMLElement>['style']}>
+          style={style as React.HTMLAttributes<HTMLElement>['style']}
+          onMouseEnter={e => e.currentTarget.classList.add('active-row')}
+          onMouseLeave={e => e.currentTarget.classList.remove('active-row')}>
           <RenderColumns
             columns={columns}
             props={() => ({ item: data[index] })}

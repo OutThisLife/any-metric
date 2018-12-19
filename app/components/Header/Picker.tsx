@@ -52,15 +52,17 @@ export default compose<PickerProps & PickerState, {}>(
         d3.interpolateCool,
         d3.interpolateSinebow,
         d3.interpolateSpectral
-      ].reduce(
-        (acc, int) =>
-          acc.push(
-            ...[...Array(10).keys()].map(i =>
-              d3.scaleSequential(int).domain([1, 100])((1 + i) * 10)
-            )
-          ) && acc,
-        []
-      )}
+      ]
+        .reduce(
+          (acc, int) =>
+            acc.push(
+              ...[...Array(10).keys()].map(i =>
+                d3.scaleSequential(int).domain([1, 100])((1 + i) * 10)
+              )
+            ) && acc,
+          []
+        )
+        .filter((c, i, s) => s.indexOf(c) === i)}
     />
   </Picker>
 ))

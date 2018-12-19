@@ -133,7 +133,7 @@ export interface PortalState {
 }
 
 export interface PortalProps {
-  id: string
+  id?: string
   isShown?: boolean
   children?: (a: PortalState) => React.ReactNode
   render?: React.SFC<PortalState>

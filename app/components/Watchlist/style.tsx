@@ -6,7 +6,13 @@ export default styled<any>('div')`
   ${({ theme }: BaphoTheme) => css`
     user-select: none;
     position: fixed;
+    outline: 1px solid transparent;
+    outline-offset: -2px;
     transition: ${theme.eases.base};
+
+    &.flash {
+      background-color: ${theme.colours.secondary};
+    }
 
     aside {
       width: 600px;

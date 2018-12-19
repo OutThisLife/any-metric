@@ -1,4 +1,5 @@
 import Modal from '@/components/Modal'
+import withHotkeys from '@/lib/withHotkeys'
 import { Product } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import { lighten } from 'polished'
@@ -42,6 +43,18 @@ export default compose<ChartProps & BaphoTheme, ChartProps>(
       }
     }
   })),
+  withHotkeys([
+    {
+      key: 67,
+      action: () => {
+        const $chart = document.getElementById('chart-toggle')
+
+        if ($chart instanceof HTMLElement) {
+          $chart.click()
+        }
+      }
+    }
+  ]),
   shouldUpdate<ChartProps>((_, np) => np.data.length > 5),
   lifecycle<ChartProps, {}>({
     componentDidMount() {
@@ -69,7 +82,13 @@ export default compose<ChartProps & BaphoTheme, ChartProps>(
 
           return (
             <ZoomedChart>
-              <Price isModal={true} width={w} height={w * 0.54} {...props} />
+              <Price
+                id="main-chart"
+                isModal={true}
+                width={w}
+                height={w * 0.54}
+                {...props}
+              />
             </ZoomedChart>
           )
         }}>
@@ -87,13 +106,22 @@ export default compose<ChartProps & BaphoTheme, ChartProps>(
                 }}
               />
             ) : (
-              <Price
-                isDesktop={isDesktop}
-                width={width}
-                height={height}
-                onSelect={() => toggle(!isOpen)}
-                {...props}
-              />
+              <>
+                <a
+                  href="javascript:;"
+                  id="chart-toggle"
+                  onClick={() => toggle(!isOpen)}
+                />
+
+                <Price
+                  id="small-chart"
+                  isDesktop={isDesktop}
+                  width={width}
+                  height={height}
+                  onSelect={() => toggle(!isOpen)}
+                  {...props}
+                />
+              </>
             )}
           </>
         )}
@@ -111,6 +139,7 @@ export interface ChartProps extends Partial<MeasuredComponentProps> {
 }
 
 export interface ChartCVProps {
+  id?: string
   data?: Product[]
   ratio?: number
   width?: number

@@ -1,6 +1,7 @@
 import Text from '@/components//Text'
 import { getWatchlist, SET_WATCHLIST } from '@/lib/queries'
 import withDraggable, { DraggableProps } from '@/lib/withDraggable'
+import withHotkeys from '@/lib/withHotkeys'
 import { Product } from '@/server/schema/types'
 import { omit } from 'lodash'
 import { graphql } from 'react-apollo'
@@ -15,6 +16,12 @@ import Watchlist from './style'
 export default compose<WatchlistState & WatchlistProps, WatchlistProps>(
   setDisplayName('watchlist'),
   withState('isOpen', 'toggle', false),
+  withHotkeys<WatchlistState>([
+    {
+      key: 87,
+      action: ({ isOpen, toggle }) => toggle(!isOpen)
+    }
+  ]),
   getWatchlist(),
   graphql<WatchlistProps & WatchlistState, {}, {}, WatchlistProps>(
     SET_WATCHLIST,
@@ -35,6 +42,7 @@ export default compose<WatchlistState & WatchlistProps, WatchlistProps>(
   mapProps(props => omit(props, ['data']))
 )(({ isOpen, toggle, watchlist, handleDelete, dragHandle, ...props }) => (
   <Watchlist
+    id="watchlist"
     data-draggable
     data-open={isOpen}
     onClick={() => toggle(!isOpen)}
@@ -52,7 +60,9 @@ export default compose<WatchlistState & WatchlistProps, WatchlistProps>(
               <Item key={d._id} {...d} onDelete={() => handleDelete(d)} />
             ))
           ) : (
-            <Text>Click the star next to products to pin them here.</Text>
+            <Text style={{ gridColumn: '1 / -1' }}>
+              Click the star next to products to pin them here.
+            </Text>
           )}
         </Box>
       </Box>

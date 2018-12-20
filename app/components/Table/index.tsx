@@ -12,7 +12,7 @@ export default compose<TableState & TableProps, TableProps>(
   withContentRect('bounds'),
   withHotkeys([
     {
-      key: 70,
+      key: 70, // F
       action: () => {
         const $row = document.querySelector('article.active-row')
 
@@ -20,6 +20,34 @@ export default compose<TableState & TableProps, TableProps>(
           ;($row.querySelector('.favourite') as HTMLElement).click()
         }
       }
+    },
+    {
+      key: 34, // PgDn
+      action: () =>
+        (document.getElementById('data-table').scrollTop +=
+          window.innerWidth / 5)
+    },
+    {
+      key: 33, // PgUp
+      action: () =>
+        (document.getElementById('data-table').scrollTop -=
+          window.innerWidth / 5)
+    },
+    {
+      key: 40, // ArrDn
+      action: () => (document.getElementById('data-table').scrollTop += 95)
+    },
+    {
+      key: 38, // ArrUp
+      action: () => (document.getElementById('data-table').scrollTop -= 95)
+    },
+    {
+      key: 35, // End
+      action: () => (document.getElementById('data-table').scrollTop = 10e10)
+    },
+    {
+      key: 36, // Home
+      action: () => (document.getElementById('data-table').scrollTop = 0)
     }
   ]),
   withHandlers<TableProps & TableState, TableState>(() => ({
@@ -44,6 +72,7 @@ export default compose<TableState & TableProps, TableProps>(
     style={{ height: ' calc(100vh - (var(--offset) * 3))' }}
     onContextMenu={handleContextMenu}>
     <Table
+      id="data-table"
       width="100%"
       height={
         isNaN(contentRect.bounds.height) ? 500 : contentRect.bounds.height

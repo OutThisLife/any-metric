@@ -19,7 +19,7 @@ export default <T extends {}>(map: Array<HotkeyMap<T>> = []) =>
         }
       }
 
-      window.addEventListener('keydown', this.handleKeyDown.bind(this))
+      document.addEventListener('keydown', this.handleKeyDown.bind(this))
     },
 
     componentWillUnmount(this: any) {
@@ -27,11 +27,11 @@ export default <T extends {}>(map: Array<HotkeyMap<T>> = []) =>
         return
       }
 
-      window.removeEventListener('keydown', this.handleKeyDown.bind(this))
+      document.removeEventListener('keydown', this.handleKeyDown.bind(this))
     }
   })
 
 export interface HotkeyMap<T> {
   key?: number
-  action?: (props?: T) => void
+  action?: (props?: T & { el: HTMLElement }) => void
 }

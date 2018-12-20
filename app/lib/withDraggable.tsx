@@ -21,6 +21,13 @@ export default (style: React.CSSProperties = {}) =>
           d3
             .drag()
             .subject(() => el.getBoundingClientRect())
+            .filter(
+              () =>
+                !(
+                  d3.event.button ||
+                  /rect|svg/i.test(d3.event.srcElement.tagName)
+                )
+            )
             .on('start', () => {
               el.style.cursor = 'move'
               el.style.zIndex = '9999'
@@ -45,6 +52,8 @@ export default (style: React.CSSProperties = {}) =>
               d3.event.on('end', () => el.classList.remove('dragging'))
             })
         )
+
+        d3.select('rect').on('mousedown.drag', null)
       }
     }
   }))

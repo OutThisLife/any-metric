@@ -10,6 +10,7 @@ import BaseText, { TextProps } from '../Text'
 export default styled<any>(VirtualList)`
   ${({ theme }: BaphoTheme) => css`
     will-change: unset !important;
+    padding-bottom: 10vh !important;
 
     &.loading {
       opacity: 0.5;
@@ -19,6 +20,7 @@ export default styled<any>(VirtualList)`
       cursor: cell;
       user-select: none;
       display: grid;
+      max-width: calc(100% - 5px);
       grid-template-columns: 100px 80px 1fr 150px 200px;
       align-items: stretch;
       justify-content: center;

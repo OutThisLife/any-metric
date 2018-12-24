@@ -93,25 +93,14 @@ export default compose<TableState & TableProps, TableProps>(
           style={style as React.HTMLAttributes<HTMLElement>['style']}
           onMouseEnter={e => e.currentTarget.classList.add('active-row')}
           onMouseLeave={e => e.currentTarget.classList.remove('active-row')}>
-          <RenderColumns
-            columns={columns}
-            props={() => ({ item: data[index] })}
-          />
+          {columns.map(c => {
+            const C = Columns[c.key.slice(0, 1).toUpperCase() + c.key.slice(1)]
+            return <C key={c.key} item={data[index]} />
+          })}
         </Box>
       )}
     />
   </div>
-))
-
-export const RenderColumns = compose<RenderColumnProps, RenderColumnProps>(
-  setDisplayName('render-columns')
-)(({ props, columns = [] }) => (
-  <>
-    {columns.map(c => {
-      const C = Columns[c.key.slice(0, 1).toUpperCase() + c.key.slice(1)]
-      return <C key={c.key} {...props(c)} />
-    })}
-  </>
 ))
 
 export interface TableState extends Partial<MeasuredComponentProps> {

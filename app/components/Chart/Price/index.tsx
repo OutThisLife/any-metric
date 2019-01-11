@@ -49,16 +49,16 @@ export default compose<ChartState & BaphoTheme, ChartCVProps>(
   branch(({ data }) => !data.length, renderComponent(() => null)),
   withProps<Partial<ChartState>, ChartState>(
     ({ data: initialData, width, height, isModal }) => {
-      const calculatedData = MA(
-        initialData.map(d => ({
-          ...d,
-          date: new Date(d.createdAt),
-          close: d.price,
-          volume: initialData
-            .filter(({ slug }) => slug === d.slug)
-            .reduce((acc, { qty }) => (acc += qty), 0)
-        }))
-      )
+      const calculatedData = initialData.map(d => ({
+        ...d,
+        date: new Date(d.createdAt),
+        close: d.price,
+        volume: initialData
+          .filter(({ slug }) => slug === d.slug)
+          .reduce((acc, { qty }) => (acc += qty), 0)
+      }))
+
+      MA(calculatedData.filter(d => /ended/i.test(d.status)))
 
       const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
         d => d.date
@@ -127,7 +127,10 @@ export default compose<ChartState & BaphoTheme, ChartCVProps>(
             markerProps={{
               width: 8,
               r: 2.5,
-              fill: theme.colours.price.hl,
+              fill: d =>
+                /active/i.test(d.status)
+                  ? rgba(theme.colours.price.hl, 0.25)
+                  : theme.colours.focus,
               stroke: 'transparent'
             }}
           />

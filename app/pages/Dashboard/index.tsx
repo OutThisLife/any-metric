@@ -5,6 +5,7 @@ import Watchlist from '@/components/Watchlist'
 import { GET_PRODUCTS } from '@/lib/queries'
 import { Product, Tag } from '@/server/schema/types'
 import { siteName } from '@/theme'
+import fz from 'fuzzaldrin-plus'
 import { orderBy } from 'lodash'
 import Head from 'next/head'
 import { func } from 'prop-types'
@@ -45,6 +46,16 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
                 t => value.split(',').includes(t._id) && f(t)
               )
             )
+
+          case 'SEARCH':
+            console.log(value, initial)
+            const res = fz.filter(initial, value, {
+              key: 'title'
+            })
+
+            console.log(res)
+
+            return res
         }
       }
 
@@ -148,7 +159,7 @@ export interface HomeState {
 
   filter?: {
     value?: string
-    action?: 'RESET' | 'TAG'
+    action?: 'RESET' | 'TAG' | 'SEARCH'
   }
 }
 

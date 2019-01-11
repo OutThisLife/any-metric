@@ -85,8 +85,16 @@ export default compose<
   ),
   withHandlers<CategoriesProps & CategoriesHandlers, CategoriesHandlers>(
     () => ({
-      handleClick: ({ filter }) => e => {
-        select(e.target as HTMLElement)
+      handleClick: ({ filter }) => ({ target }) => {
+        if (!(target instanceof HTMLElement)) {
+          return
+        } else {
+          select(target)
+        }
+
+        const el = (target as HTMLElement).closest(
+          '[data-value]'
+        ) as HTMLElement
 
         setTimeout(() => {
           const $checked = document.querySelectorAll('#filters [data-checked]')
@@ -100,15 +108,26 @@ export default compose<
             return
           }
 
-          window.requestAnimationFrame(() =>
-            filter({
-              action: 'TAG',
-              value: [].slice
-                .call($checked)
-                .map((el: HTMLElement) => el.dataset.tag)
-                .join(',')
+          if (el instanceof HTMLElement) {
+            window.requestAnimationFrame(() => {
+              const { action, value } = el.dataset
+
+              if (action === 'TAG') {
+                filter({
+                  action: 'TAG',
+                  value: [].slice
+                    .call($checked)
+                    .map((el: HTMLElement) => el.dataset.value)
+                    .join(',')
+                })
+              } else {
+                filter({
+                  action: 'SEARCH',
+                  value
+                })
+              }
             })
-          )
+          }
         }, 350)
       },
 
@@ -153,15 +172,15 @@ export default compose<
   withProps(({ tags }) => ({
     tags: orderBy(tags, ['isQuery', 'createdAt'], ['desc', 'desc'])
   }))
-)(({ onRef, total, tags, handleSubmit, handleClick, handleDelete }) => (
+)(({ total, tags, handleSubmit, handleClick, handleDelete }) => (
   <Module>
     <h5>
       Products &amp; Tags <span>{total}</span>
     </h5>
 
-    <Categories id="filters" as="section" ref={onRef} onClick={handleClick}>
+    <Categories id="filters" as="section" onClick={handleClick}>
       <Form.Container onSubmit={handleSubmit}>
-        <Form.Input required placeholder="Add basic tag" tabIndex={-1} />
+        <Form.Input required placeholder="Add search filter" tabIndex={-1} />
       </Form.Container>
 
       {tags.map(t => (

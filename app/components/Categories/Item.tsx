@@ -129,12 +129,13 @@ export default compose<
     <Item
       as="li"
       key={_id}
-      data-tag={_id}
       data-hash={slug}
+      data-action={props.isQuery ? 'TAG' : 'SEARCH'}
+      data-value={props.isQuery ? _id : title}
       className={`row ${loading ? 'loading' : ''}`}
       {...props}>
       <a href="javascript:;" tabIndex={-1}>
-        <label>{shortFormat(total)}</label>
+        {props.isQuery ? <label>{shortFormat(total)}</label> : <label />}
 
         <span>
           <span>{title}</span>

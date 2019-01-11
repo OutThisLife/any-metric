@@ -72,6 +72,10 @@ export default styled<any>(Box)`
         align-items: center;
         justify-content: space-between;
 
+        &:only-child {
+          width: 100%;
+        }
+
         > span {
           white-space: nowrap;
           overflow: hidden;

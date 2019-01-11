@@ -11,6 +11,10 @@ export default (async (_, __, { mongo }): Promise<Product[]> => {
 
   return (await mongo.products
     .find<Product>({
+      status: {
+        $ne: 'EndedWithoutSales'
+      },
+
       isDeleted: {
         $ne: true
       }

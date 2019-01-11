@@ -48,12 +48,10 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
             )
 
           case 'SEARCH':
-            console.log(value, initial)
             const res = fz.filter(initial, value, {
-              key: 'title'
+              key: 'title',
+              allowErrors: false
             })
-
-            console.log(res)
 
             return res
         }

@@ -50,7 +50,7 @@ export default compose<SearchState & SearchHandlers, {}>(
                 .value,
               paginationInput: {
                 pageNumber: 1,
-                entriesPerPage: 4
+                entriesPerPage: 2
               }
             },
             ({ items = [] }) => {
@@ -106,15 +106,23 @@ export default compose<SearchState & SearchHandlers, {}>(
         ;(window as any).collect(
           {
             keywords: title,
-            save: true,
-            paginationInput: {
-              pageNumber: 1,
-              entriesPerPage: 100
-            }
+            save: true
           },
-          () => {
+          ({ totalPages }: EbayResult) => {
             $form.reset()
             $form.classList.remove('loading')
+
+            let i = parseInt(totalPages as string, 10)
+            while (i > 1) {
+              ;(window as any).collect({
+                keywords: title,
+                save: true,
+                paginationInput: {
+                  pageNumber: i--,
+                  entriesPerPage: 100
+                }
+              })
+            }
           }
         )
       }

@@ -113,6 +113,7 @@ export const getTheme = () =>
 const ebayFragment = gql`
   fragment EbayFields on EbayResult {
     total
+    totalPages
     items {
       _id
       attribute

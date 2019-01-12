@@ -13,7 +13,8 @@ export default (async (
       (op: EbayOperations) =>
         new Promise(async resolve => {
           const {
-            searchResult: [sr]
+            searchResult: [sr],
+            paginationOutput: [pages]
           } = await getCommerce(
             Object.assign(args, {
               keywords,
@@ -24,7 +25,8 @@ export default (async (
 
           resolve({
             op,
-            total: parseInt(sr['@count'], 10),
+            total: parseInt(pages.totalEntries[0], 10),
+            totalPages: parseInt(pages.totalPages[0], 10),
             items: (sr.item as EbayItem[]).map(item => {
               for (const [k, v] of Object.entries(item)) {
                 if (Array.isArray(v) && v.length === 1) {
@@ -48,7 +50,7 @@ export default (async (
   )).reduce(
     (acc: EbayResult, r: EbayResult) => ({
       ...r,
-      total: acc.total += r.total,
+      total: (acc.total as number) += r.total as number,
       items: acc.items.concat(...r.items)
     }),
     {
@@ -146,7 +148,7 @@ export default (async (
             )
 
             await mongo.tags.updateOne(q, { $inc: { total: upsertedCount } })
-            res.total += upsertedCount
+            ;(res.total as number) += upsertedCount
           }
         }
       )

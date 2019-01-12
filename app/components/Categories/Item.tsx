@@ -37,14 +37,22 @@ export default compose<
         ;(window as any).collect(
           {
             keywords,
-            save: true,
-            paginationInput: {
-              pageNumber: 1,
-              entriesPerPage: 100
-            }
+            save: true
           },
-          ({ total, items }: EbayResult) => {
+          ({ total, totalPages, items }: EbayResult) => {
             setTime(new Date(), () => setTimeout(() => setLoading(false), 600))
+
+            let i = parseInt(totalPages as string, 10)
+            while (i > 1) {
+              ;(window as any).collect({
+                keywords,
+                save: true,
+                paginationInput: {
+                  pageNumber: i--,
+                  entriesPerPage: 100
+                }
+              })
+            }
 
             if (total > 0) {
               const { title, sellingStatus } = items[items.length - 1]

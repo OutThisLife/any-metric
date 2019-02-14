@@ -1,3 +1,4 @@
+import { dateFormat } from '@/lib/utils'
 import { Product } from '@/server/schema/types'
 import { Box } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
@@ -19,9 +20,14 @@ export default compose<TitleProps & TitleState, TitleProps>(
       a[href][id]:hover & {
         text-decoration: underline;
       }
-    `}
-    dangerouslySetInnerHTML={{ __html: item.title }}
-  />
+    `}>
+    <time
+      dangerouslySetInnerHTML={{
+        __html: `${dateFormat(item.createdAt)}&nbsp;&mdash;&nbsp;`
+      }}
+    />
+    <span dangerouslySetInnerHTML={{ __html: item.title }} />
+  </Box>
 ))
 
 interface TitleProps extends ColumnProps {

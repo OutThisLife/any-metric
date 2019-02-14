@@ -65,7 +65,7 @@ export default compose<ChartState & BaphoTheme, ChartCVProps>(
       )
 
       const start = xAccessor(last(data))
-      const end = xAccessor(data[Math.max(0, data.length - 150)])
+      const end = xAccessor(data[Math.max(0, data.length - initialData.length)])
       const xExtents = [start, end]
 
       const margin = {

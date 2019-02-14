@@ -1,12 +1,4 @@
-import {
-  complement,
-  desaturate,
-  getLuminance,
-  lighten,
-  rgba,
-  shade,
-  tint
-} from 'polished'
+import { darken, lighten, rgba, tint } from 'polished'
 import { ThemeProps } from 'styled-components'
 
 export const siteName = '$ɮΔք𝔥Ø𝔪Δ✞ʀɨჯ'
@@ -14,36 +6,27 @@ export const siteName = '$ɮΔք𝔥Ø𝔪Δ✞ʀɨჯ'
 export const between = (min = 1, max = 2, vmin = 400, vmax = 2000) =>
   `calc(${min}px + (${max} - ${min}) * (100vw - ${vmin}px) / ${vmax - vmin})`
 
-export const createTheme = (secondary: string) => {
+export const createTheme = () => {
   const colours = {
-    base: '#fafafa',
-    panel: '#020202',
-    secondary,
+    base: '#111',
+    panel: '#fff',
+    secondary: '#1A73E8',
+    focus: '#1A73E8',
 
     get module() {
-      return lighten(0.03, this.panel)
-    },
-
-    get focus() {
-      const inverted = complement(this.secondary)
-
-      if (getLuminance(inverted) < 0.33) {
-        return tint(0.2, inverted)
-      }
-
-      return inverted
+      return darken(0.03, this.panel)
     },
 
     get muted() {
-      return desaturate(0.7, shade(0.5, this.secondary))
+      return lighten(0.2, this.base)
     },
 
     get label() {
-      return desaturate(0.4, shade(0.5, this.secondary))
+      return lighten(0.4, this.base)
     },
 
     get border() {
-      return lighten(0.1, this.panel)
+      return darken(0.1, this.panel)
     },
 
     get scrollbarHandle() {
@@ -55,20 +38,15 @@ export const createTheme = (secondary: string) => {
     },
 
     price: {
-      up: '#73AD0D',
-      down: '#E60A00',
-      hl: '#f4c37d'
+      up: '#188038',
+      down: '#C53929',
+      hl: '#E6C78B'
     }
   }
 
   const fonts = {
     size: between(10, 13),
-    list: ['Roboto'],
-
-    get src() {
-      const url = 'https://fonts.googleapis.com/css?family'
-      return `${url}=${this.list.join('|').replace(/\s+/g, '+')}`
-    },
+    list: ['Arial', 'sans-serif'],
 
     get family() {
       return this.list.join(',')
@@ -93,6 +71,7 @@ export const createTheme = (secondary: string) => {
 
 // ---------------------------
 
-const theme = createTheme('#6236ba')
+const theme = createTheme()
+
 export type BaphoTheme = Partial<ThemeProps<typeof theme>>
 export default theme

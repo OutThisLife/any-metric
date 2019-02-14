@@ -4,7 +4,6 @@ import { siteName } from '@/theme'
 import { BoxProps } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
-import Picker from './Picker'
 import Search from './Search'
 import Header from './style'
 
@@ -29,8 +28,6 @@ export default compose<HeaderProps, HeaderProps>(
     </Text>
 
     <Search />
-
-    <Picker />
   </Header>
 ))
 

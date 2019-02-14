@@ -1,18 +1,11 @@
 import { MODIFY_DOC } from '@/lib/queries'
-import {
-  dateAge,
-  moneyFormat,
-  relTime,
-  shortFormat,
-  shouldRefresh
-} from '@/lib/utils'
+import { dateAge, moneyFormat, relTime, shortFormat } from '@/lib/utils'
 import withTagColour, { TagColour } from '@/lib/withTagColour'
 import { EbayResult, Tag } from '@/server/schema/types'
-import * as d3 from 'd3'
 import { graphql } from 'react-apollo'
 import { BreedingRhombusSpinner } from 'react-epic-spinners'
 import { MdClear } from 'react-icons/md'
-import { compose, setDisplayName, withHandlers, withState } from 'recompose'
+import { compose, setDisplayName, withState } from 'recompose'
 
 import Item from './Item.style'
 
@@ -82,46 +75,9 @@ export default compose<
         )
       }
     })
-  }),
-  withHandlers<CategoryItemProps & CategoryItemHandles, CategoryItemHandles>(
-    ({ setLoading, onRefresh }) => {
-      let tm: d3.Timer
-
-      if ('browser' in process) {
-        Notification.requestPermission()
-      }
-
-      return {
-        onRef: ({ loading, time }) => ref => {
-          if (tm) {
-            tm.stop()
-          }
-
-          if (!ref || loading) {
-            return
-          }
-
-          const el = ref.querySelector('small')
-
-          if (el instanceof HTMLElement) {
-            el.innerText = relTime(time)
-
-            tm = d3.timer(() => {
-              el.innerText = relTime(time)
-
-              if (shouldRefresh(time)) {
-                setLoading(true, () => onRefresh())
-                tm.stop()
-              }
-            })
-          }
-        }
-      }
-    }
-  )
+  })
 )(
   ({
-    onRef,
     _id,
     loading,
     onDelete,
@@ -156,7 +112,6 @@ export default compose<
 
       {props.isQuery && (
         <time
-          ref={onRef}
           title={time.toString()}
           onMouseDown={e => {
             e.stopPropagation()

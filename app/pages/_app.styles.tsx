@@ -7,7 +7,7 @@ export default createGlobalStyle`
   ${({ theme }: BaphoTheme) => css`
     :root {
       --cellSize: calc(100vw / 40);
-      --pad: ${between('8px', '16px')};
+      --pad: ${between('4px', '8px')};
       --offset: calc(var(--pad) * 3);
       --radius: 2px;
 
@@ -60,16 +60,12 @@ export default createGlobalStyle`
       -moz-osx-font-smoothing: grayscale;
     }
 
-    body {
-      background: ${shade(0.9, darken(0.1, theme.colours.secondary))};
-
-      * {
-        font-size: 1rem;
-        font-family: ${theme.fonts.family}, -apple-system, BlinkMacSystemFont,
-          'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
-          'Helvetica Neue', sans-serif;
-        box-sizing: border-box;
-      }
+    body * {
+      font-size: 1rem;
+      font-family: ${theme.fonts.family}, -apple-system, BlinkMacSystemFont,
+        'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+        'Helvetica Neue', sans-serif;
+      box-sizing: border-box;
     }
 
     :focus {
@@ -91,7 +87,6 @@ export default createGlobalStyle`
       color: ${theme.colours.muted};
       font-weight: 600;
       font-size: 0.9rem;
-      letter-spacing: 1px;
       text-transform: uppercase;
     }
 
@@ -137,47 +132,14 @@ export const Main = styled<any>(Box)`
   align-items: flex-start;
   justify-content: center;
   width: 100vw;
-  min-height: 100vh;
   padding: var(--offset);
   padding-top: 0;
-
-  @media (min-width: 1025px) {
-    height: 100vh;
-    overflow: hidden;
-  }
 
   ${({ theme }: BaphoTheme) => css`
     > main {
       grid-area: main;
       position: relative;
       width: 100%;
-      border: 1px solid transparent;
-      border-radius: var(--radius);
-      background: ${theme.colours.panel};
-
-      @media (min-width: 1025px) {
-        height: 100%;
-        overflow: hidden;
-        padding: calc(var(--pad)) 0;
-
-        &:after {
-          z-index: 9;
-          pointer-events: none;
-          content: '';
-          position: absolute;
-          right: 0;
-          left: 0;
-          bottom: 0;
-          height: 20%;
-          border-radius: inherit;
-          background: linear-gradient(
-            180deg,
-            transparent 22%,
-            ${theme.colours.panel} 82%,
-            ${theme.colours.panel}
-          );
-        }
-      }
 
       @media (max-width: 1025px) {
         width: calc(90vw - var(--offset));

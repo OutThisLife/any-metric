@@ -1,10 +1,9 @@
 import withData from '@/client/withData'
-import GetTheme from '@/client/withTheme'
-import Particles from '@/components/Particles'
+import theme from '@/theme'
 import { ApolloClient } from 'apollo-boost'
 import App, { AppProps, Container } from 'next/app'
-import Head from 'next/head'
 import { ApolloProvider } from 'react-apollo'
+import { ThemeProvider } from 'styled-components'
 
 import GlobalStyles from './_app.styles'
 import Layout from './_layout'
@@ -14,23 +13,12 @@ export default withData(
     public render() {
       return (
         <ApolloProvider client={this.props.client}>
-          <GetTheme>
-            {({ theme }) => (
-              <Container>
-                <Particles />
-
-                <Head>
-                  <link
-                    key="google-fonts"
-                    rel="stylesheet"
-                    href={theme.fonts.src}
-                  />
-                </Head>
-                <GlobalStyles />
-                <Layout {...this.props} />
-              </Container>
-            )}
-          </GetTheme>
+          <ThemeProvider theme={theme}>
+            <Container>
+              <GlobalStyles />
+              <Layout {...this.props} />
+            </Container>
+          </ThemeProvider>
         </ApolloProvider>
       )
     }

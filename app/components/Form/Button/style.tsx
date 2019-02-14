@@ -34,7 +34,6 @@ export default styled<any>(Button)`
     font-weight: 400;
     font-size: initial;
     line-height: 0;
-    letter-spacing: 0.04em;
     text-transform: lowercase;
     font-variant: small-caps;
     line-height: 0;

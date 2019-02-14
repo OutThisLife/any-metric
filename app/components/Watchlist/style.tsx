@@ -20,7 +20,7 @@ export default styled<any>('div')`
 
       > div {
         padding: 0;
-        background: ${darken(0.33, theme.colours.module)};
+        background: ${theme.colours.panel};
       }
 
       h5 svg {

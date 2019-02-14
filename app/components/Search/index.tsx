@@ -141,18 +141,17 @@ export default compose<SearchState & SearchHandlers, {}>(
       }
     }
   })
-)(({ children, isOpen, items, handleSubmit, handleReset, handleConfirm }) => (
+)(({ isOpen, items, handleSubmit, handleReset, handleConfirm }) => (
   <Search onSubmit={handleSubmit} onReset={handleReset}>
     <Form.Input
       required
       id="s"
+      name="s"
       tabIndex={-1}
       isFocused={isOpen}
       placeholder="Add a product"
       icon={IoIosSearch}
     />
-
-    {children}
 
     {isOpen && (
       <Box as="section">
@@ -165,9 +164,6 @@ export default compose<SearchState & SearchHandlers, {}>(
           <Box
             as="nav"
             css={`
-              display: grid;
-              grid-template-columns: repeat(2, 1fr);
-              grid-gap: calc(var(--pad) * 2);
               padding: var(--offset);
             `}>
             {items.length ? (

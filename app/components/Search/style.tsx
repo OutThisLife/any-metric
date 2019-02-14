@@ -61,15 +61,10 @@ export default styled<any>(Form.Container)`
     section nav a {
       display: flex;
       align-items: center;
-      border: 1px solid ${theme.colours.border};
-
-      &:hover {
-        border-color: ${theme.colours.focus};
-        transition: none;
-      }
+      padding: 1em 0;
 
       figure {
-        --size: 140px;
+        --size: 50px;
 
         width: var(--size);
         height: var(--size);

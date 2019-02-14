@@ -15,8 +15,6 @@ export default (props: EbayItem) => (
         as="p"
         css={`
           font-weight: 700;
-          font-size: 1.25rem;
-          line-height: 1.5;
           margin: 0;
         `}
         dangerouslySetInnerHTML={{ __html: props.title }}

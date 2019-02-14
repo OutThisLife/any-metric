@@ -6,23 +6,10 @@ import styled, { css } from 'styled-components'
 import { FormButtonProps } from '.'
 
 export default styled<any>(Button)`
-  ${({ variant, theme }: FormButtonProps & BaphoTheme) => css`
-    --colour: ${theme.colours.focus};
-    --bg: ${theme.colours.focus};
-    --shadow: inset 0 0 0 var(--bg), 0 0 1px 1px var(--bg);
+  ${({ theme }: FormButtonProps & BaphoTheme) => css`
+    --colour: ${theme.colours.secondary};
+    --bg: ${theme.colours.panel};
     --padding: 14px 15px;
-
-    ${/filled/i.test(variant) &&
-      css`
-        --colour: ${theme.colours.base};
-        --bg: ${theme.colours.focus};
-        --shadow: none;
-      `};
-
-    ${/noborder/i.test(variant) &&
-      css`
-        --shadow: none;
-      `}
 
     cursor: pointer;
     display: inline-block;
@@ -39,22 +26,12 @@ export default styled<any>(Button)`
     line-height: 0;
     padding: var(--padding, 0px);
     border: 0;
-    box-shadow: var(--shadow);
-    transition: ${theme.eases.base};
+    box-shadow: inset 0 0 0 0 ${theme.colours.border};
     background: var(--bg);
-
-    ${!/filled/i.test(variant) &&
-      css`
-        &:not(:hover) {
-          background: transparent;
-        }
-      `}
 
     &:hover {
       --colour: ${theme.colours.base};
       --bg: ${lighten(0.05, theme.colours.focus)};
-
-      box-shadow: inset 0 0 0 0 rgba(0, 0, 0, 0);
     }
 
     &:active {

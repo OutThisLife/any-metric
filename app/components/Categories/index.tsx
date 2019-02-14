@@ -149,13 +149,31 @@ export default compose<
             } as any)
           }
         }
+      },
+
+      handleSubmit: ({ handleAdd }) => ({ currentTarget }) => {
+        const el = currentTarget.tag
+
+        if (el instanceof HTMLInputElement) {
+          handleAdd({
+            _id: Math.random()
+              .toString(20)
+              .substring(3),
+            title: el.value,
+            isQuery: false,
+            total: 0
+          })
+
+          el.value = ''
+          el.blur()
+        }
       }
     })
   ),
   withProps(({ tags }) => ({
     tags: orderBy(tags, ['isQuery', 'createdAt'], ['desc', 'desc'])
   }))
-)(({ tags, handleAdd, handleClick, handleDelete }) => (
+)(({ tags, handleSubmit, handleClick, handleDelete }) => (
   <Flex
     id="filters"
     as="section"
@@ -165,32 +183,21 @@ export default compose<
       width: 100%;
       padding: 0 var(--pad);
 
-      form > div + div {
-        margin-left: 0.5em;
+      form:first-of-type {
+        width: 33vw;
+
+        + form {
+          margin-left: 0.5em;
+        }
       }
     `}>
-    <Search>
-      <Form.Input
-        required
-        placeholder="New Tag"
-        tabIndex={-1}
-        onKeyPress={e => {
-          if (/enter/i.test(e.key)) {
-            handleAdd({
-              _id: Math.random()
-                .toString(20)
-                .substring(3),
-              title: e.target.value,
-              isQuery: false,
-              total: 0
-            })
+    <Flex>
+      <Search />
 
-            e.target.value = ''
-            e.target.blur()
-          }
-        }}
-      />
-    </Search>
+      <Form.Container onSubmit={handleSubmit}>
+        <Form.Input name="tag" placeholder="New Tag" tabIndex={-1} />
+      </Form.Container>
+    </Flex>
 
     <Box
       css={`
@@ -216,6 +223,7 @@ export interface CategoriesHandlers {
   handleClick?: React.MouseEventHandler<HTMLElement>
   handleAdd?: (t: Tag) => any
   handleDelete?: (t: Tag) => any
+  handleSubmit?: React.FormEventHandler<HTMLFormElement>
 }
 
 export interface CategoriesProps extends BoxProps, TagState {

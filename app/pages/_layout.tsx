@@ -1,10 +1,6 @@
-import Header from '@/components/Header'
 import { BaphoTheme } from '@/theme'
 import { AppProps } from 'next/app'
-import { Box } from 'rebass'
 import { compose, lifecycle, setDisplayName } from 'recompose'
-
-import { Main } from './_app.styles'
 
 export default compose<LayoutProps & BaphoTheme, LayoutProps>(
   setDisplayName('layout'),
@@ -25,14 +21,6 @@ export default compose<LayoutProps & BaphoTheme, LayoutProps>(
       )
     }
   })
-)(({ Component }) => (
-  <Main>
-    <Header />
-
-    <Box as="main">
-      <Component />
-    </Box>
-  </Main>
-))
+)(({ Component }) => <Component />)
 
 export type LayoutProps = Partial<AppProps>

@@ -54,7 +54,7 @@ export default styled<any>(Form.Container)`
         overflow: hidden;
         border-radius: 0 0 var(--radius) var(--radius);
         transform-origin: left top;
-        background: ${theme.colours.module};
+        background: ${theme.colours.panel};
       }
     }
 
@@ -74,7 +74,7 @@ export default styled<any>(Form.Container)`
         width: var(--size);
         height: var(--size);
         margin: 0;
-        background: ${theme.colours.module};
+        background: ${theme.colours.panel};
 
         img {
           width: 100%;

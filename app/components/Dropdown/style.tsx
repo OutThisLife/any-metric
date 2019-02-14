@@ -20,8 +20,8 @@ export default styled<any>(Box)`
     }
 
     > div {
-      border-radius: var(--radius);
-      background: ${theme.colours.base};
+      border: 1px solid: ${theme.colours.border};
+      background: ${theme.colours.panel};
     }
 
     ul,
@@ -40,16 +40,10 @@ export default styled<any>(Box)`
       display: flex;
       align-items: center;
       line-height: 0px;
-      color: ${theme.colours.panel};
       padding: calc(var(--pad) / 3) calc(var(--pad) / 2);
       outline: 1px solid transparent;
       outline-offset: -1px;
       transition: ${theme.eases.base};
-
-      &:hover {
-        color: ${theme.colours.panel};
-        outline-color: ${theme.colours.border};
-      }
 
       svg {
         width: 1rem;

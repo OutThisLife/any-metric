@@ -1,5 +1,3 @@
-import Modal from '@/components/Modal'
-import withHotkeys from '@/lib/withHotkeys'
 import { Product } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import { lighten } from 'polished'
@@ -17,7 +15,6 @@ import { withTheme } from 'styled-components'
 
 import Loader from './Loader'
 import Price from './Price'
-import { ZoomedChart } from './style'
 
 export default compose<ChartProps & BaphoTheme, ChartProps>(
   setDisplayName('price'),
@@ -43,18 +40,6 @@ export default compose<ChartProps & BaphoTheme, ChartProps>(
       }
     }
   })),
-  withHotkeys([
-    {
-      key: 67,
-      action: () => {
-        const $chart = document.getElementById('chart-toggle')
-
-        if ($chart instanceof HTMLElement) {
-          $chart.click()
-        }
-      }
-    }
-  ]),
   shouldUpdate<ChartProps>((_, np) => np.data.length > 5),
   lifecycle<ChartProps, {}>({
     componentDidMount() {
@@ -74,58 +59,20 @@ export default compose<ChartProps & BaphoTheme, ChartProps>(
         position: 'relative',
         width: '100%'
       }}>
-      <Modal
-        id="price-chart-modal"
-        isShown={!loading && /chart/.test(location.search)}
-        render={() => {
-          const w = window.innerWidth * (isDesktop ? 0.66 : 0.9)
-
-          return (
-            <ZoomedChart>
-              <Price
-                id="main-chart"
-                isModal={true}
-                width={w}
-                height={w * 0.54}
-                {...props}
-              />
-            </ZoomedChart>
-          )
-        }}>
-        {({ isOpen, toggle }) => (
-          <>
-            {loading ? (
-              <OrbitSpinner
-                className="chart-spinner"
-                size={120}
-                color={lighten(0.1, theme.colours.module)}
-                animationDuration={668}
-                style={{
-                  margin: '-50% auto 0',
-                  transition: 'opacity 1s linear'
-                }}
-              />
-            ) : (
-              <>
-                <a
-                  href="javascript:;"
-                  id="chart-toggle"
-                  onClick={() => toggle(!isOpen)}
-                />
-
-                <Price
-                  id="small-chart"
-                  isDesktop={isDesktop}
-                  width={width}
-                  height={height}
-                  onSelect={() => toggle(!isOpen)}
-                  {...props}
-                />
-              </>
-            )}
-          </>
-        )}
-      </Modal>
+      {loading ? (
+        <OrbitSpinner
+          className="chart-spinner"
+          size={120}
+          color={lighten(0.1, theme.colours.module)}
+          animationDuration={668}
+          style={{
+            margin: '-50% auto 0',
+            transition: 'opacity 1s linear'
+          }}
+        />
+      ) : (
+        <Price isDesktop={isDesktop} width={width} height={height} {...props} />
+      )}
     </div>
   )
 })

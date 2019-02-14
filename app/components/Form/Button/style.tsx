@@ -39,7 +39,6 @@ export default styled<any>(Button)`
     line-height: 0;
     padding: var(--padding, 0px);
     border: 0;
-    border-radius: var(--radius);
     box-shadow: var(--shadow);
     transition: ${theme.eases.base};
     background: var(--bg);

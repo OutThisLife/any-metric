@@ -6,7 +6,6 @@ import { Box } from 'rebass'
 import { compose, setDisplayName, withHandlers } from 'recompose'
 
 import { ColumnProps } from '..'
-import Image from './style'
 
 export default compose<ImageProps, ImageProps>(
   setDisplayName('col-image'),
@@ -16,31 +15,44 @@ export default compose<ImageProps, ImageProps>(
       positionToMouse(document.getElementById(`popover-${_id}`), ref, 'right')
   }))
 )(({ onRef, item }) => (
-  <Image name="image">
+  <Box
+    name="image"
+    css={`
+      padding: 0 !important;
+
+      figure {
+        position: relative;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+
+        img {
+          object-fit: cover;
+          width: 100%;
+          height: 100%;
+        }
+      }
+    `}>
     {item.image.length ? (
       <Popover
         id={`popover-${item._id}`}
         direction="right"
         render={() => <img ref={onRef} src={item.image} />}>
         {({ toggle }) => (
-          <Box as="figure">
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noopener"
-              onMouseEnter={() => toggle(true)}
-              onMouseLeave={() => toggle(false)}
-              style={{ cursor: 'zoom-in' }}>
-              <img src={item.image} />
-              <img src={item.image} />
-            </a>
+          <Box
+            as="figure"
+            onMouseEnter={() => toggle(true)}
+            onMouseLeave={() => toggle(false)}
+            style={{ cursor: 'zoom-in' }}>
+            <img src={item.image} />
           </Box>
         )}
       </Popover>
     ) : (
       <IoMdImage />
     )}
-  </Image>
+  </Box>
 ))
 
 interface ImageProps extends ColumnProps {

@@ -1,9 +1,8 @@
 import { MODIFY_DOC } from '@/lib/queries'
-import { dateAge, moneyFormat, relTime, shortFormat } from '@/lib/utils'
+import { moneyFormat, shortFormat } from '@/lib/utils'
 import withTagColour, { TagColour } from '@/lib/withTagColour'
 import { EbayResult, Tag } from '@/server/schema/types'
 import { graphql } from 'react-apollo'
-import { BreedingRhombusSpinner } from 'react-epic-spinners'
 import { MdClear } from 'react-icons/md'
 import { compose, setDisplayName, withState } from 'recompose'
 
@@ -98,41 +97,19 @@ export default compose<
       data-value={props.isQuery ? _id : title}
       className={`row ${loading ? 'loading' : ''}`}
       {...props}>
-      <a href="javascript:;" tabIndex={-1}>
-        {props.isQuery ? <label>{shortFormat(total)}</label> : <label />}
-
-        <span>
-          <span>{title}</span>
-
-          <i className="delete" onClick={onDelete}>
-            <MdClear size={10} />
-          </i>
-        </span>
+      <a
+        href="javascript:;"
+        tabIndex={-1}
+        onMouseDown={e =>
+          props.isQuery && e.button === 1 && setLoading(true, () => onRefresh())
+        }>
+        <span dangerouslySetInnerHTML={{ __html: title }} />
+        {props.isQuery && <em>({shortFormat(total)})</em>}
       </a>
 
-      {props.isQuery && (
-        <time
-          title={time.toString()}
-          onMouseDown={e => {
-            e.stopPropagation()
-            setLoading(true, () => onRefresh())
-          }}>
-          {loading ? (
-            <BreedingRhombusSpinner
-              className="spinner"
-              size={16}
-              color={theme.colours.secondary}
-              animationDuration={1337}
-              style={{ gridColumn: '1 / -1', margin: 'auto' }}
-            />
-          ) : (
-            <>
-              <small>{relTime(time)}</small>
-              <i className={dateAge(time)} />
-            </>
-          )}
-        </time>
-      )}
+      <i className="delete" onClick={onDelete}>
+        <MdClear />
+      </i>
     </Item>
   )
 )

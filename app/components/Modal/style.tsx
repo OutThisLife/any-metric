@@ -25,7 +25,7 @@ export default styled<any>(Flex)`
       left: 0;
       transform: translate3d(0, 0, 0);
       animation: ${fadeIn} ${theme.eases.base} forwards;
-      background: ${rgba(theme.colours.panel, 0.7)};
+      background: ${rgba(theme.colours.base, 0.33)};
     }
 
     &.anim-out > a {
@@ -40,7 +40,6 @@ export default styled<any>(Flex)`
       max-height: 90vh;
       text-align: left;
       margin: auto;
-      border-radius: var(--radius);
       transform: translate3d(0, 0, 0);
       animation: ${animIn} 0.2s ${theme.eases.easing} forwards;
 

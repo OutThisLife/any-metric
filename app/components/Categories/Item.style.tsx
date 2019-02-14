@@ -1,51 +1,65 @@
-import { TagColour } from '@/lib/withTagColour'
-import { lighten, rgba } from 'polished'
+import { BaphoTheme } from '@/theme'
 import styled, { css } from 'styled-components'
 
 import Text from '../Text'
 import { CategoryItemProps } from './Item'
 
-export default styled<any>(Text).attrs(({ isQuery }: CategoryItemProps) => {
-  const style: React.CSSProperties = {}
+export default styled<any>(Text)`
+  ${({ theme }: CategoryItemProps & BaphoTheme) => css`
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5em;
 
-  if (isQuery) {
-    style.gridColumn = '1 / -1'
-    style.display = 'grid'
-    style.gridTemplateColumns = 'repeat(2,1fr)'
-  }
-  return { style }
-})`
-  ${({ tagColours }: CategoryItemProps & TagColour) => css`
-    &.loading {
-      pointer-events: none;
-      cursor: wait;
+    &:hover {
+      background: ${theme.colours.module};
+    }
 
-      a[href] {
-        filter: grayscale(0.7) blur(0.5px);
+    &[data-checked] {
+      background: ${theme.colours.focus};
+
+      span {
+        text-decoration: underline;
       }
     }
 
     a[href] {
-      color: ${tagColours.colour};
+      flex: 1;
+      display: inherit;
+      align-items: inherit;
 
       &:hover {
-        color: ${tagColours.colour};
-        outline-color: ${rgba(tagColours.border, 0.5)};
+        text-decoration: none;
+
+        span {
+          text-decoration: underline;
+        }
       }
 
-      label {
-        color: ${tagColours.colour};
-        background: ${tagColours.bg};
+      em {
+        margin-left: 1px;
       }
     }
 
-    &[data-checked] a[href] {
-      color: ${lighten(0.5, tagColours.colour)};
-      background: ${tagColours.bg};
+    i,
+    em {
+      color: ${theme.colours.label};
+      font-size: 0.85rem;
+      vertical-align: middle;
+      line-height: 0;
+    }
 
-      label {
-        color: ${tagColours.colour};
-      }
+    i {
+      font-style: normal;
+    }
+
+    &:not(:hover) i {
+      visibility: hidden;
+    }
+
+    &.loading {
+      pointer-events: none;
+      opacity: 0.5;
     }
   `}
 `

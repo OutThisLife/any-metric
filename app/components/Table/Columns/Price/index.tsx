@@ -1,22 +1,20 @@
-import { moneyFormat, numFormat } from '@/lib/utils'
+import { moneyFormat } from '@/lib/utils'
 import { Product } from '@/server/schema/types'
+import { Box } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
 import { ColumnProps } from '..'
-import { Text } from '../../style'
-import Price from './style'
 
 export default compose<PriceProps, PriceProps>(setDisplayName('col-price'))(
   ({ item }) => (
-    <Price name="price">
-      <Text as="div" className="up">
-        {moneyFormat(item.price)}
-      </Text>
-
-      <Text as="div">
-        S: {item.shipping > 0 ? numFormat(item.shipping) : 'n/a'}
-      </Text>
-    </Price>
+    <Box
+      name="price"
+      className="up"
+      css={`
+        font-weight: 700;
+      `}>
+      {moneyFormat(item.price)}
+    </Box>
   )
 )
 

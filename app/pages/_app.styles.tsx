@@ -1,7 +1,6 @@
 import { BaphoTheme } from '@/theme'
-import { between, darken, rgba, shade } from 'polished'
-import { Box } from 'rebass'
-import styled, { createGlobalStyle, css, keyframes } from 'styled-components'
+import { between, lighten } from 'polished'
+import { createGlobalStyle, css, keyframes } from 'styled-components'
 
 export default createGlobalStyle`
   ${({ theme }: BaphoTheme) => css`
@@ -10,39 +9,11 @@ export default createGlobalStyle`
       --pad: ${between('4px', '8px')};
       --offset: calc(var(--pad) * 3);
       --radius: 2px;
-
-      --mainGrid: 20vw minmax(70vw, 1fr);
-
-      @media (max-width: 1025px) {
-        --mainGrid: max-content 1fr;
-      }
     }
 
     ::selection {
       color: ${theme.colours.base};
       background: ${theme.colours.secondary};
-    }
-
-    ::-webkit-scrollbar {
-      width: 3px;
-      height: 3px;
-      background: transparent;
-    }
-
-    *:hover::-webkit-scrollbar {
-      background: ${theme.colours.scrollbarBg};
-    }
-
-    ::-webkit-scrollbar-corner {
-      background: ${darken(0.5, theme.colours.scrollbarBg)};
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: ${theme.colours.scrollbarHandle};
-    }
-
-    *:not(:hover)::-webkit-scrollbar-thumb {
-      background: ${rgba(theme.colours.scrollbarHandle, 0.05)};
     }
 
     html,
@@ -60,12 +31,16 @@ export default createGlobalStyle`
       -moz-osx-font-smoothing: grayscale;
     }
 
-    body * {
-      font-size: 1rem;
-      font-family: ${theme.fonts.family}, -apple-system, BlinkMacSystemFont,
-        'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
-        'Helvetica Neue', sans-serif;
-      box-sizing: border-box;
+    body {
+      background: ${theme.colours.panel};
+
+      * {
+        font-size: 1rem;
+        font-family: ${theme.fonts.family}, -apple-system, BlinkMacSystemFont,
+          'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+          'Helvetica Neue', sans-serif;
+        box-sizing: border-box;
+      }
     }
 
     :focus {
@@ -106,57 +81,33 @@ export default createGlobalStyle`
 
     a[href] {
       cursor: pointer;
-      color: ${theme.colours.base};
+      color: ${theme.colours.secondary};
       text-decoration: none;
-      transition: ${theme.eases.base};
 
       &:hover {
-        color: ${theme.colours.focus};
+        color: ${theme.colours.secondary};
+        text-decoration: underline;
       }
 
-      &:visited:not(:hover) {
-        color: ${shade(0.5, theme.colours.base)};
+      &:visited {
+        color: ${lighten(0.5, theme.colours.secondary)};
       }
     }
 
     .dragging * {
       pointer-events: none !important;
     }
-  `}
-`
 
-export const Main = styled<any>(Box)`
-  display: grid;
-  grid-template: 'head' 'main';
-  grid-template-rows: min-content 1fr;
-  align-items: flex-start;
-  justify-content: center;
-  width: 100vw;
-  padding: var(--offset);
-  padding-top: 0;
+    .up {
+      color: ${theme.colours.price.up} !important;
+    }
 
-  ${({ theme }: BaphoTheme) => css`
-    > main {
-      grid-area: main;
-      position: relative;
-      width: 100%;
+    .down {
+      color: ${theme.colours.price.down} !important;
+    }
 
-      @media (max-width: 1025px) {
-        width: calc(90vw - var(--offset));
-      }
-
-      .up {
-        color: ${theme.colours.price.up} !important;
-      }
-      .down {
-        color: ${theme.colours.price.down} !important;
-      }
-      .hl {
-        color: ${theme.colours.price.hl} !important;
-      }
-      .dead {
-        color: ${theme.colours.muted} !important;
-      }
+    .dead {
+      color: ${theme.colours.muted} !important;
     }
   `}
 `
@@ -177,4 +128,9 @@ export const animIn = keyframes`
 
 export const animOut = keyframes`
   to { opacity: 0; transform: scale(0.98); }
+`
+
+export const spin = keyframes`
+  from { transform: rotate(0deg) }
+  to { transform: rotate(360deg) }
 `

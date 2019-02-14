@@ -1,4 +1,4 @@
-import { darken, lighten, rgba, tint } from 'polished'
+import { darken, lighten } from 'polished'
 import { ThemeProps } from 'styled-components'
 
 export const siteName = '$ɮΔք𝔥Ø𝔪Δ✞ʀɨჯ'
@@ -10,8 +10,8 @@ export const createTheme = () => {
   const colours = {
     base: '#111',
     panel: '#fff',
-    secondary: '#1A73E8',
-    focus: '#1A73E8',
+    secondary: '#040D90',
+    focus: '#E6F4EA',
 
     get module() {
       return darken(0.03, this.panel)
@@ -29,18 +29,9 @@ export const createTheme = () => {
       return darken(0.1, this.panel)
     },
 
-    get scrollbarHandle() {
-      return rgba(this.secondary, 0.3)
-    },
-
-    get scrollbarBg() {
-      return tint(0.01, this.module)
-    },
-
     price: {
-      up: '#188038',
-      down: '#C53929',
-      hl: '#E6C78B'
+      up: '#207e11',
+      down: '#c53929'
     }
   }
 
@@ -55,11 +46,8 @@ export const createTheme = () => {
 
   const eases = {
     easing: 'cubic-bezier(0.165, 0.84, 0.44, 1)',
-    delay: '0.125s',
-
-    get base() {
-      return `0.234s ${this.easing}`
-    }
+    delay: '0s',
+    base: 'none'
   }
 
   return {

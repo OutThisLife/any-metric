@@ -87,6 +87,7 @@ export default (async (
           listingInfo,
           pictureURLSuperSize = '',
           sellingStatus,
+          sellerInfo,
           shippingInfo,
           title,
           unitPrice = {},
@@ -126,6 +127,11 @@ export default (async (
                 ? parseFloat(shippingInfo.shippingServiceCost[0].__value__)
                 : 0
 
+            const username =
+              'sellerUserName' in sellerInfo
+                ? sellerInfo.sellerUserName[0].__value__
+                : 'anonymous'
+
             const { upsertedCount } = await mongo.products.updateOne(
               { title },
               {
@@ -141,7 +147,8 @@ export default (async (
                   timeLeft,
                   title,
                   updatedAt,
-                  url
+                  url,
+                  username
                 }
               },
               { upsert: true }

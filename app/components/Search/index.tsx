@@ -1,6 +1,7 @@
 import * as Form from '@/components/Form'
 import Text from '@/components/Text'
 import { SEARCH_EBAY } from '@/lib/queries'
+import withHotkeys from '@/lib/withHotkeys'
 import { EbayItem, EbayResult } from '@/server/schema/types'
 import { ApolloClient } from 'apollo-boost'
 import { withApollo } from 'react-apollo'
@@ -17,6 +18,18 @@ export default compose<SearchState & SearchHandlers, {}>(
   withState('isOpen', 'toggle', false),
   withState('items', 'setItems', []),
   withApollo,
+  withHotkeys([
+    {
+      key: 13,
+      action: () => {
+        const $s = document.getElementById('s')
+
+        if (document.activeElement !== $s) {
+          $s.focus()
+        }
+      }
+    }
+  ]),
   withHandlers<SearchState, SearchHandlers>(({ toggle, setItems, client }) => {
     const collect = async (
       variables,
@@ -128,7 +141,7 @@ export default compose<SearchState & SearchHandlers, {}>(
       }
     }
   })
-)(({ isOpen, items, handleSubmit, handleReset, handleConfirm }) => (
+)(({ children, isOpen, items, handleSubmit, handleReset, handleConfirm }) => (
   <Search onSubmit={handleSubmit} onReset={handleReset}>
     <Form.Input
       required
@@ -138,6 +151,8 @@ export default compose<SearchState & SearchHandlers, {}>(
       placeholder="Add a product"
       icon={IoIosSearch}
     />
+
+    {children}
 
     {isOpen && (
       <Box as="section">

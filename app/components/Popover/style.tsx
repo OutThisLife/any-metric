@@ -1,5 +1,4 @@
 import { BaphoTheme } from '@/theme'
-import { rgba } from 'polished'
 import { Flex } from 'rebass'
 import styled, { css, keyframes } from 'styled-components'
 
@@ -23,9 +22,8 @@ export default styled<any>(Flex)`
       display: inline-block;
       overflow: hidden;
       margin: auto;
-      border-radius: var(--radius);
+      border: 1px solid ${theme.colours.border};
       animation: ${animIn} 0.2s ${theme.eases.easing} forwards;
-      box-shadow: 0 3px 5px 0 ${rgba(theme.colours.panel, 0.5)};
 
       ${dir === 'top' && 'transform-origin: center bottom'};
       ${dir === 'right' && 'transform-origin: left center'};

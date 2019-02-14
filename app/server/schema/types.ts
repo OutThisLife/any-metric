@@ -52,6 +52,7 @@ export default gql`
     timeLeft: Date
     title: String
     url: String
+    username: String
   }
 
   type Tag @cacheControl(maxAge: 10e5) {
@@ -166,6 +167,7 @@ export interface Product extends MongoEntry {
   slug?: string
   tags?: Array<Tag['_id']> | Tag[] | ObjectID[]
   url?: string
+  username?: string
   query?: string
   timeLeft?: Date
   status?: string

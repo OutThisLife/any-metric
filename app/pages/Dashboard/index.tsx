@@ -1,7 +1,6 @@
 import Categories from '@/components/Categories'
 import Chart from '@/components/Chart'
 import Table from '@/components/Table'
-import Watchlist from '@/components/Watchlist'
 import { GET_PRODUCTS } from '@/lib/queries'
 import { Product, Tag } from '@/server/schema/types'
 import { siteName } from '@/theme'
@@ -19,8 +18,6 @@ import {
   withContext,
   withState
 } from 'recompose'
-
-import Home from './style'
 
 export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
   setDisplayName('dashboard'),
@@ -65,7 +62,17 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
   }),
   withContext({ filter: func }, ({ setFilter: filter }) => ({ filter }))
 )(({ products = [] }) => (
-  <Home as="section">
+  <Box
+    as="section"
+    css={`
+      display: grid;
+      align-items: flex-start;
+      grid-template-rows: min-content 1fr;
+      grid-template-columns: 50% 50%;
+      align-self: stretch;
+      overflow: hidden;
+      height: 100vh;
+    `}>
     <Head>
       <title key="title">
         {products.length} results found :: {siteName}
@@ -74,7 +81,17 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
 
     <Box
       css={`
-        grid-area: table;
+        grid-column: 1 / -1;
+        grid-row: 1;
+        align-self: initial;
+        background: ${({ theme }) => theme.colours.module};
+      `}>
+      <Categories />
+    </Box>
+
+    <Box
+      css={`
+        grid-row: 2;
         align-self: inherit;
       `}>
       <Table
@@ -85,64 +102,31 @@ export default compose<HomeState & HomeProps & HomeStateHandlers, HomeProps>(
             key: 'price'
           },
           {
-            label: '',
-            key: 'image'
+            label: 'Date',
+            key: 'time'
           },
           {
             label: 'Name',
             key: 'title'
           },
           {
-            label: 'Date',
-            key: 'time'
-          },
-          {
             label: '',
-            key: 'tags'
+            key: 'image'
           }
         ]}
       />
     </Box>
 
     <Flex
-      flexWrap="wrap"
-      alignItems="flex-start"
+      alignItems="center"
       css={`
-        grid-area: controls;
-
-        @media (min-width: 1025px) {
-          height: 100%;
-          padding: 0 0 0 var(--pad);
-        }
+        grid-row: 2;
+        height: 100%;
+        padding: var(--pad);
       `}>
-      <Box
-        as="section"
-        css={`
-          width: 100%;
-        `}>
-        <Watchlist />
-        <Categories total={products.length} />
-      </Box>
-
-      <Box
-        as="section"
-        css={`
-          width: 100%;
-
-          @media (min-width: 1025px) {
-            align-self: flex-end;
-            margin: var(--pad) auto 0;
-          }
-
-          @media (max-width: 1025px) {
-            align-self: center;
-            margin: var(--pad);
-          }
-        `}>
-        <Chart data={orderBy(products, 'createdAt', 'asc')} />
-      </Box>
+      <Chart data={orderBy(products, 'createdAt', 'asc')} />
     </Flex>
-  </Home>
+  </Box>
 ))
 
 interface HomeProps extends BoxProps {

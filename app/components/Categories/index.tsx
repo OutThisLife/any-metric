@@ -1,5 +1,3 @@
-import * as Form from '@/components/Form'
-import Module from '@/components/Module'
 import { CREATE_TAG, getTags, REMOVE_DOC } from '@/lib/queries'
 import { select } from '@/lib/withSelections'
 import withTags, { TagHandlers, TagState } from '@/lib/withTags'
@@ -9,7 +7,7 @@ import { orderBy } from 'lodash'
 import { RouterProps } from 'next/router'
 import { func, object } from 'prop-types'
 import { graphql } from 'react-apollo'
-import { BoxProps } from 'rebass'
+import { Box, BoxProps, Flex } from 'rebass'
 import {
   compose,
   getContext,
@@ -18,8 +16,9 @@ import {
   withProps
 } from 'recompose'
 
+import * as Form from '../Form'
+import Search from '../Search'
 import Item from './Item'
-import Categories from './style'
 
 export default compose<
   CategoriesHandlers & CategoriesProps & TagHandlers,
@@ -129,22 +128,6 @@ export default compose<
             })
           }
         }, 350)
-      },
-
-      handleSubmit: ({ handleAdd }) => ({ currentTarget }) => {
-        const el = currentTarget.querySelector('input')
-
-        handleAdd({
-          _id: Math.random()
-            .toString(20)
-            .substring(3),
-          title: el.value,
-          isQuery: false,
-          total: 0
-        })
-
-        el.value = ''
-        el.blur()
       }
     })
   ),
@@ -172,17 +155,47 @@ export default compose<
   withProps(({ tags }) => ({
     tags: orderBy(tags, ['isQuery', 'createdAt'], ['desc', 'desc'])
   }))
-)(({ total, tags, handleSubmit, handleClick, handleDelete }) => (
-  <Module>
-    <h5>
-      Products &amp; Tags <span>{total}</span>
-    </h5>
+)(({ tags, handleAdd, handleClick, handleDelete }) => (
+  <Flex
+    id="filters"
+    as="section"
+    alignItems="center"
+    onClick={handleClick}
+    css={`
+      width: 100%;
+      padding: 0 var(--pad);
 
-    <Categories id="filters" as="section" onClick={handleClick}>
-      <Form.Container onSubmit={handleSubmit}>
-        <Form.Input required placeholder="Add search filter" tabIndex={-1} />
-      </Form.Container>
+      form > div + div {
+        margin-left: 0.5em;
+      }
+    `}>
+    <Search>
+      <Form.Input
+        required
+        placeholder="New Tag"
+        tabIndex={-1}
+        onKeyPress={e => {
+          if (/enter/i.test(e.key)) {
+            handleAdd({
+              _id: Math.random()
+                .toString(20)
+                .substring(3),
+              title: e.target.value,
+              isQuery: false,
+              total: 0
+            })
 
+            e.target.value = ''
+            e.target.blur()
+          }
+        }}
+      />
+    </Search>
+
+    <Box
+      css={`
+        margin-left: auto;
+      `}>
       {tags.map(t => (
         <Item
           key={t._id}
@@ -193,8 +206,8 @@ export default compose<
           {...t}
         />
       ))}
-    </Categories>
-  </Module>
+    </Box>
+  </Flex>
 ))
 
 export interface CategoriesHandlers {
@@ -203,7 +216,6 @@ export interface CategoriesHandlers {
   handleClick?: React.MouseEventHandler<HTMLElement>
   handleAdd?: (t: Tag) => any
   handleDelete?: (t: Tag) => any
-  handleSubmit?: React.FormEventHandler<HTMLFormElement>
 }
 
 export interface CategoriesProps extends BoxProps, TagState {

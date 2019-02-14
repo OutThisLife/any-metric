@@ -28,7 +28,6 @@ export default styled<any>(Box)`
   margin: 2px;
   padding: 2px 4px;
   border: 1px solid transparent;
-  border-radius: var(--radius);
   white-space: nowrap;
   overflow: hidden;
   animation: none 0.2s ${timingFunctions('easeOutQuad')} forwards;

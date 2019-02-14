@@ -1,5 +1,5 @@
 import { BaphoTheme } from '@/theme'
-import { rgba, tint } from 'polished'
+import { rgba } from 'polished'
 import { Box } from 'rebass'
 import { compose, defaultProps } from 'recompose'
 import styled, { css } from 'styled-components'
@@ -13,15 +13,13 @@ export default styled<any>('div')`
     display: block;
     position: relative;
     width: 100%;
-    border-radius: var(--radius);
 
     &:focus-within,
     &.focused {
-      --colour: ${theme.colours.focus};
+      --colour: ${theme.colours.base};
 
       input {
-        box-shadow: 0 0 7px 4px ${rgba(theme.colours.secondary, 0.1)},
-          inset 0 0 0 1px ${theme.colours.secondary};
+        box-shadow: inset 0 0 0 1px ${theme.colours.secondary};
       }
     }
 
@@ -36,10 +34,9 @@ export default styled<any>('div')`
       color: var(--colour);
       font-weight: 300;
       font-size: 1rem;
-      padding: 1rem var(--pad);
+      padding: 5px;
       border: 0;
-      border-radius: var(--radius);
-      box-shadow: inset 0 0 0 1px ${tint(0.05, theme.colours.panel)};
+      border: 1px solid ${theme.colours.border};
       transition: ${theme.eases.base};
       background: ${theme.colours.panel};
 

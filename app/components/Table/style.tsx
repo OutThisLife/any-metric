@@ -61,8 +61,8 @@ export default styled<any>(Box)`
     pointer-events: none;
     z-index: 1000;
     position: fixed;
+    top: 0;
     right: 0;
-    bottom: 0;
     max-width: 50vw;
     width: auto;
     max-height: 50vh;

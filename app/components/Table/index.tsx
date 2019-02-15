@@ -5,7 +5,6 @@ import {
   IFloatingFilterParams
 } from 'ag-grid-community/dist/lib/filter/floatingFilter'
 import { AgGridReact } from 'ag-grid-react'
-import { PureComponent } from 'react'
 import Measure from 'react-measure'
 import {
   branch,
@@ -114,10 +113,10 @@ export default compose<TableProps & TableHandles, TableProps>(
               }
             }
           ]}
-          cellMouseOver={e => {
-            const $im = document.getElementById('z-im')
-            console.log(e)
-          }}
+          onCellMouseOver={d =>
+            'image' in d.data &&
+            document.getElementById('z-im').setAttribute('src', d.data.image)
+          }
           onCellMouseOut={() =>
             document.getElementById('z-im').removeAttribute('src')
           }

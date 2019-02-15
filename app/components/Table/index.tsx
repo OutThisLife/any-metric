@@ -1,122 +1,157 @@
-import withHotkeys from '@/lib/withHotkeys'
-import { Product } from '@/server/schema/types'
-import { MeasuredComponentProps, withContentRect } from 'react-measure'
-import { Box } from 'rebass'
-import { compose, setDisplayName, withHandlers } from 'recompose'
+import { moneyFormat } from '@/lib/utils'
+import { Product, Tag } from '@/server/schema/types'
+import { GridApi, GridReadyEvent } from 'ag-grid-community'
+import {
+  IFloatingFilterParams
+} from 'ag-grid-community/dist/lib/filter/floatingFilter'
+import { AgGridReact } from 'ag-grid-react'
+import Measure from 'react-measure'
+import {
+  branch,
+  compose,
+  renderComponent,
+  setDisplayName,
+  withHandlers,
+  withState
+} from 'recompose'
 
-import * as Columns from './Columns'
+import DropdownFilter from './DropdownFilter'
+import RangeFilter from './RangeFilter'
+import SearchFilter from './SearchFilter'
 import Table from './style'
 
-export default compose<TableState & TableProps, TableProps>(
+export default compose<TableProps & TableHandles, TableProps>(
   setDisplayName('table'),
-  withContentRect('bounds'),
-  withHotkeys([
-    {
-      key: 70, // F
-      action: () => {
-        const $row = document.querySelector('article.active-row')
-
-        if ($row instanceof HTMLElement) {
-          ;($row.querySelector('.favourite') as HTMLElement).click()
-        }
-      }
-    },
-    {
-      key: 34, // PgDn
-      action: () =>
-        (document.getElementById('data-table').scrollTop +=
-          window.innerWidth / 5)
-    },
-    {
-      key: 33, // PgUp
-      action: () =>
-        (document.getElementById('data-table').scrollTop -=
-          window.innerWidth / 5)
-    },
-    {
-      key: 40, // ArrDn
-      action: () => (document.getElementById('data-table').scrollTop += 95)
-    },
-    {
-      key: 38, // ArrUp
-      action: () => (document.getElementById('data-table').scrollTop -= 95)
-    },
-    {
-      key: 35, // End
-      action: () => (document.getElementById('data-table').scrollTop = 10e10)
-    },
-    {
-      key: 36, // Home
-      action: () => (document.getElementById('data-table').scrollTop = 0)
-    }
-  ]),
-  withHandlers<TableProps & TableState, TableState>(() => ({
-    handleContextMenu: () => e => {
-      e.preventDefault()
-
-      const $row = (e.target as HTMLElement).closest('article')
-
-      if ($row instanceof HTMLElement) {
-        const $a = $row.querySelector('[class*="menu-"]')
-
-        if ($a instanceof HTMLAnchorElement) {
-          ;($a.closest('[tabindex]') as HTMLElement).focus()
-          $a.click()
-        }
+  branch(({ data = [] }) => !data.length, renderComponent(() => null)),
+  withState('api', 'bindApi', {}),
+  withHandlers<TableProps, TableHandles>(() => ({
+    handleGridReady: ({ bindApi }) => g =>
+      bindApi(g.api, () => g.api.sizeColumnsToFit()),
+    handleResize: ({ api }) => () => {
+      if ('sizeColumnsToFit' in api) {
+        window.requestAnimationFrame(() => api.sizeColumnsToFit())
       }
     }
   }))
-)(({ measureRef, contentRect, columns, data, handleContextMenu }) => (
-  <div
-    ref={measureRef}
-    style={{ height: ' calc(100vh - (var(--offset) * 3))' }}
-    onContextMenu={handleContextMenu}>
-    <Table
-      id="data-table"
-      width="100%"
-      height={
-        isNaN(contentRect.bounds.height) ? 500 : contentRect.bounds.height
-      }
-      itemCount={data.length}
-      itemSize={() => {
-        if ('browser' in process && window.innerWidth <= 1500) {
-          return 80 * 2
-        }
+)(({ handleResize, handleGridReady, data = [], tags = [] }) => (
+  <Measure client onResize={handleResize}>
+    {({ measureRef }) => (
+      <Table
+        ref={measureRef}
+        className="ag-theme-balham"
+        style={{ width: 'calc(100vw - 50px)', height: 'calc(66vh - 25px)' }}>
+        <AgGridReact
+          defaultColDef={{
+            editable: false,
+            sortable: true,
+            resizable: true
+          }}
+          columnDefs={[
+            {
+              headerName: 'Price',
+              field: 'price',
+              floatingFilterComponent: 'RangeFilter',
+              floatingFilterComponentParams: {
+                maxValue: Math.max(...data.map(d => d.price), 0),
+                suppressFilterButton: true
+              },
+              filter: 'agNumberColumnFilter',
+              maxWidth: 100,
+              valueFormatter: d => moneyFormat(d.data.price)
+            },
+            {
+              headerName: '',
+              field: 'image',
+              minWidth: 60,
+              maxWidth: 60,
+              cellRenderer: ({ value }) => `
+                <figure class="im">
+                  <img src=${value} width="80" alt="" />
+                </figure>
+              `
+            },
+            {
+              headerName: 'Name',
+              field: 'title',
+              floatingFilterComponent: 'SearchFilter',
+              floatingFilterComponentParams: {
+                label: 'Search by name',
+                suppressFilterButton: true
+              },
+              filter: 'agTextColumnFilter',
+              suppressMenu: false,
+              sortable: false,
+              width: 600,
+              onCellClicked: d => window.open(d.data.url, '_blank')
+            },
+            {
+              headerName: 'Query',
+              field: 'tags',
+              width: 50,
+              floatingFilterComponent: 'DropdownFilter',
+              floatingFilterComponentParams: {
+                label: 'Filter by query',
+                tags,
+                suppressFilterButton: true
+              },
+              filter: 'agTextColumnFilter',
+              filterParams: {
+                debounceMs: 2000,
+                textFormatter: d => d,
+                textCustomComparator: (_, [d], v) =>
+                  v.length ? d.slug === v : true
+              },
+              valueFormatter: d => d.data.tags.map(t => t.title).join(',')
+            },
+            {
+              headerName: 'Date',
+              field: 'createdAt',
+              width: 100,
+              filter: 'agDateColumnFilter',
+              floatingFilterComponentParams: {
+                suppressFilterButton: true
+              }
+            }
+          ]}
+          onCellMouseOver={d =>
+            'image' in d.data &&
+            document.getElementById('z-im').setAttribute('src', d.data.image)
+          }
+          onCellMouseOut={() =>
+            document.getElementById('z-im').removeAttribute('src')
+          }
+          frameworkComponents={{ SearchFilter, DropdownFilter, RangeFilter }}
+          onGridReady={handleGridReady}
+          rowData={data}
+          debug={true}
+          enableRangeSelection={true}
+          paginationAutoPageSize={true}
+          pagination={true}
+          animateRows={false}
+          rowHeight={60}
+          floatingFilter={true}
+          suppressColumnMoveAnimation={true}
+        />
 
-        return 96
-      }}
-      renderItem={({ index, style }) => (
-        <Box
-          as="article"
-          key={data[index]._id}
-          id={data[index]._id}
-          style={style as React.HTMLAttributes<HTMLElement>['style']}
-          onMouseEnter={e => e.currentTarget.classList.add('active-row')}
-          onMouseLeave={e => e.currentTarget.classList.remove('active-row')}>
-          {columns.map(c => {
-            const C = Columns[c.key.slice(0, 1).toUpperCase() + c.key.slice(1)]
-            return <C key={c.key} item={data[index]} />
-          })}
-        </Box>
-      )}
-    />
-  </div>
+        <img id="z-im" />
+      </Table>
+    )}
+  </Measure>
 ))
 
-export interface TableState extends Partial<MeasuredComponentProps> {
-  handleContextMenu?: React.MouseEventHandler<any>
-}
-
 export interface TableProps {
-  onRef?: (ref: HTMLElement) => void
   data: Product[]
-  columns: Array<{
-    label: string
-    key: string
-  }>
+  tags?: Tag[]
+  api?: GridApi
+  bindApi?: (a: TableProps['api'], b?: () => any) => void
 }
 
-export interface RenderColumnProps {
-  columns?: TableProps['columns']
-  props: (c: any) => { [key: string]: any }
+export interface TableHandles {
+  handleGridReady: (a: GridReadyEvent) => void
+  handleResize: () => void
+}
+
+export interface FloatingFilterProps extends IFloatingFilterParams<{}, {}> {
+  label?: string
+  tags?: Tag[]
 }

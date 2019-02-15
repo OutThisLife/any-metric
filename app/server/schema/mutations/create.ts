@@ -21,8 +21,7 @@ export default <T extends MongoEntry>({
       { _id: entry._id },
       {
         $set: {
-          updatedAt: new Date(),
-          isDeleted: false
+          updatedAt: new Date()
         }
       }
     )

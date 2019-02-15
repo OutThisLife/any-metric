@@ -1,15 +1,10 @@
-import { fadeIn } from '@/pages/_app.styles'
-import { BaphoTheme } from '@/theme'
-import { darken } from 'polished'
 import { ChartCanvas } from 'react-stockcharts'
 import { Box } from 'rebass'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 export default styled<any>(ChartCanvas)`
   z-index: 10;
-  opacity: 0;
   position: relative;
-  animation: ${fadeIn} 0.2s linear forwards;
 
   .react-stockcharts-tooltip-hover {
     z-index: 1;
@@ -26,16 +21,5 @@ export default styled<any>(ChartCanvas)`
 ` as any
 
 export const ZoomedChart = styled<any>(Box)`
-  ${({ theme }: BaphoTheme) => css`
-    padding: calc(var(--pad) * 2);
-    border: 1px solid ${theme.colours.module};
-    border-radius: var(--radius);
-    box-shadow: 0 17px 50px 0 ${darken(0.03, theme.colours.panel)};
-    transition: ${theme.eases.base};
-    background: ${darken(0.33, theme.colours.module)};
-
-    &:hover {
-      border-color: ${theme.colours.focus};
-    }
-  `}
+  padding: calc(var(--pad) * 2);
 `

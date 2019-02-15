@@ -1,15 +1,5 @@
 import dayjs from 'dayjs'
-import faker from 'faker'
 import { DataPoint } from 'typings'
-
-export const randomData = ({ min = 40, max = 50, count = 50 }): DataPoint[] =>
-  [...Array(count).keys()].map(i => ({
-    x: dayjs().add(i, 'day'),
-    y: faker.random.number({
-      min,
-      max
-    })
-  }))
 
 export const groupByKeys = r =>
   Object.keys(r[0]).reduce((m, i) => (m[i] = r.map(d => d[i])) && m, {})

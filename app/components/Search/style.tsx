@@ -1,75 +1,46 @@
-import * as Form from '@/components/Form'
-import { animIn, animOut } from '@/pages/_app.styles'
-import { BaphoTheme } from '@/theme'
-import { timingFunctions } from 'polished'
-import styled, { css, keyframes } from 'styled-components'
+import styled from 'styled-components'
 
-const shakeAnim = keyframes`
-0% {
-  transform: translate(-5px, 0);
-}
+export default styled.form`
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 
-50% {
-  transform: translate(5px, 0);
-}
+  input,
+  select {
+    display: block;
+    width: 100%;
+  }
 
-100% {
-  transform: translate(0, 0);
-}
-`
+  > section {
+    z-index: 100;
+    position: fixed;
+    top: 40px;
+    left: 25px;
+    right: 25px;
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    background: #fff;
 
-export default styled<any>(Form.Container)`
-  ${({ theme }: BaphoTheme) => css`
-    align-self: stretch;
-    position: relative;
-    transition: ${theme.eases.base};
-
-    &.shake {
-      animation: ${shakeAnim} 0.3s ${timingFunctions('easeInOutBack')};
+    nav {
+      margin: 10px auto;
+      padding: 25px;
+      border: 1px solid #bdc3c7;
+      background: #f5f7f7;
     }
 
-    &.loading [type],
-    &.loading section nav {
-      pointer-events: none;
-      cursor: wait;
-      filter: grayscale(1) opacity(0.5);
-    }
-
-    section {
-      z-index: 100;
-      position: absolute;
-      top: 100%;
-      right: 0;
-      left: 0;
-      animation: ${animIn} ${theme.eases.base} forwards;
-
-      &.anim-out {
-        animation-name: ${animOut};
-      }
-
-      > div {
-        position: relative;
-        z-index: 2;
-        padding: var(--pad);
-        overflow: hidden;
-        border-radius: 0 0 var(--radius) var(--radius);
-        transform-origin: left top;
-        background: ${theme.colours.panel};
-      }
-    }
-
-    section nav a {
+    nav > div {
       display: flex;
       align-items: center;
-      padding: 1em 0;
+
+      + div {
+        margin-top: 5px;
+      }
 
       figure {
-        --size: 50px;
-
-        width: var(--size);
-        height: var(--size);
-        margin: 0;
-        background: ${theme.colours.panel};
+        width: 40px;
+        height: 40px;
+        margin: auto;
 
         img {
           width: 100%;
@@ -80,8 +51,13 @@ export default styled<any>(Form.Container)`
 
       aside {
         flex: 1;
-        padding: 0 var(--pad);
+        padding-left: 1em;
+
+        a {
+          display: inline-block;
+          margin: 0 0 4px;
+        }
       }
     }
-  `}
+  }
 `

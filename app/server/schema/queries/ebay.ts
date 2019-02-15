@@ -1,5 +1,5 @@
 import { EbayOperations, getCommerce } from '../../api'
-import { EbayItem, EbayResult, Product, Resolver, Tag } from '../types'
+import { EbayItem, EbayResult, Resolver, Tag } from '../types'
 
 export default (async (
   _,
@@ -13,7 +13,7 @@ export default (async (
       (op: EbayOperations) =>
         new Promise(async resolve => {
           const {
-            searchResult: [sr],
+            searchResult: [sr = {}],
             paginationOutput: [pages]
           } = await getCommerce(
             Object.assign(args, {
@@ -27,7 +27,7 @@ export default (async (
             op,
             total: parseInt(pages.totalEntries[0], 10),
             totalPages: parseInt(pages.totalPages[0], 10),
-            items: (sr.item as EbayItem[]).map(item => {
+            items: ('item' in sr ? (sr.item as EbayItem[]) : []).map(item => {
               for (const [k, v] of Object.entries(item)) {
                 if (Array.isArray(v) && v.length === 1) {
                   const kv = v.pop()
@@ -62,15 +62,12 @@ export default (async (
   if (save) {
     res.total = 0
 
-    const q = { title: keywords, isQuery: true }
+    const q = { title: keywords }
     await mongo.tags.updateOne(
       q,
       {
         $setOnInsert: {
           title: keywords,
-          total: 0,
-          isQuery: true,
-          isDeleted: false,
           createdAt: new Date(),
           updatedAt: new Date()
         }
@@ -80,7 +77,6 @@ export default (async (
 
     if (res.items.length) {
       const tag = await mongo.tags.findOne<Tag>(q)
-      await mongo.tags.updateOne(q, { $set: { isDeleted: false } })
 
       res.items.map(
         async ({
@@ -93,70 +89,56 @@ export default (async (
           unitPrice = {},
           viewItemURL = 'javascript:;'
         }) => {
-          const product = await mongo.products.findOne<Product>({
-            title
-          })
+          const createdAt = new Date(listingInfo.startTime)
+          const image = pictureURLSuperSize
+          const status = sellingStatus.sellingState[0]
+          const tags = [tag._id]
+          const timeLeft = new Date(listingInfo.endTime)
+          const updatedAt = new Date()
+          const url = viewItemURL
 
-          if (product) {
-            await mongo.products.updateOne(
-              { title },
-              { $set: { isDeleted: false, restoredAt: new Date() } }
-            )
-          } else {
-            const createdAt = new Date(listingInfo.startTime)
-            const image = pictureURLSuperSize
-            const status = sellingStatus.sellingState[0]
-            const tags = [tag._id]
-            const timeLeft = new Date(listingInfo.endTime)
-            const updatedAt = new Date()
-            const url = viewItemURL
+          const bids =
+            'bidCount' in sellingStatus ? sellingStatus.bidCount[0] : 0
 
-            const bids =
-              'bidCount' in sellingStatus ? sellingStatus.bidCount[0] : 0
+          const qty =
+            'quantity' in unitPrice ? parseFloat(unitPrice.quantity) : 0
 
-            const qty =
-              'quantity' in unitPrice ? parseFloat(unitPrice.quantity) : 0
+          const price =
+            'currentPrice' in sellingStatus
+              ? parseFloat(sellingStatus.currentPrice[0].__value__)
+              : 0
 
-            const price =
-              'currentPrice' in sellingStatus
-                ? parseFloat(sellingStatus.currentPrice[0].__value__)
-                : 0
+          const shipping =
+            'shippingServiceCost' in shippingInfo
+              ? parseFloat(shippingInfo.shippingServiceCost[0].__value__)
+              : 0
 
-            const shipping =
-              'shippingServiceCost' in shippingInfo
-                ? parseFloat(shippingInfo.shippingServiceCost[0].__value__)
-                : 0
+          const username =
+            'sellerUserName' in sellerInfo
+              ? sellerInfo.sellerUserName[0].__value__
+              : 'anonymous'
 
-            const username =
-              'sellerUserName' in sellerInfo
-                ? sellerInfo.sellerUserName[0].__value__
-                : 'anonymous'
-
-            const { upsertedCount } = await mongo.products.updateOne(
-              { title },
-              {
-                $setOnInsert: {
-                  bids,
-                  createdAt,
-                  image,
-                  price,
-                  qty,
-                  shipping,
-                  status,
-                  tags,
-                  timeLeft,
-                  title,
-                  updatedAt,
-                  url,
-                  username
-                }
-              },
-              { upsert: true }
-            )
-
-            await mongo.tags.updateOne(q, { $inc: { total: upsertedCount } })
-            ;(res.total as number) += upsertedCount
-          }
+          await mongo.products.updateOne(
+            { title },
+            {
+              $setOnInsert: {
+                bids,
+                createdAt,
+                image,
+                price,
+                qty,
+                shipping,
+                status,
+                tags,
+                timeLeft,
+                title,
+                updatedAt,
+                url,
+                username
+              }
+            },
+            { upsert: true }
+          )
         }
       )
     }

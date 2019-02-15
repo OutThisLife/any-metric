@@ -22,10 +22,37 @@ export default class extends Document<{
           <meta httpEquiv="X-UA-Compatible" content="IE=edge,chrome=1" />
           <meta name="robots" content="noindex" />
 
+          <link rel="shortcut icon" href="/static/favicon.ico" />
+
+          <link
+            rel="stylesheet"
+            href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+          />
+
+          <link
+            rel="stylesheet"
+            href="//unpkg.com/ag-grid-community/dist/styles/ag-grid.css"
+          />
+
+          <link
+            rel="stylesheet"
+            href="//unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css"
+          />
+
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `*{box-sizing: border-box; }`
+            }}
+          />
+
           {this.props.styleTags}
 
-          <link rel="shortcut icon" href="/static/favicon.ico" />
           <script src="//polyfill.io/v2/polyfill.min.js" />
+        </Head>
+
+        <body>
+          <Main />
+          <NextScript />
 
           <script
             src="https://www.googletagmanager.com/gtag/js?id=UA-10405648-19"
@@ -37,11 +64,6 @@ export default class extends Document<{
               __html: `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-10405648-19');`
             }}
           />
-        </Head>
-
-        <body>
-          <Main />
-          <NextScript />
         </body>
       </html>
     )

@@ -11,13 +11,7 @@ export default ({ children }) => (
       width: 100%;
       height: 0px;
       padding: 9% 0;
-      border: 1px dotted ${({ theme }) => theme.colours.module};
     `}>
-    <Text
-      css={`
-        color: ${({ theme }) => theme.colours.label};
-      `}>
-      {children}
-    </Text>
+    <Text>{children}</Text>
   </Flex>
 )

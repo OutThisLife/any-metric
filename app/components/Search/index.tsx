@@ -1,186 +1,190 @@
-import * as Form from '@/components/Form'
-import Text from '@/components/Text'
 import { SEARCH_EBAY } from '@/lib/queries'
-import withHotkeys from '@/lib/withHotkeys'
-import { EbayItem, EbayResult } from '@/server/schema/types'
+import { moneyFormat } from '@/lib/utils'
+import { EbayItem, EbayResult, Tag } from '@/server/schema/types'
 import { ApolloClient } from 'apollo-boost'
 import { withApollo } from 'react-apollo'
-import { IoIosSearch } from 'react-icons/io'
+import { AtomSpinner } from 'react-epic-spinners'
 import { Box } from 'rebass'
 import { compose, setDisplayName, withHandlers, withState } from 'recompose'
 
-import Loader from './Loader'
-import Result from './Result'
 import Search from './style'
 
 export default compose<SearchState & SearchHandlers, {}>(
   setDisplayName('header-search'),
-  withState('isOpen', 'toggle', false),
-  withState('items', 'setItems', []),
   withApollo,
-  withHotkeys([
-    {
-      key: 13,
-      action: () => {
-        const $s = document.getElementById('s')
+  withState('isOpen', 'toggleModal', false),
+  withState('items', 'setItems', []),
+  withHandlers<SearchState, SearchHandlers>(
+    ({ toggleModal, setItems, client }) => {
+      const collect = async (
+        variables,
+        cb: (a: EbayResult) => void = () => null
+      ) => {
+        const res = await client.query<{ ebay: EbayResult }>({
+          query: SEARCH_EBAY,
+          variables
+        })
 
-        if (document.activeElement !== $s) {
-          $s.focus()
-        }
+        cb(res.data.ebay)
       }
-    }
-  ]),
-  withHandlers<SearchState, SearchHandlers>(({ toggle, setItems, client }) => {
-    const collect = async (
-      variables,
-      cb: (a: EbayResult) => void = () => null
-    ) => {
-      const res = await client.query<{ ebay: EbayResult }>({
-        query: SEARCH_EBAY,
-        variables
-      })
 
-      cb(res.data.ebay)
-    }
+      return {
+        handleSubmit: () => async ({ target }) => {
+          const el = target as HTMLFormElement
 
-    if ('browser' in process && !('collect' in window)) {
-      ;(window as any).collect = collect
-    }
+          toggleModal(true)
+          setItems([])
 
-    return {
-      handleSubmit: () => async ({ target }) => {
-        const el = target as HTMLFormElement
-
-        el.classList.add('loading')
-
-        toggle(true)
-        setItems([])
-
-        try {
-          collect(
-            {
-              keywords: (document.getElementById('s') as HTMLInputElement)
-                .value,
-              paginationInput: {
-                pageNumber: 1,
-                entriesPerPage: 2
+          try {
+            await collect(
+              {
+                keywords: (document.getElementById('s') as HTMLInputElement)
+                  .value,
+                paginationInput: {
+                  pageNumber: 1,
+                  entriesPerPage: 2
+                }
+              },
+              ({ items = [] }) => {
+                if (items.length) {
+                  window.requestAnimationFrame(() => setItems(items))
+                } else {
+                  toggleModal(false)
+                }
               }
-            },
-            ({ items = [] }) => {
-              el.classList.remove('loading')
+            )
+          } catch (err) {
+            el.reset()
+          }
+        },
 
-              if (items.length) {
-                window.requestAnimationFrame(() => setItems(items))
-              } else {
-                toggle(false, () => {
-                  el.classList.add('shake')
-                  el.addEventListener(
-                    'animationend',
-                    () => el.classList.remove('shake'),
-                    { once: true }
-                  )
-                })
-              }
-            }
-          )
-        } catch (err) {
-          el.classList.remove('loading')
-          el.reset()
-        }
-      },
+        handleReset: () => () => {
+          toggleModal(false)
+          setItems([])
+        },
 
-      handleReset: () => ({ target }) => {
-        const el = (target as HTMLElement).querySelector('section')
+        handleConfirm: () => () => {
+          const el = document.getElementById('s') as HTMLInputElement
+          const { value: keywords } = el
+          const $form = el.closest('form') as HTMLFormElement
 
-        el.addEventListener(
-          'animationend',
-          () => {
-            toggle(false)
-            setItems([])
-          },
-          { once: true }
-        )
+          if (!keywords.length) {
+            return
+          }
 
-        el.classList.add('anim-out')
-      },
-
-      handleConfirm: () => () => {
-        const el = document.getElementById('s') as HTMLInputElement
-        const { value: title } = el
-        const $form = el.closest('form') as HTMLFormElement
-
-        $form.classList.add('loading')
-
-        if (!title.length) {
-          $form.classList.remove('loading')
-          return
-        }
-
-        ;(window as any).collect(
-          {
-            keywords: title,
-            save: true
-          },
-          ({ totalPages }: EbayResult) => {
-            $form.reset()
-            $form.classList.remove('loading')
-
-            let i = parseInt(totalPages as string, 10)
-            while (i > 1) {
-              ;(window as any).collect({
-                keywords: title,
+          try {
+            collect(
+              {
+                keywords,
                 save: true,
                 paginationInput: {
-                  pageNumber: i--,
+                  pageNumber: 1,
                   entriesPerPage: 100
                 }
-              })
-            }
+              },
+              async ({ totalPages }: EbayResult) => {
+                client.reFetchObservableQueries()
+                $form.reset()
+
+                for (
+                  let i = 1, l = parseInt(totalPages as string, 10);
+                  i < l;
+                  i++
+                ) {
+                  try {
+                    await collect({
+                      keywords,
+                      save: true,
+                      paginationInput: {
+                        pageNumber: i,
+                        entriesPerPage: 100
+                      }
+                    })
+
+                    await client.reFetchObservableQueries()
+                  } catch (err) {
+                    console.error(err)
+                    break
+                  }
+                }
+              }
+            )
+          } catch (err) {
+            console.error(err)
+
+            client.reFetchObservableQueries()
+            $form.reset()
           }
-        )
+        }
       }
     }
-  })
-)(({ isOpen, items, handleSubmit, handleReset, handleConfirm }) => (
-  <Search onSubmit={handleSubmit} onReset={handleReset}>
-    <Form.Input
+  )
+)(({ isOpen, handleSubmit, handleReset, handleConfirm, items = [] }) => (
+  <Search
+    method="post"
+    action="javascript:;"
+    onSubmit={handleSubmit}
+    onReset={handleReset}>
+    <input
       required
       id="s"
       name="s"
-      tabIndex={-1}
-      isFocused={isOpen}
       placeholder="Add a product"
-      icon={IoIosSearch}
+      autoComplete="off"
+      spellCheck={false}
     />
 
     {isOpen && (
       <Box as="section">
-        <Box>
-          <Text as="h5" m={0}>
-            Please verify that these initial results represent the data you want
-            to pull &mdash;
-          </Text>
+        <h5>
+          Please verify that these initial results represent the data you want
+          to pull &mdash;
+        </h5>
+        <nav>
+          {items.length ? (
+            items.map((item, i) => (
+              <div key={i + item._id}>
+                {'galleryURL' in item && (
+                  <figure>
+                    <a href={item.viewItemURL} target="_blank" rel="noopener">
+                      <img src={item.galleryURL} alt={item.title} />
+                    </a>
+                  </figure>
+                )}
 
-          <Box
-            as="nav"
-            css={`
-              padding: var(--offset);
-            `}>
-            {items.length ? (
-              items.map((item, i) => <Result key={i + item._id} {...item} />)
-            ) : (
-              <Loader />
-            )}
-          </Box>
+                <aside>
+                  <a
+                    href={item.viewItemURL}
+                    target="_blank"
+                    rel="noopener"
+                    dangerouslySetInnerHTML={{ __html: item.title }}
+                  />
 
-          <Form.Button type="button" onClick={handleConfirm}>
-            Looks good, add to list
-          </Form.Button>
-
-          <Form.Button type="reset" variant="noborder">
-            Cancel
-          </Form.Button>
-        </Box>
+                  {'currentPrice' in item.sellingStatus && (
+                    <p>
+                      {moneyFormat(
+                        item.sellingStatus.currentPrice[0].__value__
+                      )}
+                    </p>
+                  )}
+                </aside>
+              </div>
+            ))
+          ) : (
+            <AtomSpinner
+              className="spinner"
+              size={120}
+              color="#ddd"
+              animationDuration={1337}
+              style={{ gridColumn: '1 / -1', margin: 'auto' }}
+            />
+          )}
+        </nav>
+        <button type="button" onClick={handleConfirm}>
+          Looks good, watch this query
+        </button>
+        &nbsp;
+        <button type="reset">Cancel</button>
       </Box>
     )}
   </Search>
@@ -188,14 +192,17 @@ export default compose<SearchState & SearchHandlers, {}>(
 
 export interface SearchState {
   items: EbayItem[]
-  isOpen: boolean
-  setItems?: (r: EbayItem[] | string[]) => void
-  toggle?: (b: boolean, cb?: () => void) => void
   client?: ApolloClient<{}>
+  tags?: Tag[]
+  isOpen: boolean
+  isForm: boolean
+  setItems?: (r: EbayItem[] | string[]) => void
+  toggleModal?: (b: boolean, cb?: () => void) => void
+  toggleForm?: (b: boolean, cb?: () => void) => void
 }
 
 export interface SearchHandlers {
-  handleSubmit?: React.KeyboardEventHandler<HTMLFormElement>
-  handleReset?: React.MouseEventHandler<HTMLButtonElement>
-  handleConfirm?: React.MouseEventHandler<HTMLButtonElement>
+  handleSubmit?: React.FormEventHandler<HTMLFormElement>
+  handleReset?: React.FormEventHandler<HTMLElement>
+  handleConfirm?: React.FormEventHandler<HTMLElement>
 }

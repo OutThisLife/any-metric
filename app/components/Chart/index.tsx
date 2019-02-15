@@ -1,88 +1,165 @@
 import { Product } from '@/server/schema/types'
-import { BaphoTheme } from '@/theme'
-import { lighten } from 'polished'
 import { OrbitSpinner } from 'react-epic-spinners'
-import { MeasuredComponentProps, withContentRect } from 'react-measure'
+import Measure from 'react-measure'
+import { sma } from 'react-stockcharts/lib/indicator'
+import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
+import { last } from 'react-stockcharts/lib/utils'
 import {
   compose,
+  flattenProp,
   lifecycle,
   setDisplayName,
-  shouldUpdate,
   withHandlers,
-  withState
+  withState,
+  withStateHandlers
 } from 'recompose'
-import { withTheme } from 'styled-components'
 
 import Loader from './Loader'
 import Price from './Price'
 
-export default compose<ChartProps & BaphoTheme, ChartProps>(
+export const MA = sma()
+  .options({ windowSize: 4, sourcePath: 'price' })
+  .merge((d, c) => ({ ...d, MA: c }))
+  .accessor(d => d.MA)
+
+export default compose<ChartProps, ChartProps>(
   setDisplayName('price'),
-  withTheme,
-  withContentRect('bounds'),
   withState('loading', 'setLoading', true),
-  withHandlers<ChartProps, ChartProps>(({ loading, setLoading }) => ({
-    loadChart: ({ data }) => () => {
-      if (!('browser' in process) || !data.length) {
-        return
-      } else if (!loading && !data.length) {
-        setLoading(true)
-        return
-      }
+  withHandlers<ChartProps & ChartCVProps, ChartProps>(
+    ({ loading, setLoading }) => ({
+      loadChart: ({ data }) => () => {
+        if (!('browser' in process) || !data.length) {
+          return
+        } else if (!loading && !data.length) {
+          setLoading(true)
+          return
+        }
 
-      const el = document.querySelector('.chart-spinner')
-
-      if (el instanceof HTMLElement) {
-        window.requestAnimationFrame(() => {
-          el.style.opacity = '0'
+        window.requestAnimationFrame(() =>
           setTimeout(() => setLoading(false), 1100)
-        })
+        )
+      },
+      generateChart: ({ data: initialData, width, height }) => (
+        filterFunc = () => true
+      ) => {
+        const calculatedData = MA(
+          initialData.filter(filterFunc).map(d => ({
+            ...d,
+            date: new Date(d.createdAt),
+            close: d.price,
+            volume: initialData
+              .filter(({ slug }) => slug === d.slug)
+              .reduce((acc, { qty }) => (acc += qty), 0)
+          }))
+        )
+
+        const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
+          d => d.date
+        )
+
+        const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(
+          calculatedData
+        )
+
+        const start = xAccessor(last(data))
+        const end = xAccessor(
+          data[Math.max(0, data.length - Math.round(initialData.length / 2))]
+        )
+        const xExtents = [start, end]
+
+        const margin = {
+          top: 30,
+          right: 90,
+          bottom: 30,
+          left: 30
+        }
+
+        const tickStyle: any = {
+          fontSize: 12,
+          gridWidth: width - margin.left - margin.right,
+          gridHeight: height - margin.top - margin.bottom,
+          tickStrokeDashArray: 'LongDashDotDot',
+          tickStrokeOpacity: 0.05,
+          tickStrokeWidth: 1
+        }
+
+        return {
+          data,
+          xScale,
+          displayXAccessor,
+          xAccessor,
+          xExtents,
+          margin,
+          tickStyle
+        }
       }
+    })
+  ),
+  withStateHandlers<{}, {}, ChartProps>(
+    ({ generateChart }) => ({ chart: generateChart() }),
+    {
+      updateChart: (_, { generateChart }) => (filterFunc = () => true) => ({
+        chart: generateChart(filterFunc)
+      })
     }
-  })),
-  shouldUpdate<ChartProps>((_, np) => np.data.length > 5),
+  ),
   lifecycle<ChartProps, {}>({
     componentDidMount() {
       this.props.loadChart()
+      ;(window as any).updateChart = fn =>
+        this.props.setLoading(true, async () => {
+          await this.props.updateChart(fn)
+
+          window.requestAnimationFrame(() =>
+            setTimeout(() => this.props.setLoading(false), 1000)
+          )
+        })
     }
-  })
-)(({ theme, loading, measureRef, contentRect, ...props }) => {
-  const isDesktop = 'browser' in process && window.innerWidth >= 1025
-  const width = contentRect.bounds.width
-  const height = width * (isDesktop ? 0.7 : 0.4)
+  }),
+  flattenProp('chart')
+)(({ loading, ...props }) => (
+  <Measure bounds>
+    {({ measureRef, contentRect: rect }) => (
+      <div
+        ref={measureRef}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          width: 'calc(100vw - 50px)',
+          height: 'calc(33vh - 25px)',
+          overflow: 'hidden'
+        }}>
+        {loading ? (
+          <OrbitSpinner
+            className="chart-spinner"
+            size={120}
+            color="#ddd"
+            animationDuration={668}
+            style={{}}
+          />
+        ) : (
+          <Price
+            width={rect.bounds.width}
+            height={rect.bounds.height}
+            ratio={1}
+            {...props}
+          />
+        )}
+      </div>
+    )}
+  </Measure>
+))
 
-  return (
-    <div
-      ref={measureRef}
-      id="chart-container"
-      style={{
-        position: 'relative',
-        width: '100%'
-      }}>
-      {loading ? (
-        <OrbitSpinner
-          className="chart-spinner"
-          size={120}
-          color={lighten(0.1, theme.colours.module)}
-          animationDuration={668}
-          style={{
-            margin: '-50% auto 0',
-            transition: 'opacity 1s linear'
-          }}
-        />
-      ) : (
-        <Price isDesktop={isDesktop} width={width} height={height} {...props} />
-      )}
-    </div>
-  )
-})
-
-export interface ChartProps extends Partial<MeasuredComponentProps> {
+export interface ChartProps {
   data?: any[]
-  isDesktop?: boolean
   loading?: boolean
-  setLoading?: (b: boolean) => void
+  setLoading?: (b: boolean, cb?: any) => void
   loadChart?: () => void
+  chart?: ChartState
+  generateChart?: (a?: (p?: Product) => boolean) => ChartState
+  updateChart?: (a?: (p?: Product) => boolean) => void
 }
 
 export interface ChartCVProps {
@@ -97,6 +174,7 @@ export interface ChartCVProps {
 }
 
 export interface ChartState extends ChartCVProps {
+  onRef?: (ref: HTMLElement) => void
   xScale: any[]
   displayXAccessor: any
   xAccessor: any

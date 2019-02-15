@@ -21,12 +21,9 @@ export default gql`
     google(keywords: String!): CrawlResult
     products(paginationInput: Pagination): [Product]
     tags: [Tag]
-    theme: String
   }
 
   type Mutation {
-    setTheme(theme: String!): String
-
     createTag(input: TagInput): Tag
     createProduct(input: ProductInput): Product
 
@@ -56,7 +53,6 @@ export default gql`
   }
 
   type Tag @cacheControl(maxAge: 10e5) {
-    isQuery: Boolean
     slug: String
     title: String
     total: Int
@@ -65,18 +61,12 @@ export default gql`
   extend type Product {
     _id: ID!
     createdAt: Date
-    deletedAt: Date
-    isDeleted: Boolean
-    restoredAt: Date
     updatedAt: Date
   }
 
   extend type Tag {
     _id: ID!
     createdAt: Date
-    deletedAt: Date
-    isDeleted: Boolean
-    restoredAt: Date
     updatedAt: Date
   }
 
@@ -136,7 +126,6 @@ export default gql`
   input TagInput {
     title: String
     total: Int
-    isQuery: Boolean
   }
 
   input ProductInput {
@@ -174,7 +163,6 @@ export interface Product extends MongoEntry {
 }
 
 export interface Tag extends MongoEntry {
-  isQuery?: boolean
   slug?: string
   total?: number
 }
@@ -193,8 +181,6 @@ export interface MongoEntry {
   _id: string
   title?: string
   createdAt?: Date
-  deletedAt?: Date
-  isDeleted?: boolean
   updatedAt?: Date
 }
 

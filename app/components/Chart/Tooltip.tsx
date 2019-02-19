@@ -1,24 +1,20 @@
 import { moneyFormat, numFormat } from '@/lib/utils'
 import { Product } from '@/server/schema/types'
-import { BaphoTheme } from '@/theme'
 import { ClickCallback } from 'react-stockcharts/lib/interactive'
 import { HoverTooltip } from 'react-stockcharts/lib/tooltip'
 import { compose, defaultProps, setDisplayName } from 'recompose'
-import { withTheme } from 'styled-components'
 
-export default compose<TooltipProps & BaphoTheme, TooltipProps>(
+export default compose<TooltipProps, TooltipProps>(
   setDisplayName('chart-toolip'),
   defaultProps({
     fontSize: 11
-  }),
-  withTheme
-)(({ theme, fontSize }) => (
+  })
+)(({ fontSize }) => (
   <>
     <HoverTooltip
       yAccessor={d => d.close}
       fontSize={fontSize}
       bgOpacity={0}
-      fontFill={theme.colours.base}
       fill="transparent"
       stroke="transparent"
       tooltipContent={({

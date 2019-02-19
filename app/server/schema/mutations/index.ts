@@ -5,7 +5,6 @@ import createProduct from './createProduct'
 import createTag from './createTag'
 import modify from './modify'
 import remove from './remove'
-import setTheme from './setTheme'
 
 export const convertId = (id: string) => ({
   _id: new mongoose.mongo.ObjectID(id)
@@ -18,6 +17,5 @@ export default {
   createProduct,
   createTag,
   modify,
-  remove,
-  setTheme
+  remove
 }

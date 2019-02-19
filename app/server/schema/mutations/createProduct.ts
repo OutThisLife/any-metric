@@ -6,7 +6,6 @@ export default create<Product>({
   defaultValues: {
     bids: 0,
     image: '',
-    isQuery: false,
     price: 0,
     qty: 0,
     shipping: 0,

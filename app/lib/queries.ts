@@ -1,16 +1,12 @@
 import { Product, Tag } from '@/server/schema/types'
-import { BaphoTheme } from '@/theme'
 import gql from 'graphql-tag'
-import { ChildProps, DataProps, graphql } from 'react-apollo'
+import orderBy from 'lodash/orderBy'
+import { graphql } from 'react-apollo'
 
 const tagFragment = gql`
   fragment TagFields on Tag {
     _id
     createdAt
-    deletedAt
-    isDeleted
-    isQuery
-    restoredAt
     slug
     title
     total
@@ -26,12 +22,9 @@ const productFragment = gql`
     }
     bids
     createdAt
-    deletedAt
     image
-    isDeleted
     price
     qty
-    restoredAt
     shipping
     slug
     status
@@ -42,9 +35,11 @@ const productFragment = gql`
   }
 `
 
+// ------------------------------------------------
+
 export const GET_PRODUCTS = gql`
-  query getProducts {
-    products {
+  query getProducts($paginationInput: Pagination) {
+    products(paginationInput: $paginationInput) {
       ...ProductFields
     }
   }
@@ -52,6 +47,15 @@ export const GET_PRODUCTS = gql`
   ${productFragment}
   ${tagFragment}
 `
+
+export const getProducts = (options = {}) =>
+  graphql<{}, { products: Product[] }>(GET_PRODUCTS, {
+    options,
+    props: ({ data: { products = [], ...data } }) => ({
+      data,
+      products: orderBy(products, 'createdAt', 'asc')
+    })
+  })
 
 // ------------------------------------------------
 
@@ -77,35 +81,11 @@ export const CREATE_TAG = gql`
 
 export const getTags = (options = {}) =>
   graphql<{}, { tags: Tag[] }>(GET_TAGS, {
-    ...options,
+    options,
     props: ({ data: { tags = [], ...data } }) => ({
       data,
-      initialTags: tags
+      tags
     })
-  })
-
-// ------------------------------------------------
-
-export const GET_THEME = gql`
-  query getTheme {
-    theme
-  }
-`
-
-export const SET_THEME = gql`
-  mutation setTheme($theme: String!) {
-    setTheme(theme: $theme)
-  }
-`
-
-export const getTheme = () =>
-  graphql<
-    {},
-    { theme: string },
-    DataProps<{ theme: string }>,
-    ChildProps<BaphoTheme>
-  >(GET_THEME, {
-    props: ({ data: { theme } }) => ({ theme: JSON.parse(theme) })
   })
 
 // ------------------------------------------------

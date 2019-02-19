@@ -1,12 +1,4 @@
-import {
-  complement,
-  desaturate,
-  getLuminance,
-  lighten,
-  rgba,
-  shade,
-  tint
-} from 'polished'
+import { darken, lighten } from 'polished'
 import { ThemeProps } from 'styled-components'
 
 export const siteName = '$ɮΔք𝔥Ø𝔪Δ✞ʀɨჯ'
@@ -14,61 +6,38 @@ export const siteName = '$ɮΔք𝔥Ø𝔪Δ✞ʀɨჯ'
 export const between = (min = 1, max = 2, vmin = 400, vmax = 2000) =>
   `calc(${min}px + (${max} - ${min}) * (100vw - ${vmin}px) / ${vmax - vmin})`
 
-export const createTheme = (secondary: string) => {
+export const createTheme = () => {
   const colours = {
-    base: '#fafafa',
-    panel: '#020202',
-    secondary,
+    base: '#111',
+    panel: '#fff',
+    secondary: '#040D90',
+    focus: '#E6F4EA',
 
     get module() {
-      return lighten(0.03, this.panel)
-    },
-
-    get focus() {
-      const inverted = complement(this.secondary)
-
-      if (getLuminance(inverted) < 0.33) {
-        return tint(0.2, inverted)
-      }
-
-      return inverted
+      return darken(0.03, this.panel)
     },
 
     get muted() {
-      return desaturate(0.7, shade(0.5, this.secondary))
+      return lighten(0.2, this.base)
     },
 
     get label() {
-      return desaturate(0.4, shade(0.5, this.secondary))
+      return lighten(0.4, this.base)
     },
 
     get border() {
-      return lighten(0.1, this.panel)
-    },
-
-    get scrollbarHandle() {
-      return rgba(this.secondary, 0.3)
-    },
-
-    get scrollbarBg() {
-      return tint(0.01, this.module)
+      return darken(0.1, this.panel)
     },
 
     price: {
-      up: '#73AD0D',
-      down: '#E60A00',
-      hl: '#f4c37d'
+      up: '#207e11',
+      down: '#c53929'
     }
   }
 
   const fonts = {
     size: between(10, 13),
-    list: ['Roboto'],
-
-    get src() {
-      const url = 'https://fonts.googleapis.com/css?family'
-      return `${url}=${this.list.join('|').replace(/\s+/g, '+')}`
-    },
+    list: ['Arial', 'sans-serif'],
 
     get family() {
       return this.list.join(',')
@@ -77,11 +46,8 @@ export const createTheme = (secondary: string) => {
 
   const eases = {
     easing: 'cubic-bezier(0.165, 0.84, 0.44, 1)',
-    delay: '0.125s',
-
-    get base() {
-      return `0.234s ${this.easing}`
-    }
+    delay: '0s',
+    base: 'none'
   }
 
   return {
@@ -93,6 +59,7 @@ export const createTheme = (secondary: string) => {
 
 // ---------------------------
 
-const theme = createTheme('#6236ba')
+const theme = createTheme()
+
 export type BaphoTheme = Partial<ThemeProps<typeof theme>>
 export default theme

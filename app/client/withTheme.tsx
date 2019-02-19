@@ -1,14 +1,7 @@
-import { getTheme } from '@/lib/queries'
-import { BaphoTheme } from '@/theme'
-import { compose } from 'recompose'
 import { ThemeProvider } from 'styled-components'
 
-export default compose<WithThemeProps & BaphoTheme, WithThemeProps>(getTheme())(
-  ({ children, theme }) => (
-    <ThemeProvider theme={theme}>{children({ theme })}</ThemeProvider>
-  )
-)
+import theme from '../theme'
 
-export interface WithThemeProps {
-  children: (a: BaphoTheme) => JSX.Element
-}
+export default ({ children }) => (
+  <ThemeProvider theme={theme}>{children({ theme })}</ThemeProvider>
+)

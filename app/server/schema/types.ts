@@ -19,8 +19,11 @@ export default gql`
     ): EbayResult
 
     google(keywords: String!): CrawlResult
-    products(paginationInput: Pagination): [Product]
+    products(paginationInput: Pagination, input: JSON): [Product]
     tags: [Tag]
+
+    totalProducts: Int
+    totalTags: Int
   }
 
   type Mutation {

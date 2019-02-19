@@ -1,9 +1,8 @@
-import { Product, Tag } from '@/server/schema/types'
+import { Product } from '@/server/schema/types'
 import gql from 'graphql-tag'
-import orderBy from 'lodash/orderBy'
 import { graphql } from 'react-apollo'
 
-const tagFragment = gql`
+export const tagFragment = gql`
   fragment TagFields on Tag {
     _id
     createdAt
@@ -14,7 +13,7 @@ const tagFragment = gql`
   }
 `
 
-const productFragment = gql`
+export const productFragment = gql`
   fragment ProductFields on Product {
     _id
     tags {
@@ -48,14 +47,11 @@ export const GET_PRODUCTS = gql`
   ${tagFragment}
 `
 
-export const getProducts = (options = {}) =>
-  graphql<{}, { products: Product[] }>(GET_PRODUCTS, {
-    options,
-    props: ({ data: { products = [], ...data } }) => ({
-      data,
-      products: orderBy(products, 'createdAt', 'asc')
-    })
-  })
+export const GET_TOTAL_PRODUCTS = gql`
+  query getTotalProducts {
+    totalProducts
+  }
+`
 
 // ------------------------------------------------
 
@@ -78,15 +74,6 @@ export const CREATE_TAG = gql`
 
   ${tagFragment}
 `
-
-export const getTags = (options = {}) =>
-  graphql<{}, { tags: Tag[] }>(GET_TAGS, {
-    options,
-    props: ({ data: { tags = [], ...data } }) => ({
-      data,
-      tags
-    })
-  })
 
 // ------------------------------------------------
 

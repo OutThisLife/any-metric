@@ -28,13 +28,10 @@ module.exports = ({ app, cache }) => {
   try {
     if (process.env.MONGO_URL) {
       ;(async () => {
-        const db = await mongoose.connect(
-          process.env.MONGO_URL,
-          {
-            dbName: 'datasets',
-            useNewUrlParser: true
-          }
-        )
+        const db = await mongoose.connect(process.env.MONGO_URL, {
+          dbName: 'datasets',
+          useNewUrlParser: true
+        })
 
         options.context.mongo = db.connection
         ;['tags', 'products', 'theme'].forEach(

@@ -40,7 +40,7 @@ export default class extends PureComponent<FloatingFilterProps, {}> {
         </option>
 
         {tags.map(t => (
-          <option key={t._id} value={t.slug}>
+          <option key={t._id} value={t._id}>
             {t.title}
           </option>
         ))}

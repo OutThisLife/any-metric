@@ -3,9 +3,11 @@ import { Product, Resolver, Tag } from '../types'
 export default (async (
   _,
   {
-    paginationInput = {
-      pageNumber: 1,
-      entriesPerPage: 1000
+    paginationInput,
+    input = {
+      status: {
+        $ne: 'EndedWithoutSales'
+      }
     }
   },
   { mongo }
@@ -13,11 +15,7 @@ export default (async (
   const tags = await mongo.tags.find<Tag>().toArray()
 
   return (await mongo.products
-    .find<Product>({
-      status: {
-        $ne: 'EndedWithoutSales'
-      }
-    })
+    .find<Product>(input)
     .skip(paginationInput.entriesPerPage * (paginationInput.pageNumber - 1))
     .limit(paginationInput.entriesPerPage)
     .toArray()).map(d => ({
@@ -35,3 +33,6 @@ export default (async (
       .filter(t => t)
   }))
 }) as Resolver
+
+export const totalProducts = (async (_, __, { mongo }): Promise<number> =>
+  (await mongo.products.find<Product>().toArray()).length) as Resolver

@@ -28,19 +28,16 @@ export const cache = LRU({
 nextApp.prepare().then(() => {
   const app = express()
 
-  if (!dev) {
-    app
-      .use(helmet())
-      .use(morgan('combined', {}))
-      .use(
-        compression({
-          level: 6,
-          filter: () => true
-        })
-      )
-  }
-
   app
+    .use(helmet())
+    .use(morgan('combined', {}))
+    .use(
+      compression({
+        level: 6,
+        filter: () => true
+      })
+    )
+
     .use((req, _, resolve) => {
       if (!('API_URL' in nextApp.nextConfig.publicRuntimeConfig)) {
         Object.defineProperty(

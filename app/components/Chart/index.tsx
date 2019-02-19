@@ -107,13 +107,15 @@ export default compose<ChartProps, ChartProps>(
     componentDidMount() {
       this.props.loadChart()
       ;(window as any).updateChart = fn =>
-        this.props.setLoading(true, async () => {
-          await this.props.updateChart(fn)
+        this.props.setLoading(true, async () => this.props.updateChart(fn))
+    },
 
-          window.requestAnimationFrame(() =>
-            setTimeout(() => this.props.setLoading(false), 1000)
-          )
-        })
+    componentDidUpdate() {
+      if (this.props.data.length >= 25) {
+        window.requestAnimationFrame(() =>
+          setTimeout(() => this.props.setLoading(false), 1000)
+        )
+      }
     }
   }),
   flattenProp('chart')
@@ -131,7 +133,7 @@ export default compose<ChartProps, ChartProps>(
           height: 'calc(33vh - 25px)',
           overflow: 'hidden'
         }}>
-        {loading ? (
+        {loading || props.data.length < 25 ? (
           <OrbitSpinner
             className="chart-spinner"
             size={120}

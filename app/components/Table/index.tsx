@@ -103,9 +103,6 @@ export default compose<TableProps & TableHandles, {}>(
       window.requestAnimationFrame(() => api.sizeColumnsToFit())
   })),
   graphql<{}, { totalProducts: number }>(GET_TOTAL_PRODUCTS, {
-    options: {
-      notifyOnNetworkStatusChange: true
-    },
     props: ({ data: { totalProducts = 0, ...data } }) => ({
       data,
       totalProducts

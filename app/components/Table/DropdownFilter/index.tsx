@@ -1,14 +1,16 @@
 import { REMOVE_DOC } from '@/lib/queries'
+import { ApolloClient } from 'apollo-boost'
 import { PureComponent } from 'react'
-import { Mutation } from 'react-apollo'
+import { graphql, MutationFn, withApollo } from 'react-apollo'
+import { compose, withHandlers, withState } from 'recompose'
 
 import { FloatingFilterProps } from '..'
 
-export default class extends PureComponent<
-  FloatingFilterProps,
-  { value: string }
-> {
-  public state = { value: '' }
+const Filter = class extends PureComponent<DropdownFilterProps, {}> {
+  public static defaultProps = {
+    handleDrop: () => null,
+    handleFlush: () => null
+  }
 
   constructor(props) {
     super(props)
@@ -18,13 +20,13 @@ export default class extends PureComponent<
     return
   }
 
-  public componentDidUpdate(_, prevState) {
-    if (prevState.value !== this.state.value) {
+  public componentDidUpdate(prevProps) {
+    if (prevProps.value !== this.props.value) {
       this.props.onFloatingFilterChanged({
         model: {
           filterType: 'object',
           type: 'equals',
-          filter: this.state.value,
+          filter: this.props.value,
           filterTo: null
         }
       })
@@ -32,15 +34,20 @@ export default class extends PureComponent<
   }
 
   public render() {
-    const { label, tags = [] } = this.props
+    const {
+      label,
+      value,
+      tags = [],
+      setValue,
+      handleDrop,
+      handleFlush
+    } = this.props
 
     return (
       <>
         <select
-          value={this.state.value}
-          onChange={({ target }) =>
-            this.setState({ value: target.value.trim() })
-          }>
+          value={value}
+          onChange={({ target }) => setValue(target.value.trim())}>
           <option value="">{label}</option>
 
           {tags.map(t => (
@@ -49,38 +56,61 @@ export default class extends PureComponent<
             </option>
           ))}
         </select>
-
-        <Mutation mutation={REMOVE_DOC}>
-          {mutate => (
-            <>
-              <a
-                style={{
-                  pointerEvents: this.state.value.length ? 'inherit' : 'none',
-                  opacity: this.state.value.length ? 1 : 0.2
-                }}
-                href="javascript:;"
-                onClick={() =>
-                  mutate({
-                    variables: {
-                      objectId: this.state.value,
-                      collectionName: 'tags'
-                    }
-                  })
-                }>
-                drop
-              </a>
-              &mdash;
-              <a
-                href="javascript:;"
-                onClick={() =>
-                  mutate({ variables: { collectionName: 'allTags' } })
-                }>
-                flushdb
-              </a>
-            </>
-          )}
-        </Mutation>
+        <a
+          style={{
+            pointerEvents: value.length ? 'inherit' : 'none',
+            opacity: value.length ? 1 : 0.2
+          }}
+          href="javascript:;"
+          onClick={handleDrop}>
+          drop
+        </a>
+        &mdash;
+        <a href="javascript:;" onClick={handleFlush}>
+          flushdb
+        </a>
       </>
     )
   }
+}
+
+export default compose<DropdownFilterHandles, {}>(
+  withState('value', 'setValue', ''),
+  withApollo,
+  graphql<DropdownFilterProps>(REMOVE_DOC, {
+    props: ({ mutate, data, ownProps: { client } }) => ({
+      data,
+      mutate: async opts => {
+        await mutate(opts)
+        await client.reFetchObservableQueries()
+      }
+    })
+  }),
+  withHandlers<DropdownFilterProps, DropdownFilterHandles>(({ mutate }) => ({
+    handleFlush: () => () =>
+      mutate({ variables: { collectionName: 'allTags' } }),
+
+    handleDrop: ({ value }) => () =>
+      mutate({
+        variables: {
+          objectId: value,
+          collectionName: 'tags'
+        }
+      })
+  }))
+)(Filter)
+
+export interface DropdownFilterProps
+  extends FloatingFilterProps,
+    DropdownFilterHandles {
+  value?: string
+  setValue?: (v: string) => void
+  mutate?: MutationFn
+  client?: ApolloClient<{}>
+  [key: string]: any
+}
+
+export interface DropdownFilterHandles {
+  handleDrop: React.MouseEventHandler<HTMLAnchorElement>
+  handleFlush: React.MouseEventHandler<HTMLAnchorElement>
 }

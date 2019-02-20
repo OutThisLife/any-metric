@@ -3,7 +3,7 @@ import { Product, Resolver, Tag } from '../types'
 
 export default (async (
   _,
-  { paginationInput, input = {} },
+  { paginationInput = { pageNumber: 1, entriesPerPage: 1 }, input = {} },
   { mongo }
 ): Promise<Product[]> => {
   const args = Object.assign({}, input, {

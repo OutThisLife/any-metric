@@ -73,16 +73,13 @@ export const generateChart = (initialData = []) => {
     tickStyle
   }
 }
-
 export default compose<ChartProps, ChartProps>(
   setDisplayName('price'),
   withState('isLoading', 'setLoading', true),
   withStateHandlers<{}, {}, ChartProps>(
     { chart: generateChart() },
     {
-      updateChart: () => (newData = []) => ({
-        chart: generateChart(newData)
-      })
+      updateChart: () => (data = []) => ({ chart: generateChart(data) })
     }
   ),
   lifecycle<ChartProps, {}>({

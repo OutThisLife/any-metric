@@ -1,4 +1,4 @@
-import { moneyFormat } from '@/lib/utils'
+import { dateFormat, moneyFormat } from '@/lib/utils'
 import { entriesPerPage, HomeState } from '@/pages/Dashboard'
 import { Tag } from '@/server/schema/types'
 import { GridApi, GridOptions, IDatasource } from 'ag-grid-community'
@@ -7,6 +7,7 @@ import {
 } from 'ag-grid-community/dist/lib/filter/floatingFilter'
 import { AgGridReact } from 'ag-grid-react'
 import { ObjectID } from 'bson'
+import orderBy from 'lodash/orderBy'
 import Measure from 'react-measure'
 import {
   compose,
@@ -17,8 +18,6 @@ import {
 } from 'recompose'
 
 import DropdownFilter from './DropdownFilter'
-import RangeFilter from './RangeFilter'
-import SearchFilter from './SearchFilter'
 import Table from './style'
 
 export default compose<TableProps & TableHandles, TableProps>(
@@ -27,13 +26,13 @@ export default compose<TableProps & TableHandles, TableProps>(
   withHandlers<TableProps, TableHandles>(() => ({
     bindData: ({ api, total, fetchMore }) => () => ({
       rowCount: null,
-      getRows: args =>
+      getRows: params =>
         fetchMore(
           {
-            pageNumber: args.startRow,
-            entriesPerPage: args.endRow
+            pageNumber: params.startRow,
+            entriesPerPage
           },
-          Object.entries(args.filterModel).reduce((acc, [k, v]) => {
+          Object.entries(params.filterModel).reduce((acc, [k, v]) => {
             const obj = v as any
 
             switch (k) {
@@ -60,15 +59,25 @@ export default compose<TableProps & TableHandles, TableProps>(
           }, {})
         )
           .then(({ data: { products = [] } }: any) => {
-            args.successCallback(products, total)
+            if (params.sortModel.length) {
+              params.successCallback(
+                orderBy(products, ...Object.values(params.sortModel[0])),
+                total
+              )
+            } else {
+              params.successCallback(
+                orderBy(products, 'createdAt', 'desc'),
+                total
+              )
+            }
 
-            window.requestAnimationFrame(() => {
-              api.sizeColumnsToFit()
+            api.sizeColumnsToFit()
 
-              if ('updateChart' in window) {
-                ;(window as any).updateChart(products)
-              }
-            })
+            if ('updateChart' in window) {
+              ;(window as any).updateChart(
+                orderBy(products, 'createdAt', 'asc')
+              )
+            }
           })
           .catch(console.error)
     }),
@@ -91,12 +100,6 @@ export default compose<TableProps & TableHandles, TableProps>(
           {
             headerName: 'Price',
             field: 'price',
-            floatingFilterComponent: 'RangeFilter',
-            floatingFilterComponentParams: {
-              maxValue: 100000,
-              suppressFilterButton: true
-            },
-            filter: 'agNumberColumnFilter',
             maxWidth: 100,
             valueFormatter: d => {
               try {
@@ -154,19 +157,21 @@ export default compose<TableProps & TableHandles, TableProps>(
             headerName: 'Date',
             field: 'createdAt',
             width: 100,
-            filter: 'agDateColumnFilter',
-            floatingFilterComponentParams: {
-              suppressFilterButton: true
+            valueFormatter: d => {
+              try {
+                return dateFormat(d.data.createdAt)
+              } catch {
+                return ''
+              }
             }
           }
         ],
         animateRows: false,
         cacheBlockSize: entriesPerPage,
         cacheOverflowSize: 2,
-        debug: true,
         enableRangeSelection: true,
         floatingFilter: true,
-        frameworkComponents: { SearchFilter, DropdownFilter, RangeFilter },
+        frameworkComponents: { DropdownFilter },
         infiniteInitialRowCount: 1,
         maxConcurrentDatasourceRequests: 2,
         paginationPageSize: entriesPerPage,

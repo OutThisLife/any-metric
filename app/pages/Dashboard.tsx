@@ -8,7 +8,7 @@ import { graphql, GraphqlQueryControls } from 'react-apollo'
 import { Box } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
-export const entriesPerPage = 100
+export const entriesPerPage = 50
 
 export default compose<HomeState, {}>(
   setDisplayName('dashboard'),
@@ -24,13 +24,7 @@ export default compose<HomeState, {}>(
       tags
     })
   }),
-  graphql<
-    {
-      paginationInput: { pageNumber: number; entriesPerPage: number }
-      input: { [key: string]: any }
-    },
-    { products: Product[] }
-  >(GET_PRODUCTS, {
+  graphql<HomeState['fetchMore'], { products: Product[] }>(GET_PRODUCTS, {
     options: {
       variables: {
         paginationInput: {
@@ -47,25 +41,20 @@ export default compose<HomeState, {}>(
     props: ({ data: { products = [], ...data } }) => ({
       data,
       products: orderBy(products, 'createdAt', 'asc'),
-      fetchMore: async (paginationInput = {}, input = {}) => {
-        const variables = {
-          paginationInput,
-          input
-        }
-
-        return data.fetchMore({
-          variables,
+      fetchMore: async (paginationInput = {}, input = {}) =>
+        data.fetchMore({
+          variables: {
+            paginationInput,
+            input
+          },
           updateQuery: (prev, { fetchMoreResult }) => {
             if (!fetchMoreResult) {
               return prev
             }
 
-            return Object.assign({}, prev, {
-              products: [...prev.products, ...fetchMoreResult.products]
-            })
+            return fetchMoreResult
           }
         })
-      }
     })
   })
 )(({ totalProducts, tags = [], fetchMore }) => (

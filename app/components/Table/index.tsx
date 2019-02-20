@@ -114,11 +114,14 @@ export default compose<TableProps & TableHandles, TableProps>(
             field: 'image',
             minWidth: 60,
             maxWidth: 60,
-            cellRenderer: ({ value }) => `
+            cellRenderer: ({ value }) =>
+              value
+                ? `
               <figure class="im">
                 <img src=${value.replace(/https?:/, '')} width="80" alt="" />
               </figure>
             `
+                : '<figure></figure>'
           },
           {
             headerName: 'Name',

@@ -1,4 +1,7 @@
+import { GET_BARE_PRODUCTS } from '@/lib/queries'
 import { Product } from '@/server/schema/types'
+import orderBy from 'lodash/orderBy'
+import { DataValue, graphql, GraphqlQueryControls } from 'react-apollo'
 import { OrbitSpinner } from 'react-epic-spinners'
 import Measure from 'react-measure'
 import { sma } from 'react-stockcharts/lib/indicator'
@@ -8,94 +11,105 @@ import {
   compose,
   lifecycle,
   setDisplayName,
-  withState,
-  withStateHandlers
+  withPropsOnChange
 } from 'recompose'
 
 import Loader from './Loader'
 import Price from './Price'
+import Times from './Times'
 
-export const MA = sma()
-  .options({ windowSize: 4, sourcePath: 'price' })
-  .merge((d, c) => ({ ...d, MA: c }))
-  .accessor(d => d.MA)
-
-export const generateChart = (initialData = []) => {
-  const calculatedData = MA(
-    initialData.map(d => ({
-      ...d,
-      date: new Date(d.createdAt),
-      close: d.price,
-      volume: initialData
-        .filter(({ slug }) => slug === d.slug)
-        .reduce((acc, { qty }) => (acc += qty), 0)
-    }))
-  )
-
-  const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
-    d => d.date
-  )
-
-  const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(
-    calculatedData
-  )
-
-  const start = xAccessor(last(data))
-  const end = xAccessor(
-    data[Math.max(0, data.length - Math.round(initialData.length / 2))]
-  )
-
-  const xExtents = [start, end]
-
-  const margin = {
-    top: 30,
-    right: 90,
-    bottom: 30,
-    left: 30
-  }
-
-  const tickStyle: any = {
-    fontSize: 12,
-    gridWidth: margin.left - margin.right,
-    gridHeight: margin.top - margin.bottom,
-    tickStrokeDashArray: 'LongDashDotDot',
-    tickStrokeOpacity: 0.05,
-    tickStrokeWidth: 1
-  }
-
-  return {
-    data,
-    xScale,
-    displayXAccessor,
-    xAccessor,
-    xExtents,
-    margin,
-    tickStyle
-  }
-}
-export default compose<ChartProps, ChartProps>(
+export default compose<ChartProps, {}>(
   setDisplayName('price'),
-  withState('isLoading', 'setLoading', true),
-  withStateHandlers<{}, {}, ChartProps>(
-    { chart: generateChart() },
-    {
-      updateChart: () => (data = []) => ({ chart: generateChart(data) })
-    }
-  ),
-  lifecycle<ChartProps, {}>({
-    componentDidMount() {
-      ;(window as any).updateChart = this.props.updateChart.bind(this)
+  graphql<ChartProps, { products: Product[] }>(GET_BARE_PRODUCTS, {
+    options: {
+      ssr: false,
+      notifyOnNetworkStatusChange: true
     },
+    props: ({ data }) => ({
+      data,
+      fetchMore: async (input = { tags: [] }) => {
+        const hash = JSON.stringify(input.tags)
+        const lastInput = (window as any).lastInput || ''
 
-    componentDidUpdate() {
-      if (this.props.chart.data.length >= 25) {
-        window.requestAnimationFrame(() => this.props.setLoading(false))
-      } else if (!this.props.isLoading) {
-        this.props.setLoading(true)
+        if (hash === lastInput) {
+          return
+        }
+
+        ;(window as any).lastInput = hash
+
+        return data.fetchMore({
+          variables: { input },
+          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult || prev
+        })
+      }
+    })
+  }),
+  lifecycle<ChartProps, {}, {}>({
+    componentDidMount() {
+      if ('browser' in process) {
+        ;(window as any).updateChart = this.props.fetchMore.bind(this)
       }
     }
-  })
-)(({ isLoading, chart }) => (
+  }),
+  withPropsOnChange<ChartProps, ChartProps>(
+    ['data'],
+    ({ data: { products = [], loading } }) => {
+      if (loading) {
+        return { chart: {} }
+      }
+
+      const ema = sma()
+        .options({ windowSize: 20 })
+        .skipUndefined(true)
+        .merge((d, avg) => ({ ...d, avg }))
+        .accessor(d => d.avg)
+
+      const initialData = ema(orderBy(products, 'date', 'asc'))
+      const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
+        d => new Date(d.date)
+      )
+
+      const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(
+        initialData
+      )
+
+      const start = xAccessor(last(data))
+      const end = xAccessor(data[Math.max(0, data.length - start)])
+      const xExtents = [start, end]
+
+      const margin = {
+        top: 70,
+        right: 70,
+        bottom: 30,
+        left: 70
+      }
+
+      const tickStyle: any = {
+        fontSize: 12,
+        gridWidth: margin.left - margin.right,
+        gridHeight: margin.top - margin.bottom,
+        tickStrokeDashArray: 'LongDashDotDot',
+        tickStrokeOpacity: 0.05,
+        tickStrokeWidth: 1,
+        stroke: '#A8A8A8',
+        tickStroke: '#A8A8A8'
+      }
+
+      return {
+        chart: {
+          data,
+          displayXAccessor,
+          margin,
+          tickStyle,
+          xAccessor,
+          xExtents,
+          xScale,
+          ema
+        }
+      }
+    }
+  )
+)(({ data: { loading }, chart }) => (
   <Measure bounds>
     {({ measureRef, contentRect: rect }) => (
       <div
@@ -109,7 +123,11 @@ export default compose<ChartProps, ChartProps>(
           height: 'calc(33vh - 25px)',
           overflow: 'hidden'
         }}>
-        {isLoading ? (
+        {loading ||
+        !('data' in chart) ||
+        chart.data.length < 10 ||
+        !('bounds' in rect) ||
+        isNaN(rect.bounds.width) ? (
           <OrbitSpinner
             className="chart-spinner"
             size={120}
@@ -118,14 +136,16 @@ export default compose<ChartProps, ChartProps>(
             style={{}}
           />
         ) : (
-          chart.data.length >= 15 && (
+          <>
             <Price
-              width={rect.bounds.width}
+              width={rect.bounds.width - 500}
               height={rect.bounds.height}
               ratio={1}
               {...chart}
             />
-          )
+
+            <Times {...chart} />
+          </>
         )}
       </div>
     )}
@@ -133,34 +153,28 @@ export default compose<ChartProps, ChartProps>(
 ))
 
 export interface ChartProps {
-  isLoading?: boolean
-  setLoading?: (b: boolean, cb?: any) => void
   chart?: ChartState
-  updateChart?: (a?: any[]) => void
+  data?: DataValue<{ products: Product[] }>
+  fetchMore?: (input?: {
+    [key: string]: any
+  }) => Promise<GraphqlQueryControls<{ products: Product[] }>['fetchMore']>
 }
 
-export interface ChartCVProps {
-  id?: string
+export interface ChartState {
   data?: Product[]
+  displayXAccessor?: any
+  ema?: any
+  height?: number
+  id?: string
   ratio?: number
   width?: number
-  height?: number
-  isModal?: boolean
-  isDesktop?: boolean
-  onSelect?: () => void
-}
-
-export interface ChartState extends ChartCVProps {
-  onRef?: (ref: HTMLElement) => void
-  xScale: any[]
-  displayXAccessor: any
-  xAccessor: any
-  xExtents: any
+  xAccessor?: any
+  xExtents?: any
+  xScale?: any[]
   initialData?: Array<{
     id: string | number
     date: Date
     price: number
-    volume?: number
   }>
   margin?: {
     top: number
@@ -168,7 +182,9 @@ export interface ChartState extends ChartCVProps {
     left: number
     bottom: number
   }
-  tickStyle: any
+  onRef?: (ref: HTMLElement) => void
+  onSelect?: () => void
+  tickStyle?: any
 }
 
 export { Loader }

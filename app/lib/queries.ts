@@ -47,6 +47,23 @@ export const GET_PRODUCTS = gql`
   ${tagFragment}
 `
 
+export const GET_BARE_PRODUCTS = gql`
+  query getBareProducts($input: JSON) {
+    products(
+      paginationInput: { pageNumber: 0, entriesPerPage: 2345 }
+      input: $input
+    ) {
+      _id
+      date: createdAt
+      close: price
+      qty
+      slug
+      title
+      url
+    }
+  }
+`
+
 export const GET_TOTAL_PRODUCTS = gql`
   query getTotalProducts {
     totalProducts
@@ -162,15 +179,19 @@ export const getWatchlist = () =>
 // ------------------------------------------------
 
 export const REMOVE_DOC = gql`
-  mutation remove($objectId: ID!, $collectionName: String!) {
-    remove(objectId: $objectId, collectionName: $collectionName) {
+  mutation remove($objectId: ID, $collectionName: String!, $input: JSON) {
+    remove(
+      objectId: $objectId
+      collectionName: $collectionName
+      input: $input
+    ) {
       ok
     }
   }
 `
 
 export const MODIFY_DOC = gql`
-  mutation modify($objectId: ID!, $collectionName: String!, $input: JSON) {
+  mutation modify($objectId: ID, $collectionName: String!, $input: JSON) {
     modify(
       objectId: $objectId
       collectionName: $collectionName

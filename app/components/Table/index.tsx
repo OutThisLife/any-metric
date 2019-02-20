@@ -1,6 +1,6 @@
+import { GET_PRODUCTS, GET_TAGS, GET_TOTAL_PRODUCTS } from '@/lib/queries'
 import { dateFormat, moneyFormat } from '@/lib/utils'
-import { entriesPerPage, HomeState } from '@/pages/Dashboard'
-import { Tag } from '@/server/schema/types'
+import { Product, Tag } from '@/server/schema/types'
 import { GridApi, GridOptions, IDatasource } from 'ag-grid-community'
 import {
   IFloatingFilterParams
@@ -8,6 +8,7 @@ import {
 import { AgGridReact } from 'ag-grid-react'
 import { ObjectID } from 'bson'
 import orderBy from 'lodash/orderBy'
+import { graphql, GraphqlQueryControls } from 'react-apollo'
 import Measure from 'react-measure'
 import {
   compose,
@@ -20,19 +21,51 @@ import {
 import DropdownFilter from './DropdownFilter'
 import Table from './style'
 
-export default compose<TableProps & TableHandles, TableProps>(
+const entriesPerPage = 50
+
+export default compose<TableProps & TableHandles, {}>(
   setDisplayName('table'),
   withState('api', 'bindApi', {}),
-  withHandlers<TableProps, TableHandles>(() => ({
-    bindData: ({ api, total, fetchMore }) => () => ({
-      rowCount: null,
-      getRows: params =>
-        fetchMore(
-          {
-            pageNumber: params.startRow,
-            entriesPerPage
+  graphql<{}, { totalProducts: number }>(GET_TOTAL_PRODUCTS, {
+    props: ({ data: { totalProducts = 0, ...data } }) => ({
+      data,
+      totalProducts
+    })
+  }),
+  graphql<{}, { tags: Tag[] }>(GET_TAGS, {
+    props: ({ data: { tags = [], ...data } }) => ({
+      data,
+      tags
+    })
+  }),
+  graphql<TableProps, { products: Product[] }>(GET_PRODUCTS, {
+    options: {
+      variables: {
+        paginationInput: {
+          pageNumber: 0,
+          entriesPerPage
+        }
+      }
+    },
+    props: ({ data: { products = [], ...data } }) => ({
+      data,
+      products: orderBy(products, 'createdAt', 'asc'),
+      fetchMore: async (paginationInput = {}, input = {}) =>
+        data.fetchMore({
+          variables: {
+            paginationInput,
+            input
           },
-          Object.entries(params.filterModel).reduce((acc, [k, v]) => {
+          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult || prev
+        })
+    })
+  }),
+  withHandlers<TableProps, TableHandles>(() => ({
+    bindData: ({ api, totalProducts, fetchMore }) => () => ({
+      rowCount: null,
+      getRows: params => {
+        const input = Object.entries(params.filterModel).reduce(
+          (acc, [k, v]) => {
             const obj = v as any
 
             switch (k) {
@@ -56,30 +89,38 @@ export default compose<TableProps & TableHandles, TableProps>(
             }
 
             return acc
-          }, {})
+          },
+          {}
+        )
+
+        if ('updateChart' in window) {
+          ;(window as any).updateChart(input)
+        }
+
+        fetchMore(
+          {
+            pageNumber: params.startRow,
+            entriesPerPage
+          },
+          input
         )
           .then(({ data: { products = [] } }: any) => {
             if (params.sortModel.length) {
               params.successCallback(
                 orderBy(products, ...Object.values(params.sortModel[0])),
-                total
+                totalProducts
               )
             } else {
               params.successCallback(
                 orderBy(products, 'createdAt', 'desc'),
-                total
+                totalProducts
               )
             }
 
             api.sizeColumnsToFit()
-
-            if ('updateChart' in window) {
-              ;(window as any).updateChart(
-                orderBy(products, 'createdAt', 'asc')
-              )
-            }
           })
           .catch(console.error)
+      }
     }),
 
     handleResize: ({ api }) => () =>
@@ -129,12 +170,17 @@ export default compose<TableProps & TableHandles, TableProps>(
             suppressMenu: false,
             sortable: false,
             width: 600,
-            onCellClicked: d => window.open(d.data.url, '_blank')
+            cellRenderer: ({ value, data }) =>
+              value
+                ? `<a href=${
+                    data.url
+                  } rel="noopener" target="_blank">${value}</a>`
+                : '&nbsp;'
           },
           {
             headerName: 'Query',
             field: 'tags',
-            width: 50,
+            width: 100,
             floatingFilterComponent: 'DropdownFilter',
             floatingFilterComponentParams: {
               label: 'Filter by query',
@@ -198,9 +244,15 @@ export default compose<TableProps & TableHandles, TableProps>(
 ))
 
 export interface TableProps {
-  fetchMore: HomeState['fetchMore']
-  total: number
-  tags: Tag[]
+  fetchMore?: (
+    paginationInput: {
+      pageNumber?: number
+      entriesPerPage?: number
+    },
+    input?: { [key: string]: any }
+  ) => Promise<GraphqlQueryControls<{ products: Product[] }>['fetchMore']>
+  totalProducts?: number
+  tags?: Tag[]
   config?: GridOptions
   api?: GridApi
   bindApi?: (a: TableProps['api'], b?: () => any) => void

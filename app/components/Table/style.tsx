@@ -54,6 +54,14 @@ export default styled<any>(Box)`
 
     select {
       width: 100%;
+
+      &[value=''] + a {
+        visibility: hidden;
+      }
+
+      + a {
+        margin-left: 0.5em;
+      }
     }
   }
 

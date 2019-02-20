@@ -41,7 +41,7 @@ export default compose<SearchState & SearchHandlers, {}>(
                 keywords: (document.getElementById('s') as HTMLInputElement)
                   .value,
                 paginationInput: {
-                  pageNumber: 1,
+                  pageNumber: 0,
                   entriesPerPage: 2
                 }
               },
@@ -78,7 +78,7 @@ export default compose<SearchState & SearchHandlers, {}>(
                 keywords,
                 save: true,
                 paginationInput: {
-                  pageNumber: 1,
+                  pageNumber: 0,
                   entriesPerPage: 100
                 }
               },

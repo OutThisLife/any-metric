@@ -95,8 +95,6 @@ export default compose<SearchState & SearchHandlers, {}>(
                   }
                 }
               })
-
-              await client.reFetchObservableQueries()
             } catch (err) {
               console.error(err)
               break

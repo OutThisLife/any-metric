@@ -54,8 +54,9 @@ export const GET_BARE_PRODUCTS = gql`
       input: $input
     ) {
       _id
-      date: createdAt
       close: price
+      date: createdAt
+      image
       qty
       slug
       title

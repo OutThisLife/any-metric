@@ -1,22 +1,24 @@
 import { GET_BARE_PRODUCTS } from '@/lib/queries'
 import { Product } from '@/server/schema/types'
 import orderBy from 'lodash/orderBy'
+import { func } from 'prop-types'
 import { DataValue, graphql, GraphqlQueryControls } from 'react-apollo'
-import { OrbitSpinner } from 'react-epic-spinners'
-import Measure from 'react-measure'
+import { SwappingSquaresSpinner } from 'react-epic-spinners'
+import { MeasuredComponentProps, withContentRect } from 'react-measure'
 import { sma } from 'react-stockcharts/lib/indicator'
 import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
 import { last } from 'react-stockcharts/lib/utils'
 import {
   compose,
-  lifecycle,
   setDisplayName,
+  withContext,
   withPropsOnChange
 } from 'recompose'
 
-import Loader from './Loader'
+import { Box, Flex } from 'rebass'
+import Tabs from '../Tabs'
+import Times from '../Times'
 import Price from './Price'
-import Times from './Times'
 
 export default compose<ChartProps, {}>(
   setDisplayName('price'),
@@ -44,16 +46,12 @@ export default compose<ChartProps, {}>(
       }
     })
   }),
-  lifecycle<ChartProps, {}, {}>({
-    componentDidMount() {
-      if ('browser' in process) {
-        ;(window as any).updateChart = this.props.fetchMore.bind(this)
-      }
-    }
-  }),
+  withContext({ updateChart: func }, ({ fetchMore }) => ({
+    updateChart: fetchMore
+  })),
   withPropsOnChange<ChartProps, ChartProps>(
     ['data'],
-    ({ data: { products = [], loading } }) => {
+    ({ data: { products = [], loading }, width }) => {
       if (loading) {
         return { chart: {} }
       }
@@ -78,10 +76,10 @@ export default compose<ChartProps, {}>(
       const xExtents = [start, end]
 
       const margin = {
-        top: 70,
-        right: 70,
-        bottom: 30,
-        left: 70
+        top: width >= 1025 ? 70 : 25,
+        right: width >= 1025 ? 70 : 25,
+        bottom: width >= 1025 ? 30 : 15,
+        left: width >= 1025 ? 70 : 25
       }
 
       const tickStyle: any = {
@@ -108,51 +106,64 @@ export default compose<ChartProps, {}>(
         }
       }
     }
-  )
-)(({ data: { loading }, chart }) => (
-  <Measure bounds>
-    {({ measureRef, contentRect: rect }) => (
-      <div
-        ref={measureRef}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-          width: 'calc(100vw - 50px)',
-          height: 'calc(33vh - 25px)',
-          overflow: 'hidden'
-        }}>
-        {loading ||
-        !('data' in chart) ||
-        chart.data.length < 10 ||
-        !('bounds' in rect) ||
-        isNaN(rect.bounds.width) ? (
-          <OrbitSpinner
-            className="chart-spinner"
-            size={120}
-            color="#ddd"
-            animationDuration={668}
-            style={{}}
-          />
-        ) : (
-          <>
-            <Price
-              width={rect.bounds.width - 500}
-              height={rect.bounds.height}
-              ratio={1}
-              {...chart}
-            />
-
-            <Times {...chart} />
-          </>
-        )}
-      </div>
+  ),
+  withContentRect(['client', 'bounds'])
+)(({ measureRef, contentRect: rect, data: { loading }, chart }) => (
+  <Box as="section" ref={measureRef}>
+    {loading ||
+    !('data' in chart) ||
+    chart.data.length < 10 ||
+    !('bounds' in rect) ||
+    isNaN(rect.bounds.width) ? (
+      <Loader size={120} />
+    ) : (
+      <Price
+        width={
+          rect.client.width >= 1025 ? rect.bounds.width / 2 : rect.client.width
+        }
+        height={
+          rect.client.width >= 1025
+            ? rect.bounds.height / 2
+            : rect.client.width / 2
+        }
+        ratio={1}
+        {...chart}
+      />
     )}
-  </Measure>
+
+    <Box as="aside">
+      <Tabs />
+
+      {loading || !('data' in chart) ? (
+        <Loader size={60} />
+      ) : (
+        <Times chart={chart} />
+      )}
+    </Box>
+  </Box>
 ))
 
-export interface ChartProps {
+const Loader = (props: any) => (
+  <Flex
+    alignItems="center"
+    justifyContent="center"
+    css={`
+      height: 100%;
+
+      @media (max-width: 1025px) {
+        padding: var(--pad);
+      }
+    `}>
+    <SwappingSquaresSpinner
+      className="chart-spinner"
+      color="#ddd"
+      animationDuration={668}
+      {...props}
+    />
+  </Flex>
+)
+
+export interface ChartProps extends Partial<MeasuredComponentProps> {
   chart?: ChartState
   data?: DataValue<{ products: Product[] }>
   fetchMore?: (input?: {
@@ -186,5 +197,3 @@ export interface ChartState {
   onSelect?: () => void
   tickStyle?: any
 }
-
-export { Loader }

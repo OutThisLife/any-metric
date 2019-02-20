@@ -1,5 +1,4 @@
 import { ChartCanvas } from 'react-stockcharts'
-import { Box } from 'rebass'
 import styled from 'styled-components'
 
 export default styled<any>(ChartCanvas)`
@@ -19,7 +18,3 @@ export default styled<any>(ChartCanvas)`
     cursor: zoom-in;
   }
 ` as any
-
-export const ZoomedChart = styled<any>(Box)`
-  padding: calc(var(--pad) * 2);
-`

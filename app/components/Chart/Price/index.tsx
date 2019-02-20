@@ -15,11 +15,16 @@ import {
 import { HoverTooltip } from 'react-stockcharts/lib/tooltip'
 import { compose, setDisplayName, withStateHandlers } from 'recompose'
 
+import { ThemeProps, withTheme } from 'styled-components'
 import { ChartState } from '..'
 import ChartCanvas from '../style'
 
-export default compose<ChartState & PriceChartProps, ChartState>(
+export default compose<
+  ChartState & PriceChartProps & ThemeProps<any>,
+  ChartState
+>(
   setDisplayName('chart-price'),
+  withTheme,
   withStateHandlers(
     { suffix: Math.random() },
     {
@@ -28,12 +33,15 @@ export default compose<ChartState & PriceChartProps, ChartState>(
   )
 )(
   ({
+    theme,
     handleReset,
     suffix,
     ema,
     tickStyle: { gridWidth, gridHeight, ...tickStyle },
     ...props
   }) => {
+    let tm
+
     const r = d =>
       d3
         .scaleLinear()
@@ -48,8 +56,8 @@ export default compose<ChartState & PriceChartProps, ChartState>(
             marker={CircleMarker}
             markerProps={{
               r,
-              stroke: '#BDC3C7',
-              fill: '#ECF0F1'
+              stroke: theme.bg,
+              fill: theme.border
             }}
           />
           <XAxis
@@ -65,27 +73,41 @@ export default compose<ChartState & PriceChartProps, ChartState>(
             innerTickSize={-1 * gridWidth}
             {...tickStyle}
           />
-          <ClickCallback
-            onDoubleClick={handleReset}
-            onMouseMove={({ currentItem }) => {
-              const el = document.getElementById(`t-${currentItem._id}`)
 
-              if (el instanceof HTMLElement) {
-                const $parent = el.parentElement
+          {props.width >= 1025 && (
+            <ClickCallback
+              onDoubleClick={handleReset}
+              onMouseMove={({ currentItem }) => {
+                clearTimeout(tm)
 
-                const $current = $parent.querySelector('.active')
+                const el = document.getElementById(`t-${currentItem._id}`)
+                const $zoom = document.getElementById('zoom')
 
-                if ($current) {
-                  $current.classList.remove('active')
+                if (el instanceof HTMLElement) {
+                  const $parent = el.parentElement
+                  const $current = $parent.querySelector('[id].active')
+
+                  if ($current) {
+                    $current.classList.remove('active')
+                  }
+
+                  window.requestAnimationFrame(() => {
+                    el.scrollIntoView(true)
+                    $parent.scrollTop -= el.clientHeight * 4
+
+                    el.classList.add('active')
+                    $zoom.setAttribute('src', currentItem.image)
+                  })
+
+                  tm = setTimeout(() => {
+                    el.classList.remove('active')
+                    $zoom.removeAttribute('src')
+                  }, 3500)
                 }
+              }}
+            />
+          )}
 
-                window.requestAnimationFrame(() => {
-                  el.scrollIntoView(true)
-                  el.classList.add('active')
-                })
-              }
-            }}
-          />
           <HoverTooltip
             fontSize={tickStyle.fontSize}
             bgOpacity={0}
@@ -111,9 +133,9 @@ export default compose<ChartState & PriceChartProps, ChartState>(
         <Chart id={2} yExtents={ema.accessor()} yPan={false}>
           <LineSeries
             yAccessor={ema.accessor()}
-            stroke="#0000ee"
+            stroke={theme.brand}
             strokeWidth={2}
-            interpolation={d3.curveNatural}
+            interpolation={d3.curveStep}
           />
 
           <EdgeIndicator
@@ -121,7 +143,7 @@ export default compose<ChartState & PriceChartProps, ChartState>(
             itemType="last"
             orient="right"
             edgeAt="right"
-            fill="#0000ee"
+            fill={theme.brand}
           />
         </Chart>
 

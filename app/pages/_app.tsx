@@ -2,8 +2,10 @@ import withData from '@/client/withData'
 import { ApolloClient } from 'apollo-boost'
 import App, { AppProps, Container } from 'next/app'
 import Head from 'next/head'
+import { complement, desaturate, invert } from 'polished'
 import { ApolloProvider } from 'react-apollo'
-import { createGlobalStyle } from 'styled-components'
+import { createGlobalStyle, ThemeProvider } from 'styled-components'
+import { prop, withProp } from 'styled-tools'
 
 export default withData(
   class extends App<MyAppProps> {
@@ -12,14 +14,23 @@ export default withData(
 
       return (
         <ApolloProvider client={client}>
-          <Container>
-            <Head>
-              <title key="title">$ɮΔք𝔥Ø𝔪Δ✞ʀɨჯ</title>
-            </Head>
+          <ThemeProvider
+            theme={{
+              base: '#000',
+              bg: '#fff',
+              border: '#d9dcde',
+              panel: '#f5f7f7',
+              brand: '#0000ee'
+            }}>
+            <Container>
+              <Head>
+                <title key="title">$ɮΔք𝔥Ø𝔪Δ✞ʀɨჯ</title>
+              </Head>
 
-            <GlobalStyles />
-            <Component {...pageProps} />
-          </Container>
+              <GlobalStyles />
+              <Component {...pageProps} />
+            </Container>
+          </ThemeProvider>
         </ApolloProvider>
       )
     }
@@ -36,24 +47,32 @@ const GlobalStyles = createGlobalStyle`
     font-size: 12px;
   }
 
+  body {
+    background: ${prop('theme.bg')};
+  }
+
   p, figure, h5 {
     margin: 0;
   }
 
-  img {
+  img, svg {
     max-width: 100%;
     height: auto;
   }
 
   a {
-    color: #0000ee;
+    color: ${prop('theme.brand')};
 
     &:hover {
-      color: #ee0000;
+      color: ${prop('theme.base')};
     }
 
     &:visited {
-      color: #660066;
+      color: ${withProp(prop('theme.brand'), desaturate(0.8))};
+    }
+
+    .active & {
+      color: ${prop('theme.base')};
     }
   }
 

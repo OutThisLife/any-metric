@@ -6,8 +6,7 @@ import { withApollo } from 'react-apollo'
 import { AtomSpinner } from 'react-epic-spinners'
 import { Box } from 'rebass'
 import { compose, setDisplayName, withHandlers, withState } from 'recompose'
-
-import Search from './style'
+import { prop } from 'styled-tools'
 
 export default compose<SearchState & SearchHandlers, {}>(
   setDisplayName('header-search'),
@@ -110,11 +109,74 @@ export default compose<SearchState & SearchHandlers, {}>(
     })
   )
 )(({ isOpen, handleSubmit, handleReset, handleConfirm, items = [] }) => (
-  <Search
+  <Box
+    as="form"
     method="post"
     action="javascript:;"
     onSubmit={handleSubmit}
-    onReset={handleReset}>
+    onReset={handleReset}
+    css={`
+      display: block;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+
+      input {
+        display: block;
+        width: 100%;
+        padding: 5px;
+        border: 1px solid ${prop('theme.border')};
+      }
+
+      > section {
+        z-index: 100;
+        position: fixed;
+        top: 56px;
+        left: 25px;
+        right: 25px;
+        padding: 10px;
+        border: 1px solid ${prop('theme.border')};
+        background: ${prop('theme.bg')};
+
+        nav {
+          margin: 10px auto;
+          padding: 25px;
+          border: 1px solid ${prop('theme.border')};
+          background: ${prop('theme.panel')};
+        }
+
+        nav > div {
+          display: flex;
+          align-items: center;
+
+          + div {
+            margin-top: 5px;
+          }
+
+          figure {
+            width: 40px;
+            height: 40px;
+            margin: auto;
+
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
+          }
+
+          aside {
+            flex: 1;
+            padding-left: 1em;
+
+            a {
+              display: inline-block;
+              margin: 0 0 4px;
+            }
+          }
+        }
+      }
+    `}>
     <input
       required
       id="s"
@@ -177,7 +239,7 @@ export default compose<SearchState & SearchHandlers, {}>(
         <button type="reset">Cancel</button>
       </Box>
     )}
-  </Search>
+  </Box>
 ))
 
 export interface SearchState {

@@ -66,7 +66,7 @@ export default compose<TableProps & TableHandles, TableProps>(
               maxWidth: 60,
               cellRenderer: ({ value }) => `
                 <figure class="im">
-                  <img src=${value} width="80" alt="" />
+                  <img src=${value.replace(/https?:/, '')} width="80" alt="" />
                 </figure>
               `
             },

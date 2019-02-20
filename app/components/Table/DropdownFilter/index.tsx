@@ -20,14 +20,6 @@ export default class extends PureComponent<FloatingFilterProps, {}> {
         filterTo: null
       }
     })
-
-    if ('updateChart' in window) {
-      ;(window as any).updateChart(d =>
-        target.value.length
-          ? d.tags.map(t => t.slug).includes(target.value.trim())
-          : true
-      )
-    }
   }
 
   public render() {

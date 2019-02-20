@@ -37,8 +37,8 @@ export const productFragment = gql`
 // ------------------------------------------------
 
 export const GET_PRODUCTS = gql`
-  query getProducts($paginationInput: Pagination) {
-    products(paginationInput: $paginationInput) {
+  query getProducts($paginationInput: Pagination, $input: JSON) {
+    products(paginationInput: $paginationInput, input: $input) {
       ...ProductFields
     }
   }

@@ -1,11 +1,12 @@
 import { moneyFormat } from '@/lib/utils'
 import { HomeState } from '@/pages/Dashboard'
 import { Tag } from '@/server/schema/types'
-import { GridApi, GridOptions } from 'ag-grid-community'
+import { GridApi, GridOptions, IDatasource } from 'ag-grid-community'
 import {
   IFloatingFilterParams
 } from 'ag-grid-community/dist/lib/filter/floatingFilter'
 import { AgGridReact } from 'ag-grid-react'
+import { ObjectID } from 'bson'
 import Measure from 'react-measure'
 import {
   compose,
@@ -20,48 +21,62 @@ import RangeFilter from './RangeFilter'
 import SearchFilter from './SearchFilter'
 import Table from './style'
 
+const entriesPerPage = 100
+
 export default compose<TableProps & TableHandles, TableProps>(
   setDisplayName('table'),
   withState('api', 'bindApi', {}),
   withHandlers<TableProps, TableHandles>(() => ({
+    bindData: ({ api, total, fetchMore }) => () => ({
+      rowCount: null,
+      getRows: args =>
+        fetchMore(
+          {
+            pageNumber: args.startRow,
+            entriesPerPage: args.endRow
+          },
+          Object.entries(args.filterModel).reduce((acc, [k, v]) => {
+            const obj = v as any
+
+            switch (k) {
+              case 'price':
+                acc[k] = {
+                  $gte: parseFloat(obj.filter)
+                }
+                break
+
+              case 'tags':
+                acc[k] = {
+                  $in: [new ObjectID(obj.filter)]
+                }
+                break
+
+              case 'createdAt':
+                acc[k] = {
+                  $gte: new Date(obj.dateFrom)
+                }
+                break
+            }
+
+            return acc
+          }, {})
+        )
+          .then(({ data: { products = [] } }: any) => {
+            args.successCallback(products, total)
+            window.requestAnimationFrame(() => api.sizeColumnsToFit())
+          })
+          .catch(console.error)
+    }),
+
     handleResize: ({ api }) => () =>
       'sizeColumnsToFit' in api &&
       window.requestAnimationFrame(() => api.sizeColumnsToFit())
   })),
-  withProps<{ config: Partial<GridOptions> }, TableProps>(
-    ({ total, fetchMore, bindApi, tags }) => ({
+  withProps<{ config: Partial<GridOptions> }, TableProps & TableHandles>(
+    ({ bindData, bindApi, tags }) => ({
       config: {
         onGridReady: ({ api }) =>
-          bindApi(api, () =>
-            api.setDatasource({
-              rowCount: null,
-              getRows: args =>
-                fetchMore(
-                  Math.max(1, args.startRow),
-                  args.endRow,
-                  Object.entries(args.filterModel).reduce((acc, [k, v]) => {
-                    const obj = v as any
-
-                    if ('filter' in obj) {
-                      acc[k] = {
-                        $in: [obj.filter]
-                      }
-                    } else if ('dateFrom' in obj) {
-                      acc[k] = {
-                        $gte: new Date(obj.dateFrom)
-                      }
-                    }
-
-                    return acc
-                  }, {})
-                )
-                  .then(({ data: { products = [] } }: any) => {
-                    args.successCallback(products, total)
-                    window.requestAnimationFrame(() => api.sizeColumnsToFit())
-                  })
-                  .catch(console.warn)
-            })
-          ),
+          bindApi(api, () => api.setDatasource(bindData())),
         defaultColDef: {
           editable: false,
           resizable: true,
@@ -141,7 +156,7 @@ export default compose<TableProps & TableHandles, TableProps>(
           }
         ],
         animateRows: false,
-        cacheBlockSize: 10,
+        cacheBlockSize: entriesPerPage,
         cacheOverflowSize: 2,
         debug: true,
         enableRangeSelection: true,
@@ -149,8 +164,7 @@ export default compose<TableProps & TableHandles, TableProps>(
         frameworkComponents: { SearchFilter, DropdownFilter, RangeFilter },
         infiniteInitialRowCount: 1,
         maxConcurrentDatasourceRequests: 2,
-        pagination: true,
-        paginationPageSize: 10,
+        paginationPageSize: entriesPerPage,
         rowHeight: 60,
         rowModelType: 'infinite',
         suppressColumnMoveAnimation: true
@@ -181,6 +195,7 @@ export interface TableProps {
 
 export interface TableHandles {
   handleResize: () => void
+  bindData: () => IDatasource
 }
 
 export interface FloatingFilterProps extends IFloatingFilterParams<{}, {}> {

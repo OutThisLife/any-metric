@@ -33,7 +33,7 @@ export default compose<HomeState, {}>(
       variables: {
         paginationInput: {
           pageNumber: 1,
-          entriesPerPage: 1
+          entriesPerPage: 10
         },
         input: {
           status: {
@@ -45,19 +45,14 @@ export default compose<HomeState, {}>(
     props: ({ data: { products = [], ...data } }) => ({
       data,
       products: orderBy(products, 'createdAt', 'asc'),
-      fetchMore: async (pageNumber = 1, entriesPerPage = 100, input = {}) =>
-        data.fetchMore({
-          variables: {
-            paginationInput: {
-              pageNumber,
-              entriesPerPage
-            },
-            input: Object.assign({}, input, {
-              status: {
-                $ne: 'EndedWithoutSales'
-              }
-            })
-          },
+      fetchMore: async (paginationInput = {}, input = {}) => {
+        const variables = {
+          paginationInput,
+          input
+        }
+
+        return data.fetchMore({
+          variables,
           updateQuery: (prev, { fetchMoreResult }) => {
             if (!fetchMoreResult) {
               return prev
@@ -68,6 +63,7 @@ export default compose<HomeState, {}>(
             })
           }
         })
+      }
     })
   })
 )(({ totalProducts, products = [], tags = [], fetchMore }) => (
@@ -100,8 +96,10 @@ export interface HomeState {
   tags: Tag[]
   totalProducts: number
   fetchMore: (
-    page?: number,
-    perPage?: number,
+    paginationInput: {
+      pageNumber?: number
+      entriesPerPage?: number
+    },
     input?: { [key: string]: any }
   ) => Promise<GraphqlQueryControls<{ products: Product[] }>['fetchMore']>
 }

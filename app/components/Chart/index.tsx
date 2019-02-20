@@ -24,77 +24,63 @@ export const MA = sma()
 
 export default compose<ChartProps, ChartProps>(
   setDisplayName('price'),
-  withState('loading', 'setLoading', true),
-  withHandlers<ChartProps & ChartCVProps, ChartProps>(
-    ({ loading, setLoading }) => ({
-      loadChart: ({ data }) => () => {
-        if (!('browser' in process) || !data.length) {
-          return
-        } else if (!loading && !data.length) {
-          setLoading(true)
-          return
-        }
+  withState('isLoading', 'setLoading', true),
+  withHandlers<ChartProps & ChartCVProps, ChartProps>(() => ({
+    generateChart: ({ data: initialData, width, height }) => (
+      filterFunc = () => true
+    ) => {
+      const calculatedData = MA(
+        initialData.filter(filterFunc).map(d => ({
+          ...d,
+          date: new Date(d.createdAt),
+          close: d.price,
+          volume: initialData
+            .filter(({ slug }) => slug === d.slug)
+            .reduce((acc, { qty }) => (acc += qty), 0)
+        }))
+      )
 
-        window.requestAnimationFrame(() =>
-          setTimeout(() => setLoading(false), 1100)
-        )
-      },
-      generateChart: ({ data: initialData, width, height }) => (
-        filterFunc = () => true
-      ) => {
-        const calculatedData = MA(
-          initialData.filter(filterFunc).map(d => ({
-            ...d,
-            date: new Date(d.createdAt),
-            close: d.price,
-            volume: initialData
-              .filter(({ slug }) => slug === d.slug)
-              .reduce((acc, { qty }) => (acc += qty), 0)
-          }))
-        )
+      const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
+        d => d.date
+      )
 
-        const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
-          d => d.date
-        )
+      const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(
+        calculatedData
+      )
 
-        const { data, xScale, xAccessor, displayXAccessor } = xScaleProvider(
-          calculatedData
-        )
+      const start = xAccessor(last(data))
+      const end = xAccessor(
+        data[Math.max(0, data.length - Math.round(initialData.length / 2))]
+      )
+      const xExtents = [start, end]
 
-        const start = xAccessor(last(data))
-        const end = xAccessor(
-          data[Math.max(0, data.length - Math.round(initialData.length / 2))]
-        )
-        const xExtents = [start, end]
-
-        const margin = {
-          top: 30,
-          right: 90,
-          bottom: 30,
-          left: 30
-        }
-
-        const tickStyle: any = {
-          fontSize: 12,
-          gridWidth: width - margin.left - margin.right,
-          gridHeight: height - margin.top - margin.bottom,
-          tickStrokeDashArray: 'LongDashDotDot',
-          tickStrokeOpacity: 0.05,
-          tickStrokeWidth: 1
-        }
-
-        return {
-          data,
-          xScale,
-          displayXAccessor,
-          xAccessor,
-          xExtents,
-          margin,
-          tickStyle
-        }
+      const margin = {
+        top: 30,
+        right: 90,
+        bottom: 30,
+        left: 30
       }
-    })
-  ),
+
+      const tickStyle: any = {
+        fontSize: 12,
+        gridWidth: width - margin.left - margin.right,
+        gridHeight: height - margin.top - margin.bottom,
+        tickStrokeDashArray: 'LongDashDotDot',
+        tickStrokeOpacity: 0.05,
+        tickStrokeWidth: 1
+      }
+
+      return {
+        data,
+        xScale,
+        displayXAccessor,
+        xAccessor,
+        xExtents,
+        margin,
+        tickStyle
+      }
+    }
+  })),
   withStateHandlers<{}, {}, ChartProps>(
     ({ generateChart }) => ({ chart: generateChart() }),
     {
@@ -104,22 +90,16 @@ export default compose<ChartProps, ChartProps>(
     }
   ),
   lifecycle<ChartProps, {}>({
-    componentDidMount() {
-      this.props.loadChart()
-      ;(window as any).updateChart = fn =>
-        this.props.setLoading(true, async () => this.props.updateChart(fn))
-    },
-
     componentDidUpdate() {
       if (this.props.data.length >= 25) {
-        window.requestAnimationFrame(() =>
-          setTimeout(() => this.props.setLoading(false), 1000)
-        )
+        window.requestAnimationFrame(() => this.props.setLoading(false))
+      } else if (!this.props.isLoading) {
+        this.props.setLoading(true)
       }
     }
   }),
   flattenProp('chart')
-)(({ loading, ...props }) => (
+)(({ isLoading, ...props }) => (
   <Measure bounds>
     {({ measureRef, contentRect: rect }) => (
       <div
@@ -133,7 +113,7 @@ export default compose<ChartProps, ChartProps>(
           height: 'calc(33vh - 25px)',
           overflow: 'hidden'
         }}>
-        {loading || props.data.length < 25 ? (
+        {isLoading || props.data.length < 25 ? (
           <OrbitSpinner
             className="chart-spinner"
             size={120}
@@ -156,9 +136,8 @@ export default compose<ChartProps, ChartProps>(
 
 export interface ChartProps {
   data?: any[]
-  loading?: boolean
+  isLoading?: boolean
   setLoading?: (b: boolean, cb?: any) => void
-  loadChart?: () => void
   chart?: ChartState
   generateChart?: (a?: (p?: Product) => boolean) => ChartState
   updateChart?: (a?: (p?: Product) => boolean) => void

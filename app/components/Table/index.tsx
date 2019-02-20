@@ -15,6 +15,7 @@ import {
   setDisplayName,
   withHandlers,
   withProps,
+  withPropsOnChange,
   withState
 } from 'recompose'
 
@@ -26,49 +27,8 @@ const entriesPerPage = 50
 export default compose<TableProps & TableHandles, {}>(
   setDisplayName('table'),
   withState('api', 'bindApi', {}),
-  graphql<{}, { totalProducts: number }>(GET_TOTAL_PRODUCTS, {
-    options: {
-      notifyOnNetworkStatusChange: true
-    },
-    props: ({ data: { totalProducts = 0, ...data } }) => ({
-      data,
-      totalProducts
-    })
-  }),
-  graphql<{}, { tags: Tag[] }>(GET_TAGS, {
-    options: {
-      notifyOnNetworkStatusChange: true
-    },
-    props: ({ data: { tags = [], ...data } }) => ({
-      data,
-      tags
-    })
-  }),
-  graphql<TableProps, { products: Product[] }>(GET_PRODUCTS, {
-    options: {
-      notifyOnNetworkStatusChange: true,
-      variables: {
-        paginationInput: {
-          pageNumber: 0,
-          entriesPerPage
-        }
-      }
-    },
-    props: ({ data: { products = [], ...data } }) => ({
-      data,
-      products,
-      fetchMore: async (paginationInput = {}, input = {}) =>
-        data.fetchMore({
-          variables: {
-            paginationInput,
-            input
-          },
-          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult || prev
-        })
-    })
-  }),
   withHandlers<TableProps, TableHandles>(() => ({
-    bindData: ({ api, totalProducts, fetchMore }) => () => ({
+    bindData: ({ api }) => ({ totalProducts, fetchMore }) => ({
       rowCount: null,
       getRows: params => {
         const input = Object.entries(params.filterModel).reduce(
@@ -134,11 +94,64 @@ export default compose<TableProps & TableHandles, {}>(
       'sizeColumnsToFit' in api &&
       window.requestAnimationFrame(() => api.sizeColumnsToFit())
   })),
+  graphql<{}, { totalProducts: number }>(GET_TOTAL_PRODUCTS, {
+    options: {
+      notifyOnNetworkStatusChange: true
+    },
+    props: ({ data: { totalProducts = 0, ...data } }) => ({
+      data,
+      totalProducts
+    })
+  }),
+  graphql<{}, { tags: Tag[] }>(GET_TAGS, {
+    options: {
+      notifyOnNetworkStatusChange: true
+    },
+    props: ({ data: { tags = [], ...data } }) => ({
+      data,
+      tags
+    })
+  }),
+  graphql<TableProps & TableHandles, { products: Product[] }>(GET_PRODUCTS, {
+    options: {
+      notifyOnNetworkStatusChange: true,
+      variables: {
+        paginationInput: {
+          pageNumber: 0,
+          entriesPerPage
+        }
+      }
+    },
+    props: ({ data: { products = [], ...data } }) => ({
+      data,
+      products,
+      fetchMore: async (paginationInput = {}, input = {}) =>
+        data.fetchMore({
+          variables: {
+            paginationInput,
+            input
+          },
+          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult || prev
+        })
+    })
+  }),
+  withPropsOnChange<void, TableProps & TableHandles>(
+    (p, np) => p.totalProducts !== np.totalProducts,
+    props => {
+      try {
+        if ('setDatasource' in props.api) {
+          props.api.setDatasource(props.bindData(props))
+        }
+      } catch (err) {
+        console.error(err)
+      }
+    }
+  ),
   withProps<{ config: Partial<GridOptions> }, TableProps & TableHandles>(
-    ({ bindData, bindApi, tags }) => ({
+    ({ bindData, bindApi, tags, ...props }) => ({
       config: {
         onGridReady: ({ api }) =>
-          bindApi(api, () => api.setDatasource(bindData())),
+          bindApi(api, () => api.setDatasource(bindData(props))),
         defaultColDef: {
           editable: false,
           resizable: true,
@@ -268,7 +281,7 @@ export interface TableProps {
 
 export interface TableHandles {
   handleResize: () => void
-  bindData: () => IDatasource
+  bindData: (p: Partial<TableProps>) => IDatasource
 }
 
 export interface FloatingFilterProps extends IFloatingFilterParams<{}, {}> {

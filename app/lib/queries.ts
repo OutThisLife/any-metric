@@ -142,6 +142,14 @@ export const SEARCH_EBAY = gql`
   ${ebayFragment}
 `
 
+export const SEARCH_EBAY_BARE = gql`
+  query getEbay($keywords: String!, $paginationInput: Pagination) {
+    ebay(keywords: $keywords, save: true, paginationInput: $paginationInput) {
+      total
+    }
+  }
+`
+
 // ------------------------------------------------
 
 export const GET_WATCHLIST = gql`

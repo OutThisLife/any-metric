@@ -1,4 +1,4 @@
-import { SEARCH_EBAY } from '@/lib/queries'
+import { SEARCH_EBAY, SEARCH_EBAY_BARE } from '@/lib/queries'
 import { moneyFormat } from '@/lib/utils'
 import { EbayItem, EbayResult, Tag } from '@/server/schema/types'
 import { ApolloClient } from 'apollo-boost'
@@ -15,109 +15,101 @@ export default compose<SearchState & SearchHandlers, {}>(
   withState('isOpen', 'toggleModal', false),
   withState('items', 'setItems', []),
   withHandlers<SearchState, SearchHandlers>(
-    ({ toggleModal, setItems, client }) => {
-      const collect = async (
-        variables,
-        cb: (a: EbayResult) => void = () => null
-      ) => {
-        const res = await client.query<{ ebay: EbayResult }>({
-          query: SEARCH_EBAY,
-          variables
-        })
+    ({ toggleModal, setItems, client }) => ({
+      handleSubmit: () => async () => {
+        const el = document.getElementById('s') as HTMLInputElement
+        const { value: keywords } = el
 
-        cb(res.data.ebay)
-      }
+        toggleModal(true)
+        setItems([])
 
-      return {
-        handleSubmit: () => async ({ target }) => {
-          const el = target as HTMLFormElement
-
-          toggleModal(true)
-          setItems([])
-
-          try {
-            await collect(
-              {
-                keywords: (document.getElementById('s') as HTMLInputElement)
-                  .value,
-                paginationInput: {
-                  pageNumber: 0,
-                  entriesPerPage: 2
-                }
-              },
-              ({ items = [] }) => {
-                if (items.length) {
-                  window.requestAnimationFrame(() => setItems(items))
-                } else {
-                  toggleModal(false)
-                }
+        try {
+          const {
+            data: { ebay }
+          } = await client.query<{ ebay: EbayResult }>({
+            query: SEARCH_EBAY,
+            variables: {
+              keywords,
+              paginationInput: {
+                pageNumber: 1,
+                entriesPerPage: 2
               }
-            )
-          } catch (err) {
-            el.reset()
+            }
+          })
+
+          if (ebay.items.length) {
+            window.requestAnimationFrame(() => setItems(ebay.items))
+          } else {
+            toggleModal(false)
           }
-        },
+        } catch (err) {
+          el.closest('form').reset()
+        }
+      },
 
-        handleReset: () => () => {
-          toggleModal(false)
-          setItems([])
-        },
+      handleReset: () => () => {
+        toggleModal(false)
+        setItems([])
+      },
 
-        handleConfirm: () => () => {
-          const el = document.getElementById('s') as HTMLInputElement
-          const { value: keywords } = el
-          const $form = el.closest('form') as HTMLFormElement
+      handleConfirm: () => async () => {
+        const el = document.getElementById('s') as HTMLInputElement
+        const { value: keywords } = el
+        const $form = el.closest('form') as HTMLFormElement
 
-          if (!keywords.length) {
-            return
-          }
+        if (!keywords.length) {
+          return
+        }
 
-          try {
-            collect(
-              {
-                keywords,
-                save: true,
-                paginationInput: {
-                  pageNumber: 0,
-                  entriesPerPage: 100
-                }
-              },
-              async ({ totalPages }: EbayResult) => {
-                client.reFetchObservableQueries()
-                $form.reset()
+        try {
+          const {
+            data: { ebay }
+          } = await client.query<{ ebay: EbayResult }>({
+            query: SEARCH_EBAY,
+            variables: {
+              keywords,
+              save: true,
+              paginationInput: {
+                pageNumber: 1,
+                entriesPerPage: 100
+              }
+            }
+          })
 
-                for (
-                  let i = 1, l = parseInt(totalPages as string, 10);
-                  i < l;
-                  i++
-                ) {
-                  try {
-                    await collect({
-                      keywords,
-                      save: true,
-                      paginationInput: {
-                        pageNumber: i,
-                        entriesPerPage: 100
-                      }
-                    })
+          await client.reFetchObservableQueries()
+          $form.reset()
 
-                    await client.reFetchObservableQueries()
-                  } catch (err) {
-                    console.error(err)
-                    break
+          for (
+            let i = 1, l = parseInt(ebay.totalPages as string, 10);
+            i < l;
+            i++
+          ) {
+            try {
+              await client.query<{}>({
+                query: SEARCH_EBAY_BARE,
+                variables: {
+                  keywords,
+                  paginationInput: {
+                    pageNumber: i,
+                    entriesPerPage: 100
                   }
                 }
-              }
-            )
-          } catch (err) {
-            console.error(err)
+              })
 
-            client.reFetchObservableQueries()
-            $form.reset()
+              await client.reFetchObservableQueries()
+            } catch (err) {
+              console.error(err)
+              break
+            }
           }
+        } catch (err) {
+          console.error(err)
+        } finally {
+          await client.reFetchObservableQueries()
+          $form.reset()
         }
       }
-    }
+    })
   )
 )(({ isOpen, handleSubmit, handleReset, handleConfirm, items = [] }) => (
   <Search

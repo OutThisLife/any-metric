@@ -60,8 +60,6 @@ export default (async (
   )
 
   if (save) {
-    res.total = 0
-
     const q = { title: keywords }
     await mongo.tags.updateOne(
       q,

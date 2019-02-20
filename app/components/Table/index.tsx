@@ -27,12 +27,18 @@ export default compose<TableProps & TableHandles, {}>(
   setDisplayName('table'),
   withState('api', 'bindApi', {}),
   graphql<{}, { totalProducts: number }>(GET_TOTAL_PRODUCTS, {
+    options: {
+      notifyOnNetworkStatusChange: true
+    },
     props: ({ data: { totalProducts = 0, ...data } }) => ({
       data,
       totalProducts
     })
   }),
   graphql<{}, { tags: Tag[] }>(GET_TAGS, {
+    options: {
+      notifyOnNetworkStatusChange: true
+    },
     props: ({ data: { tags = [], ...data } }) => ({
       data,
       tags
@@ -40,6 +46,7 @@ export default compose<TableProps & TableHandles, {}>(
   }),
   graphql<TableProps, { products: Product[] }>(GET_PRODUCTS, {
     options: {
+      notifyOnNetworkStatusChange: true,
       variables: {
         paginationInput: {
           pageNumber: 0,
@@ -49,7 +56,7 @@ export default compose<TableProps & TableHandles, {}>(
     },
     props: ({ data: { products = [], ...data } }) => ({
       data,
-      products: orderBy(products, 'createdAt', 'asc'),
+      products,
       fetchMore: async (paginationInput = {}, input = {}) =>
         data.fetchMore({
           variables: {
@@ -251,6 +258,7 @@ export interface TableProps {
     },
     input?: { [key: string]: any }
   ) => Promise<GraphqlQueryControls<{ products: Product[] }>['fetchMore']>
+  products?: Product[]
   totalProducts?: number
   tags?: Tag[]
   config?: GridOptions

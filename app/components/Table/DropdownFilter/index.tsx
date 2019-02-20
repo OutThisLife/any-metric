@@ -1,4 +1,4 @@
-import { GET_PRODUCTS, GET_TAGS, REMOVE_DOC } from '@/lib/queries'
+import { REMOVE_DOC } from '@/lib/queries'
 import { PureComponent } from 'react'
 import { Mutation } from 'react-apollo'
 
@@ -50,28 +50,42 @@ export default class extends PureComponent<
           ))}
         </select>
 
-        <Mutation mutation={REMOVE_DOC}>
+        <Mutation
+          mutation={REMOVE_DOC}
+          refetchQueries={['getTags', 'getProducts']}>
           {mutate => (
-            <a
-              style={{
-                pointerEvents: this.state.value.length ? 'inherit' : 'none',
-                visibility: this.state.value.length ? 'inherit' : 'hidden'
-              }}
-              href="javascript:;"
-              onClick={() =>
-                mutate({
-                  refetchQueries: [
-                    { query: GET_TAGS },
-                    { query: GET_PRODUCTS }
-                  ],
-                  variables: {
-                    objectId: this.state.value,
-                    collectionName: 'tags'
-                  }
-                })
-              }>
-              drop
-            </a>
+            <>
+              <a
+                style={{
+                  pointerEvents: this.state.value.length ? 'inherit' : 'none',
+                  opacity: this.state.value.length ? 1 : 0.2
+                }}
+                href="javascript:;"
+                onClick={() =>
+                  mutate({
+                    variables: {
+                      objectId: this.state.value,
+                      collectionName: 'tags'
+                    }
+                  })
+                }>
+                drop
+              </a>
+              &mdash;
+              <a
+                href="javascript:;"
+                onClick={() =>
+                  mutate({
+                    variables: {
+                      collectionName: 'allProducts'
+                    },
+                    update: () =>
+                      mutate({ variables: { collectionName: 'allTags' } })
+                  })
+                }>
+                flushdb
+              </a>
+            </>
           )}
         </Mutation>
       </>

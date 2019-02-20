@@ -20,7 +20,7 @@ export default (async (
     if (collectionName === 'tags') {
       await mongo.products.deleteMany({
         tags: {
-          $in: [objectId]
+          $in: [convertId(objectId)]
         }
       })
     }

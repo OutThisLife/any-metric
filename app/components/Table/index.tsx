@@ -1,5 +1,5 @@
 import { moneyFormat } from '@/lib/utils'
-import { HomeState } from '@/pages/Dashboard'
+import { entriesPerPage, HomeState } from '@/pages/Dashboard'
 import { Tag } from '@/server/schema/types'
 import { GridApi, GridOptions, IDatasource } from 'ag-grid-community'
 import {
@@ -20,8 +20,6 @@ import DropdownFilter from './DropdownFilter'
 import RangeFilter from './RangeFilter'
 import SearchFilter from './SearchFilter'
 import Table from './style'
-
-const entriesPerPage = 100
 
 export default compose<TableProps & TableHandles, TableProps>(
   setDisplayName('table'),
@@ -63,7 +61,14 @@ export default compose<TableProps & TableHandles, TableProps>(
         )
           .then(({ data: { products = [] } }: any) => {
             args.successCallback(products, total)
-            window.requestAnimationFrame(() => api.sizeColumnsToFit())
+
+            window.requestAnimationFrame(() => {
+              api.sizeColumnsToFit()
+
+              if ('updateChart' in window) {
+                ;(window as any).updateChart(products)
+              }
+            })
           })
           .catch(console.error)
     }),

@@ -8,6 +8,8 @@ import { graphql, GraphqlQueryControls } from 'react-apollo'
 import { Box } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
+export const entriesPerPage = 100
+
 export default compose<HomeState, {}>(
   setDisplayName('dashboard'),
   graphql<{}, { totalProducts: number }>(GET_TOTAL_PRODUCTS, {
@@ -33,7 +35,7 @@ export default compose<HomeState, {}>(
       variables: {
         paginationInput: {
           pageNumber: 1,
-          entriesPerPage: 10
+          entriesPerPage
         },
         input: {
           status: {
@@ -66,7 +68,7 @@ export default compose<HomeState, {}>(
       }
     })
   })
-)(({ totalProducts, products = [], tags = [], fetchMore }) => (
+)(({ totalProducts, tags = [], fetchMore }) => (
   <Box
     css={`
       display: grid;
@@ -87,7 +89,7 @@ export default compose<HomeState, {}>(
       <Table total={totalProducts} fetchMore={fetchMore} tags={tags} />
     </Box>
 
-    {totalProducts >= 20 && <Chart data={products} />}
+    <Chart />
   </Box>
 ))
 

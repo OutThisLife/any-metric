@@ -31,6 +31,7 @@ nextApp.prepare().then(() => {
   app
     .use(helmet())
     .use(morgan('combined', {}))
+    .enable('trust proxy')
     .use(
       compression({
         level: 6,

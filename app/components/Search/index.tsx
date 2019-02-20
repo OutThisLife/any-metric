@@ -61,6 +61,8 @@ export default compose<SearchState & SearchHandlers, {}>(
           return
         }
 
+        $form.reset()
+
         try {
           const {
             data: { ebay }
@@ -77,7 +79,6 @@ export default compose<SearchState & SearchHandlers, {}>(
           })
 
           await client.reFetchObservableQueries()
-          $form.reset()
 
           for (
             let i = 1, l = parseInt(ebay.totalPages as string, 10);
@@ -95,6 +96,8 @@ export default compose<SearchState & SearchHandlers, {}>(
                   }
                 }
               })
+
+              await client.reFetchObservableQueries()
             } catch (err) {
               console.error(err)
               break
@@ -102,9 +105,6 @@ export default compose<SearchState & SearchHandlers, {}>(
           }
         } catch (err) {
           console.error(err)
-        } finally {
-          await client.reFetchObservableQueries()
-          $form.reset()
         }
       }
     })

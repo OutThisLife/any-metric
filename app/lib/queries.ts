@@ -48,7 +48,7 @@ export const GET_PRODUCTS = gql`
 `
 
 export const GET_BARE_PRODUCTS = gql`
-  query getBareProducts($input: JSON) {
+  query getProducts($input: JSON) {
     products(
       paginationInput: { pageNumber: 0, entriesPerPage: 2345 }
       input: $input

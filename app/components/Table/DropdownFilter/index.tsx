@@ -50,9 +50,7 @@ export default class extends PureComponent<
           ))}
         </select>
 
-        <Mutation
-          mutation={REMOVE_DOC}
-          refetchQueries={['getTags', 'getProducts']}>
+        <Mutation mutation={REMOVE_DOC}>
           {mutate => (
             <>
               <a
@@ -75,13 +73,7 @@ export default class extends PureComponent<
               <a
                 href="javascript:;"
                 onClick={() =>
-                  mutate({
-                    variables: {
-                      collectionName: 'allProducts'
-                    },
-                    update: () =>
-                      mutate({ variables: { collectionName: 'allTags' } })
-                  })
+                  mutate({ variables: { collectionName: 'allTags' } })
                 }>
                 flushdb
               </a>

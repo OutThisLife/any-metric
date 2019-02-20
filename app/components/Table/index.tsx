@@ -35,10 +35,18 @@ export default compose<TableProps & TableHandles, {}>(
           (acc, [k, v]) => {
             const obj = v as any
 
+            console.log(obj)
             switch (k) {
               case 'price':
                 acc[k] = {
                   $gte: parseFloat(obj.filter)
+                }
+                break
+
+              case 'title':
+                acc[k] = {
+                  $regex: obj.filter,
+                  $options: 'igm'
                 }
                 break
 
@@ -104,9 +112,6 @@ export default compose<TableProps & TableHandles, {}>(
     })
   }),
   graphql<{}, { tags: Tag[] }>(GET_TAGS, {
-    options: {
-      notifyOnNetworkStatusChange: true
-    },
     props: ({ data: { tags = [], ...data } }) => ({
       data,
       tags
@@ -114,7 +119,6 @@ export default compose<TableProps & TableHandles, {}>(
   }),
   graphql<TableProps & TableHandles, { products: Product[] }>(GET_PRODUCTS, {
     options: {
-      notifyOnNetworkStatusChange: true,
       variables: {
         paginationInput: {
           pageNumber: 0,
@@ -135,18 +139,6 @@ export default compose<TableProps & TableHandles, {}>(
         })
     })
   }),
-  withPropsOnChange<void, TableProps & TableHandles>(
-    (p, np) => p.totalProducts !== np.totalProducts,
-    props => {
-      try {
-        if ('setDatasource' in props.api) {
-          props.api.setDatasource(props.bindData(props))
-        }
-      } catch (err) {
-        console.error(err)
-      }
-    }
-  ),
   withProps<{ config: Partial<GridOptions> }, TableProps & TableHandles>(
     ({ bindData, bindApi, tags, ...props }) => ({
       config: {
@@ -154,7 +146,7 @@ export default compose<TableProps & TableHandles, {}>(
           bindApi(api, () => api.setDatasource(bindData(props))),
         defaultColDef: {
           editable: false,
-          resizable: true,
+          resizable: false,
           sortable: true
         },
         columnDefs: [
@@ -187,8 +179,7 @@ export default compose<TableProps & TableHandles, {}>(
           {
             headerName: 'Name',
             field: 'title',
-            suppressMenu: false,
-            sortable: false,
+            filter: true,
             width: 600,
             cellRenderer: ({ value, data }) =>
               value
@@ -249,6 +240,20 @@ export default compose<TableProps & TableHandles, {}>(
         suppressColumnMoveAnimation: true
       }
     })
+  ),
+  withPropsOnChange<void, TableProps & TableHandles>(
+    (p, np) => p.totalProducts !== np.totalProducts,
+    props => {
+      try {
+        if ('setDatasource' in props.api) {
+          window.requestAnimationFrame(() =>
+            props.api.setDatasource(props.bindData(props))
+          )
+        }
+      } catch (err) {
+        console.error(err)
+      }
+    }
   )
 )(({ handleResize, config = {} }) => (
   <Measure client onResize={handleResize}>

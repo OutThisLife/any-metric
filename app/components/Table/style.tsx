@@ -5,28 +5,17 @@ export default styled<any>(Box)`
   [role='row'] > [role='gridcell'] {
     display: flex;
     align-items: center;
-
-    &:not([col-id='title']) {
-      justify-content: center;
-    }
   }
 
   .ag-row {
-    [col-id='title'] {
-      cursor: pointer;
-
-      &:hover {
-        color: #0000ee;
-        text-decoration: underline;
-      }
-    }
-
-    [col-id='price'] {
+    [col-id^='price'] {
       color: #097925;
+      justify-content: center;
     }
 
-    [col-id='image'] {
+    [col-id^='image'] {
       padding: 0;
+      justify-content: center;
 
       figure {
         width: 60px;
@@ -40,6 +29,23 @@ export default styled<any>(Box)`
           vertical-align: middle;
         }
       }
+    }
+
+    [col-id^='title'] {
+      cursor: pointer;
+
+      &:hover {
+        color: #0000ee;
+        text-decoration: underline;
+      }
+    }
+
+    [col-id^='tags'] {
+      justify-content: center;
+    }
+
+    [col-id^='createdAt'] {
+      justify-content: flex-end;
     }
   }
 

@@ -6,74 +6,6 @@ import { compose, withHandlers, withState } from 'recompose'
 
 import { FloatingFilterProps } from '..'
 
-const Filter = class extends PureComponent<DropdownFilterProps, {}> {
-  public static defaultProps = {
-    handleDrop: () => null,
-    handleFlush: () => null
-  }
-
-  constructor(props) {
-    super(props)
-  }
-
-  public onParentModelChanged() {
-    return
-  }
-
-  public componentDidUpdate(prevProps) {
-    if (prevProps.value !== this.props.value) {
-      this.props.onFloatingFilterChanged({
-        model: {
-          filterType: 'object',
-          type: 'equals',
-          filter: this.props.value,
-          filterTo: null
-        }
-      })
-    }
-  }
-
-  public render() {
-    const {
-      label,
-      value,
-      tags = [],
-      setValue,
-      handleDrop,
-      handleFlush
-    } = this.props
-
-    return (
-      <>
-        <select
-          value={value}
-          onChange={({ target }) => setValue(target.value.trim())}>
-          <option value="">{label}</option>
-
-          {tags.map(t => (
-            <option key={t._id} value={t._id}>
-              {t.title}
-            </option>
-          ))}
-        </select>
-        <a
-          style={{
-            pointerEvents: value.length ? 'inherit' : 'none',
-            opacity: value.length ? 1 : 0.2
-          }}
-          href="javascript:;"
-          onClick={handleDrop}>
-          drop
-        </a>
-        &mdash;
-        <a href="javascript:;" onClick={handleFlush}>
-          flushdb
-        </a>
-      </>
-    )
-  }
-}
-
 export default compose<DropdownFilterHandles, {}>(
   withState('value', 'setValue', ''),
   withApollo,
@@ -98,7 +30,75 @@ export default compose<DropdownFilterHandles, {}>(
         }
       })
   }))
-)(Filter)
+)(
+  class extends PureComponent<DropdownFilterProps, {}> {
+    public static defaultProps = {
+      handleDrop: () => null,
+      handleFlush: () => null
+    }
+
+    constructor(props) {
+      super(props)
+    }
+
+    public onParentModelChanged() {
+      return
+    }
+
+    public componentDidUpdate(prevProps) {
+      if (prevProps.value !== this.props.value) {
+        this.props.onFloatingFilterChanged({
+          model: {
+            filterType: 'object',
+            type: 'equals',
+            filter: this.props.value,
+            filterTo: null
+          }
+        })
+      }
+    }
+
+    public render() {
+      const {
+        label,
+        value,
+        tags = [],
+        setValue,
+        handleDrop,
+        handleFlush
+      } = this.props
+
+      return (
+        <>
+          <select
+            value={value}
+            onChange={({ target }) => setValue(target.value.trim())}>
+            <option value="">{label}</option>
+
+            {tags.map(t => (
+              <option key={t._id} value={t._id}>
+                {t.title}
+              </option>
+            ))}
+          </select>
+          <a
+            style={{
+              pointerEvents: value.length ? 'inherit' : 'none',
+              opacity: value.length ? 1 : 0.2
+            }}
+            href="javascript:;"
+            onClick={handleDrop}>
+            drop
+          </a>
+          &mdash;
+          <a href="javascript:;" onClick={handleFlush}>
+            flushdb
+          </a>
+        </>
+      )
+    }
+  }
+)
 
 export interface DropdownFilterProps
   extends FloatingFilterProps,

@@ -26,5 +26,11 @@
     ]
   },
   "include": ["app/**/*", "typings/*.d.ts"],
-  "exclude": ["node_modules/**", "**/*.spec", "app/out/**", "app/.next/**"]
+  "exclude": [
+    "node_modules/**",
+    "**/*.spec",
+    "**/*.worker",
+    "app/out/**",
+    "app/.next/**"
+  ]
 }

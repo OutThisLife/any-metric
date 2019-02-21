@@ -1,108 +1,99 @@
 import { SEARCH_EBAY, SEARCH_EBAY_BARE } from '@/lib/queries'
 import { moneyFormat } from '@/lib/utils'
-import { EbayItem, EbayResult, Tag } from '@/server/schema/types'
+import { EbayItem, Tag } from '@/server/schema/types'
 import { ApolloClient } from 'apollo-boost'
+import { print } from 'graphql/language/printer'
 import { withApollo } from 'react-apollo'
 import { AtomSpinner } from 'react-epic-spinners'
 import { Box } from 'rebass'
 import { compose, setDisplayName, withHandlers, withState } from 'recompose'
 import { prop } from 'styled-tools'
 
+import ImportWorker from './save.worker.js'
+
 export default compose<SearchState & SearchHandlers, {}>(
   setDisplayName('header-search'),
   withApollo,
   withState('isOpen', 'toggleModal', false),
   withState('items', 'setItems', []),
-  withHandlers<SearchState, SearchHandlers>(
-    ({ toggleModal, setItems, client }) => ({
-      handleSubmit: () => async () => {
-        const el = document.getElementById('s') as HTMLInputElement
-        const { value: keywords } = el
+  withHandlers<SearchState, SearchHandlers>(({ toggleModal, setItems }) => ({
+    handleSubmit: () => async () => {
+      const el = document.getElementById('s') as HTMLInputElement
+      const $form = el.closest('form') as HTMLFormElement
 
-        setItems([], () => toggleModal(true))
+      $form.classList.add('loading')
 
+      const worker = new ImportWorker()
+      worker.addEventListener('message', ({ data: e }) => {
         try {
-          const {
-            data: { ebay }
-          } = await client.query<{ ebay: EbayResult }>({
-            query: SEARCH_EBAY,
-            variables: {
-              keywords,
-              paginationInput: {
-                pageNumber: 1,
-                entriesPerPage: 2
-              }
-            }
-          })
+          if (e.err) {
+            throw e.err
+          } else if (e.ebay.items.length) {
+            setItems(e.ebay.items, () => $form.classList.remove('loading'))
+          }
 
-          if (ebay.items.length) {
-            window.requestAnimationFrame(() => setItems(ebay.items))
-          } else {
-            toggleModal(false)
+          if (e.done) {
+            worker.terminate()
           }
         } catch (err) {
-          el.closest('form').reset()
+          $form.reset()
         }
-      },
+      })
 
-      handleReset: () => () => setItems([], () => toggleModal(false)),
-      handleConfirm: () => async () => {
-        const el = document.getElementById('s') as HTMLInputElement
-        const { value: keywords } = el
-        const $form = el.closest('form') as HTMLFormElement
-
-        if (!keywords.length) {
-          return
-        }
-
-        $form.reset()
-
-        try {
-          const {
-            data: { ebay }
-          } = await client.query<{ ebay: EbayResult }>({
-            query: SEARCH_EBAY,
+      toggleModal(true, () =>
+        setItems([], () =>
+          worker.postMessage({
+            query: print(SEARCH_EBAY),
             variables: {
-              keywords,
-              save: true,
-              paginationInput: {
-                pageNumber: 1,
-                entriesPerPage: 100
-              }
+              keywords: el.value,
+              save: false,
+              paginationInput: { entriesPerPage: 2 }
             }
           })
+        )
+      )
+    },
 
-          await client.reFetchObservableQueries()
+    handleConfirm: ({ client }) => () => {
+      const el = document.getElementById('s') as HTMLInputElement
+      const $form = el.closest('form') as HTMLFormElement
 
-          for (
-            let i = 1, l = parseInt(ebay.totalPages as string, 10);
-            i < l;
-            i++
-          ) {
-            try {
-              await client.query<{}>({
-                query: SEARCH_EBAY_BARE,
-                variables: {
-                  keywords,
-                  paginationInput: {
-                    pageNumber: i,
-                    entriesPerPage: 100
-                  }
-                }
-              })
+      $form.classList.add('loading')
 
-              await client.reFetchObservableQueries()
-            } catch (err) {
-              console.error(err)
-              break
-            }
+      const worker = new ImportWorker()
+      worker.addEventListener('message', async ({ data: e }) => {
+        try {
+          if (e.err) {
+            throw e.err
+          } else if ($form.classList.contains('loading')) {
+            toggleModal(false, () => $form.classList.remove('loading'))
+          }
+
+          client.reFetchObservableQueries()
+
+          if (e.done) {
+            worker.terminate()
           }
         } catch (err) {
-          console.error(err)
+          $form.reset()
         }
-      }
-    })
-  )
+      })
+
+      setItems([], () =>
+        worker.postMessage({
+          recurse: true,
+          query: print(SEARCH_EBAY_BARE),
+          variables: {
+            keywords: el.value,
+            save: true,
+            paginationInput: { entriesPerPage: 100 }
+          }
+        })
+      )
+    },
+
+    handleReset: () => () => setItems([], () => toggleModal(false))
+  }))
 )(({ isOpen, handleSubmit, handleReset, handleConfirm, items = [] }) => (
   <Box
     as="form"
@@ -254,10 +245,10 @@ export default compose<SearchState & SearchHandlers, {}>(
 
 export interface SearchState {
   items: EbayItem[]
-  client?: ApolloClient<{}>
   tags?: Tag[]
   isOpen: boolean
   isForm: boolean
+  client?: ApolloClient<{}>
   setItems?: (r: EbayItem[] | string[], cb?: () => void) => void
   toggleModal?: (b: boolean, cb?: () => void) => void
   toggleForm?: (b: boolean, cb?: () => void) => void

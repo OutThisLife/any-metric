@@ -1,27 +1,23 @@
-const dev = process.env.NODE_ENV !== 'production'
-
-if (dev) {
-  require('dotenv').config()
-}
-
 const { PHASE_DEVELOPMENT_SERVER } = require('next/constants')
 
 const withPlugins = require('next-compose-plugins')
-const typescript = require('@zeit/next-typescript')
-const offline = require('next-offline')
+const withTypescript = require('@zeit/next-typescript')
+const withOffline = require('next-offline')
 const withImages = require('next-optimized-images')
+const withWorkers = require('@zeit/next-workers')
 
 module.exports = withPlugins(
   [
+    withTypescript,
+    withWorkers,
     [
       withImages,
       {
         types: ['jpeg', 'png', 'svg', 'ico']
       }
     ],
-    typescript,
     [
-      offline,
+      withOffline,
       {
         workboxOpts: {
           runtimeCaching: [
@@ -47,7 +43,7 @@ module.exports = withPlugins(
   {
     useFileSystemPublicRoutes: false,
     publicRuntimeConfig: {
-      isDev: dev
+      isDev: process.NODE_ENV !== 'production'
     },
     exportPathMap: async () => ({
       '/': { page: '/Dashboard', query: {} }

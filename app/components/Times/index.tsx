@@ -3,7 +3,7 @@ import { Product, Tag } from '@/server/schema/types'
 import Fuse from 'fuse.js'
 import orderBy from 'lodash/orderBy'
 import { lighten } from 'polished'
-import { func, number } from 'prop-types'
+import { func, number, string } from 'prop-types'
 import { MeasuredComponentProps } from 'react-measure'
 import VirtualList from 'react-tiny-virtual-list'
 import { Box, Flex } from 'rebass'
@@ -12,43 +12,49 @@ import {
   getContext,
   setDisplayName,
   withHandlers,
+  withProps,
   withState
 } from 'recompose'
 import { prop, withProp } from 'styled-tools'
 
-import { ChartProps, ChartState } from '../Chart'
+import { ChartState, isDesktop } from '../Chart'
 
 export default compose<TimesProps & TimesHandlers, TimesProps>(
   setDisplayName('chart-times'),
-  getContext({ index: number, scrollToIndex: func }),
+  getContext({
+    order: string,
+    setOrder: func,
+    index: number,
+    scrollToIndex: func
+  }),
   withState('data', 'updateData', ({ chart }) => chart.data || []),
   withHandlers<TimesProps, TimesHandlers>(
-    ({ chart: { data }, scrollToIndex, updateData }) => ({
+    ({ chart: { data }, setOrder, scrollToIndex, updateData }) => ({
       handleChange: () => ({ currentTarget: { value } }) =>
-        scrollToIndex(0, () => updateData(orderBy(data, ...value.split(',')))),
+        scrollToIndex(0, () => setOrder(value)),
 
-      handleInput: () => ({ currentTarget: { value, nextElementSibling } }) =>
+      handleInput: () => ({ currentTarget: { value } }) =>
         scrollToIndex(0, () =>
           updateData(
-            orderBy(
-              (() => {
-                if (value.length) {
-                  const fuse = new Fuse(data, {
-                    keys: ['title']
-                  })
+            (() => {
+              if (value.length) {
+                const fuse = new Fuse(data, {
+                  keys: ['title']
+                })
 
-                  return fuse.search(value)
-                } else {
-                  return data
-                }
-              })(),
-              ...(nextElementSibling as HTMLSelectElement).value.split(',')
-            )
+                return fuse.search(value)
+              } else {
+                return data
+              }
+            })()
           )
         )
     })
-  )
-)(({ data = [], index, rect, handleChange, handleInput }) => (
+  ),
+  withProps(({ order, data = [] }) => ({
+    data: orderBy(data, ...order.split(','))
+  }))
+)(({ order, data = [], index, rect, handleChange, handleInput }) => (
   <>
     <Flex
       as="form"
@@ -76,7 +82,7 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
         tabIndex={1}
       />
 
-      <select onChange={handleChange}>
+      <select defaultValue={order} onChange={handleChange}>
         <option value="date,desc">Date / DESC</option>
         <option value="date,asc">Date / ASC</option>
         <option value="close,desc">Price / DESC</option>
@@ -84,17 +90,21 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
       </select>
     </Flex>
 
-    {data.length > 0 ? (
-      <VirtualList
-        itemSize={25}
-        itemCount={data.length}
-        height={
-          window.innerWidth > 1025
-            ? rect.bounds.height
-            : rect.bounds.height / 1.8
+    <VirtualList
+      itemSize={25}
+      itemCount={Math.max(1, data.length)}
+      height={isDesktop() ? rect.bounds.height : rect.bounds.height / 1.8}
+      scrollToIndex={index}
+      renderItem={({ index: i, style }) => {
+        if (!data.length) {
+          return (
+            <Flex key={i} style={style}>
+              🤔
+            </Flex>
+          )
         }
-        scrollToIndex={index}
-        renderItem={({ index: i, style }) => (
+
+        return (
           <Flex
             key={i}
             id={`t-${data[i]._id}`}
@@ -161,14 +171,12 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
               </a>
             </span>
 
-            <span className="date">{dateFormat(data[i].date)}</span>
-            <span className="price">{moneyFormat(data[i].close)}</span>
+            <span className="date">{dateFormat((data[i] as any).date)}</span>
+            <span className="price">{moneyFormat((data[i] as any).close)}</span>
           </Flex>
-        )}
-      />
-    ) : (
-      <span style={{ padding: '20px 10px' }}>no data found</span>
-    )}
+        )
+      }}
+    />
 
     <Box
       as="img"
@@ -200,15 +208,16 @@ export interface TimesProps {
   tags?: Tag[]
   totalProducts?: number
   chart?: ChartState
+  rect?: MeasuredComponentProps['contentRect']
   data?: Product[]
-  updateData?: (a: Product[]) => void
+  order?: string
+  setOrder?: (a: string, cb?: () => void) => void
+  updateData?: (a: Product[], cb?: () => void) => void
   index?: number
   scrollToIndex?: (a: number, cb?: () => void) => void
-  rect?: MeasuredComponentProps['contentRect']
 }
 
 export interface TimesHandlers {
-  updateChart?: ChartProps['fetchMore']
   handleInput?: React.KeyboardEventHandler<HTMLInputElement>
   handleChange?: React.ChangeEventHandler<HTMLSelectElement>
 }

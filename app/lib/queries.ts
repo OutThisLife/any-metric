@@ -144,9 +144,14 @@ export const SEARCH_EBAY = gql`
 `
 
 export const SEARCH_EBAY_BARE = gql`
-  query getEbay($keywords: String!, $paginationInput: Pagination) {
-    ebay(keywords: $keywords, save: true, paginationInput: $paginationInput) {
+  query getEbay(
+    $keywords: String!
+    $save: Boolean
+    $paginationInput: Pagination
+  ) {
+    ebay(keywords: $keywords, save: $save, paginationInput: $paginationInput) {
       total
+      totalPages
     }
   }
 `

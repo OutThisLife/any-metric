@@ -37,7 +37,6 @@ export default compose<QuoteProps, {}>(
   <Box
     ref={onRef}
     css={`
-      pointer-events: none;
       position: fixed;
       right: 0;
       bottom: 0;
@@ -51,7 +50,7 @@ export default compose<QuoteProps, {}>(
       }
     `}
     onClick={getQuote}
-    dangerouslySetInnerHTML={{ __html: `<em>❤</em> ${quote}` }}
+    dangerouslySetInnerHTML={{ __html: `${quote} <em>❤</em>` }}
   />
 ))
 

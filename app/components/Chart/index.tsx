@@ -1,8 +1,8 @@
 import { GET_BARE_PRODUCTS } from '@/lib/queries'
 import { Product } from '@/server/schema/types'
 import orderBy from 'lodash/orderBy'
-import { func } from 'prop-types'
-import { DataValue, graphql, GraphqlQueryControls } from 'react-apollo'
+import { func, string } from 'prop-types'
+import { DataValue, graphql } from 'react-apollo'
 import { SwappingSquaresSpinner } from 'react-epic-spinners'
 import { MeasuredComponentProps, withContentRect } from 'react-measure'
 import { sma } from 'react-stockcharts/lib/indicator'
@@ -13,32 +13,35 @@ import {
   compose,
   setDisplayName,
   withContext,
-  withPropsOnChange
+  withPropsOnChange,
+  withState
 } from 'recompose'
 
 import Tabs from '../Tabs'
 import Times from '../Times'
 import Price from './Price'
 
+export const isDesktop = () => 'browser' in process && window.innerWidth > 1025
+
 export default compose<ChartProps, {}>(
   setDisplayName('price'),
+  withContentRect(['client', 'bounds']),
+  withState('input', 'setInput', {}),
+  withState('order', 'setOrder', 'date,desc'),
+  withContext(
+    { order: string, setOrder: func, setInput: func },
+    ({ order, setOrder, setInput }) => ({
+      order,
+      setOrder,
+      setInput
+    })
+  ),
   graphql<ChartProps, { products: Product[] }>(GET_BARE_PRODUCTS, {
-    options: {
+    options: ({ input }) => ({
       ssr: false,
-      notifyOnNetworkStatusChange: true
-    },
-    props: ({ data }) => ({
-      data,
-      fetchMore: async (input = {}) =>
-        data.fetchMore({
-          variables: { input },
-          updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult || prev
-        })
+      variables: { input }
     })
   }),
-  withContext({ updateChart: func }, ({ fetchMore }) => ({
-    updateChart: fetchMore
-  })),
   withPropsOnChange<ChartProps, ChartProps>(
     ['data'],
     ({ data: { products = [], loading } }) => {
@@ -65,13 +68,11 @@ export default compose<ChartProps, {}>(
       const end = xAccessor(data[Math.max(0, data.length - start)])
       const xExtents = [start, end]
 
-      const isDesktop = window.innerWidth > 1025
-
       const margin = {
-        top: isDesktop ? 70 : 25,
-        right: isDesktop ? 70 : 25,
-        bottom: isDesktop ? 40 : 20,
-        left: isDesktop ? 70 : 25
+        top: isDesktop() ? 70 : 25,
+        right: isDesktop() ? 70 : 25,
+        bottom: isDesktop() ? 40 : 20,
+        left: isDesktop() ? 70 : 25
       }
 
       const tickStyle: any = {
@@ -98,12 +99,10 @@ export default compose<ChartProps, {}>(
         }
       }
     }
-  ),
-  withContentRect(['client', 'bounds'])
+  )
 )(({ measureRef, contentRect: rect, data: { loading }, chart }) => (
   <Box as="section" ref={measureRef}>
-    {loading ||
-    !('data' in chart) ||
+    {(loading && !('data' in chart)) ||
     !('bounds' in rect) ||
     isNaN(rect.bounds.width) ? (
       <Loader size={120} />
@@ -111,14 +110,8 @@ export default compose<ChartProps, {}>(
       <span style={{ justifySelf: 'center' }}>not enough datapoints</span>
     ) : (
       <Price
-        width={
-          window.innerWidth >= 1025 ? rect.bounds.width / 2 : rect.client.width
-        }
-        height={
-          window.innerWidth >= 1025
-            ? rect.bounds.height / 2
-            : rect.client.width / 2
-        }
+        width={isDesktop() ? rect.bounds.width / 2 : rect.client.width}
+        height={isDesktop() ? rect.bounds.height / 2 : rect.client.width / 2}
         ratio={1}
         {...chart}
         {...rect}
@@ -128,7 +121,7 @@ export default compose<ChartProps, {}>(
     <Box as="aside">
       <Tabs />
 
-      {loading || !('data' in chart) ? (
+      {loading && !('data' in chart) ? (
         <Loader size={60} />
       ) : (
         <Times key={chart.data.length} chart={chart} rect={rect} />
@@ -142,7 +135,8 @@ const Loader = (props: any) => (
     alignItems="center"
     justifyContent="center"
     css={`
-      height: 100%;
+      height: calc(100vh - var(--pad));
+      overflow: hidden;
 
       @media (max-width: 1025px) {
         padding: var(--pad);
@@ -160,9 +154,8 @@ const Loader = (props: any) => (
 export interface ChartProps extends Partial<MeasuredComponentProps> {
   chart?: ChartState
   data?: DataValue<{ products: Product[] }>
-  fetchMore?: (input?: {
-    [key: string]: any
-  }) => Promise<GraphqlQueryControls<{ products: Product[] }>['fetchMore']>
+  input?: { [key: string]: any }
+  setInput?: (a: any) => void
 }
 
 export interface ChartState {

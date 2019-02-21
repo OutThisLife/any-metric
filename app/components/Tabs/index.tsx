@@ -9,36 +9,15 @@ import {
   getContext,
   setDisplayName,
   withHandlers,
-  withStateHandlers
+  withState
 } from 'recompose'
 import { prop } from 'styled-tools'
 
-import { TimesHandlers } from '../Times'
-
 export default compose<TimesTabsProps & TimesTabsHandles, {}>(
   setDisplayName('chart-times-tabs'),
-  getContext({ updateChart: func }),
+  getContext({ setInput: func }),
   withApollo,
-  withStateHandlers(
-    {
-      tab: ''
-    },
-    {
-      setTab: (_, { updateChart }: TimesHandlers) => tab => {
-        updateChart(
-          tab.length
-            ? {
-                tags: {
-                  $in: [tab]
-                }
-              }
-            : {}
-        )
-
-        return { tab }
-      }
-    }
-  ),
+  withState('tab', 'setTab', ''),
   graphql<{}, { tags: Tag[] }>(GET_TAGS, {
     props: ({ data: { tags = [], ...data } }) => ({
       data,
@@ -54,79 +33,104 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
       }
     })
   }),
-  withHandlers<TimesTabsProps, TimesTabsHandles>(({ mutate }) => ({
+  withHandlers<TimesTabsProps, TimesTabsHandles>(({ setTab, mutate }) => ({
     handleFlush: () => () =>
       window.confirm('Are you sure?') &&
       mutate({ variables: { collectionName: 'allTags' } }),
 
-    handleDrop: () => e =>
-      e.currentTarget instanceof HTMLElement &&
-      mutate({
-        variables: {
-          objectId: e.currentTarget.dataset.id,
-          collectionName: 'tags'
-        }
-      }),
+    handleDrop: () => ({
+      currentTarget: {
+        dataset: { id }
+      }
+    }) =>
+      setTab('', () =>
+        mutate({
+          variables: {
+            objectId: id,
+            collectionName: 'tags'
+          }
+        })
+      ),
 
     handleRefresh: ({ client }) => () => client.reFetchObservableQueries()
   }))
-)(({ tags = [], tab, setTab, handleRefresh, handleFlush, handleDrop }) => (
-  <Flex
-    as="nav"
-    css={`
-      justify-content: flex-end;
-      max-width: 100%;
-      overflow: auto;
-      white-space: nowrap;
-      background: ${prop('theme.bg')};
+)(
+  ({
+    tags = [],
+    tab,
+    setTab,
+    setInput,
+    handleRefresh,
+    handleFlush,
+    handleDrop
+  }) => (
+    <Flex
+      as="nav"
+      css={`
+        justify-content: flex-end;
+        max-width: 100%;
+        overflow: auto;
+        white-space: nowrap;
+        background: ${prop('theme.bg')};
 
-      @media (max-width: 1025px) {
-        padding: var(--pad) 0;
-      }
+        @media (max-width: 1025px) {
+          padding: var(--pad) 0;
+        }
 
-      > span {
-        display: inline-flex;
-        align-items: center;
-        font-weight: 700;
-        text-transform: uppercase;
+        > span {
+          display: inline-flex;
+          align-items: center;
+          font-weight: 700;
+          text-transform: uppercase;
 
-        i {
-          cursor: pointer;
-          margin-left: 0.3em;
+          i {
+            cursor: pointer;
+            margin-right: 0.3em;
 
-          &.refresh svg {
-            stroke: ${prop('theme.brand')};
+            &.refresh svg {
+              stroke: ${prop('theme.brand')};
+            }
+          }
+
+          &:not(:hover) .delete {
+            visibility: hidden;
           }
         }
+      `}>
+      {tags.map(t => (
+        <span key={t._id} className={tab === t._id ? 'active' : ''}>
+          <a
+            href="javascript:;"
+            onClick={() =>
+              setTab(t._id, () =>
+                setInput({
+                  tags: {
+                    $in: [t._id]
+                  }
+                })
+              )
+            }>
+            {t.title}
+          </a>
 
-        &:not(:hover) .delete {
-          visibility: hidden;
-        }
-      }
-    `}>
-    {tags.map(t => (
-      <span key={t._id} className={tab === t._id ? 'active' : ''}>
-        <a href="javascript:;" onClick={() => setTab(t._id)}>
-          {t.title}
+          <Delete data-id={t._id} onClick={handleDrop} />
+        </span>
+      ))}
+
+      <span className={tab === '' ? 'active' : ''}>
+        <a href="javascript:;" onClick={() => setTab('', () => setInput({}))}>
+          Everything
         </a>
 
-        <Delete data-id={t._id} onClick={handleDrop} />
+        <Delete onClick={handleFlush} />
       </span>
-    ))}
 
-    <span className={tab === '' ? 'active' : ''}>
-      <a href="javascript:;" onClick={() => setTab('')}>
-        Everything
-      </a>
-
-      <Delete onClick={handleFlush} />
-    </span>
-
-    <span style={{ marginLeft: 5 }}>
-      <Refresh onClick={handleRefresh} />
-    </span>
-  </Flex>
-))
+      <span style={{ marginLeft: 5 }}>
+        <Refresh onClick={handleRefresh} />
+      </span>
+    </Flex>
+  )
+)
 
 const Refresh = ({ size = 14, ...props }) => (
   <i className="refresh" {...props}>
@@ -137,9 +141,8 @@ const Refresh = ({ size = 14, ...props }) => (
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="1"
-      stroke-linecap="square"
-      stroke-linejoin="arcs">
+      strokeWidth="1"
+      strokeLinecap="square">
       <path d="M2.5 2v6h6M21.5 22v-6h-6" />
       <path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
     </svg>
@@ -155,9 +158,8 @@ const Delete = ({ size = 14, ...props }) => (
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="1"
-      stroke-linecap="square"
-      stroke-linejoin="arcs">
+      strokeWidth="1"
+      strokeLinecap="square">
       <polyline points="3 6 5 6 21 6" />
       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
       <line x1="10" y1="11" x2="10" y2="17" />
@@ -168,7 +170,7 @@ const Delete = ({ size = 14, ...props }) => (
 
 export interface TimesTabsProps {
   tab?: string
-  setTab?: (a: string) => void
+  setTab?: (a: string, cb?: () => void) => void
   tags?: Tag[]
   client?: ApolloClient<{}>
   mutate?: MutationFn

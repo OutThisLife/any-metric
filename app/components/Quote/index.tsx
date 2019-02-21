@@ -1,3 +1,4 @@
+import * as d3 from 'd3'
 import fetch from 'isomorphic-unfetch'
 import { Box } from 'rebass'
 import { compose, setDisplayName, withHandlers, withState } from 'recompose'
@@ -29,6 +30,7 @@ export default compose<QuoteProps, {}>(
       }
 
       getQuote()
+      d3.interval(getQuote, 3e5)
     }
   }))
 )(({ onRef, getQuote, quote }) => (

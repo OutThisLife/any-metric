@@ -14,8 +14,8 @@ import {
 } from 'react-stockcharts/lib/series'
 import { HoverTooltip } from 'react-stockcharts/lib/tooltip'
 import { compose, setDisplayName, withStateHandlers } from 'recompose'
-
 import { ThemeProps, withTheme } from 'styled-components'
+
 import { ChartState } from '..'
 import ChartCanvas from '../style'
 
@@ -74,7 +74,7 @@ export default compose<
             {...tickStyle}
           />
 
-          {props.width >= 1025 && (
+          {window.innerWidth >= 1025 && (
             <ClickCallback
               onDoubleClick={handleReset}
               onMouseMove={({ currentItem }) => {
@@ -92,11 +92,10 @@ export default compose<
                   }
 
                   window.requestAnimationFrame(() => {
-                    el.scrollIntoView(true)
-                    $parent.scrollTop -= el.clientHeight * 4
-
                     el.classList.add('active')
                     $zoom.setAttribute('src', currentItem.image)
+
+                    $parent.parentElement.scrollTop = el.offsetTop
                   })
 
                   tm = setTimeout(() => {

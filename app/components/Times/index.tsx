@@ -1,57 +1,81 @@
 import { dateFormat, moneyFormat } from '@/lib/utils'
 import { Product, Tag } from '@/server/schema/types'
-import { Box, Flex } from 'rebass'
-import { compose, lifecycle, setDisplayName } from 'recompose'
-
+import Fuse from 'fuse.js'
+import orderBy from 'lodash/orderBy'
 import { lighten } from 'polished'
+import { MeasuredComponentProps } from 'react-measure'
+import VirtualList from 'react-tiny-virtual-list'
+import { Box, Flex } from 'rebass'
+import { compose, setDisplayName, withHandlers, withState } from 'recompose'
 import { prop, withProp } from 'styled-tools'
+
 import { ChartProps, ChartState } from '../Chart'
 
 export default compose<TimesProps & TimesHandlers, TimesProps>(
   setDisplayName('chart-times'),
-  lifecycle({
-    componentDidMount(this: any) {
-      this.handleKeyPress = e => {
-        const $a = document.querySelector('[id].active [href]')
+  withState('data', 'updateData', ({ chart }) => chart.data || []),
+  withHandlers<TimesProps, TimesHandlers>(
+    ({ chart: { data }, updateData }) => ({
+      handleChange: () => e =>
+        updateData(orderBy(data, ...e.currentTarget.value.split(','))),
 
-        if (e.key === 'w' && $a instanceof HTMLAnchorElement) {
-          window.open($a.href, '_blank')
+      handleInput: () => e => {
+        const v = e.currentTarget.value
+
+        if (v.length) {
+          const fuse = new Fuse(data, {
+            keys: ['title']
+          })
+
+          updateData(fuse.search(v))
+        } else {
+          updateData(data)
         }
       }
-
-      window.addEventListener('keypress', this.handleKeyPress)
-    },
-
-    componentWillUnmount(this: any) {
-      window.removeEventListener('keypress', this.handleKeyPress)
-    }
-  })
-)(({ chart }) => (
+    })
+  )
+)(({ rect, data = [], handleChange, handleInput }) => (
   <>
-    {[].slice
-      .call(chart.data)
-      .reverse()
-      .map((d: Product) => (
+    <Flex
+      as="form"
+      css={`
+        justify-content: space-between;
+        padding: 5px;
+      `}>
+      <input
+        type="text"
+        onInput={handleInput}
+        placeholder="Search"
+        autoComplete="off"
+        spellCheck={false}
+      />
+
+      <select onChange={handleChange}>
+        <option value="date,desc">Date / DESC</option>
+        <option value="date,asc">Date / ASC</option>
+        <option value="close,desc">Price / DESC</option>
+        <option value="close,asc">Price / ASC</option>
+      </select>
+    </Flex>
+
+    <VirtualList
+      itemSize={25}
+      itemCount={data.length}
+      height={rect.client.height}
+      renderItem={({ index: i, style }) => (
         <Flex
-          key={d._id}
-          id={`t-${d._id}`}
-          data-src={d.image}
+          key={i}
+          id={`t-${data[i]._id}`}
+          data-src={data[i].image}
+          style={style}
           alignItems="center"
           justifyContent="center"
-          onMouseEnter={() => {
-            try {
-              document.getElementById('zoom').setAttribute('src', d.image)
-            } catch (err) {
-              //
-            }
-          }}
-          onMouseLeave={() => {
-            try {
-              document.getElementById('zoom').removeAttribute('src')
-            } catch (err) {
-              //
-            }
-          }}
+          onMouseEnter={() =>
+            document.getElementById('zoom').setAttribute('src', data[i].image)
+          }
+          onMouseLeave={() =>
+            document.getElementById('zoom').removeAttribute('src')
+          }
           css={`
             display: flex;
             align-items: center;
@@ -98,21 +122,22 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
             }
           `}>
           <span className="title">
-            <a href={d.url} target="_blank">
-              {d.title}
+            <a href={data[i].url} target="_blank">
+              {data[i].title}
             </a>
           </span>
 
-          <span className="date">{dateFormat((d as any).date)}</span>
-          <span className="price">{moneyFormat((d as any).close)}</span>
+          <span className="date">{dateFormat(data[i].date)}</span>
+          <span className="price">{moneyFormat(data[i].close)}</span>
         </Flex>
-      ))}
-
+      )}
+    />
     <Box
       as="img"
       id="zoom"
       alt=""
       css={`
+        z-index: 100;
         pointer-events: none;
         position: fixed;
         right: 0;
@@ -133,11 +158,13 @@ export interface TimesProps {
   tags?: Tag[]
   totalProducts?: number
   chart?: ChartState
-  tab?: string
-  setTab?: (a: string) => void
+  data?: Product[]
+  updateData?: (a: any) => void
+  rect?: MeasuredComponentProps['contentRect']
 }
 
 export interface TimesHandlers {
   updateChart?: ChartProps['fetchMore']
-  [key: string]: React.MouseEventHandler<HTMLAnchorElement>
+  handleInput?: React.KeyboardEventHandler<HTMLInputElement>
+  handleChange?: React.ChangeEventHandler<HTMLSelectElement>
 }

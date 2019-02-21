@@ -8,6 +8,7 @@ import { MeasuredComponentProps, withContentRect } from 'react-measure'
 import { sma } from 'react-stockcharts/lib/indicator'
 import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale'
 import { last } from 'react-stockcharts/lib/utils'
+import { Box, Flex } from 'rebass'
 import {
   compose,
   setDisplayName,
@@ -15,7 +16,6 @@ import {
   withPropsOnChange
 } from 'recompose'
 
-import { Box, Flex } from 'rebass'
 import Tabs from '../Tabs'
 import Times from '../Times'
 import Price from './Price'
@@ -51,7 +51,7 @@ export default compose<ChartProps, {}>(
   })),
   withPropsOnChange<ChartProps, ChartProps>(
     ['data'],
-    ({ data: { products = [], loading }, width }) => {
+    ({ data: { products = [], loading } }) => {
       if (loading) {
         return { chart: {} }
       }
@@ -75,11 +75,13 @@ export default compose<ChartProps, {}>(
       const end = xAccessor(data[Math.max(0, data.length - start)])
       const xExtents = [start, end]
 
+      const isDesktop = window.innerWidth >= 1025
+
       const margin = {
-        top: width >= 1025 ? 70 : 25,
-        right: width >= 1025 ? 70 : 25,
-        bottom: width >= 1025 ? 30 : 15,
-        left: width >= 1025 ? 70 : 25
+        top: isDesktop ? 70 : 25,
+        right: isDesktop ? 70 : 25,
+        bottom: isDesktop ? 40 : 20,
+        left: isDesktop ? 70 : 25
       }
 
       const tickStyle: any = {
@@ -112,10 +114,11 @@ export default compose<ChartProps, {}>(
   <Box as="section" ref={measureRef}>
     {loading ||
     !('data' in chart) ||
-    chart.data.length < 10 ||
     !('bounds' in rect) ||
     isNaN(rect.bounds.width) ? (
       <Loader size={120} />
+    ) : chart.data.length < 10 ? (
+      <span style={{ justifySelf: 'center' }}>not enough datapoints</span>
     ) : (
       <Price
         width={
@@ -128,6 +131,7 @@ export default compose<ChartProps, {}>(
         }
         ratio={1}
         {...chart}
+        {...rect}
       />
     )}
 
@@ -137,7 +141,7 @@ export default compose<ChartProps, {}>(
       {loading || !('data' in chart) ? (
         <Loader size={60} />
       ) : (
-        <Times chart={chart} />
+        <Times chart={chart} rect={rect} />
       )}
     </Box>
   </Box>

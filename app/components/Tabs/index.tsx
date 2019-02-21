@@ -1,9 +1,10 @@
 import { GET_TAGS, REMOVE_DOC } from '@/lib/queries'
 import { Tag } from '@/server/schema/types'
+import { ApolloClient } from 'apollo-boost'
 import { ObjectID } from 'bson'
 import { func } from 'prop-types'
 import { graphql, MutationFn, withApollo } from 'react-apollo'
-import { Box, Flex } from 'rebass'
+import { Flex } from 'rebass'
 import {
   compose,
   getContext,
@@ -13,8 +14,7 @@ import {
 } from 'recompose'
 import { prop } from 'styled-tools'
 
-import { ApolloClient } from 'apollo-boost'
-import { TimesHandlers, TimesProps } from '../Times'
+import { TimesHandlers } from '../Times'
 
 export default compose<TimesTabsProps & TimesTabsHandles, {}>(
   setDisplayName('chart-times-tabs'),
@@ -80,9 +80,9 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
       background: ${prop('theme.bg')};
 
       @media (min-width: 1025px) {
-        position: sticky;
+        position: absolute;
         top: 0;
-        border-bottom: 2px solid ${prop('theme.border')};
+        right: 0;
       }
 
       @media (max-width: 1025px) {
@@ -148,14 +148,6 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
         }
       }
     `}>
-    <span className={tab === '' ? 'active' : ''}>
-      <a href="javascript:;" onClick={() => setTab('')}>
-        Everything
-      </a>
-
-      <Delete onClick={handleFlush} />
-    </span>
-
     {tags.map(t => (
       <span key={t._id} className={tab === t._id ? 'active' : ''}>
         <a href="javascript:;" onClick={() => setTab(t._id)}>
@@ -166,7 +158,15 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
       </span>
     ))}
 
-    <span style={{ marginLeft: 'auto' }}>
+    <span className={tab === '' ? 'active' : ''}>
+      <a href="javascript:;" onClick={() => setTab('')}>
+        Everything
+      </a>
+
+      <Delete onClick={handleFlush} />
+    </span>
+
+    <span style={{ marginLeft: 5 }}>
       <Refresh onClick={handleRefresh} />
     </span>
   </Flex>
@@ -208,12 +208,14 @@ const Delete = props => (
   </i>
 )
 
-export interface TimesTabsProps extends TimesProps {
+export interface TimesTabsProps {
+  tab?: string
+  setTab?: (a: string) => void
   client?: ApolloClient<{}>
   mutate?: MutationFn
 }
 
-export interface TimesTabsHandles extends TimesHandlers {
+export interface TimesTabsHandles {
   handleDrop: React.MouseEventHandler<HTMLAnchorElement>
   handleFlush: React.MouseEventHandler<HTMLAnchorElement>
   handleRefresh: React.MouseEventHandler<HTMLAnchorElement>

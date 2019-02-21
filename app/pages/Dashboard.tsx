@@ -1,10 +1,29 @@
 import Chart from '@/components/Chart'
 import Search from '@/components/Search'
 import { Box } from 'rebass'
-import { compose, setDisplayName } from 'recompose'
+import { compose, lifecycle, setDisplayName } from 'recompose'
 import { prop } from 'styled-tools'
 
-export default compose(setDisplayName('dashboard'))(() => (
+export default compose(
+  setDisplayName('dashboard'),
+  lifecycle({
+    componentDidMount(this: any) {
+      this.handleKeyPress = e => {
+        const $a = document.querySelector('[id].active [href]')
+
+        if (e.key === 'w' && $a instanceof HTMLAnchorElement) {
+          window.open($a.href, '_blank')
+        }
+      }
+
+      window.addEventListener('keypress', this.handleKeyPress)
+    },
+
+    componentWillUnmount(this: any) {
+      window.removeEventListener('keypress', this.handleKeyPress)
+    }
+  })
+)(() => (
   <Box
     css={`
       --pad: 25px;
@@ -22,9 +41,11 @@ export default compose(setDisplayName('dashboard'))(() => (
       }
 
       > section {
+        position: relative;
+
         @media (min-width: 1025px) {
           display: grid;
-          grid-template-columns: repeat(2, 50%);
+          grid-template-columns: repeat(2, calc(50% - 15px));
           grid-gap: var(--pad);
           align-items: center;
           justify-content: center;
@@ -37,7 +58,7 @@ export default compose(setDisplayName('dashboard'))(() => (
 
           @media (min-width: 1025px) {
             height: calc(100vh - (var(--pad) * 6));
-            overflow: auto;
+            overflow: hidden;
           }
 
           @media (max-width: 1025px) {

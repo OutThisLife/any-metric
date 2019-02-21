@@ -80,7 +80,7 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
       <VirtualList
         itemSize={25}
         itemCount={data.length}
-        height={rect.client.height}
+        height={rect.client.width >= 1025 ? rect.client.height : 1025}
         scrollToIndex={index}
         renderItem={({ index: i, style }) => (
           <Flex

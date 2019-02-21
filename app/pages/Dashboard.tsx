@@ -1,4 +1,5 @@
 import Chart from '@/components/Chart'
+import Quote from '@/components/Quote'
 import Search from '@/components/Search'
 import { func, number } from 'prop-types'
 import { Box } from 'rebass'
@@ -82,6 +83,7 @@ export default compose<DashboardProps, {}>(
     `}>
     <Search />
     <Chart />
+    <Quote />
   </Box>
 ))
 

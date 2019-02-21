@@ -65,7 +65,7 @@ export default compose<ChartProps, {}>(
       const end = xAccessor(data[Math.max(0, data.length - start)])
       const xExtents = [start, end]
 
-      const isDesktop = window.innerWidth >= 1025
+      const isDesktop = window.innerWidth > 1025
 
       const margin = {
         top: isDesktop ? 70 : 25,
@@ -112,10 +112,10 @@ export default compose<ChartProps, {}>(
     ) : (
       <Price
         width={
-          rect.client.width >= 1025 ? rect.bounds.width / 2 : rect.client.width
+          window.innerWidth >= 1025 ? rect.bounds.width / 2 : rect.client.width
         }
         height={
-          rect.client.width >= 1025
+          window.innerWidth >= 1025
             ? rect.bounds.height / 2
             : rect.client.width / 2
         }

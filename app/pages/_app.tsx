@@ -2,7 +2,7 @@ import withData from '@/client/withData'
 import { ApolloClient } from 'apollo-boost'
 import App, { AppProps, Container } from 'next/app'
 import Head from 'next/head'
-import { complement, desaturate, invert } from 'polished'
+import { desaturate } from 'polished'
 import { ApolloProvider } from 'react-apollo'
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import { prop, withProp } from 'styled-tools'
@@ -45,10 +45,26 @@ const GlobalStyles = createGlobalStyle`
   * {
     font-family: Arial, sans-serif;
     font-size: 12px;
+    box-sizing: border-box;
+
+    &:focus{
+      outline: #4D90FE solid 2px;
+      outline-offset: 1px;
+    }
   }
 
   body {
     background: ${prop('theme.bg')};
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+    background: ${prop('theme.panel')};
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: ${prop('theme.base')};
   }
 
   p, figure, h5 {

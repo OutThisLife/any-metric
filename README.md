@@ -2,26 +2,6 @@
 
 ```graphql
 mutation {
-  createTag(input: { title: "Product Name", isQuery: true }) {
-    _id
-    title
-    slug
-  }
-}
-```
-
-```graphql
-mutation {
-  createProduct(input: { title: "Product Name" }) {
-    _id
-    title
-    slug
-  }
-}
-```
-
-```graphql
-mutation {
   modify(
     objectId: "5c1001bb32245fbaaa48d9bd"
     collectionName: "products"
@@ -113,14 +93,14 @@ type Query {
   ): EbayResult
 
   google(keywords: String!): CrawlResult
-  products(paginationInput: Pagination): [Product]
+  products(paginationInput: Pagination, input: JSON): [Product]
   tags: [Tag]
-  theme: String
+
+  totalProducts: Int
+  totalTags: Int
 }
 
 type Mutation {
-  setTheme(theme: String!): String
-
   createTag(input: TagInput): Tag
   createProduct(input: ProductInput): Product
 
@@ -146,10 +126,10 @@ type Product @cacheControl(maxAge: 10e5) {
   timeLeft: Date
   title: String
   url: String
+  username: String
 }
 
 type Tag @cacheControl(maxAge: 10e5) {
-  isQuery: Boolean
   slug: String
   title: String
   total: Int
@@ -158,18 +138,12 @@ type Tag @cacheControl(maxAge: 10e5) {
 extend type Product {
   _id: ID!
   createdAt: Date
-  deletedAt: Date
-  isDeleted: Boolean
-  restoredAt: Date
   updatedAt: Date
 }
 
 extend type Tag {
   _id: ID!
   createdAt: Date
-  deletedAt: Date
-  isDeleted: Boolean
-  restoredAt: Date
   updatedAt: Date
 }
 
@@ -187,6 +161,8 @@ type CrawlResult @cacheControl(maxAge: 10e5) {
 type EbayResult @cacheControl(maxAge: 10e5) {
   items: [EbayItem]
   total: String
+  totalPages: String
+  op: String
 }
 
 type EbayItem @cacheControl(maxAge: 10e5) {
@@ -227,7 +203,6 @@ input SelectorInput {
 input TagInput {
   title: String
   total: Int
-  isQuery: Boolean
 }
 
 input ProductInput {

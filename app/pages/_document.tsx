@@ -22,27 +22,11 @@ export default class extends Document<{
           <meta httpEquiv="X-UA-Compatible" content="IE=edge,chrome=1" />
           <meta name="robots" content="noindex" />
 
-          <link rel="shortcut icon" href="/static/favicon.ico" />
+          <link rel="shortcut icon" href={require('./favicon.jpg')} />
 
           <link
             rel="stylesheet"
             href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
-          />
-
-          <link
-            rel="stylesheet"
-            href="//unpkg.com/ag-grid-community/dist/styles/ag-grid.css"
-          />
-
-          <link
-            rel="stylesheet"
-            href="//unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css"
-          />
-
-          <style
-            dangerouslySetInnerHTML={{
-              __html: `*{box-sizing: border-box; }`
-            }}
           />
 
           {this.props.styleTags}

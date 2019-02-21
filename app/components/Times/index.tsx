@@ -53,10 +53,18 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
     <Flex
       as="form"
       css={`
-        padding: 5px;
+        padding: 5px 0;
 
-        > * + * {
-          margin-left: 2.5px;
+        @media (max-width: 1025px) {
+          padding-top: 0;
+        }
+
+        > * {
+          margin: 0;
+
+          + * {
+            margin-left: 2.5px;
+          }
         }
       `}>
       <input
@@ -80,7 +88,11 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
       <VirtualList
         itemSize={25}
         itemCount={data.length}
-        height={rect.client.width >= 1025 ? rect.client.height : 1025}
+        height={
+          window.innerWidth > 1025
+            ? rect.bounds.height
+            : rect.bounds.height / 1.8
+        }
         scrollToIndex={index}
         renderItem={({ index: i, style }) => (
           <Flex
@@ -166,13 +178,17 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
         z-index: 100;
         pointer-events: none;
         position: fixed;
-        top: 0;
+        bottom: 0;
         left: 0;
         max-width: 33vw;
         max-height: 33vh;
         vertical-align: top;
 
         &:not([src]) {
+          display: none;
+        }
+
+        @media (max-width: 1025px) {
           display: none;
         }
       `}

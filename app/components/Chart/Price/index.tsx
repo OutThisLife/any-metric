@@ -1,7 +1,7 @@
 import { moneyFormat } from '@/lib/utils'
 import * as d3 from 'd3'
 import { func } from 'prop-types'
-import { Chart, ZoomButtons } from 'react-stockcharts'
+import { Chart, ChartCanvas, ZoomButtons } from 'react-stockcharts'
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes'
 import {
   CrossHairCursor,
@@ -23,7 +23,6 @@ import {
 import { ThemeProps, withTheme } from 'styled-components'
 
 import { ChartState } from '..'
-import ChartCanvas from '../style'
 
 export default compose<
   ChartState & PriceChartProps & ThemeProps<any>,
@@ -88,8 +87,9 @@ export default compose<
               onMouseMove={({ currentItem, fullData }) => {
                 clearTimeout(tm)
 
-                const $zoom = document.getElementById('zoom')
-                $zoom.setAttribute('src', currentItem.image)
+                document
+                  .getElementById('zoom')
+                  .setAttribute('src', currentItem.image)
                 localStorage.setItem('url', currentItem.url)
 
                 scrollToIndex(

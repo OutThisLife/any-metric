@@ -21,7 +21,7 @@ export const dateFormat = withDate(d => {
     return d.fromNow()
   }
 
-  return d.format('MMM DD, YY')
+  return d.format('MM.DD.YY')
 })
 
 export const tickerFormat = withDate(d => {

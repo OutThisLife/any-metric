@@ -58,9 +58,7 @@ export default (initialState = {}) => {
   }
 
   if (!client) {
-    client = create(
-      initialState || (window as any).__NEXT_DATA__.props.apolloState
-    )
+    client = create(initialState)
   }
 
   return client

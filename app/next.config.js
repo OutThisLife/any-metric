@@ -4,15 +4,21 @@ if (dev) {
   require('dotenv').config()
 }
 
-const withBundleAnalyzer = require('@zeit/next-bundle-analyzer')
+const { PHASE_DEVELOPMENT_SERVER } = require('next/constants')
+
 const withPlugins = require('next-compose-plugins')
 const typescript = require('@zeit/next-typescript')
 const offline = require('next-offline')
-const { PHASE_DEVELOPMENT_SERVER } = require('next/constants')
+const withImages = require('next-optimized-images')
 
 module.exports = withPlugins(
   [
-    withBundleAnalyzer,
+    [
+      withImages,
+      {
+        types: ['jpeg', 'png', 'svg', 'ico']
+      }
+    ],
     typescript,
     [
       offline,
@@ -43,34 +49,6 @@ module.exports = withPlugins(
     publicRuntimeConfig: {
       isDev: dev
     },
-    analyzeServer: ['server', 'both'].includes(process.env.BUNDLE_ANALYZE),
-    analyzeBrowser: ['browser', 'both'].includes(process.env.BUNDLE_ANALYZE),
-    bundleAnalyzerConfig: {
-      server: {
-        analyzerMode: 'static',
-        reportFilename: '../bundles/server.html'
-      },
-      browser: {
-        analyzerMode: 'static',
-        reportFilename: './bundles/client.html'
-      }
-    },
-    webpack: config => {
-      config.module.rules.push({
-        test: /\.(png|jpg|gif|svg|eot|ttf|otf|woff|woff2|ico)$/,
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              limit: 10000
-            }
-          }
-        ]
-      })
-
-      return config
-    },
-
     exportPathMap: async () => ({
       '/': { page: '/Dashboard', query: {} }
     })

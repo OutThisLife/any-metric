@@ -37,15 +37,13 @@ export default compose<QuoteProps, {}>(
   <Box
     ref={onRef}
     css={`
+      pointer-events: none;
+      position: fixed;
+      right: 0;
+      bottom: 0;
       font-size: 11px;
       letter-spacing: 0.03em;
-
-      @media (min-width: 1025px) {
-        z-index: 100;
-        position: fixed;
-        left: var(--pad);
-        bottom: var(--pad);
-      }
+      padding: calc(var(--pad) / 2);
 
       em {
         color: #f00;

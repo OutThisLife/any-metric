@@ -10,7 +10,6 @@ import {
   withContext,
   withState
 } from 'recompose'
-import { prop } from 'styled-tools'
 
 export default compose<DashboardProps, {}>(
   setDisplayName('dashboard'),
@@ -39,44 +38,61 @@ export default compose<DashboardProps, {}>(
   })
 )(() => (
   <Box
+    as="main"
     css={`
-      --pad: 25px;
+      --pad: 15px;
 
+      display: grid;
+      grid-template-rows: calc(100% - var(--pad));
+      width: 100vw;
+      height: 100vh;
       overflow: hidden;
       margin: auto;
       padding: var(--pad);
 
       @media (min-width: 1025px) {
-        display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      @media (max-width: 1025px) {
         grid-template-rows: max-content 1fr;
-        width: 100vw;
-        height: 100vh;
+      }
+
+      > form {
+        grid-row: 1;
+        grid-column: 1 / 1;
+        height: max-content;
       }
 
       > section {
+        display: grid;
+        grid-column: 1 / -1;
         position: relative;
+        overflow: hidden;
 
         @media (min-width: 1025px) {
-          display: grid;
-          grid-template-columns: repeat(2, calc(50% - 15px));
+          grid-row: 1;
+          grid-template-columns: inherit;
           grid-gap: var(--pad);
           align-items: center;
           justify-content: center;
-          height: calc(100vh - (var(--pad) * 4));
-          overflow: hidden;
+
+          > aside {
+            margin-top: 6px;
+          }
         }
 
-        > aside {
-          border: 1px solid ${prop('theme.border')};
+        @media (max-width: 1025px) {
+          grid-template-columns: 1fr;
+          grid-template-rows: repeat(2, 1fr);
 
-          @media (min-width: 1025px) {
-            height: calc(100vh - (var(--pad) * 6));
-            overflow: hidden;
+          > aside {
+            grid-row: 1;
           }
 
-          @media (max-width: 1025px) {
-            margin-top: var(--pad);
+          > div {
+            grid-row: 2;
+            align-self: center;
           }
         }
       }

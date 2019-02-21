@@ -19,8 +19,7 @@ export default compose<SearchState & SearchHandlers, {}>(
         const el = document.getElementById('s') as HTMLInputElement
         const { value: keywords } = el
 
-        toggleModal(true)
-        setItems([])
+        setItems([], () => toggleModal(true))
 
         try {
           const {
@@ -46,11 +45,7 @@ export default compose<SearchState & SearchHandlers, {}>(
         }
       },
 
-      handleReset: () => () => {
-        toggleModal(false)
-        setItems([])
-      },
-
+      handleReset: () => () => setItems([], () => toggleModal(false)),
       handleConfirm: () => async () => {
         const el = document.getElementById('s') as HTMLInputElement
         const { value: keywords } = el
@@ -116,31 +111,41 @@ export default compose<SearchState & SearchHandlers, {}>(
     onSubmit={handleSubmit}
     onReset={handleReset}
     css={`
+      z-index: 100;
+      position: relative;
       display: block;
       width: 100%;
       margin: 0;
       padding: 0;
 
-      input {
-        display: block;
-        width: 100%;
-        padding: 5px;
-        border: 1px solid ${prop('theme.border')};
+      &.loading {
+        input,
+        button {
+          opacity: 0.5;
+          pointer-events: none;
+        }
       }
 
       > section {
         z-index: 100;
         position: fixed;
-        top: 56px;
-        left: 25px;
-        right: 25px;
-        padding: 10px;
-        border: 1px solid ${prop('theme.border')};
-        background: ${prop('theme.bg')};
+        top: calc(var(--pad) + 26px);
+        left: var(--pad);
+        padding: var(--pad) 0;
+
+        @media (min-width: 1025px) {
+          width: calc(50vw - var(--pad));
+        }
+
+        @media (max-width: 1025px) {
+          right: var(--pad);
+          border: 1px solid ${prop('theme.border')};
+          background: ${prop('theme.bg')};
+        }
 
         nav {
           margin: 10px auto;
-          padding: 25px;
+          padding: var(--pad);
           border: 1px solid ${prop('theme.border')};
           background: ${prop('theme.panel')};
         }
@@ -150,7 +155,11 @@ export default compose<SearchState & SearchHandlers, {}>(
           align-items: center;
 
           + div {
-            margin-top: 5px;
+            margin-top: 1px;
+
+            @media (max-width: 1025px) {
+              margin-top: calc(var(--pad) / 2);
+            }
           }
 
           figure {
@@ -163,16 +172,17 @@ export default compose<SearchState & SearchHandlers, {}>(
               height: 100%;
               object-fit: cover;
             }
+
+            &:hover + aside > a {
+              color: ${prop('theme.base')};
+            }
           }
 
           aside {
+            display: flex;
+            justify-content: space-between;
             flex: 1;
             padding-left: 1em;
-
-            a {
-              display: inline-block;
-              margin: 0 0 4px;
-            }
           }
         }
       }
@@ -248,7 +258,7 @@ export interface SearchState {
   tags?: Tag[]
   isOpen: boolean
   isForm: boolean
-  setItems?: (r: EbayItem[] | string[]) => void
+  setItems?: (r: EbayItem[] | string[], cb?: () => void) => void
   toggleModal?: (b: boolean, cb?: () => void) => void
   toggleForm?: (b: boolean, cb?: () => void) => void
 }

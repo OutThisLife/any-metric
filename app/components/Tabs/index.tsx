@@ -25,7 +25,6 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
     },
     {
       setTab: (_, { updateChart }: TimesHandlers) => tab => {
-        console.log(tab)
         updateChart(
           tab.length
             ? {

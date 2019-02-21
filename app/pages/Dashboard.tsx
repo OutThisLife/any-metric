@@ -1,11 +1,23 @@
 import Chart from '@/components/Chart'
 import Search from '@/components/Search'
+import { func, number } from 'prop-types'
 import { Box } from 'rebass'
-import { compose, lifecycle, setDisplayName } from 'recompose'
+import {
+  compose,
+  lifecycle,
+  setDisplayName,
+  withContext,
+  withState
+} from 'recompose'
 import { prop } from 'styled-tools'
 
-export default compose(
+export default compose<DashboardProps, {}>(
   setDisplayName('dashboard'),
+  withState('index', 'scrollToIndex', 0),
+  withContext(
+    { index: number, scrollToIndex: func },
+    ({ index, scrollToIndex }) => ({ index, scrollToIndex })
+  ),
   lifecycle({
     componentDidMount(this: any) {
       this.handleKeyPress = e => {
@@ -71,3 +83,8 @@ export default compose(
     <Chart />
   </Box>
 ))
+
+export interface DashboardProps {
+  index?: number
+  scrollToIndex?: (a: number) => void
+}

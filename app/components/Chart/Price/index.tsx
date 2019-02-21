@@ -1,5 +1,6 @@
 import { moneyFormat } from '@/lib/utils'
 import * as d3 from 'd3'
+import { func } from 'prop-types'
 import { Chart, ZoomButtons } from 'react-stockcharts'
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes'
 import {
@@ -13,7 +14,12 @@ import {
   ScatterSeries
 } from 'react-stockcharts/lib/series'
 import { HoverTooltip } from 'react-stockcharts/lib/tooltip'
-import { compose, setDisplayName, withStateHandlers } from 'recompose'
+import {
+  compose,
+  getContext,
+  setDisplayName,
+  withStateHandlers
+} from 'recompose'
 import { ThemeProps, withTheme } from 'styled-components'
 
 import { ChartState } from '..'
@@ -25,6 +31,7 @@ export default compose<
 >(
   setDisplayName('chart-price'),
   withTheme,
+  getContext({ scrollToIndex: func }),
   withStateHandlers(
     { suffix: Math.random() },
     {
@@ -38,6 +45,7 @@ export default compose<
     suffix,
     ema,
     tickStyle: { gridWidth, gridHeight, ...tickStyle },
+    scrollToIndex,
     ...props
   }) => {
     let tm
@@ -77,32 +85,28 @@ export default compose<
           {window.innerWidth >= 1025 && (
             <ClickCallback
               onDoubleClick={handleReset}
-              onMouseMove={({ currentItem }) => {
+              onMouseMove={({ currentItem, fullData }) => {
                 clearTimeout(tm)
 
-                const el = document.getElementById(`t-${currentItem._id}`)
                 const $zoom = document.getElementById('zoom')
+                $zoom.setAttribute('src', currentItem.image)
 
-                if (el instanceof HTMLElement) {
-                  const $parent = el.parentElement
-                  const $current = $parent.querySelector('[id].active')
+                scrollToIndex(
+                  fullData.findIndex(d => d._id === currentItem._id)
+                )
 
-                  if ($current) {
-                    $current.classList.remove('active')
-                  }
-
-                  window.requestAnimationFrame(() => {
-                    el.classList.add('active')
-                    $zoom.setAttribute('src', currentItem.image)
-
-                    $parent.parentElement.scrollTop = el.offsetTop
-                  })
-
-                  tm = setTimeout(() => {
-                    el.classList.remove('active')
-                    $zoom.removeAttribute('src')
-                  }, 3500)
-                }
+                window.requestAnimationFrame(
+                  () =>
+                    (tm = setTimeout(() => {
+                      try {
+                        document
+                          .querySelector('[id].active')
+                          .classList.remove('active')
+                      } catch {
+                        //
+                      }
+                    }, 2000))
+                )
               }}
             />
           )}
@@ -159,4 +163,5 @@ export default compose<
 export interface PriceChartProps {
   suffix: number
   handleReset: () => void
+  scrollToIndex?: (a: number) => void
 }

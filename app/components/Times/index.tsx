@@ -3,24 +3,36 @@ import { Product, Tag } from '@/server/schema/types'
 import Fuse from 'fuse.js'
 import orderBy from 'lodash/orderBy'
 import { lighten } from 'polished'
+import { func, number } from 'prop-types'
 import { MeasuredComponentProps } from 'react-measure'
 import VirtualList from 'react-tiny-virtual-list'
 import { Box, Flex } from 'rebass'
-import { compose, setDisplayName, withHandlers, withState } from 'recompose'
+import {
+  compose,
+  getContext,
+  setDisplayName,
+  withHandlers,
+  withState
+} from 'recompose'
 import { prop, withProp } from 'styled-tools'
 
 import { ChartProps, ChartState } from '../Chart'
 
 export default compose<TimesProps & TimesHandlers, TimesProps>(
   setDisplayName('chart-times'),
+  getContext({ index: number, scrollToIndex: func }),
   withState('data', 'updateData', ({ chart }) => chart.data || []),
   withHandlers<TimesProps, TimesHandlers>(
-    ({ chart: { data }, updateData }) => ({
+    ({ chart: { data }, scrollToIndex, updateData }) => ({
       handleChange: () => e =>
-        updateData(orderBy(data, ...e.currentTarget.value.split(','))),
+        scrollToIndex(0, () =>
+          updateData(orderBy(data, ...e.currentTarget.value.split(',')))
+        ),
 
       handleInput: () => e => {
         const v = e.currentTarget.value
+
+        scrollToIndex(0)
 
         if (v.length) {
           const fuse = new Fuse(data, {
@@ -34,7 +46,7 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
       }
     })
   )
-)(({ rect, data = [], handleChange, handleInput }) => (
+)(({ data = [], index, rect, handleChange, handleInput }) => (
   <>
     <Flex
       as="form"
@@ -58,80 +70,86 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
       </select>
     </Flex>
 
-    <VirtualList
-      itemSize={25}
-      itemCount={data.length}
-      height={rect.client.height}
-      renderItem={({ index: i, style }) => (
-        <Flex
-          key={i}
-          id={`t-${data[i]._id}`}
-          data-src={data[i].image}
-          style={style}
-          alignItems="center"
-          justifyContent="center"
-          onMouseEnter={() =>
-            document.getElementById('zoom').setAttribute('src', data[i].image)
-          }
-          onMouseLeave={() =>
-            document.getElementById('zoom').removeAttribute('src')
-          }
-          css={`
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid ${prop('theme.border')};
-
-            &:hover {
-              background: ${withProp(prop('theme.brand'), lighten(0.5))};
+    {data.length > 0 ? (
+      <VirtualList
+        itemSize={25}
+        itemCount={data.length}
+        height={rect.client.height}
+        scrollToIndex={index}
+        renderItem={({ index: i, style }) => (
+          <Flex
+            key={i}
+            id={`t-${data[i]._id}`}
+            data-src={data[i].image}
+            style={style}
+            alignItems="center"
+            justifyContent="center"
+            className={index === i ? 'active' : ''}
+            onMouseEnter={() =>
+              document.getElementById('zoom').setAttribute('src', data[i].image)
             }
+            onMouseLeave={() =>
+              document.getElementById('zoom').removeAttribute('src')
+            }
+            css={`
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              border-bottom: 1px solid ${prop('theme.border')};
 
-            &.active {
-              background: ${prop('theme.brand')} !important;
+              &:hover {
+                background: ${withProp(prop('theme.brand'), lighten(0.5))};
+              }
 
-              a,
+              &.active {
+                background: ${prop('theme.brand')} !important;
+
+                a,
+                span {
+                  color: ${prop('theme.bg')};
+                }
+              }
+
               span {
-                color: ${prop('theme.bg')};
+                display: block;
+                width: 100%;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                padding: 0.25em;
+
+                &.title {
+                  flex: 1;
+                }
+
+                &.date {
+                  flex: 0.25;
+                }
+
+                &.price {
+                  flex: 0.25;
+                  text-align: right;
+                }
+
+                &:last-of-type {
+                  margin-left: auto;
+                }
               }
-            }
+            `}>
+            <span className="title">
+              <a href={data[i].url} target="_blank">
+                {data[i].title}
+              </a>
+            </span>
 
-            span {
-              display: block;
-              width: 100%;
-              overflow: hidden;
-              white-space: nowrap;
-              text-overflow: ellipsis;
-              padding: 0.25em;
-
-              &.title {
-                flex: 1;
-              }
-
-              &.date {
-                flex: 0.25;
-              }
-
-              &.price {
-                flex: 0.25;
-                text-align: right;
-              }
-
-              &:last-of-type {
-                margin-left: auto;
-              }
-            }
-          `}>
-          <span className="title">
-            <a href={data[i].url} target="_blank">
-              {data[i].title}
-            </a>
-          </span>
-
-          <span className="date">{dateFormat(data[i].date)}</span>
-          <span className="price">{moneyFormat(data[i].close)}</span>
-        </Flex>
-      )}
-    />
+            <span className="date">{dateFormat(data[i].date)}</span>
+            <span className="price">{moneyFormat(data[i].close)}</span>
+          </Flex>
+        )}
+      />
+    ) : (
+      <span style={{ padding: '20px 10px' }}>no data found</span>
+    )}
 
     <Box
       as="img"
@@ -160,7 +178,9 @@ export interface TimesProps {
   totalProducts?: number
   chart?: ChartState
   data?: Product[]
-  updateData?: (a: any) => void
+  updateData?: (a: Product[]) => void
+  index?: number
+  scrollToIndex?: (a: number, cb?: () => void) => void
   rect?: MeasuredComponentProps['contentRect']
 }
 

@@ -21,10 +21,11 @@ export default compose<DashboardProps, {}>(
   lifecycle({
     componentDidMount(this: any) {
       this.handleKeyPress = e => {
-        const $a = document.querySelector('[id].active [href]')
-
-        if (e.key === 'w' && $a instanceof HTMLAnchorElement) {
-          window.open($a.href, '_blank')
+        if (
+          e.key === 'w' &&
+          !(document.activeElement instanceof HTMLInputElement)
+        ) {
+          window.open(localStorage.getItem('url'), '_blank')
         }
       }
 

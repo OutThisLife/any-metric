@@ -90,6 +90,7 @@ export default compose<
 
                 const $zoom = document.getElementById('zoom')
                 $zoom.setAttribute('src', currentItem.image)
+                localStorage.setItem('url', currentItem.url)
 
                 scrollToIndex(
                   fullData.findIndex(d => d._id === currentItem._id)

@@ -24,26 +24,28 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
   withState('data', 'updateData', ({ chart }) => chart.data || []),
   withHandlers<TimesProps, TimesHandlers>(
     ({ chart: { data }, scrollToIndex, updateData }) => ({
-      handleChange: () => e =>
+      handleChange: () => ({ currentTarget: { value } }) =>
+        scrollToIndex(0, () => updateData(orderBy(data, ...value.split(',')))),
+
+      handleInput: () => ({ currentTarget: { value, nextElementSibling } }) =>
         scrollToIndex(0, () =>
-          updateData(orderBy(data, ...e.currentTarget.value.split(',')))
-        ),
+          updateData(
+            orderBy(
+              (() => {
+                if (value.length) {
+                  const fuse = new Fuse(data, {
+                    keys: ['title']
+                  })
 
-      handleInput: () => e => {
-        const v = e.currentTarget.value
-
-        scrollToIndex(0)
-
-        if (v.length) {
-          const fuse = new Fuse(data, {
-            keys: ['title']
-          })
-
-          updateData(fuse.search(v))
-        } else {
-          updateData(data)
-        }
-      }
+                  return fuse.search(value)
+                } else {
+                  return data
+                }
+              })(),
+              ...(nextElementSibling as HTMLSelectElement).value.split(',')
+            )
+          )
+        )
     })
   )
 )(({ data = [], index, rect, handleChange, handleInput }) => (
@@ -51,8 +53,11 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
     <Flex
       as="form"
       css={`
-        justify-content: space-between;
         padding: 5px;
+
+        > * + * {
+          margin-left: 2.5px;
+        }
       `}>
       <input
         type="text"
@@ -60,6 +65,7 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
         placeholder="Search"
         autoComplete="off"
         spellCheck={false}
+        tabIndex={1}
       />
 
       <select onChange={handleChange}>
@@ -85,9 +91,10 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
             alignItems="center"
             justifyContent="center"
             className={index === i ? 'active' : ''}
-            onMouseEnter={() =>
+            onMouseEnter={() => {
+              localStorage.setItem('url', data[i].url)
               document.getElementById('zoom').setAttribute('src', data[i].image)
-            }
+            }}
             onMouseLeave={() =>
               document.getElementById('zoom').removeAttribute('src')
             }

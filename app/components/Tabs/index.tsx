@@ -1,7 +1,6 @@
 import { GET_TAGS, REMOVE_DOC } from '@/lib/queries'
 import { Tag } from '@/server/schema/types'
 import { ApolloClient } from 'apollo-boost'
-import { ObjectID } from 'bson'
 import { func } from 'prop-types'
 import { graphql, MutationFn, withApollo } from 'react-apollo'
 import { Flex } from 'rebass'
@@ -26,11 +25,12 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
     },
     {
       setTab: (_, { updateChart }: TimesHandlers) => tab => {
+        console.log(tab)
         updateChart(
           tab.length
             ? {
                 tags: {
-                  $in: [new ObjectID(tab)]
+                  $in: [tab]
                 }
               }
             : {}
@@ -211,6 +211,7 @@ const Delete = props => (
 export interface TimesTabsProps {
   tab?: string
   setTab?: (a: string) => void
+  tags?: Tag[]
   client?: ApolloClient<{}>
   mutate?: MutationFn
 }

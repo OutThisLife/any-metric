@@ -132,6 +132,7 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
         </Flex>
       )}
     />
+
     <Box
       as="img"
       id="zoom"
@@ -140,8 +141,8 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
         z-index: 100;
         pointer-events: none;
         position: fixed;
-        right: 0;
-        bottom: 0;
+        top: 0;
+        left: 0;
         max-width: 33vw;
         max-height: 33vh;
         vertical-align: top;

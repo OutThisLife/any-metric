@@ -29,21 +29,11 @@ export default compose<ChartProps, {}>(
     },
     props: ({ data }) => ({
       data,
-      fetchMore: async (input = { tags: [] }) => {
-        const hash = JSON.stringify(input.tags)
-        const lastInput = (window as any).lastInput || ''
-
-        if (hash === lastInput) {
-          return
-        }
-
-        ;(window as any).lastInput = hash
-
-        return data.fetchMore({
+      fetchMore: async (input = {}) =>
+        data.fetchMore({
           variables: { input },
           updateQuery: (prev, { fetchMoreResult }) => fetchMoreResult || prev
         })
-      }
     })
   }),
   withContext({ updateChart: func }, ({ fetchMore }) => ({
@@ -141,7 +131,7 @@ export default compose<ChartProps, {}>(
       {loading || !('data' in chart) ? (
         <Loader size={60} />
       ) : (
-        <Times chart={chart} rect={rect} />
+        <Times key={chart.data.length} chart={chart} rect={rect} />
       )}
     </Box>
   </Box>

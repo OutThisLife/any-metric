@@ -1,13 +1,11 @@
 import { GET_VIEW } from '@/lib/queries'
 import { View } from '@/server/schema/types'
-import { RouterProps, withRouter } from 'next/router'
 import { DataValue, graphql } from 'react-apollo'
 import { Flex } from 'rebass'
 import { compose, setDisplayName } from 'recompose'
 
 export default compose<HomeProps & HomeHandles, {}>(
   setDisplayName('login'),
-  withRouter,
   graphql<HomeProps & HomeHandles, { slug: string }>(GET_VIEW, {
     options: {
       variables: {
@@ -16,7 +14,7 @@ export default compose<HomeProps & HomeHandles, {}>(
         }
       }
     },
-    props: ({ data, ownProps: { router } }) => ({
+    props: ({ data }) => ({
       data,
       handleSubmit: async () => {
         const slug = (document.getElementById('v') as HTMLInputElement).value
@@ -62,7 +60,6 @@ export default compose<HomeProps & HomeHandles, {}>(
 ))
 
 export interface HomeProps {
-  router: RouterProps
   data: DataValue<{ view: View }, { slug: string }>
 }
 

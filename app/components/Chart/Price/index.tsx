@@ -14,12 +14,7 @@ import {
   ScatterSeries
 } from 'react-stockcharts/lib/series'
 import { HoverTooltip } from 'react-stockcharts/lib/tooltip'
-import {
-  compose,
-  getContext,
-  setDisplayName,
-  withStateHandlers
-} from 'recompose'
+import { compose, getContext, setDisplayName, withState } from 'recompose'
 import { ThemeProps, withTheme } from 'styled-components'
 
 import { ChartState } from '..'
@@ -31,12 +26,7 @@ export default compose<
   setDisplayName('chart-price'),
   withTheme,
   getContext({ scrollToIndex: func }),
-  withStateHandlers(
-    { suffix: Math.random() },
-    {
-      handleReset: () => () => ({ suffix: Math.random() })
-    }
-  )
+  withState('suffix', 'handleReset', Math.random())
 )(
   ({
     theme,
@@ -87,10 +77,11 @@ export default compose<
               onMouseMove={({ currentItem, fullData }) => {
                 clearTimeout(tm)
 
+                localStorage.setItem('url', currentItem.url)
+
                 document
                   .getElementById('zoom')
                   .setAttribute('src', currentItem.image)
-                localStorage.setItem('url', currentItem.url)
 
                 scrollToIndex(
                   fullData.findIndex(d => d._id === currentItem._id)

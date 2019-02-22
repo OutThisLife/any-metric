@@ -1,5 +1,5 @@
 import { convertIds } from '../mutations'
-import { Product, Resolver, Tag } from '../types'
+import { Product, Resolver } from '../types'
 
 export default (async (
   _,
@@ -21,28 +21,11 @@ export default (async (
     }
   }
 
-  const tags = await mongo.tags.find<Tag>().toArray()
-
-  return (await mongo.products
+  return await mongo.products
     .find<Product>(args)
     .skip(paginationInput.pageNumber)
     .limit(paginationInput.entriesPerPage)
-    .toArray())
-    .map(d => ({
-      ...d,
-      tags: (d.tags as any[])
-        .map(t =>
-          tags.find(tt => {
-            if (typeof t === 'object' && 'equals' in t) {
-              return t.equals(tt._id)
-            }
-
-            return t === tt._id.toString()
-          })
-        )
-        .filter(t => t)
-    }))
-    .filter(t => (t.tags || []).length)
+    .toArray()
 }) as Resolver
 
 export const totalProducts = (async (_, __, { mongo }): Promise<number> =>

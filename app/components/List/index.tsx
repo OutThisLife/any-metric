@@ -1,4 +1,5 @@
 import { dateFormat, moneyFormat } from '@/lib/utils'
+import { isDesktop } from '@/pages/Dashboard'
 import { Product, Tag } from '@/server/schema/types'
 import Fuse from 'fuse.js'
 import orderBy from 'lodash/orderBy'
@@ -17,7 +18,7 @@ import {
 } from 'recompose'
 import { prop, withProp } from 'styled-tools'
 
-import { ChartState, isDesktop } from '../Chart'
+import { ChartState } from '../Chart'
 
 export default compose<TimesProps & TimesHandlers, TimesProps>(
   setDisplayName('chart-times'),
@@ -59,18 +60,21 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
     <Flex
       as="form"
       css={`
+        display: flex;
+        align-items: center;
         padding: 5px 0;
 
         @media (max-width: 1025px) {
           padding-top: 0;
         }
 
-        > * {
+        input,
+        select {
           margin: 0;
+        }
 
-          + * {
-            margin-left: 2.5px;
-          }
+        > * + * {
+          margin-left: 7px !important;
         }
       `}>
       <input
@@ -81,102 +85,109 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
         spellCheck={false}
         tabIndex={1}
       />
-
       <select defaultValue={order} onChange={handleChange}>
         <option value="date,desc">Date / DESC</option>
         <option value="date,asc">Date / ASC</option>
         <option value="close,desc">Price / DESC</option>
         <option value="close,asc">Price / ASC</option>
       </select>
+
+      <div>{data.length} items</div>
     </Flex>
 
-    <VirtualList
-      itemSize={25}
-      itemCount={Math.max(1, data.length)}
-      height={isDesktop() ? rect.bounds.height : rect.bounds.height / 1.8}
-      scrollToIndex={index}
-      renderItem={({ index: i, style }) => {
-        if (!data.length) {
+    {!isNaN(rect.bounds.height) && (
+      <VirtualList
+        itemSize={25}
+        itemCount={Math.max(1, data.length)}
+        height={isDesktop() ? rect.bounds.height : rect.bounds.height / 1.8}
+        scrollToIndex={index}
+        renderItem={({ index: i, style }) => {
+          if (!data.length) {
+            return (
+              <Flex key={i} style={style}>
+                🤔
+              </Flex>
+            )
+          }
+
           return (
-            <Flex key={i} style={style}>
-              🤔
+            <Flex
+              key={i}
+              id={`t-${data[i]._id}`}
+              data-src={data[i].image}
+              style={style}
+              alignItems="center"
+              justifyContent="center"
+              className={index === i ? 'active' : ''}
+              onMouseEnter={() => {
+                localStorage.setItem('url', data[i].url)
+                document
+                  .getElementById('zoom')
+                  .setAttribute('src', data[i].image)
+              }}
+              onMouseLeave={() =>
+                document.getElementById('zoom').removeAttribute('src')
+              }
+              css={`
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-bottom: 1px solid ${prop('theme.border')};
+
+                &:hover {
+                  background: ${withProp(prop('theme.brand'), lighten(0.5))};
+                }
+
+                &.active {
+                  background: ${prop('theme.brand')} !important;
+
+                  a,
+                  span {
+                    color: ${prop('theme.bg')};
+                  }
+                }
+
+                span {
+                  display: block;
+                  width: 100%;
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                  padding: 0.25em;
+
+                  &.title {
+                    flex: 1;
+                  }
+
+                  &.date {
+                    flex: 0.25;
+                  }
+
+                  &.price {
+                    flex: 0.25;
+                    text-align: right;
+                  }
+
+                  &:last-of-type {
+                    margin-left: auto;
+                  }
+                }
+              `}>
+              <span className="title">
+                <a href={data[i].url} target="_blank">
+                  {data[i].title}
+                </a>
+              </span>
+
+              <span className="date">{dateFormat((data[i] as any).date)}</span>
+              <span className="price">
+                {moneyFormat((data[i] as any).close)}
+              </span>
             </Flex>
           )
-        }
-
-        return (
-          <Flex
-            key={i}
-            id={`t-${data[i]._id}`}
-            data-src={data[i].image}
-            style={style}
-            alignItems="center"
-            justifyContent="center"
-            className={index === i ? 'active' : ''}
-            onMouseEnter={() => {
-              localStorage.setItem('url', data[i].url)
-              document.getElementById('zoom').setAttribute('src', data[i].image)
-            }}
-            onMouseLeave={() =>
-              document.getElementById('zoom').removeAttribute('src')
-            }
-            css={`
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              border-bottom: 1px solid ${prop('theme.border')};
-
-              &:hover {
-                background: ${withProp(prop('theme.brand'), lighten(0.5))};
-              }
-
-              &.active {
-                background: ${prop('theme.brand')} !important;
-
-                a,
-                span {
-                  color: ${prop('theme.bg')};
-                }
-              }
-
-              span {
-                display: block;
-                width: 100%;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                padding: 0.25em;
-
-                &.title {
-                  flex: 1;
-                }
-
-                &.date {
-                  flex: 0.25;
-                }
-
-                &.price {
-                  flex: 0.25;
-                  text-align: right;
-                }
-
-                &:last-of-type {
-                  margin-left: auto;
-                }
-              }
-            `}>
-            <span className="title">
-              <a href={data[i].url} target="_blank">
-                {data[i].title}
-              </a>
-            </span>
-
-            <span className="date">{dateFormat((data[i] as any).date)}</span>
-            <span className="price">{moneyFormat((data[i] as any).close)}</span>
-          </Flex>
-        )
-      }}
-    />
+        }}
+      />
+    )}
 
     <Box
       as="img"
@@ -188,8 +199,8 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
         position: fixed;
         bottom: 0;
         left: 0;
-        max-width: 33vw;
-        max-height: 33vh;
+        max-width: 66vw;
+        max-height: 66vh;
         vertical-align: top;
 
         &:not([src]) {
@@ -206,7 +217,6 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
 
 export interface TimesProps {
   tags?: Tag[]
-  totalProducts?: number
   chart?: ChartState
   rect?: MeasuredComponentProps['contentRect']
   data?: Product[]

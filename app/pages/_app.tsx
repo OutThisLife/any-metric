@@ -100,6 +100,6 @@ const GlobalStyles = createGlobalStyle`
   }
 
   select {
-    padding: 1px;
+    padding: 2.5px;
   }
 `

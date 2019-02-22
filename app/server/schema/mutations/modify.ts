@@ -1,20 +1,15 @@
 import { convertId } from '.'
-import { Product, Resolver, Tag } from '../types'
+import { Resolver } from '../types'
 
-export default (async (
-  _,
-  { objectId, collectionName, input },
-  { mongo }
-): Promise<Product | Tag> => {
-  const q = convertId(objectId)
+export default (async (_, { objectId, collectionName, input }, { mongo }) => {
+  const { result } = await mongo
+    .collection(collectionName)
+    .updateOne(convertId(objectId), {
+      $set: {
+        updatedAt: new Date()
+      },
+      ...input
+    })
 
-  const col = await mongo.collection(collectionName)
-  await col.updateOne(q, {
-    $set: {
-      updatedAt: new Date()
-    },
-    ...input
-  })
-
-  return col.findOne<Product | Tag>(q)
+  return result
 }) as Resolver

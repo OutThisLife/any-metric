@@ -1,27 +1,21 @@
-import { convertId, convertIds } from '.'
+import { convertId } from '.'
 import { Resolver } from '../types'
 
 export default (async (_, { objectId, collectionName }, { mongo }) => {
-  if (/^all/i.test(collectionName)) {
-    await mongo
-      .collection(collectionName.split('all')[1].toLowerCase())
-      .deleteMany({})
+  if (/all/i.test(collectionName)) {
+    const { result: r1 } = await mongo.tags.deleteMany({})
+    const { result: r2 } = await mongo.view.deleteMany({})
+    const { result: r3 } = await mongo.products.deleteMany({})
 
-    const { result } = await mongo.products.deleteMany({})
+    return {
+      ok: true,
+      n: [r1, r2, r3].reduce((acc, r) => (acc += r.n), 0)
+    }
+  } else {
+    const { result } = await mongo
+      .collection(collectionName)
+      .deleteOne(convertId(objectId))
+
     return result
   }
-
-  if (/tags/i.test(collectionName)) {
-    await mongo.products.deleteMany({
-      tags: {
-        $in: convertIds([objectId])
-      }
-    })
-  }
-
-  const { result } = await mongo
-    .collection(collectionName)
-    .deleteOne(convertId(objectId))
-
-  return result
 }) as Resolver

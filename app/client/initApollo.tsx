@@ -31,9 +31,7 @@ const createCache = (): InMemoryCache => {
         cache,
         maxSize: 1048576,
         storage: window.localStorage,
-        debug: isDev,
-        trigger: 'background',
-        debounce: 1000
+        debug: isDev
       }))()
   }
 

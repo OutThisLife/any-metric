@@ -34,17 +34,17 @@ module.exports = ({ app, cache }) => {
         })
 
         options.context.mongo = db.connection
-        ;['tags', 'products', 'theme'].forEach(
+        ;['tags', 'products', 'view'].forEach(
           c => (options.context.mongo[c] = db.connection.collection(c))
         )
       })()
     }
+
+    new ApolloServer(options).applyMiddleware({ app })
   } catch (err) {
     console.error(err)
     process.exit(1)
   }
-
-  new ApolloServer(options).applyMiddleware({ app })
 
   return router
 }

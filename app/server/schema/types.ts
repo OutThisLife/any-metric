@@ -7,10 +7,15 @@ import { Collection, Connection } from 'mongoose'
 export default gql`
   scalar JSON
   scalar Date
-  union T = Product | Tag
 
   type Query {
-    crawl(query: CrawlInput!): CrawlResult
+    products(paginationInput: Pagination, input: JSON): [Product]
+    totalProducts: Int
+
+    tags: [Tag]
+    totalTags: Int
+
+    view(objectId: ID, input: JSON): View
 
     ebay(
       keywords: String!
@@ -18,20 +23,14 @@ export default gql`
       paginationInput: Pagination
     ): EbayResult
 
+    crawl(query: CrawlInput!): CrawlResult
     google(keywords: String!): CrawlResult
-    products(paginationInput: Pagination, input: JSON): [Product]
-    tags: [Tag]
-
-    totalProducts: Int
-    totalTags: Int
+    find(collectionName: String!): JSON
   }
 
   type Mutation {
-    createTag(input: TagInput): Tag
-    createProduct(input: ProductInput): Product
-
     remove(objectId: ID, collectionName: String!, input: JSON): MongoResult
-    modify(objectId: ID, collectionName: String!, input: JSON): T
+    modify(objectId: ID, collectionName: String!, input: JSON): MongoResult
   }
 
   type MongoResult {
@@ -61,6 +60,10 @@ export default gql`
     total: Int
   }
 
+  type View @cacheControl(maxAge: 10e5) {
+    tags: [Tag]
+  }
+
   extend type Product {
     _id: ID!
     createdAt: Date
@@ -68,6 +71,12 @@ export default gql`
   }
 
   extend type Tag {
+    _id: ID!
+    createdAt: Date
+    updatedAt: Date
+  }
+
+  extend type View {
     _id: ID!
     createdAt: Date
     updatedAt: Date
@@ -88,6 +97,7 @@ export default gql`
     items: [EbayItem]
     total: String
     totalPages: String
+    tag: Tag
     op: String
   }
 
@@ -170,12 +180,16 @@ export interface Tag extends MongoEntry {
   total?: number
 }
 
+export interface View extends MongoEntry {
+  tags?: Product['tags']
+}
+
 export interface Context {
   cache: KeyValueCache
   mongo?: Connection & {
     tags: Collection
     products: Collection
-    theme: Collection
+    view: Collection
   }
 }
 
@@ -205,6 +219,7 @@ export interface EbayResult {
   items?: EbayItem[]
   total?: number | string
   totalPages?: number | string
+  tag?: Tag
 }
 
 export interface EbayItem {

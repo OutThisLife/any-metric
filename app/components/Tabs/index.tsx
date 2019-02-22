@@ -1,7 +1,7 @@
-import { GET_TAGS, REMOVE_DOC } from '@/lib/queries'
-import { Tag } from '@/server/schema/types'
+import { MODIFY_DOC } from '@/lib/queries'
+import { Tag, View } from '@/server/schema/types'
 import { ApolloClient } from 'apollo-boost'
-import { func } from 'prop-types'
+import { func, object } from 'prop-types'
 import { graphql, MutationFn, withApollo } from 'react-apollo'
 import { Flex } from 'rebass'
 import {
@@ -15,28 +15,33 @@ import { prop } from 'styled-tools'
 
 export default compose<TimesTabsProps & TimesTabsHandles, {}>(
   setDisplayName('chart-times-tabs'),
-  getContext({ setInput: func }),
   withApollo,
+  getContext({ session: object, setInput: func }),
   withState('tab', 'setTab', ''),
-  graphql<{}, { tags: Tag[] }>(GET_TAGS, {
-    props: ({ data: { tags = [], ...data } }) => ({
+  graphql<TimesTabsProps>(MODIFY_DOC, {
+    props: ({ mutate, data, ownProps: { client, session } }) => ({
       data,
-      tags
-    })
-  }),
-  graphql<TimesTabsProps>(REMOVE_DOC, {
-    props: ({ mutate, data, ownProps: { client } }) => ({
-      data,
-      mutate: async opts => {
-        await mutate(opts)
+      modify: async input => {
+        await mutate({
+          variables: {
+            objectId: session._id,
+            collectionName: 'view',
+            input
+          }
+        })
+
         await client.reFetchObservableQueries()
       }
     })
   }),
-  withHandlers<TimesTabsProps, TimesTabsHandles>(({ setTab, mutate }) => ({
+  withHandlers<TimesTabsProps, TimesTabsHandles>(({ setTab, modify }) => ({
     handleFlush: () => () =>
       window.confirm('Are you sure?') &&
-      mutate({ variables: { collectionName: 'allTags' } }),
+      modify({
+        $set: {
+          tags: []
+        }
+      }),
 
     handleDrop: () => ({
       currentTarget: {
@@ -44,10 +49,9 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
       }
     }) =>
       setTab('', () =>
-        mutate({
-          variables: {
-            objectId: id,
-            collectionName: 'tags'
+        modify({
+          $pull: {
+            tags: id
           }
         })
       ),
@@ -56,7 +60,7 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
   }))
 )(
   ({
-    tags = [],
+    session,
     tab,
     setTab,
     setInput,
@@ -67,6 +71,7 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
     <Flex
       as="nav"
       css={`
+        justify-self: flex-start;
         justify-content: flex-end;
         max-width: 100%;
         overflow: auto;
@@ -97,7 +102,7 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
           }
         }
       `}>
-      {tags.map(t => (
+      {(session.tags as Tag[]).map(t => (
         <span key={t._id} className={tab === t._id ? 'active' : ''}>
           <a
             href="javascript:;"
@@ -171,9 +176,10 @@ const Delete = ({ size = 14, ...props }) => (
 export interface TimesTabsProps {
   tab?: string
   setTab?: (a: string, cb?: () => void) => void
-  tags?: Tag[]
+  setInput: (a: any) => void
+  session?: View
   client?: ApolloClient<{}>
-  mutate?: MutationFn
+  modify?: (a: any) => MutationFn
 }
 
 export interface TimesTabsHandles {

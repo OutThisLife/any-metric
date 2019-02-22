@@ -1,6 +1,4 @@
-import { Product } from '@/server/schema/types'
 import gql from 'graphql-tag'
-import { graphql } from 'react-apollo'
 
 export const tagFragment = gql`
   fragment TagFields on Tag {
@@ -36,7 +34,7 @@ export const productFragment = gql`
 
 // ------------------------------------------------
 
-export const GET_PRODUCTS = gql`
+export const GET_FULL_PRODUCTS = gql`
   query getProducts($paginationInput: Pagination, $input: JSON) {
     products(paginationInput: $paginationInput, input: $input) {
       ...ProductFields
@@ -47,7 +45,7 @@ export const GET_PRODUCTS = gql`
   ${tagFragment}
 `
 
-export const GET_BARE_PRODUCTS = gql`
+export const GET_PRODUCTS = gql`
   query getProducts($input: JSON) {
     products(
       paginationInput: { pageNumber: 0, entriesPerPage: 2345 }
@@ -99,6 +97,9 @@ const ebayFragment = gql`
   fragment EbayFields on EbayResult {
     total
     totalPages
+    tag {
+      _id
+    }
     items {
       _id
       attribute
@@ -152,43 +153,12 @@ export const SEARCH_EBAY_BARE = gql`
     ebay(keywords: $keywords, save: $save, paginationInput: $paginationInput) {
       total
       totalPages
-    }
-  }
-`
-
-// ------------------------------------------------
-
-export const GET_WATCHLIST = gql`
-  query getWatchlist {
-    watchlist @client {
-      _id
-      createdAt
-      image
-      price
-      shipping
-      status
-      timeLeft
-      title
-      url
-      tags {
+      tag {
         _id
-        title
-        slug
       }
     }
   }
 `
-
-export const SET_WATCHLIST = gql`
-  mutation updateWatchlist($watchlist: [Product]) {
-    updateWatchlist(watchlist: $watchlist) @client
-  }
-`
-
-export const getWatchlist = () =>
-  graphql<{}, { watchlist: Product[] }>(GET_WATCHLIST, {
-    props: ({ data: { watchlist = [], ...data } }) => ({ data, watchlist })
-  })
 
 // ------------------------------------------------
 
@@ -211,13 +181,23 @@ export const MODIFY_DOC = gql`
       collectionName: $collectionName
       input: $input
     ) {
-      ... on Product {
-        _id
-      }
+      ok
+    }
+  }
+`
 
-      ... on Tag {
-        _id
+// ------------------------------------------------
+
+export const GET_VIEW = gql`
+  query getView($objectId: ID, $input: JSON) {
+    view(objectId: $objectId, input: $input) {
+      _id
+
+      tags {
+        ...TagFields
       }
     }
   }
+
+  ${tagFragment}
 `

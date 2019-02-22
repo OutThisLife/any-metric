@@ -1,25 +1,54 @@
 import Chart from '@/components/Chart'
+import Price from '@/components/Chart/Price'
+import List from '@/components/List'
+import Loader from '@/components/Loader'
 import Quote from '@/components/Quote'
 import Search from '@/components/Search'
-import { func, number } from 'prop-types'
+import Tabs from '@/components/Tabs'
+import { GET_VIEW } from '@/lib/queries'
+import { View } from '@/server/schema/types'
+import { RouterProps, withRouter } from 'next/router'
+import { func, number, object } from 'prop-types'
+import { DataValue, graphql } from 'react-apollo'
 import { Box } from 'rebass'
 import {
+  branch,
   compose,
   lifecycle,
+  renderComponent,
   setDisplayName,
   withContext,
   withState
 } from 'recompose'
 
+export const isDesktop = () => 'browser' in process && window.innerWidth > 1025
+
 export default compose<DashboardProps, {}>(
   setDisplayName('dashboard'),
+  withRouter,
+  branch(
+    ({ router }) => !('viewId' in router.query),
+    renderComponent(() => null)
+  ),
+  graphql<DashboardProps, { view: View }>(GET_VIEW, {
+    options: ({ router }) => ({
+      notifyOnNetworkStatusChange: true,
+      variables: {
+        objectId: router.query.viewId
+      }
+    })
+  }),
   withState('index', 'scrollToIndex', 0),
   withContext(
-    { index: number, scrollToIndex: func },
-    ({ index, scrollToIndex }) => ({ index, scrollToIndex })
+    { index: number, scrollToIndex: func, session: object },
+    ({ index, scrollToIndex, data }) => ({
+      index,
+      scrollToIndex,
+      session: data.view || { tags: [] }
+    })
   ),
-  lifecycle({
-    componentDidMount(this: any) {
+  lifecycle<DashboardProps, {}, any>({
+    componentDidMount() {
       this.handleKeyPress = e => {
         if (
           e.key === 'w' &&
@@ -32,7 +61,7 @@ export default compose<DashboardProps, {}>(
       window.addEventListener('keypress', this.handleKeyPress)
     },
 
-    componentWillUnmount(this: any) {
+    componentWillUnmount() {
       window.removeEventListener('keypress', this.handleKeyPress)
     }
   })
@@ -95,15 +124,54 @@ export default compose<DashboardProps, {}>(
             align-self: center;
           }
         }
+
+        [class*='Loader'] {
+          height: calc(100vh - var(--pad));
+        }
       }
     `}>
     <Search />
-    <Chart />
+    <Chart>
+      {({ data: { loading }, contentRect: rect, chart }) => (
+        <>
+          {(loading && !chart.data.length) ||
+          !('bounds' in rect) ||
+          isNaN(rect.bounds.width) ? (
+            <Loader size={120} />
+          ) : chart.data.length < 10 ? (
+            <span style={{ justifySelf: 'center' }}>not enough datapoints</span>
+          ) : (
+            <Price
+              width={isDesktop() ? rect.bounds.width / 2 : rect.client.width}
+              height={
+                isDesktop() ? rect.bounds.height / 2 : rect.client.width / 2
+              }
+              ratio={1}
+              {...chart}
+              {...rect}
+            />
+          )}
+
+          <Box as="aside">
+            <Tabs />
+
+            {loading && !chart.data.length ? (
+              <Loader size={60} />
+            ) : (
+              <List key={chart.data.length} chart={chart} rect={rect} />
+            )}
+          </Box>
+        </>
+      )}
+    </Chart>
+
     <Quote />
   </Box>
 ))
 
 export interface DashboardProps {
   index?: number
+  router?: RouterProps
   scrollToIndex?: (a: number) => void
+  data?: DataValue<{ view: View }>
 }

@@ -37,8 +37,6 @@ export default compose<
     scrollToIndex,
     ...props
   }) => {
-    let tm
-
     const r = d =>
       d3
         .scaleLinear()
@@ -75,30 +73,12 @@ export default compose<
             <ClickCallback
               onDoubleClick={handleReset}
               onMouseMove={({ currentItem, fullData }) => {
-                clearTimeout(tm)
-
                 localStorage.setItem('url', currentItem.url)
 
-                document
-                  .getElementById('zoom')
-                  .setAttribute('src', currentItem.image)
-
-                scrollToIndex(
-                  fullData.findIndex(d => d._id === currentItem._id)
-                )
-
-                window.requestAnimationFrame(
-                  () =>
-                    (tm = setTimeout(() => {
-                      try {
-                        document
-                          .querySelector('[id].active')
-                          .classList.remove('active')
-                      } catch {
-                        //
-                      }
-                    }, 2000))
-                )
+                if (!document.body.classList.contains('lock-chart')) {
+                  const idx = fullData.findIndex(d => d._id === currentItem._id)
+                  window.requestAnimationFrame(() => scrollToIndex(idx))
+                }
               }}
             />
           )}

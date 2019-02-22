@@ -2,7 +2,7 @@ import { GET_PRODUCTS } from '@/lib/queries'
 import { isDesktop } from '@/pages/Dashboard'
 import { Product, Tag, View } from '@/server/schema/types'
 import orderBy from 'lodash/orderBy'
-import { func, object, string } from 'prop-types'
+import { func, number, object, string } from 'prop-types'
 import { DataValue, graphql } from 'react-apollo'
 import { MeasuredComponentProps, withContentRect } from 'react-measure'
 import { sma } from 'react-stockcharts/lib/indicator'
@@ -21,19 +21,16 @@ import {
 
 export default compose<ChartProps & ChartRenderProps, ChartRenderProps>(
   setDisplayName('price'),
-  getContext({ session: object }),
+  getContext({ session: object, index: number }),
   withState('input', 'setInput', {}),
   withState('order', 'setOrder', 'date,desc'),
-  shouldUpdate<ChartProps>(({ input: lastInput }, { input }) => {
-    if (!('tags' in input && 'browser' in process)) {
-      return true
-    }
-
-    return (
-      ('tags' in lastInput && lastInput.tags.$in[0] !== input.tags.$in[0]) ||
-      document.body.getAttribute('data-proc') === input.tags.$in[0]
-    )
-  }),
+  shouldUpdate<ChartProps>(
+    (p, np) =>
+      !('tags' in np.input && 'browser' in process) ||
+      ('tags' in p.input && p.input.tags.$in[0] !== np.input.tags.$in[0]) ||
+      p.index !== np.index ||
+      document.body.getAttribute('data-proc') === np.input.tags.$in[0]
+  ),
   graphql<ChartProps, { products: Product[] }>(GET_PRODUCTS, {
     skip: ({ session }) => !session.tags.length,
     options: ({ session, input = {} }) => {
@@ -131,6 +128,7 @@ export interface ChartRenderProps {
 export interface ChartProps extends Partial<MeasuredComponentProps> {
   chart?: ChartState
   session?: View
+  index?: number
   data?: Partial<DataValue<{ view: View; products: Product[] }>>
   input?: { [key: string]: any }
   setInput?: (a: any) => void

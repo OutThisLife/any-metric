@@ -49,12 +49,17 @@ export default compose<DashboardProps, {}>(
   ),
   lifecycle<DashboardProps, {}, any>({
     componentDidMount() {
-      this.handleKeyPress = e => {
-        if (
-          e.key === 'w' &&
-          !(document.activeElement instanceof HTMLInputElement)
-        ) {
+      this.handleKeyPress = ({ key }) => {
+        if (document.activeElement instanceof HTMLInputElement) {
+          return
+        }
+
+        if (key === 'w' && localStorage.getItem('url')) {
           window.open(localStorage.getItem('url'), '_blank')
+        }
+
+        if (key === 's') {
+          document.body.classList.toggle('lock-chart')
         }
       }
 
@@ -125,6 +130,11 @@ export default compose<DashboardProps, {}>(
           }
         }
 
+        > span {
+          justify-self: center;
+          text-align: center;
+        }
+
         [class*='Loader'] {
           height: calc(100vh - var(--pad));
         }
@@ -139,17 +149,35 @@ export default compose<DashboardProps, {}>(
           isNaN(rect.bounds.width) ? (
             <Loader size={120} />
           ) : chart.data.length < 10 ? (
-            <span style={{ justifySelf: 'center' }}>not enough datapoints</span>
+            <span>not enough datapoints</span>
           ) : (
-            <Price
-              width={isDesktop() ? rect.bounds.width / 2 : rect.client.width}
-              height={
-                isDesktop() ? rect.bounds.height / 2 : rect.client.width / 2
-              }
-              ratio={1}
-              {...chart}
-              {...rect}
-            />
+            <Box>
+              <Price
+                width={isDesktop() ? rect.bounds.width / 2 : rect.client.width}
+                height={
+                  isDesktop() ? rect.bounds.height / 2 : rect.client.width / 2
+                }
+                ratio={1}
+                {...chart}
+                {...rect}
+              />
+
+              <Box
+                css={`
+                  font-size: 11px;
+                  padding: var(--pad);
+
+                  strong {
+                    display: inline-block;
+                    width: 10px;
+                    text-align: right;
+                  }
+                `}>
+                <strong>W</strong> to open item in new tab.
+                <br />
+                <strong>S</strong> to toggle chart sync
+              </Box>
+            </Box>
           )}
 
           <Box as="aside">

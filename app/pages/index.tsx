@@ -29,7 +29,7 @@ export default compose<HomeProps & HomeHandles, {}>(
         })
 
         if ('_id' in view) {
-          router.push(`/Dashboard?viewId=${view._id}`, `/${view._id}`)
+          window.requestAnimationFrame(() => (location.pathname = view._id))
         } else {
           alert('Something went wrong. /shrug')
         }

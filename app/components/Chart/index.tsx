@@ -29,6 +29,7 @@ export default compose<ChartProps & ChartRenderProps, ChartRenderProps>(
       !('tags' in np.input && 'browser' in process) ||
       ('tags' in p.input && p.input.tags.$in[0] !== np.input.tags.$in[0]) ||
       p.index !== np.index ||
+      p.order !== np.order ||
       document.body.getAttribute('data-proc') === np.input.tags.$in[0]
   ),
   graphql<ChartProps, { products: Product[] }>(GET_PRODUCTS, {
@@ -129,6 +130,7 @@ export interface ChartProps extends Partial<MeasuredComponentProps> {
   chart?: ChartState
   session?: View
   index?: number
+  order?: string
   data?: Partial<DataValue<{ view: View; products: Product[] }>>
   input?: { [key: string]: any }
   setInput?: (a: any) => void

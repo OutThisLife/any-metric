@@ -13,6 +13,7 @@ import {
   compose,
   getContext,
   setDisplayName,
+  shouldUpdate,
   withContext,
   withPropsOnChange,
   withState
@@ -23,6 +24,16 @@ export default compose<ChartProps & ChartRenderProps, ChartRenderProps>(
   getContext({ session: object }),
   withState('input', 'setInput', {}),
   withState('order', 'setOrder', 'date,desc'),
+  shouldUpdate<ChartProps>(({ input: lastInput }, { input }) => {
+    if (!('tags' in input && 'browser' in process)) {
+      return true
+    }
+
+    return (
+      ('tags' in lastInput && lastInput.tags.$in[0] !== input.tags.$in[0]) ||
+      document.body.getAttribute('data-proc') === input.tags.$in[0]
+    )
+  }),
   graphql<ChartProps, { products: Product[] }>(GET_PRODUCTS, {
     skip: ({ session }) => !session.tags.length,
     options: ({ session, input = {} }) => {

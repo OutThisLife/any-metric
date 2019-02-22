@@ -47,7 +47,7 @@ export default (async (
             resolve({
               op,
               tag,
-              total: parseInt(pages.totalEntries[0], 10),
+              total: parseInt(sr['@count'], 10),
               totalPages: parseInt(pages.totalPages[0], 10),
               items: ('item' in sr ? (sr.item as EbayItem[]) : []).map(item => {
                 for (const [k, v] of Object.entries(item)) {

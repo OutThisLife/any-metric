@@ -17,11 +17,12 @@ self.addEventListener('message', ({ data: fields }) => {
       .then(r => r.json())
       .then(({ data }) => {
         if (fields.recurse) {
-          const pages = parseInt(data.ebay.total, 10) / 100
+          const totalPages = parseInt(data.ebay.totalPages, 10)
+          const total = parseInt(data.ebay.total, 10)
 
-          if (pages > i) {
+          if (totalPages > i) {
             getPage(++i)
-            self.postMessage({ i })
+            self.postMessage({ i, total })
           } else {
             self.postMessage({ i, done: true })
           }

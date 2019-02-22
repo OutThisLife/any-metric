@@ -31,6 +31,7 @@ export default compose<SearchProps & SearchHandlers, {}>(
       updateView: t =>
         mutate({
           refetchQueries: ['getView'],
+          update: () => document.body.setAttribute('data-proc', t._id),
           variables: {
             objectId: session._id,
             collectionName: 'view',
@@ -67,8 +68,8 @@ export default compose<SearchProps & SearchHandlers, {}>(
               } else if (e.done) {
                 setItems(e.ebay.items, async () => {
                   await updateView(e.ebay.tag)
-                  worker.terminate()
                   $form.classList.remove('loading')
+                  worker.terminate()
                 })
               }
             } catch (err) {
@@ -99,6 +100,7 @@ export default compose<SearchProps & SearchHandlers, {}>(
           worker = new ImportWorker()
           $form.classList.add('loading')
 
+          let n = 0
           worker.addEventListener('message', async ({ data: e }) => {
             try {
               if (e.err) {
@@ -108,14 +110,17 @@ export default compose<SearchProps & SearchHandlers, {}>(
                 $form.classList.add('processing')
               }
 
-              $status.firstElementChild.innerHTML = `${Math.max(1, e.i) *
-                100} items imported&hellip;`
+              if (e.total) {
+                $status.firstElementChild.innerHTML = `~${(n +=
+                  e.total)} items imported&hellip;`
+              }
 
               await client.reFetchObservableQueries()
 
               if (e.done) {
                 $form.classList.remove('processing')
                 $status.lastElementChild.textContent = 'OK'
+                document.body.removeAttribute('data-proc')
                 worker.terminate()
               }
             } catch (err) {
@@ -139,12 +144,19 @@ export default compose<SearchProps & SearchHandlers, {}>(
           )
         },
 
-        handleReset: () => () => setItems([], () => toggleModal(false)),
+        handleReset: () => () =>
+          setItems([], () =>
+            toggleModal(false, () => {
+              document
+                .getElementById('search')
+                .classList.remove('processing', 'loading')
+
+              document.body.removeAttribute('data-proc')
+            })
+          ),
+
         handleAbort: () => () => {
-          document
-            .getElementById('s')
-            .closest('form')
-            .classList.remove('processing')
+          ;(document.getElementById('search') as HTMLFormElement).reset()
 
           if ('terminate' in worker) {
             worker.terminate()
@@ -164,6 +176,7 @@ export default compose<SearchProps & SearchHandlers, {}>(
   }) => (
     <Box
       as="form"
+      id="search"
       method="post"
       action="javascript:;"
       onSubmit={handleSubmit}
@@ -362,7 +375,7 @@ export interface SearchProps {
 }
 
 export interface SearchHandlers {
-  handleSubmit?: React.FormEventHandler<HTMLFormElement>
+  handleSubmit?: React.FormEventHandler<HTMLElement>
   handleConfirm?: React.FormEventHandler<HTMLElement>
   handleReset?: React.FormEventHandler<HTMLElement>
   handleAbort?: React.MouseEventHandler<HTMLElement>

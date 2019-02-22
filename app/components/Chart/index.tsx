@@ -51,9 +51,10 @@ export default compose<ChartProps & ChartRenderProps, ChartRenderProps>(
     }
   }),
   withContext(
-    { order: string, setOrder: func, setInput: func },
-    ({ order, setOrder, setInput }) => ({
+    { order: string, input: object, setOrder: func, setInput: func },
+    ({ order, input, setOrder, setInput }) => ({
       order,
+      input,
       setOrder,
       setInput
     })

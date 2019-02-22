@@ -6,23 +6,23 @@ export default (async (
   { paginationInput = { pageNumber: 0, entriesPerPage: 1 }, input = {} },
   { mongo }
 ): Promise<Product[]> => {
-  const args = Object.assign({}, input, {
-    status: {
+  if (!('status' in input)) {
+    input.status = {
       $ne: 'EndedWithoutSales'
     }
-  })
+  }
 
-  if ('tags' in args && '$in' in args.tags) {
-    args.tags.$in = convertIds(args.tags.$in)
-  } else if (!('tags' in args)) {
-    args.tags = {
+  if ('tags' in input && '$in' in input.tags) {
+    input.tags.$in = convertIds(input.tags.$in)
+  } else if (!('tags' in input)) {
+    input.tags = {
       $exists: true,
       $not: { $size: 0 }
     }
   }
 
   return await mongo.products
-    .find<Product>(args)
+    .find<Product>(input)
     .skip(paginationInput.pageNumber)
     .limit(paginationInput.entriesPerPage)
     .toArray()

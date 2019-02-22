@@ -57,6 +57,7 @@ export const GET_PRODUCTS = gql`
       image
       qty
       slug
+      status
       title
       url
     }
@@ -151,6 +152,7 @@ export const SEARCH_EBAY_BARE = gql`
     $paginationInput: Pagination
   ) {
     ebay(keywords: $keywords, save: $save, paginationInput: $paginationInput) {
+      op
       total
       totalPages
       tag {

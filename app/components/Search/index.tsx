@@ -64,7 +64,10 @@ export default compose<SearchProps & SearchHandlers, {}>(
 
               if (!e.ebay.items.length) {
                 alert('No items were found, aborting')
-                toggleModal(false, () => worker.terminate())
+                toggleModal(false, () => {
+                  $form.reset()
+                  worker.terminate()
+                })
               } else if (e.done) {
                 setItems(e.ebay.items, async () => {
                   await updateView(e.ebay.tag)

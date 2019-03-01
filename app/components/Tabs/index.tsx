@@ -9,7 +9,7 @@ import {
   getContext,
   setDisplayName,
   withHandlers,
-  withState
+  withStateHandlers
 } from 'recompose'
 import { prop } from 'styled-tools'
 
@@ -17,7 +17,6 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
   setDisplayName('chart-times-tabs'),
   withApollo,
   getContext({ session: object, setInput: func }),
-  withState('tab', 'setTab', ''),
   graphql<TimesTabsProps>(MODIFY_DOC, {
     props: ({ mutate, data, ownProps: { client, session } }) => ({
       data,
@@ -34,31 +33,66 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
       }
     })
   }),
-  withHandlers<TimesTabsProps, TimesTabsHandles>(({ setTab, modify }) => ({
-    handleFlush: () => () =>
-      window.confirm('Are you sure?') &&
-      modify({
-        $set: {
-          tags: []
+  withStateHandlers(
+    { tab: '' },
+    {
+      setTab: () => (tab, cb = () => null) => {
+        if (tab.length) {
+          location.hash = `/${tab}`
+        } else {
+          window.history.replaceState(null, null, location.pathname)
         }
-      }),
 
-    handleDrop: () => ({
-      currentTarget: {
-        dataset: { id }
+        cb()
+        return { tab }
       }
-    }) =>
-      window.confirm('Are you sure?') &&
-      setTab('', () =>
-        modify({
-          $pull: {
-            tags: id
+    }
+  ),
+  withHandlers<TimesTabsProps, TimesTabsHandles>(
+    ({ setTab, setInput, modify }) => ({
+      onRef: () => ref => {
+        if (!ref) {
+          return
+        } else if (location.hash) {
+          const id = location.hash.split('/')[1]
+          const $a = document.getElementById(`tab-${id}`)
+
+          if ($a instanceof HTMLAnchorElement) {
+            $a.click()
           }
-        })
-      )
-  }))
-)(({ session, tab, setTab, setInput, handleFlush, handleDrop }) => (
+        }
+      },
+
+      handleClick: () => (tab, params = {}) => {
+        setTab(tab, () => setInput(params))
+      },
+
+      handleFlush: () => () =>
+        window.confirm('Are you sure?') &&
+        modify({
+          $set: {
+            tags: []
+          }
+        }),
+
+      handleDrop: () => ({
+        currentTarget: {
+          dataset: { id }
+        }
+      }) =>
+        window.confirm('Are you sure?') &&
+        setTab('', () =>
+          modify({
+            $pull: {
+              tags: id
+            }
+          })
+        )
+    })
+  )
+)(({ onRef, session, tab, handleClick, handleFlush, handleDrop }) => (
   <Flex
+    ref={onRef}
     as="nav"
     css={`
       justify-self: flex-start;
@@ -95,15 +129,14 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
     {(session.tags as Tag[]).map(t => (
       <span key={t._id} className={tab === t._id ? 'active' : ''}>
         <a
+          id={`tab-${t._id}`}
           href="javascript:;"
           onClick={() =>
-            setTab(t._id, () =>
-              setInput({
-                tags: {
-                  $in: [t._id]
-                }
-              })
-            )
+            handleClick(t._id, {
+              tags: {
+                $in: [t._id]
+              }
+            })
           }>
           {t.title}
         </a>
@@ -113,7 +146,7 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
     ))}
 
     <span className={tab === '' ? 'active' : ''}>
-      <a href="javascript:;" onClick={() => setTab('', () => setInput({}))}>
+      <a href="javascript:;" onClick={() => handleClick('')}>
         Everything
       </a>
 
@@ -151,6 +184,8 @@ export interface TimesTabsProps {
 }
 
 export interface TimesTabsHandles {
+  onRef?: (ref: HTMLElement) => void
+  handleClick: (tab: string, params?: any) => void
   handleDrop: React.MouseEventHandler<HTMLAnchorElement>
   handleFlush: React.MouseEventHandler<HTMLAnchorElement>
 }

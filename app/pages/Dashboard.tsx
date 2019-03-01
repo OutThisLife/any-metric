@@ -9,7 +9,7 @@ import Tabs from '@/components/Tabs'
 import { GET_VIEW } from '@/lib/queries'
 import { View } from '@/server/schema/types'
 import { RouterProps, withRouter } from 'next/router'
-import { func, number, object } from 'prop-types'
+import { func, object, string } from 'prop-types'
 import { DataValue, graphql } from 'react-apollo'
 import { Box } from 'rebass'
 import {
@@ -41,7 +41,7 @@ export default compose<DashboardProps, {}>(
   }),
   withState('index', 'scrollToIndex', ''),
   withContext(
-    { index: number, scrollToIndex: func, session: object },
+    { index: string, scrollToIndex: func, session: object },
     ({ index, scrollToIndex, data }) => ({
       index,
       scrollToIndex,

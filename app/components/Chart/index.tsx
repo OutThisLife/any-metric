@@ -3,7 +3,7 @@ import { isDesktop } from '@/pages/Dashboard'
 import { Product, Tag, View } from '@/server/schema/types'
 import { BaphoTheme } from '@/theme'
 import orderBy from 'lodash/orderBy'
-import { func, number, object, string } from 'prop-types'
+import { func, object, string } from 'prop-types'
 import { DataValue, graphql } from 'react-apollo'
 import { MeasuredComponentProps, withContentRect } from 'react-measure'
 import { sma } from 'react-stockcharts/lib/indicator'
@@ -25,7 +25,7 @@ import { withTheme } from 'styled-components'
 export default compose<ChartProps & ChartRenderProps, ChartRenderProps>(
   setDisplayName('price'),
   withTheme,
-  getContext({ session: object, index: number }),
+  getContext({ session: object, index: string }),
   withState('input', 'setInput', ({ session }) => ({
     tags: {
       $in: (session.tags as Tag[]).map(t => t._id)

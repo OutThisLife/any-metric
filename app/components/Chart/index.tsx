@@ -23,7 +23,11 @@ import {
 export default compose<ChartProps & ChartRenderProps, ChartRenderProps>(
   setDisplayName('price'),
   getContext({ session: object, index: number }),
-  withState('input', 'setInput', {}),
+  withState('input', 'setInput', ({ session }) => ({
+    tags: {
+      $in: (session.tags as Tag[]).map(t => t._id)
+    }
+  })),
   withState('order', 'setOrder', 'date,desc'),
   shouldUpdate<ChartProps>(
     (p, np) =>
@@ -31,6 +35,7 @@ export default compose<ChartProps & ChartRenderProps, ChartRenderProps>(
       p.index !== np.index ||
       p.order !== np.order ||
       ('browser' in process &&
+        'tags' in np.input &&
         document.body.getAttribute('data-proc') === np.input.tags.$in[0])
   ),
   graphql<ChartProps, { products: Product[] }>(GET_PRODUCTS, {

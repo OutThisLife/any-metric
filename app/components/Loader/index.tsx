@@ -1,7 +1,12 @@
-import { AtomSpinner } from 'react-epic-spinners'
+import { BaphoTheme } from '@/theme'
+import { BreedingRhombusSpinner } from 'react-epic-spinners'
 import { Flex, FlexProps } from 'rebass'
+import { compose } from 'recompose'
+import { withTheme } from 'styled-components'
 
-export default ({ size = 60, ...props }: FlexProps & any) => (
+export default compose<BaphoTheme & LoaderProps, Partial<LoaderProps>>(
+  withTheme
+)(({ theme, size = 60, ...props }: FlexProps & any) => (
   <Flex
     alignItems="center"
     justifyContent="center"
@@ -12,13 +17,20 @@ export default ({ size = 60, ...props }: FlexProps & any) => (
         padding: var(--pad);
       }
     `}>
-    <AtomSpinner
-      className="chart-spinner"
-      color="#ddd"
-      animationDuration={668}
+    <BreedingRhombusSpinner
+      color={theme.border}
+      animationDuration={1300}
       size={size}
       style={{}}
       {...props}
     />
   </Flex>
-)
+))
+
+export interface LoaderProps {
+  size: number
+  animationDuration: number
+  color: string
+  className: string
+  style: object
+}

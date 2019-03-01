@@ -3,8 +3,7 @@ import { isDesktop } from '@/pages/Dashboard'
 import { Product, Tag } from '@/server/schema/types'
 import Fuse from 'fuse.js'
 import orderBy from 'lodash/orderBy'
-import { lighten } from 'polished'
-import { func, number, object, string } from 'prop-types'
+import { func, object, string } from 'prop-types'
 import { MeasuredComponentProps } from 'react-measure'
 import VirtualList from 'react-tiny-virtual-list'
 import { Box, Flex } from 'rebass'
@@ -16,16 +15,16 @@ import {
   withProps,
   withState
 } from 'recompose'
-import { prop, withProp } from 'styled-tools'
+import { prop } from 'styled-tools'
 
 import { ChartState } from '../Chart'
 
 export default compose<TimesProps & TimesHandlers, TimesProps>(
-  setDisplayName('chart-times'),
+  setDisplayName('chart-list'),
   getContext({
     order: string,
     setOrder: func,
-    index: number,
+    index: string,
     scrollToIndex: func,
     input: object,
     setInput: func
@@ -71,10 +70,10 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
   }))
 )(
   ({
+    index,
     order,
     input: { status = '' },
     data = [],
-    index,
     rect,
     handleChange,
     handleInput
@@ -132,7 +131,7 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
           itemSize={25}
           itemCount={Math.max(1, data.length)}
           height={isDesktop() ? rect.bounds.height : rect.bounds.height / 1.8}
-          scrollToIndex={index}
+          scrollToIndex={data.findIndex(d => d._id === index.toString()) || 0}
           renderItem={({ index: i, style }) => {
             if (!data.length) {
               return (
@@ -142,22 +141,22 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
               )
             }
 
+            const d = data[i]
+
             return (
               <Flex
                 key={i}
-                id={`t-${data[i]._id}`}
-                data-src={data[i].image}
+                id={`t-${d._id}`}
+                data-src={d.image}
                 style={style}
                 alignItems="center"
                 justifyContent="center"
-                className={`${index === i ? 'active' : ''} status-${data[
-                  i
-                ].status.toLocaleLowerCase()}`}
+                className={`${
+                  index === d._id ? 'active' : ''
+                } status-${d.status.toLocaleLowerCase()}`}
                 onMouseEnter={() => {
-                  localStorage.setItem('url', data[i].url)
-                  document
-                    .getElementById('zoom')
-                    .setAttribute('src', data[i].image)
+                  localStorage.setItem('url', d.url)
+                  document.getElementById('zoom').setAttribute('src', d.image)
                 }}
                 onMouseLeave={() =>
                   document.getElementById('zoom').removeAttribute('src')
@@ -166,13 +165,23 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
                   display: flex;
                   align-items: center;
                   justify-content: space-between;
+                  position: relative;
                   border-bottom: 1px solid ${prop('theme.border')};
 
-                  &:hover {
-                    background: ${withProp(prop('theme.brand'), lighten(0.5))};
+                  &:hover,
+                  &.active {
+                    z-index: 2;
+                    font-weight: 700;
+                    text-decoration: underline;
+                    box-shadow: 0 0 25px ${prop('theme.border')};
+
+                    a {
+                      color: ${prop('theme.base')};
+                    }
                   }
 
                   &.active {
+                    z-index: 3;
                     background: ${prop('theme.brand')} !important;
 
                     a,
@@ -204,7 +213,7 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
                         display: inline-block;
                         width: 5px;
                         height: 5px;
-                        margin-right: 0.25em;
+                        margin-right: 0.5em;
                         vertical-align: middle;
                       }
                     }
@@ -226,17 +235,15 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
                 <span className="title">
                   <i />
 
-                  <a href={data[i].url} target="_blank">
-                    {data[i].title}
-                  </a>
+                  <a
+                    href={d.url}
+                    target="_blank"
+                    dangerouslySetInnerHTML={{ __html: d.title }}
+                  />
                 </span>
 
-                <span className="date">
-                  {dateFormat((data[i] as any).date)}
-                </span>
-                <span className="price">
-                  {moneyFormat((data[i] as any).close)}
-                </span>
+                <span className="date">{dateFormat(d.date)}</span>
+                <span className="price">{moneyFormat(d.close)}</span>
               </Flex>
             )
           }}
@@ -253,8 +260,8 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
           position: fixed;
           bottom: 0;
           left: 0;
-          max-width: 66vw;
-          max-height: 66vh;
+          max-width: 45vw;
+          max-height: 45vh;
           vertical-align: top;
 
           &:not([src]) {
@@ -280,7 +287,7 @@ export interface TimesProps {
   setInput?: (a: any, cb?: () => void) => void
   setOrder?: (a: string, cb?: () => void) => void
   updateData?: (a: Product[], cb?: () => void) => void
-  index?: number
+  index?: string
   scrollToIndex?: (a: number, cb?: () => void) => void
 }
 

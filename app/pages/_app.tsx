@@ -1,8 +1,9 @@
 import withData from '@/client/withData'
+import theme, { BaphoTheme } from '@/theme'
 import { ApolloClient } from 'apollo-boost'
 import App, { AppProps, Container } from 'next/app'
 import Head from 'next/head'
-import { desaturate } from 'polished'
+import { darken, desaturate } from 'polished'
 import { ApolloProvider } from 'react-apollo'
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import { prop, withProp } from 'styled-tools'
@@ -14,14 +15,7 @@ export default withData(
 
       return (
         <ApolloProvider client={client}>
-          <ThemeProvider
-            theme={{
-              base: '#000',
-              bg: '#fff',
-              border: '#d9dcde',
-              panel: '#f5f7f7',
-              brand: '#0000ee'
-            }}>
+          <ThemeProvider theme={theme}>
             <Container>
               <Head>
                 <title key="title">$ɮΔք𝔥Ø𝔪Δ✞ʀɨჯ</title>
@@ -41,20 +35,16 @@ export interface MyAppProps extends AppProps {
   client: ApolloClient<{}>
 }
 
-const GlobalStyles = createGlobalStyle`
+const GlobalStyles = createGlobalStyle<BaphoTheme>`
   * {
+    cursor: crosshair;
     font-family: Arial, sans-serif;
     font-size: 12px;
     box-sizing: border-box;
 
-    &:focus{
-      outline: #4D90FE solid 2px;
-      outline-offset: 1px;
+    &:focus {
+      outline: none;
     }
-  }
-
-  body {
-    background: ${prop('theme.bg')};
   }
 
   ::-webkit-scrollbar {
@@ -67,6 +57,15 @@ const GlobalStyles = createGlobalStyle`
     background: ${prop('theme.base')};
   }
 
+  ::selection {
+    color: ${prop('theme.bg')};
+    background: ${prop('theme.base')};
+  }
+
+  body {
+    background: ${prop('theme.bg')};
+  }
+
   p, figure, h5 {
     margin: 0;
   }
@@ -77,7 +76,12 @@ const GlobalStyles = createGlobalStyle`
   }
 
   a {
+    cursor: pointer;
     color: ${prop('theme.brand')};
+
+    &:not(:hover) {
+      text-decoration: none;
+    }
 
     &:hover {
       color: ${prop('theme.base')};
@@ -93,13 +97,21 @@ const GlobalStyles = createGlobalStyle`
   }
 
   input, select, textarea {
+    cursor: text;
     display: block;
     width: inherit;
     margin: 4px 0;
     padding: 3px;
+    border: 1px solid ${prop('theme.border')};
+    background: ${prop('theme.panel')};
+
+    &:focus {
+      border-color: ${withProp(prop('theme.border'), darken(0.2))};;
+    }
   }
 
   select {
+    cursor: pointer;
     padding: 2.5px;
   }
 `

@@ -1,5 +1,7 @@
 import { moneyFormat } from '@/lib/utils'
+import { BaphoTheme } from '@/theme'
 import * as d3 from 'd3'
+import { rgba } from 'polished'
 import { func } from 'prop-types'
 import { Chart, ChartCanvas, ZoomButtons } from 'react-stockcharts'
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes'
@@ -15,14 +17,11 @@ import {
 } from 'react-stockcharts/lib/series'
 import { HoverTooltip } from 'react-stockcharts/lib/tooltip'
 import { compose, getContext, setDisplayName, withState } from 'recompose'
-import { ThemeProps, withTheme } from 'styled-components'
+import { withTheme } from 'styled-components'
 
-import { ChartState } from '..'
+import { ChartState } from '.'
 
-export default compose<
-  ChartState & PriceChartProps & ThemeProps<any>,
-  ChartState
->(
+export default compose<ChartState & PriceChartProps, ChartState>(
   setDisplayName('chart-price'),
   withTheme,
   getContext({ scrollToIndex: func }),
@@ -40,19 +39,19 @@ export default compose<
     const r = d =>
       d3
         .scaleLinear()
-        .range([2, 20])
+        .range([2, 10])
         .domain(d3.extent(props.data, (z: any) => z.close))(d.close)
 
     return (
       <ChartCanvas seriesName={`Price_${suffix}`} {...props}>
-        <Chart id={1} yExtents={d => d.close}>
+        <Chart id={1} yExtents={d => d.close} yPan={false}>
           <ScatterSeries
             yAccessor={d => d.close}
             marker={CircleMarker}
             markerProps={{
               r,
               stroke: theme.bg,
-              fill: theme.border
+              fill: rgba(theme.brand, 0.1)
             }}
           />
           <XAxis
@@ -72,12 +71,13 @@ export default compose<
           {window.innerWidth >= 1025 && (
             <ClickCallback
               onDoubleClick={handleReset}
-              onMouseMove={({ currentItem, fullData }) => {
+              onMouseMove={({ currentItem }) => {
                 localStorage.setItem('url', currentItem.url)
 
                 if (!document.body.classList.contains('lock-chart')) {
-                  const idx = fullData.findIndex(d => d._id === currentItem._id)
-                  window.requestAnimationFrame(() => scrollToIndex(idx))
+                  window.requestAnimationFrame(() =>
+                    scrollToIndex(currentItem._id)
+                  )
                 }
               }}
             />
@@ -124,7 +124,7 @@ export default compose<
 
         <CrossHairCursor
           StrokeDasharray="ShortDashDot"
-          stroke="#000"
+          stroke={theme.base}
           snapX={true}
         />
       </ChartCanvas>
@@ -132,7 +132,7 @@ export default compose<
   }
 )
 
-export interface PriceChartProps {
+export interface PriceChartProps extends BaphoTheme {
   suffix: number
   handleReset: () => void
   scrollToIndex?: (a: number) => void

@@ -1,8 +1,9 @@
 import Chart from '@/components/Chart'
 import Price from '@/components/Chart/Price'
+import Footer from '@/components/Footer'
 import List from '@/components/List'
 import Loader from '@/components/Loader'
-import Quote from '@/components/Quote'
+import Meta from '@/components/Meta'
 import Search from '@/components/Search'
 import Tabs from '@/components/Tabs'
 import { GET_VIEW } from '@/lib/queries'
@@ -38,7 +39,7 @@ export default compose<DashboardProps, {}>(
       }
     })
   }),
-  withState('index', 'scrollToIndex', 0),
+  withState('index', 'scrollToIndex', ''),
   withContext(
     { index: number, scrollToIndex: func, session: object },
     ({ index, scrollToIndex, data }) => ({
@@ -152,6 +153,8 @@ export default compose<DashboardProps, {}>(
             <span>not enough datapoints</span>
           ) : (
             <Box>
+              <Meta key={chart.data.length} data={chart.data} />
+
               <Price
                 width={isDesktop() ? rect.bounds.width / 2 : rect.client.width}
                 height={
@@ -161,22 +164,6 @@ export default compose<DashboardProps, {}>(
                 {...chart}
                 {...rect}
               />
-
-              <Box
-                css={`
-                  font-size: 11px;
-                  padding: var(--pad);
-
-                  strong {
-                    display: inline-block;
-                    width: 10px;
-                    text-align: right;
-                  }
-                `}>
-                <strong>W</strong> to open item in new tab.
-                <br />
-                <strong>S</strong> to toggle chart sync
-              </Box>
             </Box>
           )}
 
@@ -193,7 +180,7 @@ export default compose<DashboardProps, {}>(
       )}
     </Chart>
 
-    <Quote />
+    <Footer />
   </Box>
 ))
 

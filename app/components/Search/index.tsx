@@ -121,9 +121,10 @@ export default compose<SearchProps & SearchHandlers, {}>(
               await client.reFetchObservableQueries()
 
               if (e.done) {
-                $form.classList.remove('processing')
                 $status.lastElementChild.textContent = 'OK'
                 document.body.removeAttribute('data-proc')
+
+                $form.reset()
                 worker.terminate()
               }
             } catch (err) {
@@ -238,8 +239,8 @@ export default compose<SearchProps & SearchHandlers, {}>(
           left: 50%;
           padding: 5px;
           transform: translateX(-50%);
-          border: 1px solid ${prop('theme.border')};
-          background: yellow;
+          border: 1px solid #e2bc83;
+          background: #f5ed00;
         `}>
         <span>working&hellip;</span>
         <a href="javascript:;" onClick={handleAbort}>

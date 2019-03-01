@@ -3,10 +3,10 @@ import fetch from 'isomorphic-unfetch'
 import { Box } from 'rebass'
 import { compose, setDisplayName, withHandlers, withState } from 'recompose'
 
-export default compose<QuoteProps, {}>(
-  setDisplayName('quote'),
+export default compose<FooterProps, {}>(
+  setDisplayName('footer'),
   withState('quote', 'setQuote', null),
-  withHandlers<QuoteProps, QuoteProps>(({ setQuote }) => ({
+  withHandlers<FooterProps, FooterProps>(({ setQuote }) => ({
     getQuote: () => async () => {
       try {
         if (Math.random() < 0.3) {
@@ -23,7 +23,7 @@ export default compose<QuoteProps, {}>(
       }
     }
   })),
-  withHandlers<QuoteProps, QuoteProps>(({ getQuote }) => ({
+  withHandlers<FooterProps, FooterProps>(({ getQuote }) => ({
     onRef: () => async ref => {
       if (!ref) {
         return
@@ -37,24 +37,32 @@ export default compose<QuoteProps, {}>(
   <Box
     ref={onRef}
     css={`
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
       position: fixed;
+      left: 0;
       right: 0;
       bottom: 0;
-      font-size: 11px;
-      letter-spacing: 0.03em;
       padding: calc(var(--pad) / 2);
+
+      > div {
+        font-size: 11px;
+        letter-spacing: 0.03em;
+      }
 
       em {
         color: #f00;
         font-style: normal;
       }
     `}
-    onClick={getQuote}
-    dangerouslySetInnerHTML={{ __html: `${quote} <em>❤</em>` }}
-  />
+    onClick={getQuote}>
+    <div>W to open item in new tab; S to toggle chart sync</div>
+    <div dangerouslySetInnerHTML={{ __html: `${quote} <em>❤</em>` }} />
+  </Box>
 ))
 
-export interface QuoteProps {
+export interface FooterProps {
   quote?: string
   getQuote?: () => void
   setQuote?: (s: string) => void

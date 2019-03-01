@@ -1,6 +1,7 @@
 import { GET_PRODUCTS } from '@/lib/queries'
 import { isDesktop } from '@/pages/Dashboard'
 import { Product, Tag, View } from '@/server/schema/types'
+import { BaphoTheme } from '@/theme'
 import orderBy from 'lodash/orderBy'
 import { func, number, object, string } from 'prop-types'
 import { DataValue, graphql } from 'react-apollo'
@@ -19,9 +20,11 @@ import {
   withPropsOnChange,
   withState
 } from 'recompose'
+import { withTheme } from 'styled-components'
 
 export default compose<ChartProps & ChartRenderProps, ChartRenderProps>(
   setDisplayName('price'),
+  withTheme,
   getContext({ session: object, index: number }),
   withState('input', 'setInput', ({ session }) => ({
     tags: {
@@ -66,7 +69,7 @@ export default compose<ChartProps & ChartRenderProps, ChartRenderProps>(
   ),
   withPropsOnChange<ChartProps, ChartProps>(
     ['data'],
-    ({ data: initialData }) => {
+    ({ theme, data: initialData }) => {
       if (!initialData || initialData.loading) {
         return { data: { products: [], loading: true }, chart: { data: [] } }
       }
@@ -104,8 +107,8 @@ export default compose<ChartProps & ChartRenderProps, ChartRenderProps>(
         tickStrokeDashArray: 'LongDashDotDot',
         tickStrokeOpacity: 0.05,
         tickStrokeWidth: 1,
-        stroke: '#A8A8A8',
-        tickStroke: '#A8A8A8'
+        stroke: theme.border,
+        tickStroke: theme.border
       }
 
       return {
@@ -133,7 +136,9 @@ export interface ChartRenderProps {
   children: (a: ChartProps) => JSX.Element
 }
 
-export interface ChartProps extends Partial<MeasuredComponentProps> {
+export interface ChartProps
+  extends Partial<MeasuredComponentProps>,
+    BaphoTheme {
   chart?: ChartState
   session?: View
   index?: number

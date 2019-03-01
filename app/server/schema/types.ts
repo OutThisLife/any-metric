@@ -162,17 +162,19 @@ export default gql`
 
 export interface Product extends MongoEntry {
   bids?: number
+  close?: number
+  date?: Date
   image?: string
   price?: number
   qty?: number
+  query?: string
   shipping?: number
   slug?: string
+  status?: string
   tags?: Array<Tag['_id']> | Tag[] | ObjectID[]
+  timeLeft?: Date
   url?: string
   username?: string
-  query?: string
-  timeLeft?: Date
-  status?: string
 }
 
 export interface Tag extends MongoEntry {

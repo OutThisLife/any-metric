@@ -48,113 +48,81 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
         dataset: { id }
       }
     }) =>
+      window.confirm('Are you sure?') &&
       setTab('', () =>
         modify({
           $pull: {
             tags: id
           }
         })
-      ),
-
-    handleRefresh: ({ client }) => () => client.reFetchObservableQueries()
+      )
   }))
-)(
-  ({
-    session,
-    tab,
-    setTab,
-    setInput,
-    handleRefresh,
-    handleFlush,
-    handleDrop
-  }) => (
-    <Flex
-      as="nav"
-      css={`
-        justify-self: flex-start;
-        justify-content: flex-end;
-        max-width: 100%;
-        overflow: auto;
-        white-space: nowrap;
-        background: ${prop('theme.bg')};
+)(({ session, tab, setTab, setInput, handleFlush, handleDrop }) => (
+  <Flex
+    as="nav"
+    css={`
+      justify-self: flex-start;
+      justify-content: flex-end;
+      max-width: 100%;
+      overflow: auto;
+      white-space: nowrap;
+      background: ${prop('theme.bg')};
 
-        @media (max-width: 1025px) {
-          padding: var(--pad) 0;
-        }
+      @media (max-width: 1025px) {
+        padding: var(--pad) 0;
+      }
 
-        > span {
-          display: inline-flex;
-          align-items: center;
-          font-weight: 700;
-          text-transform: uppercase;
+      > span {
+        display: inline-flex;
+        align-items: center;
+        font-weight: 700;
+        text-transform: uppercase;
 
-          i {
-            cursor: pointer;
-            margin-right: 0.3em;
+        i {
+          cursor: pointer;
+          margin: 0 0.3em 0 0.1em;
 
-            &.refresh svg {
-              stroke: ${prop('theme.brand')};
-            }
-          }
-
-          &:not(:hover) .delete {
-            visibility: hidden;
+          &.refresh svg {
+            stroke: ${prop('theme.brand')};
           }
         }
-      `}>
-      {(session.tags as Tag[]).map(t => (
-        <span key={t._id} className={tab === t._id ? 'active' : ''}>
-          <a
-            href="javascript:;"
-            onClick={() =>
-              setTab(t._id, () =>
-                setInput({
-                  tags: {
-                    $in: [t._id]
-                  }
-                })
-              )
-            }>
-            {t.title}
-          </a>
 
-          <Delete data-id={t._id} onClick={handleDrop} />
-        </span>
-      ))}
-
-      <span className={tab === '' ? 'active' : ''}>
-        <a href="javascript:;" onClick={() => setTab('', () => setInput({}))}>
-          Everything
+        &:not(:hover) .delete {
+          visibility: hidden;
+        }
+      }
+    `}>
+    {(session.tags as Tag[]).map(t => (
+      <span key={t._id} className={tab === t._id ? 'active' : ''}>
+        <a
+          href="javascript:;"
+          onClick={() =>
+            setTab(t._id, () =>
+              setInput({
+                tags: {
+                  $in: [t._id]
+                }
+              })
+            )
+          }>
+          {t.title}
         </a>
 
-        <Delete onClick={handleFlush} />
+        <Delete data-id={t._id} onClick={handleDrop} />
       </span>
+    ))}
 
-      <span style={{ marginLeft: 5 }}>
-        <Refresh onClick={handleRefresh} />
-      </span>
-    </Flex>
-  )
-)
+    <span className={tab === '' ? 'active' : ''}>
+      <a href="javascript:;" onClick={() => setTab('', () => setInput({}))}>
+        Everything
+      </a>
 
-const Refresh = ({ size = 14, ...props }) => (
-  <i className="refresh" {...props}>
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1"
-      strokeLinecap="square">
-      <path d="M2.5 2v6h6M21.5 22v-6h-6" />
-      <path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
-    </svg>
-  </i>
-)
+      <Delete onClick={handleFlush} />
+    </span>
+  </Flex>
+))
 
-const Delete = ({ size = 14, ...props }) => (
+const Delete = ({ size = 12, ...props }) => (
   <i className="delete" {...props}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -185,5 +153,4 @@ export interface TimesTabsProps {
 export interface TimesTabsHandles {
   handleDrop: React.MouseEventHandler<HTMLAnchorElement>
   handleFlush: React.MouseEventHandler<HTMLAnchorElement>
-  handleRefresh: React.MouseEventHandler<HTMLAnchorElement>
 }

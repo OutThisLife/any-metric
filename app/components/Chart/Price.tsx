@@ -135,5 +135,5 @@ export default compose<ChartState & PriceChartProps, ChartState>(
 export interface PriceChartProps extends BaphoTheme {
   suffix: number
   handleReset: () => void
-  scrollToIndex?: (a: number) => void
+  scrollToIndex?: (a: string) => void
 }

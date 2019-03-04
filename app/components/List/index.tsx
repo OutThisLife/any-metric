@@ -1,8 +1,8 @@
 import { dateFormat, moneyFormat } from '@/lib/utils'
 import { isDesktop } from '@/pages/Dashboard'
 import { Product, Tag } from '@/server/schema/types'
-import Fuse from 'fuse.js'
 import orderBy from 'lodash/orderBy'
+import lunr from 'lunr'
 import { func, object, string } from 'prop-types'
 import { MeasuredComponentProps } from 'react-measure'
 import VirtualList from 'react-tiny-virtual-list'
@@ -31,39 +31,45 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
   }),
   withState('data', 'updateData', ({ chart }) => chart.data || []),
   withHandlers<TimesProps, TimesHandlers>(
-    ({ chart: { data }, setOrder, setInput, scrollToIndex, updateData }) => ({
-      handleChange: () => ({ currentTarget: { name, value } }) =>
-        scrollToIndex(0, () => {
-          if (name === 'order') {
-            setOrder(value)
-          } else if (name === 'status') {
-            setInput({
-              status: value.length
-                ? value
-                : {
-                    $ne: 'EndedWithoutSales'
-                  }
-            })
+    ({ chart: { data }, setOrder, setInput, scrollToIndex, updateData }) => {
+      const idx = lunr(function() {
+        this.ref('_id')
+        this.field('title')
+        data.map(this.add.bind(this))
+      })
+
+      const search = (v): Product[] => {
+        if (v.length) {
+          try {
+            return idx.search(v).map(r => data.find(d => d._id === r.ref))
+          } catch (err) {
+            return []
           }
-        }),
+        }
 
-      handleInput: () => ({ currentTarget: { value } }) =>
-        scrollToIndex(0, () =>
-          updateData(
-            (() => {
-              if (value.length) {
-                const fuse = new Fuse(data, {
-                  keys: ['title']
-                })
+        return data
+      }
 
-                return fuse.search(value)
-              } else {
-                return data
-              }
-            })()
-          )
-        )
-    })
+      return {
+        handleChange: () => ({ currentTarget: { name, value } }) =>
+          scrollToIndex('0', () => {
+            if (name === 'order') {
+              setOrder(value)
+            } else if (name === 'status') {
+              setInput({
+                status: value.length
+                  ? value
+                  : {
+                      $ne: 'EndedWithoutSales'
+                    }
+              })
+            }
+          }),
+
+        handleInput: () => ({ currentTarget: { value } }) =>
+          scrollToIndex('0', () => updateData(search(value.trim())))
+      }
+    }
   ),
   withProps(({ order, data = [] }) => ({
     data: orderBy(data, ...order.split(','))
@@ -288,7 +294,7 @@ export interface TimesProps {
   setOrder?: (a: string, cb?: () => void) => void
   updateData?: (a: Product[], cb?: () => void) => void
   index?: string
-  scrollToIndex?: (a: number, cb?: () => void) => void
+  scrollToIndex?: (a: string, cb?: () => void) => void
 }
 
 export interface TimesHandlers {

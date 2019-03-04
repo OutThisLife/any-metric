@@ -38,7 +38,7 @@ export default compose<TimesProps & TimesHandlers, TimesProps>(
         data.map(this.add.bind(this))
       })
 
-      const search = (v): Product[] => {
+      const search = (v: string): Product[] => {
         if (v.length) {
           try {
             return idx.search(v).map(r => data.find(d => d._id === r.ref))

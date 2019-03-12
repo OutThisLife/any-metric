@@ -13,8 +13,7 @@
     "fix": "tslint app/**/*.tsx --fix",
     "dev": "cross-env NODE_ENV=development nodemon ./app/server/index.ts",
     "build": "cross-env NODE_ENV=production yarn build:universal",
-    "start": "cross-env NODE_ENV=production yarn start:universal",
-    "postinstall": "[ $NODE_ENV = production ] && yarn build || exit 0"
+    "start": "cross-env NODE_ENV=production yarn start:universal"
   },
   "keywords": [],
   "author": "",

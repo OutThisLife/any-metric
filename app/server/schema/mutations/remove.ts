@@ -11,11 +11,14 @@ export default (async (_, { objectId, collectionName }, { mongo }) => {
       ok: true,
       n: [r1, r2, r3].reduce((acc, r) => (acc += r.n), 0)
     }
-  } else {
+  } else if (objectId) {
     const { result } = await mongo
       .collection(collectionName)
       .deleteOne(convertId(objectId))
 
+    return result
+  } else {
+    const { result } = await mongo.collection(collectionName).deleteMany({})
     return result
   }
 }) as Resolver

@@ -48,7 +48,7 @@ export const GET_FULL_PRODUCTS = gql`
 export const GET_PRODUCTS = gql`
   query getProducts($input: JSON) {
     products(
-      paginationInput: { pageNumber: 0, entriesPerPage: 2345 }
+      paginationInput: { pageNumber: 1, entriesPerPage: 2345 }
       input: $input
     ) {
       _id
@@ -98,6 +98,7 @@ const ebayFragment = gql`
   fragment EbayFields on EbayResult {
     total
     totalPages
+    totalEntries
     tag {
       _id
     }
@@ -135,9 +136,15 @@ export const SEARCH_EBAY = gql`
   query getEbay(
     $keywords: String!
     $save: Boolean
+    $operation: String
     $paginationInput: Pagination
   ) {
-    ebay(keywords: $keywords, save: $save, paginationInput: $paginationInput) {
+    ebay(
+      keywords: $keywords
+      save: $save
+      operation: $operation
+      paginationInput: $paginationInput
+    ) {
       ...EbayFields
     }
   }
@@ -149,9 +156,15 @@ export const SEARCH_EBAY_BARE = gql`
   query getEbay(
     $keywords: String!
     $save: Boolean
+    $operation: String
     $paginationInput: Pagination
   ) {
-    ebay(keywords: $keywords, save: $save, paginationInput: $paginationInput) {
+    ebay(
+      keywords: $keywords
+      save: $save
+      operation: $operation
+      paginationInput: $paginationInput
+    ) {
       op
       total
       totalPages

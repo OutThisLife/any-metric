@@ -6,11 +6,11 @@ const { EBAY_APP_ID } = process.env
 
 export const getCommerce = async (
   body: Response,
-  operation: EbayOperations = 'findItemsByKeywords'
+  op: EbayOperations = 'findItemsByKeywords'
 ): Promise<Response> => {
   try {
     const url = (() => {
-      if (/^find|items$/i.test(operation)) {
+      if (/^find|items$/i.test(op)) {
         return `https://svcs.ebay.com/services/search/FindingService/v1`
       }
     })()
@@ -19,7 +19,7 @@ export const getCommerce = async (
       method: 'POST',
       body: JSON.stringify(body),
       headers: {
-        'X-EBAY-SOA-OPERATION-NAME': operation,
+        'X-EBAY-SOA-OPERATION-NAME': op,
         'X-EBAY-SOA-SECURITY-APPNAME': EBAY_APP_ID,
         'X-EBAY-SOA-REQUEST-DATA-FORMAT': 'JSON'
       }
@@ -31,12 +31,12 @@ export const getCommerce = async (
       throw data.errorMessage[0].error[0]
     }
 
-    return data[`${operation}Response`][0]
+    return data[`${op}Response`][0]
   } catch (err) {
     console.log('')
     console.error('Ebay API error:')
+    console.dir(err)
     console.trace(err)
-    console.table(err)
     console.log('')
   }
 }

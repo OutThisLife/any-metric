@@ -20,6 +20,7 @@ export default gql`
     ebay(
       keywords: String!
       save: Boolean
+      operation: String
       paginationInput: Pagination
     ): EbayResult
 
@@ -95,10 +96,11 @@ export default gql`
 
   type EbayResult @cacheControl(maxAge: 10e5) {
     items: [EbayItem]
-    total: String
-    totalPages: String
-    tag: Tag
     op: String
+    tag: Tag
+    total: String
+    totalEntries: String
+    totalPages: String
   }
 
   type EbayItem @cacheControl(maxAge: 10e5) {
@@ -215,13 +217,14 @@ export interface CrawlResult {
   url?: string
 }
 
-export interface EbayResult {
+export interface EbayResult<P = string> {
   __typename?: string
-  op?: string
   items?: EbayItem[]
-  total?: number | string
-  totalPages?: number | string
+  op?: string
   tag?: Tag
+  total?: P
+  totalEntries?: P
+  totalPages?: P
 }
 
 export interface EbayItem {

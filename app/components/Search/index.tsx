@@ -53,6 +53,8 @@ export default compose<SearchProps & SearchHandlers, {}>(
           const el = document.getElementById('s') as HTMLInputElement
           const $form = el.closest('form') as HTMLFormElement
 
+          const keywords = el.value
+
           worker = new ImportWorker()
           $form.classList.add('loading')
 
@@ -86,19 +88,23 @@ export default compose<SearchProps & SearchHandlers, {}>(
               worker.postMessage({
                 query: print(SEARCH_EBAY),
                 variables: {
-                  keywords: el.value,
-                  save: true,
-                  paginationInput: { entriesPerPage: 2 }
+                  keywords,
+                  save: false,
+                  operation: 'findItemsByKeywords',
+                  paginationInput: { pageNumber: 1, entriesPerPage: 4 }
                 }
               })
             )
           )
         },
 
-        handleConfirm: ({ client }) => () => {
+        handleConfirm: ({ client }) => ({ currentTarget }) => {
           const el = document.getElementById('s') as HTMLInputElement
           const $form = el.closest('form') as HTMLFormElement
           const $status = document.getElementById('status')
+
+          const { operation } = currentTarget.dataset
+          const keywords = el.value
 
           worker = new ImportWorker()
           $form.classList.add('loading')
@@ -114,8 +120,9 @@ export default compose<SearchProps & SearchHandlers, {}>(
               }
 
               if (e.total) {
-                $status.firstElementChild.innerHTML = `~${(n +=
-                  e.total)} items imported&hellip;`
+                $status.firstElementChild.innerHTML = `${(n += e.total)} / ${
+                  e.totalEntries
+                } &hellip;`
               }
 
               await client.reFetchObservableQueries()
@@ -139,9 +146,10 @@ export default compose<SearchProps & SearchHandlers, {}>(
                 recurse: true,
                 query: print(SEARCH_EBAY_BARE),
                 variables: {
-                  keywords: el.value,
+                  keywords,
+                  operation,
                   save: true,
-                  paginationInput: { entriesPerPage: 100 }
+                  paginationInput: { pageNumber: 1, entriesPerPage: 100 }
                 }
               })
             )
@@ -353,8 +361,18 @@ export default compose<SearchProps & SearchHandlers, {}>(
               />
             )}
           </nav>
-          <button type="button" onClick={handleConfirm}>
-            Looks good, watch this query
+          <button
+            type="button"
+            data-operation="findCompletedItems"
+            onClick={handleConfirm}>
+            Import Completed
+          </button>
+          &nbsp;
+          <button
+            type="button"
+            data-operation="findItemsByKeywords"
+            onClick={handleConfirm}>
+            Import Active
           </button>
           &nbsp;
           <button type="reset">Cancel</button>

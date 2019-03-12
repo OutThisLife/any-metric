@@ -1,13 +1,16 @@
-import { EbayOperations, getCommerce } from '../../api'
+import { getCommerce } from '../../api'
 import { EbayItem, EbayResult, Resolver, Tag } from '../types'
 
 export default (async (
   _,
-  { keywords, save = false, ...args }: EbayArgs,
+  {
+    keywords,
+    operation: op = 'findItemsByKeywords',
+    save = false,
+    ...args
+  }: EbayArgs,
   { mongo }
-): Promise<EbayResult> => {
-  const operations = ['findItemsByKeywords', 'findCompletedItems']
-
+): Promise<Result> => {
   const tag = await (async () => {
     const entry = await mongo.tags.findOne<Tag>({ title: keywords })
 
@@ -24,136 +27,131 @@ export default (async (
     return entry
   })()
 
-  const res = (await Promise.all<EbayResult>(
-    operations.map(
-      (op: EbayOperations) =>
-        new Promise(async resolve => {
-          try {
-            const {
-              searchResult: [sr = {}],
-              paginationOutput: [pages]
-            } = await getCommerce(
-              Object.assign(args, {
-                keywords,
-                outputSelector: [
-                  'PictureURLSuperSize',
-                  'SellerInfo',
-                  'UnitPrice'
-                ]
-              }),
-              op
-            )
-
-            resolve({
-              op,
-              tag,
-              total: parseInt(sr['@count'], 10),
-              totalPages: parseInt(pages.totalPages[0], 10),
-              items: ('item' in sr ? (sr.item as EbayItem[]) : []).map(item => {
-                for (const [k, v] of Object.entries(item)) {
-                  if (Array.isArray(v) && v.length === 1) {
-                    const kv = v.pop()
-
-                    if (typeof kv === 'string' && /false|true/.test(kv)) {
-                      item[k] = !(kv === 'false')
-                    } else {
-                      item[k] = kv
-                    }
-                  }
-                }
-
-                item._id = item.itemId
-
-                return item
-              })
-            })
-          } catch (err) {
-            resolve({ op, tag, total: 0, totalPages: 0, items: [] })
-          }
-        })
-    )
-  )).reduce(
-    (acc: EbayResult, r: EbayResult) => ({
-      ...r,
-      total: (acc.total as number) += r.total as number,
-      items: acc.items.concat(...r.items)
+  const {
+    searchResult: [sr = {}],
+    paginationOutput: [pages]
+  } = await getCommerce(
+    Object.assign(args, {
+      keywords,
+      outputSelector: ['PictureURLSuperSize', 'SellerInfo', 'UnitPrice'],
+      sortOrder: op === 'findCompletedItems' ? 'StartTimeNewest' : 'BestMatch',
+      itemFilter: [
+        {
+          name: 'HideDuplicateItems',
+          value: true
+        },
+        {
+          name: 'SoldItemsOnly',
+          value: op === 'findCompletedItems'
+        }
+      ]
     }),
-    {
-      total: 0,
-      items: []
-    }
+    op
   )
 
-  if (save) {
-    ;(res.items || []).map(
-      async ({
-        listingInfo,
-        pictureURLSuperSize = '',
-        sellingStatus,
-        sellerInfo,
-        shippingInfo,
-        title,
-        unitPrice = {},
-        viewItemURL = 'javascript:;'
-      }) => {
-        const createdAt = new Date(listingInfo.startTime)
-        const image = pictureURLSuperSize
-        const status = sellingStatus.sellingState[0]
-        const tags = [tag._id]
-        const timeLeft = new Date(listingInfo.endTime)
-        const updatedAt = new Date()
-        const url = viewItemURL
+  const res = {
+    op,
+    tag,
+    total: parseInt(sr['@count'], 10),
+    totalPages: parseInt(pages.totalPages[0], 10),
+    totalEntries: parseInt(pages.totalEntries[0], 10),
+    items: ('item' in sr ? (sr.item as EbayItem[]) : []).map(item => {
+      for (const [k, v] of Object.entries(item)) {
+        if (Array.isArray(v) && v.length === 1) {
+          const kv = v.pop()
 
-        const bids = 'bidCount' in sellingStatus ? sellingStatus.bidCount[0] : 0
-
-        const qty = 'quantity' in unitPrice ? parseFloat(unitPrice.quantity) : 0
-
-        const price =
-          'currentPrice' in sellingStatus
-            ? parseFloat(sellingStatus.currentPrice[0].__value__)
-            : 0
-
-        const shipping =
-          'shippingServiceCost' in shippingInfo
-            ? parseFloat(shippingInfo.shippingServiceCost[0].__value__)
-            : 0
-
-        const username =
-          'sellerUserName' in sellerInfo
-            ? sellerInfo.sellerUserName[0].__value__
-            : 'anonymous'
-
-        await mongo.products.updateOne(
-          { title },
-          {
-            $setOnInsert: {
-              bids,
-              createdAt,
-              image,
-              price,
-              qty,
-              shipping,
-              status,
-              tags,
-              timeLeft,
-              title,
-              updatedAt,
-              url,
-              username
-            }
-          },
-          { upsert: true }
-        )
+          if (typeof kv === 'string' && /false|true/.test(kv)) {
+            item[k] = !(kv === 'false')
+          } else {
+            item[k] = kv
+          }
+        }
       }
+
+      item._id = item.itemId
+
+      return item
+    })
+  }
+
+  if (save && res.items.length) {
+    await mongo.products.bulkWrite(
+      res.items.map(
+        ({
+          listingInfo,
+          pictureURLSuperSize = '',
+          sellingStatus,
+          sellerInfo,
+          shippingInfo,
+          title,
+          unitPrice = {},
+          viewItemURL = 'javascript:;'
+        }) => {
+          const createdAt = new Date(listingInfo.startTime)
+          const image = pictureURLSuperSize
+          const status = sellingStatus.sellingState[0]
+          const tags = [tag._id]
+          const timeLeft = new Date(listingInfo.endTime)
+          const updatedAt = new Date()
+          const url = viewItemURL
+
+          const bids =
+            'bidCount' in sellingStatus ? sellingStatus.bidCount[0] : 0
+
+          const qty =
+            'quantity' in unitPrice ? parseFloat(unitPrice.quantity) : 0
+
+          const price =
+            'currentPrice' in sellingStatus
+              ? parseFloat(sellingStatus.currentPrice[0].__value__)
+              : 0
+
+          const shipping =
+            'shippingServiceCost' in shippingInfo
+              ? parseFloat(shippingInfo.shippingServiceCost[0].__value__)
+              : 0
+
+          const username =
+            'sellerUserName' in sellerInfo
+              ? sellerInfo.sellerUserName[0].__value__
+              : 'anonymous'
+
+          return {
+            updateOne: {
+              filter: { title },
+              upsert: true,
+              update: {
+                $setOnInsert: {
+                  bids,
+                  createdAt,
+                  image,
+                  price,
+                  qty,
+                  shipping,
+                  status,
+                  tags,
+                  timeLeft,
+                  title,
+                  updatedAt,
+                  url,
+                  username
+                }
+              }
+            }
+          }
+        }
+      )
     )
   }
 
   return res
 }) as Resolver
 
+type Result = EbayResult<number>
+
 interface EbayArgs {
   keywords: string
   save?: boolean
-  operation?: EbayOperations
+  operation?: 'findItemsByKeywords' | 'findCompletedItems'
   [key: string]: any
 }

@@ -23,7 +23,11 @@ export default (async (
 
   return await mongo.products
     .find<Product>(input)
-    .skip(paginationInput.pageNumber)
+    .skip(
+      Math.ceil(
+        (paginationInput.pageNumber - 1) * paginationInput.entriesPerPage
+      )
+    )
     .limit(paginationInput.entriesPerPage)
     .toArray()
 }) as Resolver

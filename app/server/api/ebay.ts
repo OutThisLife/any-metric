@@ -9,21 +9,18 @@ export const getCommerce = async (
   op: EbayOperations = 'findItemsByKeywords'
 ): Promise<Response> => {
   try {
-    const url = (() => {
-      if (/^find|items$/i.test(op)) {
-        return `https://svcs.ebay.com/services/search/FindingService/v1`
+    const res = await fetch(
+      'https://svcs.ebay.com/services/search/FindingService/v1',
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'X-EBAY-SOA-OPERATION-NAME': op,
+          'X-EBAY-SOA-SECURITY-APPNAME': EBAY_APP_ID,
+          'X-EBAY-SOA-REQUEST-DATA-FORMAT': 'JSON'
+        }
       }
-    })()
-
-    const res = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: {
-        'X-EBAY-SOA-OPERATION-NAME': op,
-        'X-EBAY-SOA-SECURITY-APPNAME': EBAY_APP_ID,
-        'X-EBAY-SOA-REQUEST-DATA-FORMAT': 'JSON'
-      }
-    })
+    )
 
     const data = await res.json()
 
@@ -41,7 +38,10 @@ export const getCommerce = async (
   }
 }
 
-export type EbayOperations = 'findItemsByKeywords' | 'findCompletedItems'
+export type EbayOperations =
+  | 'findItemsByKeywords'
+  | 'findCompletedItems'
+  | 'findItemsAdvanced'
 
 interface Response {
   [key: string]: any

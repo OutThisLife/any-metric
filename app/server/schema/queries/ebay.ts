@@ -1,4 +1,4 @@
-import { getCommerce } from '../../api'
+import { EbayOperations, getCommerce } from '../../api'
 import { EbayItem, EbayResult, Resolver, Tag } from '../types'
 
 export default (async (
@@ -33,8 +33,8 @@ export default (async (
   } = await getCommerce(
     Object.assign(args, {
       keywords,
+      descriptionSearch: true,
       outputSelector: ['PictureURLSuperSize', 'SellerInfo', 'UnitPrice'],
-      sortOrder: op === 'findCompletedItems' ? 'StartTimeNewest' : 'BestMatch',
       itemFilter: [
         {
           name: 'HideDuplicateItems',
@@ -42,7 +42,7 @@ export default (async (
         },
         {
           name: 'SoldItemsOnly',
-          value: op === 'findCompletedItems'
+          value: save
         }
       ]
     }),
@@ -53,7 +53,7 @@ export default (async (
     op,
     tag,
     total: parseInt(sr['@count'], 10),
-    totalPages: parseInt(pages.totalPages[0], 10),
+    totalPages: Math.min(100, parseInt(pages.totalPages[0], 10)),
     totalEntries: parseInt(pages.totalEntries[0], 10),
     items: ('item' in sr ? (sr.item as EbayItem[]) : []).map(item => {
       for (const [k, v] of Object.entries(item)) {
@@ -152,6 +152,6 @@ type Result = EbayResult<number>
 interface EbayArgs {
   keywords: string
   save?: boolean
-  operation?: 'findItemsByKeywords' | 'findCompletedItems'
+  operation?: EbayOperations
   [key: string]: any
 }

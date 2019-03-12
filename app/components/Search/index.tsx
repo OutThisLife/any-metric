@@ -51,9 +51,8 @@ export default compose<SearchProps & SearchHandlers, {}>(
       return {
         handleSubmit: () => async () => {
           const el = document.getElementById('s') as HTMLInputElement
-          const $form = el.closest('form') as HTMLFormElement
-
           const keywords = el.value
+          const $form = el.closest('form') as HTMLFormElement
 
           worker = new ImportWorker()
           $form.classList.add('loading')
@@ -98,13 +97,11 @@ export default compose<SearchProps & SearchHandlers, {}>(
           )
         },
 
-        handleConfirm: ({ client }) => ({ currentTarget }) => {
+        handleConfirm: ({ client }) => () => {
           const el = document.getElementById('s') as HTMLInputElement
+          const keywords = el.value
           const $form = el.closest('form') as HTMLFormElement
           const $status = document.getElementById('status')
-
-          const { operation } = currentTarget.dataset
-          const keywords = el.value
 
           worker = new ImportWorker()
           $form.classList.add('loading')
@@ -147,7 +144,7 @@ export default compose<SearchProps & SearchHandlers, {}>(
                 query: print(SEARCH_EBAY_BARE),
                 variables: {
                   keywords,
-                  operation,
+                  operation: 'findItemsAdvanced',
                   save: true,
                   paginationInput: { pageNumber: 1, entriesPerPage: 100 }
                 }
@@ -361,18 +358,8 @@ export default compose<SearchProps & SearchHandlers, {}>(
               />
             )}
           </nav>
-          <button
-            type="button"
-            data-operation="findCompletedItems"
-            onClick={handleConfirm}>
-            Import Completed
-          </button>
-          &nbsp;
-          <button
-            type="button"
-            data-operation="findItemsByKeywords"
-            onClick={handleConfirm}>
-            Import Active
+          <button type="button" onClick={handleConfirm}>
+            Import
           </button>
           &nbsp;
           <button type="reset">Cancel</button>

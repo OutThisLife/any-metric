@@ -18,7 +18,7 @@ self.addEventListener('message', ({ data: fields }) => {
       .then(({ data }) => {
         if (fields.recurse) {
           const total = parseInt(data.ebay.total, 10)
-          const totalPages = Math.min(100, parseInt(data.ebay.totalPages, 10))
+          const totalPages = parseInt(data.ebay.totalPages, 10)
           const totalEntries = parseInt(data.ebay.totalEntries, 10)
 
           if (totalPages > i) {

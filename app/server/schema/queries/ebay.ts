@@ -39,10 +39,6 @@ export default (async (
         {
           name: 'HideDuplicateItems',
           value: true
-        },
-        {
-          name: 'SoldItemsOnly',
-          value: save
         }
       ]
     }),

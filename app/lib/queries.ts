@@ -168,6 +168,7 @@ export const SEARCH_EBAY_BARE = gql`
       op
       total
       totalPages
+      totalEntries
       tag {
         _id
       }

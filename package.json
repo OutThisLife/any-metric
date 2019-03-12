@@ -6,9 +6,8 @@
   "scripts": {
     "analyze": "cross-env BUNDLE_ANALYZE=both next build ./app",
     "fix": "tslint app/**/*.tsx --fix",
-    "s": "tsc -P ./tsconfig.server.json",
     "dev": "cross-env NODE_ENV=development nodemon ./app/server/index.ts",
-    "build": "next build ./app && tsc -P ./tsconfig.server.json",
+    "build": "next build ./app && tsc-transpile-only -P ./tsconfig.server.json",
     "start": "node --optimize_for_size --max_old_space_size=460 --gc_interval=100 ./app/.next/production-server/index.js"
   },
   "keywords": [],
@@ -99,6 +98,7 @@
     "typescript": "^3.1.6",
     "typescript-eslint-parser": "^21.0.1",
     "typescript-styled-plugin": "^0.13.0",
+    "typescript-transpile-only": "^0.0.4",
     "url-loader": "^1.1.2",
     "worker-loader": "^2.0.0"
   },

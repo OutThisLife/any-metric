@@ -10169,6 +10169,13 @@ typescript-template-language-service-decorator@^2.0.0:
   resolved "https://registry.yarnpkg.com/typescript-template-language-service-decorator/-/typescript-template-language-service-decorator-2.2.0.tgz#4ee6d580f307fb9239978e69626f2775b8a59b2a"
   integrity sha512-xiolqt1i7e22rpqMaprPgSFVgU64u3b9n6EJlAaUYE61jumipKAdI1+O5khPlWslpTUj80YzjUKjJ2jxT0D74w==
 
+typescript-transpile-only@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/typescript-transpile-only/-/typescript-transpile-only-0.0.4.tgz#d52a9a5587d26272c29cb867b1ba4ab1323d77fb"
+  integrity sha512-iRNrUzeUZPra6lwEiHwobrKS77Lc3W6/dlngW2G4FA1SWuSyrc1LiZtsHcS4JQO7L/3oiiMbouXr1UPZtWroag==
+  dependencies:
+    tslib "^1.9.3"
+
 typescript@*, typescript@^3.1.6:
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.3.3.tgz#f1657fc7daa27e1a8930758ace9ae8da31403221"

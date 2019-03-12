@@ -5,6 +5,8 @@ self.addEventListener('message', ({ data: fields }) => {
   const getPage = () => {
     fields.variables.paginationInput.pageNumber = i
 
+    console.log(fields.variables.operation)
+
     fetch(`${location.origin}/graphql`, {
       method: 'POST',
       headers: {

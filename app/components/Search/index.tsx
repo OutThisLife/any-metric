@@ -97,9 +97,11 @@ export default compose<SearchProps & SearchHandlers, {}>(
           )
         },
 
-        handleConfirm: ({ client }) => () => {
+        handleConfirm: ({ client }) => ({ currentTarget }) => {
           const el = document.getElementById('s') as HTMLInputElement
           const keywords = el.value
+          const { operation } = currentTarget.dataset
+
           const $form = el.closest('form') as HTMLFormElement
           const $status = document.getElementById('status')
 
@@ -144,7 +146,7 @@ export default compose<SearchProps & SearchHandlers, {}>(
                 query: print(SEARCH_EBAY_BARE),
                 variables: {
                   keywords,
-                  operation: 'findItemsAdvanced',
+                  operation,
                   save: true,
                   paginationInput: { pageNumber: 1, entriesPerPage: 100 }
                 }
@@ -358,8 +360,17 @@ export default compose<SearchProps & SearchHandlers, {}>(
               />
             )}
           </nav>
-          <button type="button" onClick={handleConfirm}>
-            Import
+          <button
+            type="button"
+            data-operation="findCompletedItems"
+            onClick={handleConfirm}>
+            Import Complete
+          </button>
+          <button
+            type="button"
+            data-operation="findItemsAdvanced"
+            onClick={handleConfirm}>
+            Import Active
           </button>
           &nbsp;
           <button type="reset">Cancel</button>

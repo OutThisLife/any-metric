@@ -6,6 +6,7 @@
   "scripts": {
     "analyze": "cross-env BUNDLE_ANALYZE=both next build ./app",
     "fix": "tslint app/**/*.tsx --fix",
+    "s": "tsc -P ./tsconfig.server.json",
     "dev": "cross-env NODE_ENV=development nodemon ./app/server/index.ts",
     "build": "next build ./app && tsc -P ./tsconfig.server.json",
     "start": "node --optimize_for_size --max_old_space_size=460 --gc_interval=100 ./app/.next/production-server/index.js"
@@ -53,7 +54,6 @@
     "dayjs-plugin-utc": "^0.1.0",
     "dotenv": "^6.1.0",
     "express": "^4.16.4",
-    "fuse.js": "^3.4.2",
     "graphql": "^14.0.2",
     "graphql-iso-date": "^3.6.1",
     "graphql-tag": "^2.10.0",

@@ -7,13 +7,12 @@
     "analyze": "cross-env BUNDLE_ANALYZE=both next build ./app",
     "analyze:server": "cross-env BUNDLE_ANALYZE=server next build ./app",
     "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build ./app",
-    "start:universal": "node --optimize_for_size --max_old_space_size=460 --gc_interval=100 ./app/.next/production-server/index.js",
     "build:app": "next build ./app",
-    "build:universal": "yarn build:app && tsc -p ./tsconfig.server.json",
+    "build:server": "tsc -p ./tsconfig.server.json",
     "fix": "tslint app/**/*.tsx --fix",
     "dev": "cross-env NODE_ENV=development nodemon ./app/server/index.ts",
-    "build": "cross-env NODE_ENV=production yarn build:universal",
-    "start": "cross-env NODE_ENV=production yarn start:universal"
+    "build": "cross-env NODE_ENV=production yarn build:app && yarn build:server",
+    "start": "cross-env NODE_ENV=production node --optimize_for_size --max_old_space_size=460 --gc_interval=100 ./app/.next/production-server/index.js"
   },
   "keywords": [],
   "author": "",

@@ -17,6 +17,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": "~10",
+    "yarn": "~1"
+  },
   "dependencies": {
     "@babel/core": "^7.1.6",
     "@babel/plugin-proposal-optional-chaining": "^7.0.0",

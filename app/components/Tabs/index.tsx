@@ -1,6 +1,7 @@
-import { MODIFY_DOC } from '@/lib/queries'
+import { MODIFY_DOC, SEARCH_EBAY_BARE } from '@/lib/queries'
 import { Tag, View } from '@/server/schema/types'
 import { ApolloClient } from 'apollo-boost'
+import { print } from 'graphql'
 import { func, object } from 'prop-types'
 import { graphql, MutationFn, withApollo } from 'react-apollo'
 import { Flex } from 'rebass'
@@ -12,6 +13,8 @@ import {
   withStateHandlers
 } from 'recompose'
 import { prop } from 'styled-tools'
+
+import ImportWorker from '../Search/save.worker.js'
 
 export default compose<TimesTabsProps & TimesTabsHandles, {}>(
   setDisplayName('chart-times-tabs'),
@@ -34,7 +37,7 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
     })
   }),
   withStateHandlers(
-    { tab: '' },
+    { tab: '', loading: '' },
     {
       setTab: () => (tab, cb = () => null) => {
         if (tab.length) {
@@ -45,6 +48,11 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
 
         cb()
         return { tab }
+      },
+
+      setLoading: () => (loading, cb = () => null) => {
+        cb()
+        return { loading }
       }
     }
   ),
@@ -63,9 +71,8 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
         }
       },
 
-      handleClick: () => (tab, params = {}) => {
-        setTab(tab, () => setInput(params))
-      },
+      handleClick: () => (tab, params = {}) =>
+        setTab(tab, () => setInput(params)),
 
       handleFlush: () => () =>
         window.confirm('Are you sure?') &&
@@ -87,73 +94,180 @@ export default compose<TimesTabsProps & TimesTabsHandles, {}>(
               tags: id
             }
           })
+        ),
+
+      handleRefresh: ({ setLoading }) => ({
+        currentTarget: {
+          dataset: { keywords }
+        }
+      }) => {
+        const $status = document.getElementById('status')
+        const worker = new ImportWorker()
+
+        let n = 0
+        worker.addEventListener('message', async ({ data: e }) => {
+          try {
+            if (e.err) {
+              throw e.err
+            }
+
+            if (e.total) {
+              $status.firstElementChild.innerHTML = `${(n += e.total)} / ${
+                e.totalEntries
+              } &hellip;`
+            }
+
+            if (e.done) {
+              setLoading('', () => {
+                $status.lastElementChild.textContent = 'OK'
+                document.body.removeAttribute('data-proc')
+              })
+
+              worker.terminate()
+            }
+          } catch (err) {
+            worker.terminate()
+          }
+        })
+
+        setLoading(keywords, () =>
+          worker.postMessage({
+            recurse: true,
+            query: print(SEARCH_EBAY_BARE),
+            variables: {
+              keywords,
+              operation: 'findCompletedItems',
+              save: true,
+              paginationInput: { pageNumber: 1, entriesPerPage: 100 },
+              itemFilter: [
+                {
+                  name: 'HideDuplicateItems',
+                  value: true
+                },
+                {
+                  name: 'SoldItemsOnly',
+                  value: true
+                }
+              ]
+            }
+          })
         )
+      }
     })
   )
-)(({ onRef, session, tab, handleClick, handleFlush, handleDrop }) => (
-  <Flex
-    ref={onRef}
-    as="nav"
-    css={`
-      justify-self: flex-start;
-      justify-content: flex-end;
-      max-width: 100%;
-      overflow: auto;
-      white-space: nowrap;
-      background: ${prop('theme.bg')};
+)(
+  ({
+    onRef,
+    session,
+    tab,
+    loading,
+    handleClick,
+    handleRefresh,
+    handleFlush,
+    handleDrop
+  }) => (
+    <Flex
+      ref={onRef}
+      as="nav"
+      css={`
+        justify-self: flex-start;
+        justify-content: flex-end;
+        max-width: 100%;
+        overflow: auto;
+        white-space: nowrap;
+        background: ${prop('theme.bg')};
 
-      @media (max-width: 1025px) {
-        padding: var(--pad) 0;
-      }
+        @media (max-width: 1025px) {
+          padding: var(--pad) 0;
+        }
 
-      > span {
-        display: inline-flex;
-        align-items: center;
-        font-weight: 700;
-        text-transform: uppercase;
+        > span {
+          display: inline-flex;
+          align-items: center;
+          font-weight: 700;
+          text-transform: uppercase;
+          padding: 5px;
+          background: rgba(0, 0, 0, 0.02);
 
-        i {
-          cursor: pointer;
-          margin: 0 0.3em 0 0.1em;
+          + span {
+            margin-left: 1em;
+          }
 
-          &.refresh svg {
-            stroke: ${prop('theme.brand')};
+          &.loading {
+            opacity: 0.3;
+            pointer-events: none;
+          }
+
+          &.active {
+            color: ${prop('theme.bg')};
+            background: ${prop('theme.brand')};
+          }
+
+          span {
+            display: inline-flex;
+            align-items: center;
+            padding: 0 0 0 3px;
+            margin: 0 0 0 5px;
+            border-left: 1px solid rgba(255, 255, 255, 0.3);
+
+            i {
+              cursor: pointer;
+              display: inline-flex;
+
+              + i {
+                margin-left: 0.2em;
+              }
+            }
+          }
+
+          &:not(:hover) span {
+            opacity: 0.2;
+          }
+
+          a {
+            color: inherit;
+            line-height: 1;
           }
         }
+      `}>
+      {(session.tags as Tag[]).map(t => (
+        <span
+          key={t._id}
+          className={`${tab === t._id ? 'active' : ''} ${
+            loading === t.slug ? 'loading' : ''
+          }`}>
+          <a
+            id={`tab-${t._id}`}
+            href="javascript:;"
+            onClick={() =>
+              handleClick(t._id, {
+                tags: {
+                  $in: [t._id]
+                }
+              })
+            }>
+            {t.title}
+          </a>
 
-        &:not(:hover) .delete {
-          visibility: hidden;
-        }
-      }
-    `}>
-    {(session.tags as Tag[]).map(t => (
-      <span key={t._id} className={tab === t._id ? 'active' : ''}>
-        <a
-          id={`tab-${t._id}`}
-          href="javascript:;"
-          onClick={() =>
-            handleClick(t._id, {
-              tags: {
-                $in: [t._id]
-              }
-            })
-          }>
-          {t.title}
+          <span>
+            <Refresh data-keywords={t.slug} onClick={handleRefresh} />
+            <Delete data-id={t._id} onClick={handleDrop} />
+          </span>
+        </span>
+      ))}
+
+      <span className={tab === '' ? 'active' : ''}>
+        <a href="javascript:;" onClick={() => handleClick('')}>
+          Everything
         </a>
 
-        <Delete data-id={t._id} onClick={handleDrop} />
+        <span>
+          <Delete onClick={handleFlush} />
+        </span>
       </span>
-    ))}
-
-    <span className={tab === '' ? 'active' : ''}>
-      <a href="javascript:;" onClick={() => handleClick('')}>
-        Everything
-      </a>
-
-      <Delete onClick={handleFlush} />
-    </span>
-  </Flex>
-))
+    </Flex>
+  )
+)
 
 const Delete = ({ size = 12, ...props }) => (
   <i className="delete" {...props}>
@@ -174,9 +288,27 @@ const Delete = ({ size = 12, ...props }) => (
   </i>
 )
 
+const Refresh = ({ size = 12, ...props }) => (
+  <i className="refresh" {...props}>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeWidth="3"
+      viewBox="0 0 24 24">
+      <path d="M21.2 15c.7-1.2 1-2.5.7-3.9-.6-2-2.4-3.5-4.4-3.5h-1.2c-.7-3-3.2-5.2-6.2-5.6-3-.3-5.9 1.3-7.3 4-1.2 2.5-1 6.5.5 8.8m8.7 5V12m4 5l-4 4-4-4" />
+    </svg>
+  </i>
+)
+
 export interface TimesTabsProps {
   tab?: string
   setTab?: (a: string, cb?: () => void) => void
+  loading?: string
+  setLoading?: (a: string, cb?: () => void) => void
   setInput: (a: any) => void
   session?: View
   client?: ApolloClient<{}>
@@ -188,4 +320,5 @@ export interface TimesTabsHandles {
   handleClick: (tab: string, params?: any) => void
   handleDrop: React.MouseEventHandler<HTMLAnchorElement>
   handleFlush: React.MouseEventHandler<HTMLAnchorElement>
+  handleRefresh: React.MouseEventHandler<HTMLAnchorElement>
 }

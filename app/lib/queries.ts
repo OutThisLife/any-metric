@@ -137,12 +137,14 @@ export const SEARCH_EBAY = gql`
     $keywords: String!
     $save: Boolean
     $operation: String
+    $itemFilter: JSON
     $paginationInput: Pagination
   ) {
     ebay(
       keywords: $keywords
       save: $save
       operation: $operation
+      itemFilter: $itemFilter
       paginationInput: $paginationInput
     ) {
       ...EbayFields
@@ -157,12 +159,14 @@ export const SEARCH_EBAY_BARE = gql`
     $keywords: String!
     $save: Boolean
     $operation: String
+    $itemFilter: JSON
     $paginationInput: Pagination
   ) {
     ebay(
       keywords: $keywords
       save: $save
       operation: $operation
+      itemFilter: $itemFilter
       paginationInput: $paginationInput
     ) {
       op

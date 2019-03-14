@@ -21,6 +21,7 @@ export default gql`
       keywords: String!
       save: Boolean
       operation: String
+      itemFilter: JSON
       paginationInput: Pagination
     ): EbayResult
 

@@ -34,13 +34,7 @@ export default (async (
     Object.assign(args, {
       keywords,
       descriptionSearch: true,
-      outputSelector: ['PictureURLSuperSize', 'SellerInfo', 'UnitPrice'],
-      itemFilter: [
-        {
-          name: 'HideDuplicateItems',
-          value: true
-        }
-      ]
+      outputSelector: ['PictureURLSuperSize', 'SellerInfo', 'UnitPrice']
     }),
     op
   )

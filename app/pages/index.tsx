@@ -54,6 +54,7 @@ export default compose<HomeProps & HomeHandles, {}>(
         name="v"
         placeholder="view id"
         spellCheck={false}
+        autoComplete="off"
       />
     </form>
   </Flex>

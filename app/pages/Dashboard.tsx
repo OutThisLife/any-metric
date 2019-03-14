@@ -10,12 +10,12 @@ import { GET_VIEW } from '@/lib/queries'
 import { View } from '@/server/schema/types'
 import { RouterProps, withRouter } from 'next/router'
 import { func, object, string } from 'prop-types'
+import { useEffect } from 'react'
 import { DataValue, graphql } from 'react-apollo'
 import { Box } from 'rebass'
 import {
   branch,
   compose,
-  lifecycle,
   renderComponent,
   setDisplayName,
   withContext,
@@ -47,142 +47,142 @@ export default compose<DashboardProps, {}>(
       scrollToIndex,
       session: data.view || { tags: [] }
     })
-  ),
-  lifecycle<DashboardProps, {}, any>({
-    componentDidMount() {
-      this.handleKeyPress = ({ key }) => {
-        if (document.activeElement instanceof HTMLInputElement) {
-          return
-        }
-
-        if (key === 'w' && localStorage.getItem('url')) {
-          window.open(localStorage.getItem('url'), '_blank')
-        }
-
-        if (key === 's') {
-          document.body.classList.toggle('lock-chart')
-        }
+  )
+)(() => {
+  useEffect(() => {
+    const handleKeyPress = ({ key }) => {
+      if (document.activeElement instanceof HTMLInputElement) {
+        return
       }
 
-      window.addEventListener('keypress', this.handleKeyPress)
-    },
+      if (key === 'w' && localStorage.getItem('url')) {
+        window.open(localStorage.getItem('url'), '_blank')
+      }
 
-    componentWillUnmount() {
-      window.removeEventListener('keypress', this.handleKeyPress)
+      if (key === 's') {
+        document.body.classList.toggle('lock-chart')
+      }
     }
-  })
-)(() => (
-  <Box
-    as="main"
-    css={`
-      --pad: 15px;
 
-      display: grid;
-      grid-template-rows: calc(100% - var(--pad));
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      margin: auto;
-      padding: var(--pad);
+    window.addEventListener('keypress', handleKeyPress)
+    return () => window.removeEventListener('keypress', handleKeyPress)
+  }, [])
 
-      @media (min-width: 1025px) {
-        grid-template-columns: repeat(2, 1fr);
-      }
+  return (
+    <Box
+      as="main"
+      css={`
+        --pad: 15px;
 
-      @media (max-width: 1025px) {
-        grid-template-rows: max-content 1fr;
-      }
-
-      > form {
-        grid-row: 1;
-        grid-column: 1 / 1;
-        height: max-content;
-      }
-
-      > section {
         display: grid;
-        grid-column: 1 / -1;
-        position: relative;
+        grid-template-rows: calc(100% - var(--pad));
+        width: 100vw;
+        height: 100vh;
         overflow: hidden;
+        margin: auto;
+        padding: var(--pad);
 
         @media (min-width: 1025px) {
-          grid-row: 1;
-          grid-template-columns: inherit;
-          grid-gap: var(--pad);
-          align-items: center;
-          justify-content: center;
-
-          > aside {
-            margin-top: 6px;
-          }
+          grid-template-columns: repeat(2, 1fr);
         }
 
         @media (max-width: 1025px) {
-          grid-template-columns: 1fr;
-          grid-template-rows: repeat(2, 1fr);
+          grid-template-rows: max-content 1fr;
+        }
 
-          > aside {
+        > form {
+          grid-row: 1;
+          grid-column: 1 / 1;
+          height: max-content;
+        }
+
+        > section {
+          display: grid;
+          grid-column: 1 / -1;
+          position: relative;
+          overflow: hidden;
+
+          @media (min-width: 1025px) {
             grid-row: 1;
+            grid-template-columns: inherit;
+            grid-gap: var(--pad);
+            align-items: center;
+            justify-content: center;
+
+            > aside {
+              margin-top: 6px;
+            }
           }
 
-          > div {
-            grid-row: 2;
-            align-self: center;
+          @media (max-width: 1025px) {
+            grid-template-columns: 1fr;
+            grid-template-rows: repeat(2, 1fr);
+
+            > aside {
+              grid-row: 1;
+            }
+
+            > div {
+              grid-row: 2;
+              align-self: center;
+            }
+          }
+
+          > span {
+            justify-self: center;
+            text-align: center;
+          }
+
+          [class*='Loader'] {
+            height: calc(100vh - var(--pad));
           }
         }
-
-        > span {
-          justify-self: center;
-          text-align: center;
-        }
-
-        [class*='Loader'] {
-          height: calc(100vh - var(--pad));
-        }
-      }
-    `}>
-    <Search />
-    <Chart>
-      {({ data: { loading }, contentRect: rect, chart }) => (
-        <>
-          {(loading && !chart.data.length) ||
-          !('bounds' in rect) ||
-          isNaN(rect.bounds.width) ? (
-            <Loader size={120} />
-          ) : chart.data.length < 10 ? (
-            <span>not enough datapoints</span>
-          ) : (
-            <Box>
-              <Meta key={chart.data.length} data={chart.data} />
-
-              <Price
-                width={isDesktop() ? rect.bounds.width / 2 : rect.client.width}
-                height={
-                  isDesktop() ? rect.bounds.height / 2 : rect.client.width / 2
-                }
-                ratio={1}
-                {...chart}
-                {...rect}
-              />
-            </Box>
-          )}
-
-          <Box as="aside">
-            <Tabs />
-
-            {loading && !chart.data.length ? (
-              <Loader size={60} />
+      `}>
+      <Search />
+      <Chart>
+        {({ data: { loading }, contentRect: rect, chart }) => (
+          <>
+            {(loading && !chart.data.length) ||
+            !('bounds' in rect) ||
+            isNaN(rect.bounds.width) ? (
+              <Loader size={120} />
+            ) : chart.data.length < 10 ? (
+              <span>not enough datapoints</span>
             ) : (
-              <List key={chart.data.length} chart={chart} rect={rect} />
-            )}
-          </Box>
-        </>
-      )}
-    </Chart>
+              <Box>
+                <Meta key={chart.data.length} data={chart.data} />
 
-    <Footer />
-  </Box>
-))
+                <Price
+                  width={
+                    isDesktop() ? rect.bounds.width / 2 : rect.client.width
+                  }
+                  height={
+                    isDesktop() ? rect.bounds.height / 2 : rect.client.width / 2
+                  }
+                  ratio={1}
+                  {...chart}
+                  {...rect}
+                />
+              </Box>
+            )}
+
+            <Box as="aside">
+              <Tabs />
+
+              {loading && !chart.data.length ? (
+                <Loader size={60} />
+              ) : (
+                <List key={chart.data.length} chart={chart} rect={rect} />
+              )}
+            </Box>
+          </>
+        )}
+      </Chart>
+
+      <Footer />
+    </Box>
+  )
+})
 
 export interface DashboardProps {
   index?: number

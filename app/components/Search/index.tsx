@@ -2,11 +2,10 @@ import Loader from '@/components/Loader'
 import { MODIFY_DOC, SEARCH_EBAY, SEARCH_EBAY_BARE } from '@/lib/queries'
 import { moneyFormat } from '@/lib/utils'
 import { EbayItem, Tag, View } from '@/server/schema/types'
-import { ApolloClient } from 'apollo-boost'
 import { print } from 'graphql/language/printer'
 import Link from 'next/link'
 import { object } from 'prop-types'
-import { graphql, MutationFn, withApollo } from 'react-apollo'
+import { graphql, MutationFn } from 'react-apollo'
 import { Box } from 'rebass'
 import {
   compose,
@@ -21,7 +20,6 @@ import ImportWorker from './save.worker.js'
 
 export default compose<SearchProps & SearchHandlers, {}>(
   setDisplayName('header-search'),
-  withApollo,
   getContext({ session: object }),
   withState('isOpen', 'toggleModal', false),
   withState('items', 'setItems', []),
@@ -90,17 +88,22 @@ export default compose<SearchProps & SearchHandlers, {}>(
                   keywords,
                   save: false,
                   operation: 'findItemsByKeywords',
-                  paginationInput: { pageNumber: 1, entriesPerPage: 4 }
+                  paginationInput: { pageNumber: 1, entriesPerPage: 4 },
+                  itemFilter: [
+                    {
+                      name: 'HideDuplicateItems',
+                      value: true
+                    }
+                  ]
                 }
               })
             )
           )
         },
 
-        handleConfirm: ({ client }) => ({ currentTarget }) => {
+        handleConfirm: () => () => {
           const el = document.getElementById('s') as HTMLInputElement
           const keywords = el.value
-          const { operation } = currentTarget.dataset
 
           const $form = el.closest('form') as HTMLFormElement
           const $status = document.getElementById('status')
@@ -124,8 +127,6 @@ export default compose<SearchProps & SearchHandlers, {}>(
                 } &hellip;`
               }
 
-              await client.reFetchObservableQueries()
-
               if (e.done) {
                 $status.lastElementChild.textContent = 'OK'
                 document.body.removeAttribute('data-proc')
@@ -146,9 +147,19 @@ export default compose<SearchProps & SearchHandlers, {}>(
                 query: print(SEARCH_EBAY_BARE),
                 variables: {
                   keywords,
-                  operation,
+                  operation: 'findCompletedItems',
                   save: true,
-                  paginationInput: { pageNumber: 1, entriesPerPage: 100 }
+                  paginationInput: { pageNumber: 1, entriesPerPage: 100 },
+                  itemFilter: [
+                    {
+                      name: 'HideDuplicateItems',
+                      value: true
+                    },
+                    {
+                      name: 'SoldItemsOnly',
+                      value: true
+                    }
+                  ]
                 }
               })
             )
@@ -360,17 +371,8 @@ export default compose<SearchProps & SearchHandlers, {}>(
               />
             )}
           </nav>
-          <button
-            type="button"
-            data-operation="findCompletedItems"
-            onClick={handleConfirm}>
-            Import Complete
-          </button>
-          <button
-            type="button"
-            data-operation="findItemsAdvanced"
-            onClick={handleConfirm}>
-            Import Active
+          <button type="button" onClick={handleConfirm}>
+            Import
           </button>
           &nbsp;
           <button type="reset">Cancel</button>
@@ -386,7 +388,6 @@ export interface SearchProps {
   isOpen: boolean
   isProcessing: boolean
   session?: View
-  client?: ApolloClient<{}>
   updateView?: (t: Tag) => MutationFn
   setItems?: (r: EbayItem[] | string[], cb?: () => void) => void
   toggleModal?: (b: boolean, cb?: () => void) => void

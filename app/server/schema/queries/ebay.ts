@@ -64,77 +64,77 @@ export default (async (
     })
   }
 
-  if (save && res.items.length) {
-    await mongo.products.bulkWrite(
-      res.items.map(
-        ({
-          listingInfo,
-          pictureURLSuperSize = '',
-          sellingStatus,
-          sellerInfo,
-          shippingInfo,
-          title,
-          unitPrice = {},
-          viewItemURL = 'javascript:;'
-        }) => {
-          const createdAt = new Date(listingInfo.startTime)
-          const image = pictureURLSuperSize
-          const status = sellingStatus.sellingState[0]
-          const tags = [tag._id]
-          const timeLeft = new Date(listingInfo.endTime)
-          const updatedAt = new Date()
-          const url = viewItemURL
+  if (!save) {
+    return res
+  }
 
-          const bids =
-            'bidCount' in sellingStatus ? sellingStatus.bidCount[0] : 0
+  await mongo.products.bulkWrite(
+    res.items.map(
+      ({
+        itemId,
+        listingInfo,
+        pictureURLSuperSize = '',
+        sellerInfo,
+        sellingStatus,
+        shippingInfo,
+        title,
+        unitPrice = {},
+        viewItemURL = 'javascript:;'
+      }) => {
+        const createdAt = new Date(listingInfo.startTime)
+        const image = pictureURLSuperSize
+        const status = sellingStatus.sellingState[0]
+        const tags = [tag._id]
+        const timeLeft = new Date(listingInfo.endTime)
+        const updatedAt = new Date()
+        const url = viewItemURL
 
-          const qty =
-            'quantity' in unitPrice ? parseFloat(unitPrice.quantity) : 0
+        const bids = 'bidCount' in sellingStatus ? sellingStatus.bidCount[0] : 0
 
-          const price =
-            'currentPrice' in sellingStatus
-              ? parseFloat(sellingStatus.currentPrice[0].__value__)
-              : 0
+        const qty = 'quantity' in unitPrice ? parseFloat(unitPrice.quantity) : 0
 
-          const shipping =
-            'shippingServiceCost' in shippingInfo
-              ? parseFloat(shippingInfo.shippingServiceCost[0].__value__)
-              : 0
+        const price =
+          'currentPrice' in sellingStatus
+            ? parseFloat(sellingStatus.currentPrice[0].__value__)
+            : 0
 
-          const username =
-            'sellerUserName' in sellerInfo
-              ? sellerInfo.sellerUserName[0].__value__
-              : 'anonymous'
+        const shipping =
+          'shippingServiceCost' in shippingInfo
+            ? parseFloat(shippingInfo.shippingServiceCost[0].__value__)
+            : 0
 
-          return {
-            updateOne: {
-              filter: { title },
-              upsert: true,
-              update: {
-                $setOnInsert: {
-                  bids,
-                  createdAt,
-                  image,
-                  price,
-                  qty,
-                  shipping,
-                  status,
-                  tags,
-                  timeLeft,
-                  title,
-                  updatedAt,
-                  url,
-                  username
-                }
+        const username =
+          'sellerUserName' in sellerInfo
+            ? sellerInfo.sellerUserName[0].__value__
+            : 'anonymous'
+
+        return {
+          updateOne: {
+            filter: { title },
+            upsert: true,
+            update: {
+              $setOnInsert: {
+                bids,
+                itemId,
+                createdAt,
+                image,
+                price,
+                qty,
+                shipping,
+                status,
+                tags,
+                timeLeft,
+                title,
+                updatedAt,
+                url,
+                username
               }
             }
           }
         }
-      )
+      }
     )
-  }
-
-  return res
+  )
 }) as Resolver
 
 type Result = EbayResult<number>

@@ -26,7 +26,7 @@ export default gql`
     ): EbayResult
 
     crawl(query: CrawlInput!): CrawlResult
-    google(keywords: String!): CrawlResult
+    google(keywords: String!, news: Boolean): CrawlResult
     find(collectionName: String!): JSON
   }
 
@@ -153,7 +153,7 @@ export default gql`
 
   input CrawlInput {
     parent: String!
-    selectors: [SelectorInput]!
+    selectors: [SelectorInput]
     url: String!
   }
 
